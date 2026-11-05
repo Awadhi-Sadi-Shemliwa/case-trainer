@@ -5,7 +5,7 @@ Prompts come from docs/spec.pdf §10. Status: TODO / IN PROGRESS / DONE / BLOCKE
 | # | Prompt | Status | Notes |
 |---|--------|--------|-------|
 | 1 | Read spec, plan, set up repo | DONE (pending S21 run by owner) | arm64 debug APK builds; pytest + flutter test pass |
-| 2 | Pipeline framework (provenance, results, charts, content build) | TODO | |
+| 2 | Pipeline framework (provenance, results, charts, content build) | DONE | 28 tests; build fails on missing keys, weights≠100, unverified sources, missing calibration, hand-typed numbers |
 | 3 | Solve P50 yield curve end to end | TODO | Stop for owner review afterwards |
 | 4 | Flutter app shell and case player | TODO | |
 | 5 | Interactive charts (Syncfusion + fl_chart fallback) | TODO | Owner registers Syncfusion Community Licence |
