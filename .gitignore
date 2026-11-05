@@ -1,0 +1,12 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Raw data IS committed when its licence allows (reproducible tests). Restricted data: add a per-case .gitignore.
+# Flutter/Android handled by app/.gitignore
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
