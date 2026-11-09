@@ -27,5 +27,20 @@ Words that contain digits but are names (R2, T10Y2Y, 2s10s) go in the case's `al
 ### NY Fed yield-curve data download
 There is no direct file link on ycfaq (JS app). Don't spoof a browser User-Agent to scrape it; download it by hand if needed.
 
+### Riverpod: "Tried to modify a provider while the widget tree was building" (2026-11-09)
+Bumping `progressTickProvider` from `initState` throws. Write to the DB immediately, bump in
+`WidgetsBinding.instance.addPostFrameCallback`. See `case_player_screen.dart`.
+
+### Widget test: "derived an Offset … would not hit test" (2026-11-09)
+The button is below the fold or behind the bottom bar. Use `_tapVisible` in `player_test.dart`
+(`Scrollable.ensureVisible(..., alignment: 0.5)` then tap).
+
+### A guard test that strips display strings is vacuous
+Removing every result display string ("1", "5", "19"…) erases most digits, so injected numbers slip through.
+Strip by WIDGET (skip ValueChip and CodeView), and mutation-check the test once.
+
+### `ReorderableListView.onReorder` deprecated (Flutter 3.44)
+Use `onReorderItem`; it already adjusts `newIndex` for the removed item.
+
 ### Gradle: "Conflicting configuration … abiFilters … splits"
 Don't set `ndk.abiFilters`; use `--split-per-abi --target-platform android-arm64`.

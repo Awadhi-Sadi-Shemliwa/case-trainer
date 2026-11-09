@@ -25,6 +25,24 @@ Deterministic: sentence embeddings + keyword groups + numeric anchors − red-fl
 Pass = score ≥ 85 and no critical red flag. 3 attempts with escalating feedback. LLMs may only
 rephrase feedback, never grade. Details: GRADING.md.
 
+## App layers (`app/lib/`, Prompt 4)
+| Layer | Files | Notes |
+|---|---|---|
+| Entry | `main.dart`, `app.dart` | Opens both DBs before `runApp`; injects them with Riverpod overrides; go_router shell with 4 tabs + `/case/:id` |
+| State | `providers.dart` | `contentDbProvider`, `progressDbProvider`, `graderProvider`; `progressTickProvider` bumped after every progress write; `themeModeProvider` (stored in progress settings) |
+| Data | `data/content_db.dart` | Copies `assets/content/content.sqlite` to app support dir when missing or different (byte compare), opens **read-only** |
+| | `data/progress_db.dart` | `attempts`, `case_state` (resume: `step_idx`, `max_idx`, `completed`), `reviews` (Prompts 6/9), `settings`; schema via `PRAGMA user_version` |
+| Engine | `engine/placeholders.dart` | `{expected.k}` → `results.display` (ValueChip, tap shows description); `{captured.n}` → code block; unknown key **throws** |
+| | `engine/checker.dart` | Exact checks for mcq / multi / kpi / order / numeric (tolerance, % aware) / code_fill / code_fix (whitespace-insensitive) |
+| Grading | `grading/grader.dart` | `Grader` interface; `StubGrader` until Prompt 6. While the stub is active, free-text steps offer the model answer after submit |
+| UI | `ui/screens/*`, `ui/steps/*`, `ui/widgets/*` | One widget family per step type (`step_view.dart` dispatches). Checked steps reveal the answer after 3 failed attempts. Charts are pipeline PNGs (pinch-zoom, full screen) until Prompt 5 |
+
+Data flow for one step: `content_db.steps()` → `StepView` → `Prose` resolves placeholders → user answers →
+`Checker` / `Grader` → `progress_db.recordAttempt()` → `progressTickProvider.bump()` → Home/Progress rebuild.
+
+Guard test: `app/test/no_hardcoded_numbers_test.dart` renders every step of the REAL bundle and fails on any
+digit outside value chips, code blocks and allowed literals (mutation-checked: an injected "13.5" fails it).
+
 ## Build-time guarantees (build_content.py fails if…)
 - a `{expected.key}` placeholder is missing from expected_results.json
 - a source key is missing from sources.json or not VERIFIED

@@ -50,6 +50,20 @@ Correct numbers in example answers come from the pipeline, like content text. De
 wrong/red-flag answers are typed, because they are not results. build_content.py fails if a calibration placeholder
 key is missing.
 
+### 2026-11-09 · App storage: `sqlite3` directly, not drift (supersedes the 2026-11-05 entry below)
+Both DBs are tiny and fixed (read-only bundle, four progress tables). drift adds build_runner code generation
+for little gain. sqlite3 3.x bundles SQLite itself (verified: runs on the S21+ and in Windows host tests).
+
+### 2026-11-09 · Charts are the pipeline PNGs until Prompt 5
+Spec Prompt 4 only needs play-through to the first chart. Interactive Syncfusion/fl_chart rendering is Prompt 5.
+
+### 2026-11-09 · Model answer visible after submitting, only while the grader is a stub
+Until the examiner exists you can still self-check. `Grader.isStub` gates it; Prompt 6 switches to the
+spec's attempt-3 reveal.
+
+### 2026-11-09 · Checked steps reveal after 3 failed attempts
+Mirrors the examiner's 3-attempt rule for mcq/order/numeric/code steps.
+
 ### 2026-11-05 · drift + sqlite3 (not sqlite3_flutter_libs)
 sqlite3_flutter_libs is marked end-of-life (0.6.0+eol). To confirm in Prompt 4 that sqlite3 3.x
 bundles the native library on Android.

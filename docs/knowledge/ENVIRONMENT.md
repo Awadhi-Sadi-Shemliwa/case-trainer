@@ -25,7 +25,22 @@ Then open a new terminal and run `adb version`.
 5. `cd app && flutter run` (debug, hot reload) **or**
    `adb install -r build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk`.
 6. Record the phone's Android / One UI version here (Settings → About phone → Software information):
-   - Android: _owner to fill_ · One UI: _owner to fill_ · Model (S21 / S21+), chip: _owner to fill_
+   - Read over adb on 2026-11-09: **SM-G996U = Galaxy S21+ (US), Snapdragon 888 (`lahaina`), Android 15, One UI 7.0**,
+     screen 1080×2400, adb serial `RFCNC0Q05WE`. App id `dev.awadhi.case_trainer`.
+
+## Measured on the S21+ (2026-11-09, Prompt 4)
+| What | Debug build | Release build |
+|---|---|---|
+| arm64 APK size | 107.8 MB | 19.4 MB |
+| Cold start (`am start -W` TotalTime) | 3,822 ms first run; 2,011 ms second | 452, 338, 290, 308, 309 ms (median 309) |
+| content.sqlite copy on first run | 329 ms (176,128 bytes) | – |
+| Both DBs ready (from main) | 367 ms first run | – |
+Re-measure whenever the bundle grows (more cases) or charts become interactive (Prompt 5).
+
+## App dependencies in use (resolved 2026-11-09, pinned in app/pubspec.lock)
+flutter_riverpod 3.5.0 · go_router 18.1.4 · sqlite3 3.5.2 (bundles native SQLite via build hooks; works on
+Android arm64 AND in host `flutter test` on Windows, no sqlite3_flutter_libs) · path_provider 2.1.6.
+sqlite3 3.9.1 existed but was published ~1 day earlier; not used.
 
 ## Verified package versions (pub.dev / PyPI APIs, 2026-11-05)
 Flutter: flutter_riverpod 3.4.3 · go_router 18.1.3 · drift 2.35.3 · sqlite3 3.9.0 ·
