@@ -3,3 +3,5 @@
 *.pdf binary
 *.sqlite binary
 *.bat text eol=crlf
+# Raw data is stored byte-for-byte: its SHA-256 is recorded in provenance.json
+pipeline/cases/*/raw/** binary
