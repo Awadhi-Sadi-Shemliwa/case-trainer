@@ -1,0 +1,176 @@
+# Generated from _answers.py. Edit there.
+step: s15_threshold
+answers:
+- id: a01
+  text: 'Metric: the model''s home goal edge in goals per match. Adjustment: reduce it by {expected.adj_goals} goals
+    when there are no crowds, range {expected.adj_goals_lo} to {expected.adj_goals_hi}. Trigger: closed doors only,
+    scaled for partial crowds, removed when fans return. Uncertainty: from the confidence interval; congestion may
+    explain part of it. Now fans are back the edge recovered to {expected.gd_back}, so remove the adjustment.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: Cut the home advantage term by about {expected.adj_goals} goals per match for matches without crowds (plausible
+    {expected.adj_goals_lo}–{expected.adj_goals_hi}). Apply only behind closed doors and remove it when fans return.
+    The range reflects the interval and possible confounding. With fans back, use the normal term and re-estimate.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Rule: if a league plays behind closed doors, lower the expected home goal difference by {expected.adj_goals},
+    within a range of {expected.adj_goals_lo} to {expected.adj_goals_hi}. Scale it for partial crowds. It''s uncertain:
+    congestion, and the interval is wide. Fans are back now, so revert to the full edge.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: The home edge term drops by {expected.adj_goals} goals per match in empty stadiums. The uncertainty runs
+    from {expected.adj_goals_lo} to {expected.adj_goals_hi}. It switches on only when crowds are absent and off
+    when they return; today it's off, since the edge recovered to {expected.gd_back}.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Metric: home goal edge. Value: minus {expected.adj_goals} goals without crowds, range {expected.adj_goals_lo}
+    to {expected.adj_goals_hi}. Trigger: closed doors; partial crowds get a partial cut. Error: interval-based,
+    with possible congestion bias. Now: no adjustment, because fans have returned.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: Reduce the home advantage in the pricing model by around {expected.adj_goals} goals per match when matches
+    are played without fans, using the {expected.adj_goals_lo} to {expected.adj_goals_hi} range for scenario pricing.
+    Remove it once fans return and keep re-estimating.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Home term in goals per match: subtract {expected.adj_goals} in ghost conditions. Interval {expected.adj_goals_lo}
+    to {expected.adj_goals_hi}. Apply when stadiums are empty, scale with attendance, revert when full. Part of
+    the drop may be congestion, so treat it as an upper bound.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: Adjust the home goal edge down by {expected.adj_goals} when crowds are absent (range {expected.adj_goals_lo}–{expected.adj_goals_hi});
+    trigger on closed doors; with fans back the edge is {expected.gd_back} against {expected.gd_fans}, so drop the
+    adjustment.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Reduce the home edge by {expected.adj_goals} goals per match in ghost games, range {expected.adj_goals_lo}
+    to {expected.adj_goals_hi}; remove it when fans return.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Thin on uncertainty sources; acceptable?
+- id: a10
+  text: 'Metric: home goal edge. Cut by {expected.adj_goals} without crowds. Apply only behind closed doors. The
+    interval is {expected.adj_goals_lo} to {expected.adj_goals_hi}.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: 'When no fans: home edge minus {expected.adj_goals} goals (range {expected.adj_goals_lo} to {expected.adj_goals_hi}),
+    switched off when crowds return; uncertainty from the interval and congestion.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Reduce home advantage when there are no fans.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: The adjustment is {expected.adj_goals} goals.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Apply the adjustment only for empty stadiums.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: The range is {expected.adj_goals_lo} to {expected.adj_goals_hi}.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Range only.
+- id: a16
+  text: Home goal difference fell from {expected.gd_fans} to {expected.gd_ghost}.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: Remove the adjustment when fans return.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Use the confidence interval to show uncertainty.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: The model's home term should change.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: Increase home advantage when there are no crowds.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Reduce home advantage by half a goal in every match.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: Use the home win rate as the adjustment, at fifty percent.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Don't adjust; the effect isn't significant in any league.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The adjustment should be based on yellow cards.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: Apply the adjustment to away teams only.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Set home advantage to zero when there are no crowds.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Keep the reduction permanently because the pandemic changed football.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: The adjustment is exactly {expected.adj_goals} with no uncertainty.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: False precision.
+- id: a29
+  text: Home advantage disappeared without fans, so remove the term entirely.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: Reduce home advantage only in the Premier League.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

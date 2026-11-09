@@ -1,0 +1,178 @@
+# Generated from _answers.py. Edit there.
+step: s12_plan_challenge
+answers:
+- id: a01
+  text: 'Testing four leagues at five percent makes a false positive likely, and reporting the one that worked is
+    cherry-picking. Use a Holm correction: {expected.n_leagues_significant} leagues stay significant. Use one pooled
+    pre-planned test instead: home win rate changed by {expected.hw_change}. ''Proves'' is causal, but congestion
+    changed too. Total cards ignore fouls, so use cards per foul with a home comparison group (rate ratio {expected.rr_did}).'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: Four tests mean multiple testing. After Holm no league is significant on its own, so the Premier League
+    result is not convincing. A pooled test has more power and is the right primary test. Ghost games also came
+    with fewer rest days, so say 'consistent with'. Raw card totals ignore fouls; model yellow cards per foul with
+    a difference-in-differences.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Problems: multiple comparisons (one hit in four by chance), causal overclaim (congested fixtures confound),
+    and card totals without a denominator or control group. Fixes: Holm correction plus a pooled test, ''consistent
+    with'' language, and a Poisson model with a fouls offset and a home by ghost interaction. Check: the corrected
+    p-values and the rate ratio''s confidence interval.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: The plan assumes each league test is independent evidence, but running four raises the false-positive chance.
+    Correct with Holm, or test pooled. It assumes the crowd is the only change, but rest days fell from {expected.rest_fans}
+    to {expected.rest_ghost}. It assumes cards measure bias, but you need cards per foul compared with home teams.
+    The card rate ratio {expected.rr_did} is the right evidence.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Cherry-picking one significant league out of four is weak; adjust with Holm, where {expected.n_leagues_significant}
+    remain. The pooled drop is the primary test. Total cards ignore fouling: use cards per foul and a difference-in-differences
+    against home teams. And don''t say ''proves'': congestion is a confounder.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Multiple testing: four leagues at five percent. Fix with Holm and a pooled test. Causation: congestion
+    and partial crowds confound, so phrase it carefully. Cards: use a rate per foul with home teams as the comparison,
+    a difference-in-differences. Check by reporting the adjusted p-values and the interaction''s confidence interval.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: Running separate tests and picking the winner inflates false positives; after correction no league is significant.
+    Pool for power. Saying 'proves crowds create' ignores that fixtures were compressed. Raw away-card counts ignore
+    fouls; the right measure is cards per foul relative to home teams, which shows a rate ratio of {expected.rr_did}.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: First, one significant test out of four is expected by luck; use Holm (giving {expected.n_leagues_significant}
+    significant) and a pooled test. Second, 'proves' is too strong because congestion changed too. Third, use yellow
+    cards per foul with home teams as a control, not raw totals.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Four separate tests is multiple testing; use Holm and pool. Raw cards ignore fouls, so use cards per foul.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Misses causal/confounder point; acceptable?
+- id: a10
+  text: 'Multiple testing: correct with Holm, after which no single league is significant; pool instead. Cards need
+    a per-foul denominator and a home comparison. Congestion confounds the crowd effect.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: The plan cherry-picks one league from four tests; use a corrected pooled test. Total cards are misleading
+    without fouls. 'Proves' overclaims because schedules changed.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Testing four leagues separately is a problem.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: You should correct for multiple testing.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Raw cards ignore fouls.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Correlation is not causation.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Only one generic point.
+- id: a16
+  text: Use a Holm correction and pool the leagues.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: The Premier League result might be luck.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Congestion is a confounder.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: Use cards per foul instead of total cards.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: The plan is fine because the Premier League is the biggest league.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Use a lower significance level of ten percent to find more significant leagues.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: The problem is that football data is unreliable.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: They should use red cards instead of yellow cards.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: Add more leagues until more of them are significant.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: The plan should compare attendance numbers.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: One significant league is enough evidence; the plan just needs a better chart.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Total yellow cards are a fine measure of bias, but they should test more seasons.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: The analysis shows referees are corrupt, so the plan should report them.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Corruption claim.
+- id: a29
+  text: 'The plan is good: the Premier League proves crowds create home advantage.'
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: The plan should use machine learning instead.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

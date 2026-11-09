@@ -2,7 +2,10 @@
   {
     "key": "estrella_mishkin_1996",
     "title": "The Yield Curve as a Predictor of U.S. Recessions",
-    "authors": ["Arturo Estrella", "Frederic S. Mishkin"],
+    "authors": [
+      "Arturo Estrella",
+      "Frederic S. Mishkin"
+    ],
     "year": 1996,
     "url": "https://www.newyorkfed.org/research/current_issues/ci2-7.html",
     "verified_on": "2026-11-09",
@@ -13,7 +16,9 @@
   {
     "key": "nyfed_ycfaq",
     "title": "The Yield Curve as a Leading Indicator: Frequently Asked Questions",
-    "authors": ["Arturo Estrella"],
+    "authors": [
+      "Arturo Estrella"
+    ],
     "year": 2005,
     "url": "https://www.newyorkfed.org/medialibrary/media/research/capital_markets/ycfaq.pdf",
     "verified_on": "2026-11-09",
@@ -24,12 +29,45 @@
   {
     "key": "johansson_meldrum_2018",
     "title": "Predicting Recession Probabilities Using the Slope of the Yield Curve",
-    "authors": ["Peter Johansson", "Andrew Meldrum"],
+    "authors": [
+      "Peter Johansson",
+      "Andrew Meldrum"
+    ],
     "year": 2018,
     "url": "https://www.federalreserve.gov/econres/notes/feds-notes/predicting-recession-probabilities-using-the-slope-of-the-yield-curve-20180301.html",
     "verified_on": "2026-11-09",
     "quote": "may overstate the current probability of a recession",
     "status": "VERIFIED",
     "note": "FEDS Notes, Board of Governors of the Federal Reserve System, 1 March 2018. Argues lower term premiums can make the raw slope overstate recession risk."
+  },
+  {
+    "key": "leitner_2022_review",
+    "title": "The cauldron has cooled down: a systematic literature review on home advantage in football during the COVID-19 pandemic from a socio-economic and psychological perspective",
+    "authors": [
+      "Michael Christian Leitner",
+      "Frank Daumann",
+      "Florian Follert",
+      "Fabio Richlan"
+    ],
+    "year": 2022,
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8724651/",
+    "verified_on": "2026-11-09",
+    "quote": "the home advantage indeed decreases considerably during ghost games",
+    "status": "VERIFIED",
+    "note": "Management Review Quarterly (online 4 Jan 2022). Also: leagues 'resumed in the form of ghost games in May and June 2020'; effect is 'league dependent'; mechanism mostly reduced referee bias."
+  },
+  {
+    "key": "leitner_richlan_2021",
+    "title": "No Fans-No Pressure: Referees in Professional Football During the COVID-19 Pandemic",
+    "authors": [
+      "Michael Christian Leitner",
+      "Fabio Richlan"
+    ],
+    "year": 2021,
+    "url": "https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2021.720488/full",
+    "verified_on": "2026-11-09",
+    "quote": "Since there were no significant changes in referee decisions against the away teams",
+    "status": "VERIFIED",
+    "note": "Frontiers in Sports and Active Living 3:720488. 8 leagues, 1,286 matches (2018/19 vs 2019/20 ghost games), transfermarkt data. Disagrees with the review on the referee mechanism."
   }
 ]

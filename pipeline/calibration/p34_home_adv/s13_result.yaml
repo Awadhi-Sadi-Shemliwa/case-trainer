@@ -1,0 +1,182 @@
+# Generated from _answers.py. Edit there.
+step: s13_result
+answers:
+- id: a01
+  text: 'Claim: home advantage shrank without crowds and partly came back with fans. Evidence: the pooled home win
+    rate fell from {expected.hw_fans} to {expected.hw_ghost} (CI {expected.hw_change_lo} to {expected.hw_change_hi})
+    and recovered to {expected.hw_back}; the card rate ratio was {expected.rr_did}. Reasoning: the pooled test has
+    power; after Holm {expected.n_leagues_significant} single leagues are significant, so no league-level claims.
+    Limitation: congestion and disputed literature.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Empty stadiums reduced the home edge. Home wins fell by {expected.hw_change} overall, with an interval
+    excluding zero, and recovered to {expected.hw_back}. Referees carded away teams less per foul relative to home
+    teams (rate ratio {expected.rr_did}). No individual league survives correction, so I''d only claim the pooled
+    effect. Limitation: congested fixtures confound it.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Claim: a smaller home advantage in ghost games, consistent with a crowd effect. Evidence: {expected.hw_fans}
+    → {expected.hw_ghost} home wins pooled; the card interaction {expected.rr_did}, p {expected.rr_did_p}. Reasoning:
+    pooled power versus per-league noise; Holm leaves no league significant alone. Limitation: the referee mechanism
+    is disputed in the literature.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'The pooled drop in home win rate ({expected.hw_change}) is significant and reverses when fans return. Away
+    teams'' cards per foul narrowed relative to home teams (ratio {expected.rr_did}). Single leagues are too noisy:
+    after Holm none is significant. This is consistent with crowds influencing referees but confounded by congestion.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Claim: crowds contribute to home advantage. Evidence: home win rate {expected.hw_fans} vs {expected.hw_ghost}
+    (CI excludes zero), back to {expected.hw_back}; card rate ratio {expected.rr_did}. Reasoning: the reversal plus
+    a mechanism makes it credible; per-league tests lack power after correction. Limitation: partial crowds and
+    congestion.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Home teams won less often in empty stadiums, {expected.hw_ghost} against {expected.hw_fans}, and more again
+    with fans back. The away card penalty per foul narrowed. Only the pooled result is supported; corrected league
+    tests show {expected.n_leagues_significant} significant. Limitation: congestion and studies that disagree on
+    referees.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Pooled evidence: a {expected.hw_change} change in home win rate, interval {expected.hw_change_lo} to {expected.hw_change_hi}.
+    Mechanism: the card rate ratio {expected.rr_did}. Caution: no single league significant after Holm. Limitation:
+    fixture congestion confounds.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'Claim: home edge shrank and partly returned. Evidence: win rate {expected.hw_fans}→{expected.hw_ghost}→{expected.hw_back};
+    cards per foul ratio {expected.rr_did}. Reasoning: one pooled test, corrected league tests not significant.
+    Limitation: not causal proof because schedules changed.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Home win rate fell from {expected.hw_fans} to {expected.hw_ghost} pooled and recovered to {expected.hw_back}.
+    No single league is significant after correction. Congestion is a limitation.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No card mechanism; acceptable?
+- id: a10
+  text: 'Claim: smaller home advantage without fans. Evidence: pooled drop {expected.hw_change}, card ratio {expected.rr_did}.
+    Reasoning: pooled test is significant though single leagues aren''t after Holm. Limitation: congestion.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: Empty stadiums cut the home win rate from {expected.hw_fans} to {expected.hw_ghost}; referees were less
+    harsh on away teams per foul ({expected.rr_did}); leagues individually not significant after Holm; congestion
+    confounds.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Home advantage fell in ghost games.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: The home win rate dropped from {expected.hw_fans} to {expected.hw_ghost}.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: No league is significant after correction.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Referees gave fewer cards to away teams.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Mechanism only; raw phrasing.
+- id: a16
+  text: The card rate ratio is {expected.rr_did}.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: The results are consistent with a crowd effect but congestion is a confounder.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Home advantage partly returned with fans.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: The pooled test is significant.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: Home advantage increased in ghost games.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Since no league is significant, there is no effect at all.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: Away teams won less often without crowds.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: The rate ratio means away teams got eight times more cards.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The results show home advantage is constant over time.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: Serie A had the biggest drop, so Italian crowds matter most.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: This proves crowds cause home advantage.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Referees are corrupt; the card ratio shows it.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: The Premier League clearly had the biggest effect, so price it separately.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Ranks leagues on noise.
+- id: a29
+  text: Home advantage disappeared without fans, so drop it from the model.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: The analysis has too little data to say anything.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

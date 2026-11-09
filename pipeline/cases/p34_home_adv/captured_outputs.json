@@ -1,0 +1,6 @@
+{
+  "card_model": "             Coef.  Std.Err.   P>|z|\nhome       -0.0985    0.0129  0.0000\nghost      -0.1297    0.0176  0.0000\nhome:ghost  0.0763    0.0233  0.0011\nrate ratio home:ghost = 1.079  (95% CI 1.031 to 1.130)",
+  "league_tests": "        league  fans  ghost  fans_back  change  ci_low  ci_high     p  p_holm\nPremier League 0.461  0.396      0.429  -0.065  -0.118   -0.011 0.019   0.075\n    Bundesliga 0.447  0.399      0.467  -0.048  -0.107    0.011 0.116   0.238\n       La Liga 0.462  0.414      0.434  -0.048  -0.101    0.005 0.079   0.238\n       Serie A 0.426  0.417      0.389  -0.010  -0.062    0.043 0.724   0.724",
+  "period_counts": "period          fans  ghost  fans_back\nleague                                \nBundesliga       836    388        306\nLa Liga         1030    490        380\nPremier League  1048    472        380\nSerie A         1016    504        380",
+  "restart_dates": "Premier League  pause 100 days, restart 2020-06-17\nBundesliga      pause  66 days, restart 2020-05-16\nLa Liga         pause  93 days, restart 2020-06-11\nSerie A         pause 103 days, restart 2020-06-20"
+}

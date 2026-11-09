@@ -1,0 +1,183 @@
+# Generated from _answers.py. Edit there.
+step: s16_memo
+answers:
+- id: a01
+  text: 'Recommendation: without crowds, reduce the home goal edge by about {expected.adj_goals} goals per match
+    (range {expected.adj_goals_lo} to {expected.adj_goals_hi}) and restore it when fans return. Evidence: home win
+    rate {expected.hw_fans} → {expected.hw_ghost}, home goal difference {expected.gd_fans} → {expected.gd_ghost},
+    card rate ratio {expected.rr_did}. Risk: no single league significant after correction. Limitations: congestion,
+    partial crowds, disputed mechanism. Next: add attendance data and test by crowd size.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Cut the home term by {expected.adj_goals} goals in empty stadiums and remove the cut when fans return.
+    Pooled home wins fell from {expected.hw_fans} to {expected.hw_ghost}; about {expected.gd_share_lost} of the
+    goal edge disappeared; referees carded away teams less per foul. League-specific adjustments aren''t supported.
+    Congestion and partial crowds limit it. Next: model by attendance.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Recommend a pooled ghost adjustment of {expected.adj_goals} goals ({expected.adj_goals_lo}–{expected.adj_goals_hi}).
+    Evidence: the drop in home win rate (CI excludes zero), the goal difference fall and recovery, and the card
+    interaction {expected.rr_did}. Risk: per-league effects unknown. Limits: confounded by congestion; the literature
+    disagrees. Next: test on later seasons with attendance data.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'Action: lower home advantage by around {expected.adj_goals} goals per match when crowds are absent; revert
+    with fans. Numbers: {expected.hw_fans} vs {expected.hw_ghost} home wins, {expected.gd_fans} vs {expected.gd_ghost}
+    goal edge. Risk: no individual league is significant. Limitations: fixture congestion, partial crowds. Next:
+    add attendance and rerun.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Recommendation with range: minus {expected.adj_goals} goals ({expected.adj_goals_lo} to {expected.adj_goals_hi})
+    for empty stadiums. Evidence: goal edge {expected.gd_fans}→{expected.gd_ghost}, recovering to {expected.gd_back};
+    card ratio {expected.rr_did}. Residual risk: league-level uncertainty. Limitations: congestion and mechanism
+    disputes. Next step: use attendance to model partial effects.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Shrink the home edge by {expected.adj_goals} goals without fans. Pooled evidence: home wins fell to {expected.hw_ghost}
+    from {expected.hw_fans}; the edge came back with fans. Not supported per league after Holm. Caveats: congestion,
+    partial crowds. Next: attendance-based model.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Use a {expected.adj_goals}-goal reduction (range {expected.adj_goals_lo}–{expected.adj_goals_hi}) when
+    matches are closed to fans; remove it once crowds return. Evidence: home win rate drop of {expected.hw_change},
+    goal difference fall, card ratio {expected.rr_did}. Risk: league-specific sizes unknown. Limitations: confounding.
+    Next: validate on new seasons.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'Recommendation: pooled adjustment of {expected.adj_goals} goals for ghost conditions. Evidence: {expected.hw_fans}→{expected.hw_ghost}
+    home wins; {expected.gd_share_lost} of the edge lost; less card bias against away teams. Risk: no single league
+    significant. Limits: congestion, partial crowds. Next: add attendance.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: 'Reduce home advantage by {expected.adj_goals} goals without crowds. Home win rate fell from {expected.hw_fans}
+    to {expected.hw_ghost}. Congestion is a limitation. Next: add attendance data.'
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Missing risk section; acceptable?
+- id: a10
+  text: 'Cut the home edge by {expected.adj_goals} goals in ghost games (range {expected.adj_goals_lo}–{expected.adj_goals_hi});
+    evidence: home wins {expected.hw_fans}→{expected.hw_ghost}, card ratio {expected.rr_did}; risk: no single league
+    significant; limitation: congestion; next: attendance.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: Recommend minus {expected.adj_goals} goals without fans. Goal edge {expected.gd_fans} to {expected.gd_ghost}.
+    League effects unsupported. Partial crowds and congestion limit it. Test on later seasons.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Reduce home advantage without fans.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: Home win rate fell from {expected.hw_fans} to {expected.hw_ghost}.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: There are limitations like congestion.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: 'Recommendation: adjust the model.'
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: No number.
+- id: a16
+  text: The card rate ratio is {expected.rr_did}.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: 'Next step: get attendance data.'
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: No single league is significant after correction.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: The home edge recovered when fans came back.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: 'Recommendation: increase home advantage.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: 'Recommendation: remove the home advantage term permanently.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: The analysis is inconclusive so do nothing.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Use only Premier League results.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: Adjust based on red cards.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: Home advantage is caused by travel, not crowds.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: This proves crowds cause home advantage, so cut the home term by {expected.adj_goals}.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Referees are corrupt; report them and cut home advantage.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Reduce home advantage a bit.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Vague; no number.
+- id: a29
+  text: Set home advantage to zero in empty stadiums.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: 'Recommendation: bet on away teams in every match.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

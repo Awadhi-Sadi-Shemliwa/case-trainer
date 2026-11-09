@@ -25,43 +25,46 @@ void main() {
 
   final digit = RegExp(r'\d');
 
-  testWidgets('no hand-typed numbers in any rendered P50 step', (tester) async {
+  testWidgets('no hand-typed numbers in any rendered step of any case', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.6;
     addTearDown(tester.view.reset);
 
-    final caseInfo = content.caseById(p50);
-    final strip = [...caseInfo.allowedLiterals]..sort((a, b) => b.length.compareTo(a.length));
     var checked = 0;
-
-    final steps = content.steps(p50);
-    expect(steps, isNotEmpty);
+    var totalSteps = 0;
     final offenders = <String>[];
-    for (var i = 0; i < steps.length; i++) {
-      final progress = ProgressDb.inMemory();
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(body: SingleChildScrollView(child: StepView(scopeFor(content, progress, p50, i)))),
-      ));
-      await tester.pump();
-
-      final excluded = {
-        ...find.descendant(of: find.byKey(CodeView.codeKey), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
-        ...find.descendant(of: find.byType(ValueChip), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
-        // chart labels/legends come from the pipeline's chart JSON, not from authored text
-        ...find.descendant(of: find.byKey(InteractiveChart.chartKey), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
-      };
-      for (final el in find.byType(RichText).evaluate()) {
-        if (excluded.contains(el.widget)) continue;
-        checked++;
-        var text = (el.widget as RichText).text.toPlainText();
-        for (final s in strip) {
-          if (s.isNotEmpty) text = text.replaceAll(s, ' ');
+    for (final caseInfo in content.cases()) {
+      final strip = [...caseInfo.allowedLiterals]..sort((a, b) => b.length.compareTo(a.length));
+      final steps = content.steps(caseInfo.id);
+      totalSteps += steps.length;
+      for (var i = 0; i < steps.length; i++) {
+        final progress = ProgressDb.inMemory();
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(body: SingleChildScrollView(child: StepView(scopeFor(content, progress, caseInfo.id, i)))),
+        ));
+        await tester.pump();
+        final excluded = {
+          ...find.descendant(of: find.byKey(CodeView.codeKey), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
+          ...find.descendant(of: find.byType(ValueChip), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
+          // chart labels/legends come from the pipeline's chart JSON, not from authored text
+          ...find.descendant(of: find.byKey(InteractiveChart.chartKey), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
+        };
+        for (final el in find.byType(RichText).evaluate()) {
+          if (excluded.contains(el.widget)) continue;
+          checked++;
+          var text = (el.widget as RichText).text.toPlainText();
+          for (final s in strip) {
+            if (s.isNotEmpty) text = text.replaceAll(s, ' ');
+          }
+          if (digit.hasMatch(text)) offenders.add('${caseInfo.id}/${steps[i].id}: "${text.trim()}"');
         }
-        if (digit.hasMatch(text)) offenders.add('${steps[i].id}: "${text.trim()}"');
+        progress.close();
       }
-      progress.close();
     }
-    expect(checked, greaterThan(steps.length * 3), reason: 'the test must actually inspect text');
+    // let chart animations finish so no timers are left pending
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 5));
+    expect(checked, greaterThan(totalSteps * 3), reason: 'the test must actually inspect text');
     expect(offenders, isEmpty, reason: 'Hand-typed numbers found:\n${offenders.join('\n')}');
   });
 }

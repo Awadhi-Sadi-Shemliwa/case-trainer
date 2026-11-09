@@ -33,6 +33,15 @@ Future<void> _tapVisible(WidgetTester tester, Finder f) async {
   await tester.pumpAndSettle();
 }
 
+/// Cases further down the home list are not built until scrolled into view.
+Future<void> _openCase(WidgetTester tester, ContentDb content) async {
+  final title = find.text(content.caseById(p50).title);
+  await tester.scrollUntilVisible(title, 300, scrollable: find.byType(Scrollable).first);
+  await tester.pumpAndSettle();
+  await tester.tap(title);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   late ContentDb content;
   setUpAll(() => content = realContent());
@@ -42,9 +51,10 @@ void main() {
     final progress = ProgressDb.inMemory();
     await _pumpApp(tester, content, progress);
     expect(find.text('FINANCE'), findsOneWidget);
+    final empty = {'aviation', 'f1', 'football', 'finance'}.difference({for (final c in content.cases()) c.domain});
+    expect(find.textContaining('No cases yet'), findsNWidgets(empty.length));
+    await tester.scrollUntilVisible(find.text(content.caseById(p50).title), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text(content.caseById(p50).title), findsOneWidget);
-    expect(find.text('Start'), findsOneWidget);
-    expect(find.textContaining('No cases yet'), findsNWidgets(3));
   });
 
   testWidgets('play first steps, leave, reopen: resumes at the same step', (tester) async {
@@ -52,8 +62,7 @@ void main() {
     final total = content.steps(p50).length;
     await _pumpApp(tester, content, progress);
 
-    await tester.tap(find.text(content.caseById(p50).title));
-    await tester.pumpAndSettle();
+    await _openCase(tester, content);
     expect(find.text('Step 1 of $total'), findsOneWidget);
     expect(find.text('BRIEF'), findsOneWidget);
 
@@ -74,8 +83,7 @@ void main() {
     await tester.pageBack();
     await tester.pumpAndSettle();
     expect(find.text('Continue'), findsOneWidget);
-    await tester.tap(find.text(content.caseById(p50).title));
-    await tester.pumpAndSettle();
+    await _openCase(tester, content);
     expect(find.text('Step 3 of $total'), findsOneWidget);
     expect(progress.caseState(p50)!.stepIdx, 2);
   });
@@ -86,8 +94,7 @@ void main() {
     final idx = steps.indexWhere((s) => s.isGraded);
     progress.saveCaseState(p50, idx);
     await _pumpApp(tester, content, progress);
-    await tester.tap(find.text(content.caseById(p50).title));
-    await tester.pumpAndSettle();
+    await _openCase(tester, content);
 
     await tester.enterText(find.byType(TextField).first, 'Daily rows in percentage points with holiday blanks.');
     await tester.pump();

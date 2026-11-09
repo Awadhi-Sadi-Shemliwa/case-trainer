@@ -1,0 +1,177 @@
+# Generated from _answers.py. Edit there.
+step: s07_justify_period
+answers:
+- id: a01
+  text: Matches were labelled fans, ghost or fans back. The restart was found in the data as the first match after
+    the longest pause, so no dates were typed. Without an attendance column dates are the only signal, and the review
+    confirms leagues resumed as ghost games. I rejected using only the first restart months because of low power.
+    The strict window still shows a lower home win rate, {expected.hw_strict_ghost} against {expected.hw_fans}.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: We assigned a crowd period per match from the restart date detected as the longest gap. There's no crowd
+    column, so this proxy is necessary, backed by the literature. A narrower window would be purer but smaller;
+    the strict check gives {expected.hw_strict_ghost}, still below the {expected.hw_fans} with fans, so the definition
+    doesn't drive the result.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'What: periods by date, restart found as the first match after the longest pause per league. Why: attendance
+    isn''t recorded and a source says play resumed behind closed doors. Alternative: only the 2019/20 post-restart
+    matches; rejected for power but used as a robustness check, which still shows a drop.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: Each match got fans / ghost / fans_back. The restart came from the data, not memory. Partial crowds in 2020/21
+    make the estimate conservative. Re-running with only the strictly empty matches still gives a lower home win
+    rate, so the result isn't an artefact of the window.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Dates stand in for crowds because no attendance exists in the files. The restart was computed per league
+    from the longest gap. I rejected guessing attendance per match. The sensitivity check with the strict window
+    keeps the effect: {expected.hw_strict_ghost} home wins vs {expected.hw_fans}.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: Labelling by date with a data-derived restart is reproducible. The source supports that resumed matches
+    had no crowds. A wider window adds partial-crowd matches, which blur the contrast, but the strict-window check
+    shows the conclusion holds.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'The period comes from a detected restart and season boundaries. That''s the only option without attendance,
+    and it''s confirmed by the review. Alternative: a strict window only, which is too small for the main test,
+    so I used it as a robustness check, and it agrees.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'Done: matches tagged by period, restart detected automatically. Why: no attendance column; the review confirms
+    closed doors. Rejected: hand-typed dates and a tiny strict sample. Check: the strict ghost home win rate {expected.hw_strict_ghost}
+    is still well below {expected.hw_fans}.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Matches were labelled by date using the detected restart, because attendance isn't in the data. I checked
+    with the strict window and the home win rate is still lower.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No alternative rejected; acceptable?
+- id: a10
+  text: Periods by date; restart from the longest gap; no crowd column; partial crowds blur things; strict window
+    check confirms the drop.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: We used the restart detected in the data and the end of the next season as the ghost window since there
+    is no attendance. The strict-window robustness check agrees with the main result.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Matches after the restart were labelled ghost.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: There is no attendance column so we used dates.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: The restart was found as the longest gap in the dates.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: We should check the result with a stricter window.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Only the check; not acceptable?
+- id: a16
+  text: Ghost games are the ones without fans, which is obvious from the dates.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: The periods are fans, ghost and fans back.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Partial crowds in 2020/21 could blur the effect.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: We used the review to justify the period.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: We used the attendance column to label ghost games.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Ghost games are all matches in 2019/20.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: We dropped the ghost games because they were outliers.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: The restart dates were looked up on Wikipedia and typed in.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The period does not matter for the result.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: We labelled the matches randomly to avoid bias.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Every ghost match had exactly zero fans, so no check is needed.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: The definition is obviously right so there is no need for a robustness check.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Correct description earlier? Only the red flag here.
+- id: a28
+  text: We chose the window that gave the biggest drop in home win rate.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a29
+  text: We typed the restart dates from memory; they are well known.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: Ghost games were defined as matches with fewer than ten fouls.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

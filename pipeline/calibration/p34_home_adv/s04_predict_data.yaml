@@ -1,0 +1,175 @@
+# Generated from _answers.py. Edit there.
+step: s04_predict_data
+answers:
+- id: a01
+  text: One row per match with date, home and away team, full-time goals, result, fouls and yellow and red cards
+    for each side. Dates are day first, maybe two-digit years in old files. There will be a long gap in spring when
+    play stopped, and matches after it had no fans. No attendance column, so ghost games must come from the dates.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Each row is a game: HomeTeam, AwayTeam, FTHG, FTAG, FTR, HF, AF, HY, AY. European date format, parse explicitly.
+    The season was suspended in March and restarted behind closed doors, so one file holds two regimes. Columns
+    change between seasons and English yellow cards are counted differently.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: Match-level file, goals, result, fouls and cards per side plus betting odds. Day-first dates. Expect a big
+    pause mid-season from the pandemic; after the restart, empty stadiums. Nothing in the file says whether fans
+    attended, so I infer it from dates.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'One fixture per row. I need goals, result, fouls and cards. Dates dd/mm/yyyy or dd/mm/yy, so parse carefully.
+    The spring gap marks the suspension; matches after it were ghost games. Trap: no attendance data, and card counting
+    differs between England and Europe, so compare within a league.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: Rows are matches with full-time goals and result, fouls committed and cards for home and away. Dates written
+    day-first. This season has a long gap when it was suspended and the rest was played without crowds. There is
+    no crowd column, so the period must be inferred and checked.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Grain: one match. Columns: FTHG FTAG FTR HF AF HY AY HR AR. Day-first dates, possibly mixed formats. The
+    interrupted season has a pause then ghost matches; attendance is not in the file. Watch for changing column
+    sets across seasons.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: Each row is one game with both teams' goals, fouls and cards. Dates in European order. I'd expect a long
+    break in March to June and then ghost games. I can't read crowds from the file, so I'd use the restart date.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: Match per row; goals, result, fouls, yellows, reds. Parse day-first dates explicitly because formats differ
+    by season. A gap in spring shows the COVID suspension and the matches after it were behind closed doors. No
+    attendance column.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: One row per match with goals, fouls and cards. Day-first dates. A long gap in spring then ghost games.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No mention of missing attendance or within-league comparison; enough?
+- id: a10
+  text: Match rows with goals and cards; dates need explicit parsing; the season stops in March and resumes without
+    fans, which must be inferred from dates because there is no attendance column.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: 'Rows are games. Key columns: goals, result, fouls, cards. There is a pause then empty-stadium matches;
+    dates are dd/mm. No crowd data.'
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Brief; check whether all four areas are covered.
+- id: a12
+  text: A CSV of football results with lots of columns.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: One row per match with goals and the result.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Dates are day first and there might be missing values.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: The season was interrupted by COVID so some matches had no fans.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a16
+  text: Each row is a match. I would drop the odds columns.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: There is a gap in the dates in spring 2020.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Only the gap; not acceptable?
+- id: a18
+  text: Goals, fouls and cards for home and away teams, one row per match.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: The file will need cleaning before analysis.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: One row per team per season with points and goal difference.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: There is an attendance column which tells us which games were empty.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: The dates are in American month-first format.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Each row is a player with their goals and cards.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The 2019/20 season was cancelled so the file is empty after March.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: Weekly aggregated results for each team.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Rows are matches; I will use the attendance column to find ghost games and compare total cards across leagues.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: One row per match; I'll compare raw yellow-card totals between England and Spain to see which referees are
+    biased.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Match rows; missing dates can be filled with the previous date.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Proposes filling dates; red flag?
+- id: a29
+  text: Each row is a game, and referees in the ghost games were clearly corrupt.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: The data is a single table of league standings.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
