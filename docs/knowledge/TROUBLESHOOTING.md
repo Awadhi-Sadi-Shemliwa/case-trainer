@@ -42,5 +42,14 @@ Strip by WIDGET (skip ValueChip and CodeView), and mutation-check the test once.
 ### `ReorderableListView.onReorder` deprecated (Flutter 3.44)
 Use `onReorderItem`; it already adjusts `newIndex` for the removed item.
 
+### `flutter drive` on the phone: "SocketException: Connection refused … localhost" in traceAction (2026-11-09)
+The device tries to reach the host's DDS port. Add `--no-dds`.
+
+### Syncfusion: "The name 'ChartSeries'/'ChartAxis' is defined in the libraries …"
+Syncfusion exports those names. Our chart model uses `SpecSeries` / `SpecAxis`.
+
+### Progress gone after a perf run
+`flutter drive` reinstalls the app, which wipes app data. Expected. Don't run it on a phone with real progress you want to keep.
+
 ### Gradle: "Conflicting configuration … abiFilters … splits"
 Don't set `ndk.abiFilters`; use `--split-per-abi --target-platform android-arm64`.

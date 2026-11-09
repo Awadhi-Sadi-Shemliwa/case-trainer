@@ -67,3 +67,14 @@ Mirrors the examiner's 3-attempt rule for mcq/order/numeric/code steps.
 ### 2026-11-05 · drift + sqlite3 (not sqlite3_flutter_libs)
 sqlite3_flutter_libs is marked end-of-life (0.6.0+eol). To confirm in Prompt 4 that sqlite3 3.x
 bundles the native library on Android.
+
+### 2026-11-09 · Syncfusion: no licence key in the app
+Syncfusion 35.x no longer needs a runtime key (CHANGELOG quoted in ENVIRONMENT.md). The owner's Community Licence
+registration covers use. Nothing secret is in the repo, which matters because it will be public.
+
+### 2026-11-09 · fl_chart not added (spec lists it as a fallback)
+With a valid Syncfusion licence, fl_chart would only duplicate rendering. The spec's real fallback, the
+pipeline PNG on parse failure, is implemented and tested. Revisit if Syncfusion's terms change.
+
+### 2026-11-09 · LineSeries, not FastLineSeries
+Measured on the S21+: 9 runs, no difference in missed frames (ENVIRONMENT.md). Keep the simpler code path.

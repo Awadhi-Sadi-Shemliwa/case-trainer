@@ -35,13 +35,23 @@ rephrase feedback, never grade. Details: GRADING.md.
 | Engine | `engine/placeholders.dart` | `{expected.k}` → `results.display` (ValueChip, tap shows description); `{captured.n}` → code block; unknown key **throws** |
 | | `engine/checker.dart` | Exact checks for mcq / multi / kpi / order / numeric (tolerance, % aware) / code_fill / code_fix (whitespace-insensitive) |
 | Grading | `grading/grader.dart` | `Grader` interface; `StubGrader` until Prompt 6. While the stub is active, free-text steps offer the model answer after submit |
-| UI | `ui/screens/*`, `ui/steps/*`, `ui/widgets/*` | One widget family per step type (`step_view.dart` dispatches). Checked steps reveal the answer after 3 failed attempts. Charts are pipeline PNGs (pinch-zoom, full screen) until Prompt 5 |
+| UI | `ui/screens/*`, `ui/steps/*`, `ui/widgets/*` | One widget family per step type (`step_view.dart` dispatches). Checked steps reveal the answer after 3 failed attempts. Chart steps use `InteractiveChart` (Charts layer below); the PNG is only the fallback |
 
 Data flow for one step: `content_db.steps()` → `StepView` → `Prose` resolves placeholders → user answers →
 `Checker` / `Grader` → `progress_db.recordAttempt()` → `progressTickProvider.bump()` → Home/Progress rebuild.
 
 Guard test: `app/test/no_hardcoded_numbers_test.dart` renders every step of the REAL bundle and fails on any
 digit outside value chips, code blocks and allowed literals (mutation-checked: an injected "13.5" fails it).
+
+## Charts layer (`app/lib/charts/`, Prompt 5)
+`chart_spec.dart` strictly parses the pipeline chart JSON (schema v1) and throws `ChartParseError` on anything
+unexpected. `chart_view.dart`: `InteractiveChart(id)` loads `assets/content/charts/<id>.json`. On a load or parse
+error it falls back to the PNG and logs `[CaseTrainer] chart <id> fallback to PNG: …`. `ChartPanel` holds the title, Reset view,
+Full screen, the chart, a gesture hint and the source note. `cartesian_builder.dart` maps to Syncfusion: line, scatter + fitted
+line, bar, stacked bar, histogram (columns at bin centres), box (Hilo whiskers + range column + median marker),
+shaded regions → PlotBands, reference lines → zero-width PlotBands, annotations; the tooltip shows the unit.
+`heatmap_view.dart` draws a custom grid. `FullScreenChart` locks to landscape and restores the default on close.
+Test fixtures for every type live only in `app/test/chart_fixtures.dart`.
 
 ## Build-time guarantees (build_content.py fails if…)
 - a `{expected.key}` placeholder is missing from expected_results.json

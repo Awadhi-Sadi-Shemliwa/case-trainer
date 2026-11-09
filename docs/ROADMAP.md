@@ -8,7 +8,7 @@ Prompts come from docs/spec.pdf §10. Status: TODO / IN PROGRESS / DONE / BLOCKE
 | 2 | Pipeline framework (provenance, results, charts, content build) | DONE | 28 tests; build fails on missing keys, weights≠100, unverified sources, missing calibration, hand-typed numbers |
 | 3 | Solve P50 yield curve end to end | DONE (awaiting owner review) | 25 steps, 94 results, 9 graded steps × 32 calibration answers (36 flagged for owner review). NY Fed benchmark NOT obtained — see docs/knowledge/cases/p50_yield_curve.md |
 | 4 | Flutter app shell and case player | DONE | Plays P50 on the S21+ to the first chart and beyond; resume verified after app kill; release cold start median 309 ms; 14 Flutter tests incl. no-hard-coded-numbers |
-| 5 | Interactive charts (Syncfusion + fl_chart fallback) | TODO | Owner registers Syncfusion Community Licence |
+| 5 | Interactive charts (Syncfusion; PNG fallback) | DONE | Pinch/pan, unit tooltips, legend toggle, reset, landscape full screen verified on S21+. Pinch-zoom misses ~12% of 60 Hz build frames (median of 9 measured runs), raster 0 missed. No licence key needed in 35.x; fl_chart not added (DECISIONS) |
 | 6 | Examiner: grading engine, 3 attempts, 85% | TODO | flutter_onnxruntime + MiniLM; verify 16 KB pages |
 | 7 | Calibrate and test the grader | TODO | Owner labels calibration answers |
 | 8 | Remaining Tier A cases in batches | TODO | Portfolio order: P34, P3, P13, P1, then spec §8 order |
