@@ -338,6 +338,8 @@ def render_png(chart: Chart, path: Path) -> Path:
             ax.set_ylim(chart.y_axis.min, chart.y_axis.max)
         if t not in ("heatmap", "box") and (chart.series or chart.histogram):
             ax.legend(loc="best")
+        if kind == "date":
+            fig.autofmt_xdate()  # rotate date ticks so they never overlap on a phone-width PNG
         fig.text(0.01, 0.005, chart.source_note, fontsize=6, color="#6b7280")
         fig.tight_layout(rect=(0, 0.02, 1, 1))
         fig.savefig(path)

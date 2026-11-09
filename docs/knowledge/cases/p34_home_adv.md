@@ -34,6 +34,23 @@ flagged `owner_review: true`. Result numbers live in `expected_results.json` and
 `hw_fans`, `hw_ghost`, `hw_back`, `hw_change` (+ CI), `n_leagues_significant` vs `n_leagues_unadjusted_sig`,
 `gd_fans`/`gd_ghost`/`gd_back`, `gd_share_lost`, `rr_did` (+ CI, p), `rest_fans`/`rest_ghost`, `adj_goals`.
 
+## Quality-gate review (fresh reviewer, 2026-11-09): what changed
+The first version over-claimed. Fixed after an independent lecturer-style review:
+- **Seasonality**: the home edge is normally higher in Jan–Jun than in Jul–Dec. The rise *inside* the ghost period
+  was mostly that spring pattern. A like-for-like comparison (`gd_drop_autumn`, `gd_drop_spring`) shows the ghost
+  season was lower in **both** halves. The rolling-window chart, which lagged and spanned breaks, was replaced
+  by half-season means with 95% CIs.
+- **Reversal is inconclusive**: fans back vs ghost is not significant (`hw_reversal` with CI, `gd_reversal_p`).
+- **Strict window is underpowered**: same direction, CI includes zero (`hw_change_strict_lo/hi/p`).
+- **Pre-trend**: the edge was already drifting down (`gd_season_1718`, `gd_season_1819`, `gd_pre_1920`). Rule and
+  protocol changes also overlap (named generically; specific rule dates were not verified here).
+- **Cards**: fouls are themselves referee decisions (`fouls_home_*`). A sensitivity model with log(fouls) as a
+  covariate (`rr_did_cov`) agrees. The wording is "consistent with".
+- **Heterogeneity**: per-league goal-difference changes (`gd_change_epl` … `gd_change_seria`) differ a lot.
+- `diff_prop` now uses the same unpooled SE for the CI and the p-value.
+- Red-flag **keywords** like "prove"/"cause" removed (they penalised good negated answers). `build_content.py`
+  now rejects negatable red-flag keywords.
+
 ## Teaching points
 - Pooled evidence is strong, but after Holm **no single league** is significant. Don't rank leagues on noise.
 - Cards must be counted per foul and compared with home teams (DiD); raw card totals mislead.
@@ -41,4 +58,5 @@ flagged `owner_review: true`. Result numbers live in `expected_results.json` and
 - Congested fixtures in the ghost period are a confounder, so say "consistent with", not "proves".
 
 ## Limitations
-No attendance data; partial crowds in 2020/21; congestion; four leagues only; cards depend on referee style trends.
+About 10 matches just before each pause (early March 2020) were already played behind closed doors but are
+labelled 'fans' (no attendance data); 2021/22 crowd levels were not verified; No attendance data; partial crowds in 2020/21; congestion; four leagues only; cards depend on referee style trends.

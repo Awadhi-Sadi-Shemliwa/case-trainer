@@ -41,13 +41,12 @@ def load() -> pd.DataFrame:
 
 
 def diff_prop(a: pd.Series, b: pd.Series) -> tuple[float, float, float, float]:
-    """b - a for two 0/1 samples: difference, 95% CI low/high (Wald), two-sided p (pooled z test)."""
+    """b - a for two 0/1 samples: difference, 95% CI (Wald) and two-sided p from the SAME unpooled
+    standard error, so the interval and the p-value always agree."""
     p1, p2, n1, n2 = a.mean(), b.mean(), len(a), len(b)
     d = p2 - p1
     se = np.sqrt(p1 * (1 - p1) / n1 + p2 * (1 - p2) / n2)
-    pp = (a.sum() + b.sum()) / (n1 + n2)
-    z = d / np.sqrt(pp * (1 - pp) * (1 / n1 + 1 / n2))
-    return d, d - 1.96 * se, d + 1.96 * se, 2 * stats.norm.sf(abs(z))
+    return d, d - 1.96 * se, d + 1.96 * se, 2 * stats.norm.sf(abs(d / se))
 
 
 def descriptives(df: pd.DataFrame, rs: ResultStore) -> None:
@@ -107,6 +106,16 @@ def win_rates(df: pd.DataFrame, rs: ResultStore) -> pd.DataFrame:
     rs.put("hw_strict_ghost", float(s["home_win"].mean()), "share",
            "Home win rate in the strict ghost window (2019/20 after restart)", decimals=1, pct=True)
     rs.put("hw_change_strict", float(d2), "share", "Change vs fans using only the strict ghost window", decimals=1, pct=True)
+    rs.put("hw_change_strict_lo", float(lo2), "share", "Strict window: 95% CI lower bound", decimals=1, pct=True)
+    rs.put("hw_change_strict_hi", float(hi2), "share", "Strict window: 95% CI upper bound", decimals=1, pct=True)
+    rs.put("hw_change_strict_p", float(p2), "p-value", "Strict window: two-sided p-value", decimals=3)
+
+    # reversal check: did the home win rate go back up when fans returned? (fans_back minus ghost)
+    d3, lo3, hi3, p3 = diff_prop(g, b)
+    rs.put("hw_reversal", float(d3), "share", "Home win rate change when fans returned (fans back minus ghost)", decimals=1, pct=True)
+    rs.put("hw_reversal_lo", float(lo3), "share", "Reversal: 95% CI lower bound", decimals=1, pct=True)
+    rs.put("hw_reversal_hi", float(hi3), "share", "Reversal: 95% CI upper bound", decimals=1, pct=True)
+    rs.put("hw_reversal_p", float(p3), "p-value", "Reversal: two-sided p-value", decimals=3)
     return table
 
 
@@ -124,6 +133,54 @@ def goal_diff(df: pd.DataFrame, rs: ResultStore) -> None:
     rs.put("gd_change_p", float(t.pvalue), "p-value", "Welch t-test p-value for the goal-difference change", decimals=4)
     rs.put("gd_share_lost", float(-diff / gd["fans"].mean()), "share",
            "Share of the with-fans home goal edge that disappeared in ghost games", decimals=0, pct=True)
+    rs.put("gd_share_lost_lo", float(-ci.high / gd["fans"].mean()), "share",
+           "Share lost, low end (from the CI of the change)", decimals=0, pct=True)
+    rs.put("gd_share_lost_hi", float(-ci.low / gd["fans"].mean()), "share",
+           "Share lost, high end (from the CI of the change)", decimals=0, pct=True)
+
+    # reversal on goal difference
+    tr = stats.ttest_ind(gd["fans_back"], gd["ghost"], equal_var=False)
+    rs.put("gd_reversal_p", float(tr.pvalue), "p-value", "Welch p-value: fans-back vs ghost goal difference", decimals=3)
+
+    # strict window on goal difference
+    strict = df.loc[df.strict_ghost, "home_gd"]
+    ts = stats.ttest_ind(strict, gd["fans"], equal_var=False)
+    rs.put("gd_change_strict", float(strict.mean() - gd["fans"].mean()), "goals per match",
+           "Goal-difference change vs fans, strict ghost window only", decimals=3)
+    rs.put("gd_change_strict_p", float(ts.pvalue), "p-value", "Strict window goal-difference p-value (Welch)", decimals=3)
+
+    # inside the ghost period: first half of 2020/21 vs second half (still no or limited crowds)
+    s21 = df[df.season == "2020/21"]
+    h1, h2 = s21[s21.Date < "2021-01-01"], s21[s21.Date >= "2021-01-01"]
+    rs.put("gd_ghost_h1", float(h1.home_gd.mean()), "goals per match", "Home goal difference, 2020/21 Aug-Dec (empty stadiums)", decimals=3)
+    rs.put("gd_ghost_h2", float(h2.home_gd.mean()), "goals per match", "Home goal difference, 2020/21 Jan-May (still empty)", decimals=3)
+    rs.put("hw_ghost_h1", float(h1.home_win.mean()), "share", "Home win rate, 2020/21 Aug-Dec", decimals=1, pct=True)
+    rs.put("hw_ghost_h2", float(h2.home_win.mean()), "share", "Home win rate, 2020/21 Jan-May", decimals=1, pct=True)
+
+    # seasonality: home edge is normally higher in Jan-Jun than in Jul-Dec, so compare like with like
+    # >>> snippet: seasonality
+    fans = df[df.period == "fans"]
+    autumn, spring = fans[fans.Date.dt.month >= 7], fans[fans.Date.dt.month < 7]
+    drop_autumn = h1.home_gd.mean() - autumn.home_gd.mean()      # 2020/21 Aug-Dec vs pre-COVID Jul-Dec
+    drop_spring = h2.home_gd.mean() - spring.home_gd.mean()      # 2020/21 Jan-May vs pre-COVID Jan-Jun
+    # <<< snippet
+    rs.put("gd_fans_autumn", float(autumn.home_gd.mean()), "goals per match", "With fans: home goal difference in Jul-Dec halves", decimals=3)
+    rs.put("gd_fans_spring", float(spring.home_gd.mean()), "goals per match", "With fans: home goal difference in Jan-Jun halves", decimals=3)
+    rs.put("gd_drop_autumn", float(drop_autumn), "goals per match", "Ghost Aug-Dec 2020 minus with-fans Jul-Dec average", decimals=2)
+    rs.put("gd_drop_spring", float(drop_spring), "goals per match", "Ghost Jan-May 2021 minus with-fans Jan-Jun average", decimals=2)
+
+    # pre-trend: was home advantage already falling before COVID?
+    for season, tag in (("2017/18", "1718"), ("2018/19", "1819")):
+        rs.put(f"gd_season_{tag}", float(df.loc[df.season == season, "home_gd"].mean()), "goals per match",
+               f"Home goal difference, season {season} (with fans)", decimals=3)
+    pre = df[(df.season == "2019/20") & (df.period == "fans")]
+    rs.put("gd_pre_1920", float(pre.home_gd.mean()), "goals per match", "Home goal difference, 2019/20 before the pause", decimals=3)
+
+    # league heterogeneity in the goal-difference change
+    for lg in LEAGUE_ORDER:
+        x = df[df.league == lg]
+        rs.put(f"gd_change_{TAG[lg]}", float(x.loc[x.period == "ghost", "home_gd"].mean() - x.loc[x.period == "fans", "home_gd"].mean()),
+               "goals per match", f"{lg}: goal-difference change, ghost minus fans", decimals=2)
 
 
 def cards(df: pd.DataFrame, rs: ResultStore) -> None:
@@ -169,6 +226,19 @@ def cards(df: pd.DataFrame, rs: ResultStore) -> None:
     rs.put("rr_did_hi", float(np.exp(hi)), "rate ratio", "95% CI upper bound (match-clustered)", decimals=3)
     rs.put("rr_did_p", float(res.pvalues["home:ghost"]), "p-value", "p-value of the home x ghost interaction", decimals=4)
 
+    # sensitivity: fouls are themselves referee decisions, so do not force their coefficient to 1 (no offset)
+    sub["log_fouls"] = np.log(sub["fouls"])
+    res2 = smf.glm("yellows ~ home * ghost + log_fouls + C(league)", data=sub,
+                   family=sm.families.Poisson()).fit(cov_type="cluster", cov_kwds={"groups": sub["match_id"]})
+    rs.put("rr_did_cov", float(np.exp(res2.params["home:ghost"])), "rate ratio",
+           "Sensitivity: interaction with log(fouls) as a covariate instead of an offset", decimals=3)
+    rs.put("rr_did_cov_p", float(res2.pvalues["home:ghost"]), "p-value", "Sensitivity model p-value", decimals=4)
+    for p in ["fans", "ghost"]:
+        rs.put(f"fouls_home_{p}", float(df.loc[df.period == p, "HF"].mean()), "fouls per match",
+               f"Home team fouls per match, period '{p}'", decimals=2)
+        rs.put(f"fouls_away_{p}", float(df.loc[df.period == p, "AF"].mean()), "fouls per match",
+               f"Away team fouls per match, period '{p}'", decimals=2)
+
 
 def congestion(df: pd.DataFrame, rs: ResultStore) -> None:
     # >>> snippet: rest_days
@@ -205,29 +275,40 @@ def charts(df: pd.DataFrame, table: pd.DataFrame, rs: ResultStore) -> None:
         source_note=SOURCE, result_keys=["hw_fans", "hw_ghost", "hw_back", "n_leagues_significant"],
     ), out)
 
-    # rolling pooled home goal difference over time, ghost window shaded
-    d = df.sort_values("Date").reset_index(drop=True)
-    roll = d["home_gd"].rolling(380, min_periods=380).mean()
-    ghost = d[d.period == "ghost"]
+    # half-season means of home goal difference with 95% CIs (a rolling window lags and spans breaks)
+    # >>> snippet: half_seasons
+    d = df.copy()
+    autumn = d.Date.dt.month >= 7
+    d["half"] = np.where(autumn, d.Date.dt.year.astype(str) + "-H1", (d.Date.dt.year - 1).astype(str) + "-H2")
+    d.loc[d.strict_ghost, "half"] = "2019-restart"
+    seg = d.groupby("half").agg(mid=("Date", lambda x: x.min() + (x.max() - x.min()) / 2),
+                                gd=("home_gd", "mean"), sd=("home_gd", "std"), n=("home_gd", "size")).sort_values("mid")
+    seg["half_width"] = 1.96 * seg.sd / np.sqrt(seg.n)
+    # <<< snippet
+    ghost = df[df.period == "ghost"]
     export_chart(Chart(
         id="p34_home_gd_timeline", type="line",
-        title="Home goal difference over time (rolling 380 matches)",
-        subtitle="All four leagues pooled; grey = ghost-game period",
-        x_axis=Axis(title="Match date", kind="date"),
+        title="Home goal difference by half-season",
+        subtitle="Mean per half-season, all four leagues; dashed = 95% CI; grey = ghost-game period",
+        x_axis=Axis(title="Middle of half-season", kind="date"),
         y_axis=Axis(title="Home minus away goals", unit="goals per match"),
-        series=[make_series("Rolling home goal difference", d["Date"], roll, unit="goals")],
+        series=[make_series("Home goal difference", seg.mid, seg.gd, unit="goals", downsample=False),
+                make_series("95% CI upper", seg.mid, seg.gd + seg.half_width, unit="goals", role="benchmark", downsample=False),
+                make_series("95% CI lower", seg.mid, seg.gd - seg.half_width, unit="goals", role="benchmark", downsample=False)],
         shaded_regions=[ShadedRegion(start=ghost.Date.min().strftime("%Y-%m-%d"), end=ghost.Date.max().strftime("%Y-%m-%d"),
                                      label="Ghost games (no or very limited crowds)")],
         reference_lines=[ReferenceLine(axis="y", value=0, label="no home edge")],
-        source_note=SOURCE, result_keys=["gd_fans", "gd_ghost", "gd_back"],
+        source_note=SOURCE, result_keys=["gd_fans", "gd_ghost", "gd_back", "gd_ghost_h1", "gd_ghost_h2"],
     ), out)
+    with capture_output(CASE_DIR, "half_seasons"):
+        print(seg.assign(mid=seg.mid.dt.strftime("%Y-%m"))[["mid", "gd", "half_width", "n"]].round(3).to_string())
 
     periods = ["fans", "ghost", "fans_back"]
     labels = ["With fans", "Ghost games", "Fans back"]
     export_chart(Chart(
         id="p34_cards_per_foul", type="bar",
         title="Yellow cards per 10 fouls, home vs away teams",
-        subtitle="Cards are counted per foul committed, so more fouls alone cannot explain a gap",
+        subtitle="Pooled across leagues; the model compares within each league",
         x_axis=Axis(title="Period", kind="category"),
         y_axis=Axis(title="Yellow cards", unit="per 10 fouls", min=0),
         series=[make_series("Home teams", labels, [rs.get(f"ypf_home_{p}") for p in periods], downsample=False),

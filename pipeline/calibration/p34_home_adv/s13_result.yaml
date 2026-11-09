@@ -31,15 +31,15 @@ answers:
     teams'' cards per foul narrowed relative to home teams (ratio {expected.rr_did}). Single leagues are too noisy:
     after Holm none is significant. This is consistent with crowds influencing referees but confounded by congestion.'
   label: acceptable
-  kind: strong
+  kind: partial
   owner_review: false
 - id: a05
   text: 'Claim: crowds contribute to home advantage. Evidence: home win rate {expected.hw_fans} vs {expected.hw_ghost}
     (CI excludes zero), back to {expected.hw_back}; card rate ratio {expected.rr_did}. Reasoning: the reversal plus
     a mechanism makes it credible; per-league tests lack power after correction. Limitation: partial crowds and
     congestion.'
-  label: acceptable
-  kind: strong
+  label: not_acceptable
+  kind: partial
   owner_review: false
 - id: a06
   text: 'Home teams won less often in empty stadiums, {expected.hw_ghost} against {expected.hw_fans}, and more again

@@ -529,7 +529,6 @@ steps:
         paraphrases:
           - inversion causes recessions
           - the inverted curve makes the economy go into recession
-        keywords: [[causes, cause, makes, leads to, triggers]]
         feedback: The chart shows timing, not cause. Say "precedes" or "is associated with".
       - id: perfect
         critical: true
@@ -633,7 +632,6 @@ steps:
         penalty: 35
         paraphrases:
           - a low spread causes a recession
-        keywords: [[causes, cause, makes]]
         feedback: The chart shows association. Inversion may reflect expectations of rate cuts, which is not a cause.
       - id: certain
         critical: true
@@ -891,7 +889,6 @@ steps:
         penalty: 30
         paraphrases:
           - inversion causes recessions
-        keywords: [[causes, cause]]
         feedback: Prediction isn't causation.
       - id: pick_split
         critical: false
@@ -1126,7 +1123,6 @@ steps:
         penalty: 30
         paraphrases:
           - inversion causes recessions so we must sell
-        keywords: [[causes, cause]]
         feedback: Association, not cause.
       - id: certainty
         critical: true

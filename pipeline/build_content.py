@@ -43,6 +43,7 @@ OUT_DIR = REPO / "app" / "assets" / "content"
 BUNDLE_SCHEMA_VERSION = 1
 MIN_CALIBRATION = 30
 
+NEGATABLE_KEYWORDS = {"cause", "causes", "caused", "causation", "prove", "proves", "proof", "certain", "guarantee"}
 CAPTURED_RE = re.compile(r"\{captured\.([a-z][a-z0-9_]*)\}")
 SOURCE_FIELDS = {"key", "title", "authors", "year", "url", "verified_on", "quote", "status"}
 # Fields that hold identifiers or code, not prose — exempt from the hand-typed-number check.
@@ -196,6 +197,12 @@ def validate_case(case_dir: Path, sources: dict[str, dict], cal_root: Path = CAL
         if st.answer_key and st.answer_key not in results:
             errs.append(f"{where}: answer_key {st.answer_key!r} not in expected_results.json")
         if st.rubric:
+            # Red-flag keywords fire on bare words, so words good answers use NEGATED ("this can't prove /
+            # does not show cause") would penalise correct answers. Use paraphrases for these instead.
+            for rf in st.rubric.red_flags:
+                bad = {w for g in rf.keywords for w in g} & NEGATABLE_KEYWORDS
+                if bad:
+                    errs.append(f"{where}: red flag {rf.id} uses negatable keyword(s) {sorted(bad)}; use paraphrases")
             for p in st.rubric.points:
                 if p.numeric and p.numeric.key not in results:
                     errs.append(f"{where}: numeric anchor {p.numeric.key!r} not in expected_results.json")

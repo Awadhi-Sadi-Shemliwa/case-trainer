@@ -181,6 +181,7 @@ def _mutate(fx, fn):
     lambda c: c["steps"][2].__setitem__("model_answer", "The mean is 1.5"),                   # hand-typed number
     lambda c: c["steps"][1]["blanks"][0].__setitem__("token", ".median()"),                   # blank not in code
     lambda c: c.__setitem__("datasets", ["not_downloaded"]),                                  # dataset missing
+    lambda c: c["steps"][2]["rubric"]["red_flags"][0].__setitem__("keywords", [["causes"]]),  # negatable keyword
 ])
 def test_build_fails(fixture_case, mutation):
     _mutate(fixture_case, mutation)

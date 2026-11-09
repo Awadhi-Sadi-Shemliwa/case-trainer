@@ -10,10 +10,10 @@ answers:
   kind: strong
   owner_review: false
 - id: a02
-  text: We assigned a crowd period per match from the restart date detected as the longest gap. There's no crowd
+  text: 'We assigned a crowd period per match from the restart date detected as the longest gap. There''s no crowd
     column, so this proxy is necessary, backed by the literature. A narrower window would be purer but smaller;
-    the strict check gives {expected.hw_strict_ghost}, still below the {expected.hw_fans} with fans, so the definition
-    doesn't drive the result.
+    the strict check gives {expected.hw_strict_ghost} against {expected.hw_fans} with fans: same direction, though
+    its interval includes zero because only {expected.n_strict_ghost} matches.'
   label: acceptable
   kind: strong
   owner_review: false
@@ -26,8 +26,8 @@ answers:
   owner_review: false
 - id: a04
   text: Each match got fans / ghost / fans_back. The restart came from the data, not memory. Partial crowds in 2020/21
-    make the estimate conservative. Re-running with only the strictly empty matches still gives a lower home win
-    rate, so the result isn't an artefact of the window.
+    make the estimate conservative. Re-running with only the strictly empty matches points the same way, but that
+    sample is too small to confirm it alone.
   label: acceptable
   kind: strong
   owner_review: false
@@ -55,7 +55,7 @@ answers:
 - id: a08
   text: 'Done: matches tagged by period, restart detected automatically. Why: no attendance column; the review confirms
     closed doors. Rejected: hand-typed dates and a tiny strict sample. Check: the strict ghost home win rate {expected.hw_strict_ghost}
-    is still well below {expected.hw_fans}.'
+    is below {expected.hw_fans}, the same direction, but not significant on its own (p {expected.hw_change_strict_p}).'
   label: acceptable
   kind: strong
   owner_review: false

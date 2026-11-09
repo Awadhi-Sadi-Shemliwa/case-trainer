@@ -24,9 +24,9 @@ steps:
   body: >-
     You price matches for a betting model. Every price includes a home-advantage term learned from years of matches
     played in full stadiums. In COVID-19 the big European leagues played behind closed doors. That created
-    a rare natural experiment: the same teams, referees and pitches, but no crowd. Our data: every match of the
-    Premier League, Bundesliga, La Liga and Serie A from {expected.n_leagues} leagues over five seasons,
-    {expected.n_matches} matches from football-data.co.uk.
+    a rare natural experiment: largely the same clubs, referees and stadiums, but no crowd. Our data:
+    {expected.n_matches} matches from four leagues (Premier League, Bundesliga, La Liga, Serie A) over five seasons,
+    from football-data.co.uk.
   prompt: Which decision does this analysis inform?
   options:
     - id: a
@@ -51,9 +51,9 @@ steps:
   prompt: Which question can this data actually answer?
   options:
     - id: a
-      text: Compared with matches with fans, how much did the home win rate and home goal difference fall in ghost games, and did they recover when fans returned?
+      text: Compared with matches with fans, how much did the home win rate and home goal difference fall in ghost games, and what happened when fans returned?
       correct: true
-      explanation: It compares like with like, uses outcomes in the data, and adds a reversal check.
+      explanation: It compares like with like, uses outcomes in the data, and adds a reversal check, whose result you must test rather than assume.
     - id: b
       text: How loud does a crowd need to be to change a referee's mind?
       explanation: There is no noise or attendance data in these files.
@@ -195,7 +195,7 @@ steps:
       explanation: "Real output: {captured.restart_dates}"
     - id: b
       text: The first match of each season
-      explanation: The first match of the season follows the summer break, which is shorter than the COVID-19 pause.
+      explanation: The code reads only one season's file, so the summer break is never inside it. The longest gap within that season is the COVID-19 pause.
     - id: c
       text: The same restart date for every league
       explanation: Each league restarted on its own date. The code works per league.
@@ -222,8 +222,10 @@ steps:
     June 2020. I rejected guessing exact attendance per match, which the files don't contain. I also rejected using
     only a handful of ghost matches, which would leave little power. The risk is that 2020/21 had some matches with
     small crowds, which would blur the contrast and make the estimate conservative. The check is the strict window
-    using only 2019/20 matches after the restart: it still shows a lower home win rate
-    ({expected.hw_strict_ghost} against {expected.hw_fans} with fans).
+    using only 2019/20 matches after the restart. It points the same way ({expected.hw_strict_ghost} home wins against
+    {expected.hw_fans}, a change of {expected.hw_change_strict}), but with only {expected.n_strict_ghost} matches its
+    interval runs from {expected.hw_change_strict_lo} to {expected.hw_change_strict_hi} (p {expected.hw_change_strict_p}).
+    So it is consistent with the main result but too small to confirm it on its own.
   rubric:
     points:
       - id: what
@@ -260,13 +262,13 @@ steps:
         label: Robustness check
         weight: 30
         paraphrases:
-          - the strict window with only the first ghost matches still shows a lower home win rate
-          - re-running with a narrower definition gives a similar answer
-          - the strict ghost home win rate is {expected.hw_strict_ghost} against {expected.hw_fans} with fans
-        keywords: [[strict, narrow, robust, check, sensitivity, re-run]]
+          - the strict window points the same way but is too small to confirm the effect on its own
+          - re-running with a narrower definition gives the same direction with a wide interval
+          - the strict ghost home win rate is {expected.hw_strict_ghost} against {expected.hw_fans} but the interval includes zero
+        keywords: [[strict, narrow, robust, check, sensitivity, re-run], [direction, small, wide, interval, not significant, too few]]
         numeric: {key: hw_strict_ghost, tolerance: 0.02, accept_percent: true}
-        hint: What happens to the result if you only trust the matches that were certainly empty?
-        why: A result that survives a stricter definition is far more convincing.
+        hint: What happens to the result if you only trust the matches that were certainly empty, and how big is that sample?
+        why: A robustness check must be read honestly, including when it is underpowered.
     red_flags:
       - id: exact_attendance
         critical: false
@@ -286,6 +288,13 @@ steps:
         paraphrases:
           - the definition is obviously right so no check is needed
         feedback: Any proxy needs a sensitivity check.
+      - id: strict_proves
+        critical: false
+        penalty: 15
+        paraphrases:
+          - the strict window proves the definition does not matter
+          - the strict check confirms the effect is significant
+        feedback: The strict window has too few matches; its interval includes zero. Say it points the same way.
 
 - id: s08_fill_restart
   phase: data
@@ -301,73 +310,76 @@ steps:
 - id: s09_chart_gd
   phase: explore
   type: chart_explain
-  title: Read the home goal difference timeline
+  title: Read the home goal difference by half-season
   chart: p34_home_gd_timeline
   prompt: Explain what this chart shows and what it does NOT show.
   scaffold: chart_6q
-  analysis_pointer: Compare the line inside the grey band with the line before it and after it.
-  redo_step: Check the average home goal difference for each period in the results.
+  analysis_pointer: Compare each ghost half-season with the SAME half (autumn or spring) of earlier seasons, not with its neighbour.
+  redo_step: Look at the half-season output and the like-for-like comparison in the results.
   model_answer: >-
-    The line is the rolling average of home minus away goals per match over the last season's worth of matches, all
-    four leagues pooled; the grey band is the ghost-game period. Before COVID-19 the home edge sits well above zero.
-    It falls during ghost games and climbs back when fans return. In numbers: {expected.gd_fans} goals per match with
-    fans, {expected.gd_ghost} in ghost games, {expected.gd_back} when fans returned. About {expected.gd_share_lost}
-    of the edge disappeared. Anomalies: because it is a rolling average, the drop lags the start of the band, and the
-    straight segments are summer breaks with no matches. The edge never reaches zero. It can't show that crowds
-    caused the drop: ghost games also came with congested fixtures and a strange season, and the chart pools leagues
-    that may differ. So what: in empty stadiums the model's home term should shrink, but not to zero.
+    Each point is the average home minus away goals per match in one half-season, all four leagues pooled, with a
+    dashed confidence band; grey marks the ghost-game period. With fans the line zigzags: the spring half is
+    usually higher than the autumn half ({expected.gd_fans_spring} against {expected.gd_fans_autumn} on average).
+    During ghost games it sits lower: {expected.gd_ghost_h1} in the first half of 2020/21 and {expected.gd_ghost_h2} in the second half.
+    The rise inside the grey band is mostly the normal spring pattern. Compared like with like, the ghost
+    autumn was {expected.gd_drop_autumn} goals below a normal autumn and the ghost spring {expected.gd_drop_spring}
+    below a normal spring. Anomalies: the line never goes below zero, the bands are wide, and the edge was already
+    drifting down before COVID-19 ({expected.gd_season_1718}, then {expected.gd_season_1819}). When fans returned
+    the point estimates rose, but not significantly (p {expected.gd_reversal_p}). It can't show that crowds caused the
+    drop: rule changes, congestion and a downward pre-trend all overlap. So what: shrink, don't remove, the home
+    term without crowds, and compare like with like.
   rubric:
     points:
       - id: axes
         label: What is plotted
         weight: 15
         paraphrases:
-          - a rolling average of home minus away goals per match over time
-          - the shaded band marks the ghost game period
+          - average home minus away goals per match for each half season with a confidence band
+          - the shaded period marks the ghost games
           - the y axis is home goal difference in goals per match
-        keywords: [[goal difference, home minus away, goals], [rolling, average, shaded, ghost, band]]
-        hint: Name the line, its unit and what the grey band is.
+        keywords: [[goal difference, home minus away, goals], [half, season, band, interval, shaded, ghost]]
+        hint: Name the line, the dashed lines, the unit and the grey band.
         why: You can't interpret a line you can't name.
-      - id: pattern
-        label: Pattern
-        weight: 25
-        paraphrases:
-          - the home edge falls during ghost games and recovers when fans return
-          - home goal difference drops in the shaded period
-          - after crowds come back the home advantage climbs again
-        keywords: [[fall, drop, lower, shrink, decline], [recover, return, climb, back, rise]]
-        hint: Compare inside the band with before and after.
-        why: The reversal is what makes the natural experiment convincing.
-      - id: size
-        label: Size (a number)
+      - id: seasonal
+        label: Seasonal pattern
         weight: 20
         paraphrases:
-          - home goal difference fell from {expected.gd_fans} to {expected.gd_ghost} goals per match
-          - about {expected.gd_share_lost} of the home edge disappeared
-          - it recovered to {expected.gd_back} when fans returned
-        keywords: [[goals, per match, share, from, to]]
-        numeric: {key: gd_ghost, tolerance: 0.05}
-        hint: Quote the per-period averages.
-        why: The size of the drop is the number the pricing model needs.
+          - the spring half is normally higher than the autumn half
+          - the line zigzags every season so compare the same half of each season
+          - the rise inside the ghost period is mostly the normal spring pattern
+        keywords: [[spring, autumn, half, season, zigzag, seasonal, same half, like with like]]
+        hint: Look at the pattern in the seasons before COVID-19.
+        why: Ignoring seasonality makes a normal spring rise look like a recovery.
+      - id: drop
+        label: Like-for-like drop (a number)
+        weight: 25
+        paraphrases:
+          - ghost autumn was {expected.gd_drop_autumn} goals below a normal autumn
+          - ghost spring was {expected.gd_drop_spring} goals below a normal spring
+          - home goal difference was lower in both ghost halves than in the same halves with fans
+        keywords: [[lower, below, drop, fell], [autumn, spring, half, both, same]]
+        numeric: {key: gd_drop_spring, tolerance: 0.05}
+        hint: Compare each ghost half with the same half of earlier seasons.
+        why: The like-for-like gap is the effect the pricing model needs.
       - id: anomalies
-        label: Anomalies
+        label: Anomalies and uncertainty
         weight: 15
         paraphrases:
-          - the rolling average lags so the drop appears late
-          - straight segments are breaks with no matches
-          - the home edge never reaches zero
-        keywords: [[lag, rolling, late, straight, break, summer, never zero, above zero]]
-        hint: Why does the lowest point sit inside the band rather than at its start?
-        why: Smoothing changes what a chart appears to say.
+          - the edge never goes below zero
+          - the confidence bands are wide
+          - home advantage was already drifting down before COVID
+        keywords: [[zero, wide, band, interval, uncertain, already, before, trend, drift]]
+        hint: What is surprising or uncertain in this picture?
+        why: The exceptions decide how much weight the pattern can bear.
       - id: limits
         label: What it can't show
         weight: 15
         paraphrases:
-          - it cannot prove crowds caused the drop because ghost games also had congested schedules
-          - pooling leagues can hide differences between them
-          - association in time is not causation
-        keywords: [[cause, causation, congest, schedule, confound, pool, league]]
-        hint: What else changed at the same time as the crowds disappeared?
+          - it cannot show that crowds caused the drop because other changes overlap
+          - the recovery when fans returned is not statistically significant
+          - a downward pre-trend and congested fixtures confound the comparison
+        keywords: [[cause, causation, confound, trend, congest, rule, not significant, overlap]]
+        hint: What else changed at the same time, and is the return of fans clearly visible?
         why: Natural experiments still have confounders.
       - id: so_what
         label: So what
@@ -375,8 +387,8 @@ steps:
         paraphrases:
           - the model should reduce but not remove the home term in empty stadiums
           - home advantage shrinks without fans but does not vanish
-          - lower the home term for empty stadiums rather than drop it
-        keywords: [[reduce, shrink, adjust, not zero, model, price]]
+          - adjust like with like because the home edge is seasonal
+        keywords: [[reduce, shrink, adjust, not zero, model, price, seasonal]]
         hint: Turn the pattern into an instruction for the model.
         why: The chart exists to change a number in the model.
     red_flags:
@@ -385,14 +397,20 @@ steps:
         penalty: 30
         paraphrases:
           - home advantage disappeared completely in ghost games
-        feedback: The edge shrank but stayed above zero. Check the per-period averages.
+        feedback: The edge shrank but stayed above zero.
       - id: crowds_cause
         critical: true
         penalty: 30
         paraphrases:
           - this proves crowds cause home advantage
-        keywords: [[proves, prove]]
-        feedback: It's a natural experiment with confounders (congestion). Say it is consistent with a crowd effect.
+        feedback: It's a natural experiment with confounders (a pre-trend, rule changes, congestion). Say it is consistent with a crowd effect.
+      - id: recovered_fans
+        critical: false
+        penalty: 20
+        paraphrases:
+          - home advantage recovered because fans returned
+          - the line climbs back when crowds come back so fans caused the recovery
+        feedback: Most of the rise happened inside the ghost period (the normal spring pattern), and the change when fans returned is not significant.
       - id: corrupt
         critical: true
         penalty: 35
@@ -411,8 +429,10 @@ steps:
     Raw card counts mislead: a team that fouls more gets more cards with no bias at all. So we count yellow cards per
     foul committed. With fans, away teams got {expected.ypf_away_fans} yellows per ten fouls and home teams
     {expected.ypf_home_fans}. In ghost games the figures were {expected.ypf_away_ghost} and {expected.ypf_home_ghost}:
-    the away penalty narrowed. Yellow cards are also counted differently in England than in the rest of Europe, so
-    the model below compares within each league.
+    the away penalty narrowed. Careful: fouls are themselves referee decisions (home fouls per match went from
+    {expected.fouls_home_fans} to {expected.fouls_home_ghost}), so the denominator can move too. A sensitivity model
+    that does not force the foul effect gives a similar rate ratio ({expected.rr_did_cov}). Yellow cards are also
+    counted differently in England than in the rest of Europe, so the model compares within each league.
 
 # ============================================================== MODEL
 - id: s11_method
@@ -457,10 +477,11 @@ steps:
     Picking the one that worked is cherry-picking. Fix it with a Holm correction: after it,
     {expected.n_leagues_significant} leagues stay significant (unadjusted it was {expected.n_leagues_unadjusted_sig}).
     The pooled test across leagues is the better primary test: the home win rate fell by {expected.hw_change}
-    (p {expected.hw_change_p}). Second, "proves crowds create" is causal language. Ghost games also had congested
-    fixtures, with median rest falling from {expected.rest_fans} to {expected.rest_ghost} days, so say "consistent
-    with". Third, total cards ignore fouls: use yellow cards per foul with a home comparison group, a
-    difference-in-differences. That gives a rate ratio of {expected.rr_did}, and its confidence interval checks the fix.
+    (p {expected.hw_change_p}). Second, "proves crowds create" is causal language. Home advantage was already drifting
+    down before COVID-19 ({expected.gd_season_1718}, then {expected.gd_season_1819} goals), rule and protocol changes
+    overlapped, and fixtures were congested (median rest {expected.rest_fans} versus {expected.rest_ghost} days). So
+    say "consistent with". Third, total cards ignore fouls: use yellow cards per foul with a home comparison group,
+    a difference-in-differences. That gives a rate ratio of {expected.rr_did}, and its confidence interval checks the fix.
   rubric:
     points:
       - id: multiple
@@ -490,7 +511,7 @@ steps:
         paraphrases:
           - ghost games also had congested schedules so this is not proof
           - say consistent with a crowd effect not proves
-          - other things changed at the same time
+          - home advantage was already falling before COVID and other rules changed at the same time
         keywords: [[cause, prove, confound, congest, schedule, rest, consistent]]
         hint: What else was different about the ghost-game period?
         why: Natural experiments are strong, not perfect.
@@ -537,21 +558,23 @@ steps:
   analysis_pointer: Compare the pooled test with the per-league tests, then look at the card model.
   redo_step: Re-read the league tests output and the card model output.
   model_answer: >-
-    Claim: home advantage shrank in empty stadiums and partly came back with fans, and referees treated away teams
-    less harshly without a crowd. Evidence: the pooled home win rate fell from {expected.hw_fans} to
-    {expected.hw_ghost} ({expected.hw_change}, confidence interval {expected.hw_change_lo} to {expected.hw_change_hi})
-    and recovered to {expected.hw_back}. The away penalty in yellow cards per foul narrowed, with a rate ratio of
-    {expected.rr_did} (p {expected.rr_did_p}). Reasoning: the pooled test has the power that single leagues lack.
-    After Holm correction {expected.n_leagues_significant} individual leagues are significant, so league-level claims
-    are not supported, while the overall effect is. Limitation: ghost games also had congested schedules, and the
-    literature disagrees on the referee mechanism, so this is consistent with a crowd effect rather than proof.
+    Claim: home advantage shrank in empty stadiums, and the card pattern is consistent with referees being less
+    harsh on away teams without a crowd. Evidence: the pooled home win rate fell from {expected.hw_fans} to
+    {expected.hw_ghost} ({expected.hw_change}, confidence interval {expected.hw_change_lo} to {expected.hw_change_hi}).
+    The away penalty in yellow cards per foul narrowed, with a rate ratio of {expected.rr_did} (p {expected.rr_did_p}).
+    When fans returned the rate rose by {expected.hw_reversal}, but that interval ({expected.hw_reversal_lo} to
+    {expected.hw_reversal_hi}) includes zero, so the reversal is inconclusive. Reasoning: the pooled test has the power
+    that single leagues lack. After Holm correction {expected.n_leagues_significant} individual leagues are
+    significant, so league-level claims are not supported. Limitation: a pre-COVID downward trend, rule changes and
+    congested schedules overlap with the ghost period, and fouls are themselves referee decisions. So this is
+    consistent with a crowd effect rather than proof.
   rubric:
     points:
       - id: claim
         label: Claim
         weight: 15
         paraphrases:
-          - home advantage fell without fans and partly recovered when they returned
+          - home advantage fell without fans
           - empty stadiums reduced the home edge
           - without crowds home teams won less often
         keywords: [[fell, shrank, reduced, drop], [home advantage, home edge, home win]]
@@ -563,7 +586,7 @@ steps:
         paraphrases:
           - the pooled home win rate fell from {expected.hw_fans} to {expected.hw_ghost}
           - the confidence interval of the change excludes zero
-          - it recovered to {expected.hw_back} with fans back
+          - the rebound when fans returned is not significant
         keywords: [[win rate, pooled, interval, from, to, recovered]]
         numeric: {key: hw_ghost, tolerance: 0.01, accept_percent: true}
         hint: Quote the pooled rates and the interval.
@@ -593,9 +616,9 @@ steps:
         label: Limitation
         weight: 15
         paraphrases:
-          - congested schedules confound the ghost period
-          - the literature disagrees about the referee mechanism
-          - partial crowds in the second season blur the contrast
+          - congested schedules and rule changes confound the ghost period
+          - home advantage was already falling before COVID
+          - fouls are themselves referee decisions so the card denominator can move
         keywords: [[congest, confound, disagree, literature, partial, limitation]]
         hint: What else changed, and do other studies agree?
         why: Every result needs its honest caveat.
@@ -611,7 +634,13 @@ steps:
         penalty: 30
         paraphrases:
           - this proves crowds cause home advantage
-        feedback: Say it is consistent with a crowd effect. Congestion is a confounder.
+        feedback: Say it is consistent with a crowd effect. A pre-trend, rule changes and congestion all overlap.
+      - id: reversal_proof
+        critical: false
+        penalty: 15
+        paraphrases:
+          - home advantage clearly came back when fans returned which proves the crowd effect
+        feedback: The change when fans returned is not significant. Call the reversal inconclusive.
       - id: corrupt
         critical: true
         penalty: 35
@@ -623,7 +652,9 @@ steps:
   phase: model
   type: numeric
   title: Read the effect size
-  prompt: What share of the with-fans home goal edge disappeared in ghost games? Enter it as a percentage.
+  prompt: >-
+    What share of the with-fans home goal edge disappeared in ghost games? Enter the point estimate as a percentage.
+    (Its plausible range is wide: {expected.gd_share_lost_lo} to {expected.gd_share_lost_hi}.)
   answer_key: gd_share_lost
   tolerance: 0.03
   unit: "%"
@@ -643,9 +674,11 @@ steps:
     Metric: the home goal edge in the model, measured in goals per match. Adjustment: when matches are played without
     crowds, reduce it by {expected.adj_goals} goals per match, with a plausible range of {expected.adj_goals_lo} to
     {expected.adj_goals_hi}. Trigger: apply it only when a league plays behind closed doors, and scale it down for
-    partial crowds. Uncertainty: the range comes from the confidence interval, and congestion may account for part of
-    the drop. With fans back, the edge recovered to {expected.gd_back} against {expected.gd_fans} before, so remove
-    the adjustment and re-estimate on new seasons.
+    partial crowds. Uncertainty: the range comes from the confidence interval. The pooled figure hides big league
+    differences (Premier League {expected.gd_change_epl}, Serie A {expected.gd_change_seria}), part of the drop may be
+    the pre-COVID downward drift, and the effect should be applied like for like across the season. With fans back
+    the edge is {expected.gd_back} against {expected.gd_fans} before, but that rebound is not significant. So remove the
+    ghost adjustment and keep re-estimating the base home term on new seasons.
   rubric:
     points:
       - id: metric
@@ -684,8 +717,8 @@ steps:
         weight: 30
         paraphrases:
           - the confidence interval runs from {expected.adj_goals_lo} to {expected.adj_goals_hi}
-          - congestion may explain part of the drop
-          - re-estimate as new data arrives
+          - the pooled figure hides large differences between leagues
+          - part of the drop may be a pre-existing downward trend so re-estimate as new data arrives
         keywords: [[interval, range, uncertain, congest, re-estimate, confound]]
         hint: How sure are you of the size?
         why: Pricing with a false precision loses money.
@@ -722,10 +755,11 @@ steps:
     per match (range {expected.adj_goals_lo} to {expected.adj_goals_hi}), and restore it when fans return. Evidence:
     the pooled home win rate fell from {expected.hw_fans} to {expected.hw_ghost}, home goal difference from
     {expected.gd_fans} to {expected.gd_ghost}, and the away card penalty per foul narrowed (rate ratio
-    {expected.rr_did}). Risk left over: no single league is significant after correction, so league-specific
-    adjustments are not supported. Limitations: congested fixtures, partial crowds in 2020/21, and published
-    studies disagree on the referee mechanism. Next step: add attendance data, model the effect by crowd size, and
-    test it on later seasons.
+    {expected.rr_did}). Risk left over: no single league is significant after correction and league effects differ a
+    lot, so league-specific adjustments are not supported; the rebound when fans returned is not significant.
+    Limitations: a pre-COVID downward trend, rule changes, congested fixtures and partial crowds in 2020/21; the
+    published studies don't agree on the referee mechanism. Next step: add attendance data, model the effect
+    by crowd size with a season trend, and test it on later seasons.
   rubric:
     points:
       - id: rec
@@ -763,8 +797,8 @@ steps:
         label: Limitations
         weight: 15
         paraphrases:
-          - congested fixtures confound the ghost period
-          - partial crowds in the second season
+          - congested fixtures and rule changes confound the ghost period
+          - home advantage was already drifting down before COVID
           - the literature disagrees on the mechanism
         keywords: [[congest, partial, disagree, confound, literature]]
         hint: Name at least two.
@@ -807,15 +841,18 @@ steps:
   prompt: A natural experiment is powerful, but only with the right denominator and honest multiple testing.
   body: >-
     Pooling gave the power to see a real drop in home advantage (home win rate {expected.hw_change}), while correcting
-    for four league tests left {expected.n_leagues_significant} leagues significant on their own. Cards had to be
-    measured per foul with a home comparison group. Congested fixtures are a confounder you must name.
+    for four league tests left {expected.n_leagues_significant} leagues significant on their own. The home edge is
+    seasonal, so the apparent recovery inside the ghost period was mostly the normal spring rise. Compare like with
+    like. The rebound when fans returned was not significant. Cards had to be measured per foul with a home comparison
+    group, and a pre-trend, rule changes and congestion are confounders you must name.
 
 debrief:
   concepts_learned:
     - A natural experiment compares the same system with one factor removed
     - Test one pre-planned pooled hypothesis; correct when testing several
     - Counts need a denominator (cards per foul) and a comparison group (difference-in-differences)
-    - A reversal (fans back) strengthens the evidence
+    - Compare like with like (same half of the season) before calling anything a recovery
+    - A reversal check only strengthens evidence if it is tested and significant
   common_mistakes:
     - Reporting the one significant league out of several
     - Comparing raw card counts
@@ -823,7 +860,8 @@ debrief:
     - Calling referees corrupt
   interview_summary: >-
     I used COVID-19 ghost games as a natural experiment across {expected.n_matches} matches in four leagues. The pooled
-    home win rate fell from {expected.hw_fans} to {expected.hw_ghost} and recovered when fans returned. About
-    {expected.gd_share_lost} of the home goal edge vanished. A Poisson difference-in-differences on yellow cards per
-    foul showed referees were less harsh on away teams without crowds. After a Holm correction no single league was
-    significant, so I recommended a pooled adjustment of about {expected.adj_goals} goals, tied to crowd status.
+    home win rate fell from {expected.hw_fans} to {expected.hw_ghost}, and comparing like with like showed the drop
+    held in both halves of the ghost season. A Poisson difference-in-differences on yellow cards per foul was consistent
+    with referees being less harsh on away teams without crowds. After a Holm correction no single league was
+    significant, and the rebound when fans returned was not significant, so I recommended a pooled adjustment of about
+    {expected.adj_goals} goals, tied to crowd status, with its range and confounders stated.

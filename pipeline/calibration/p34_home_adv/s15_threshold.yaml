@@ -49,8 +49,9 @@ answers:
     to {expected.adj_goals_hi}. Apply when stadiums are empty, scale with attendance, revert when full. Part of
     the drop may be congestion, so treat it as an upper bound.'
   label: acceptable
-  kind: strong
-  owner_review: false
+  kind: partial
+  owner_review: true
+  note: Bias direction unclear (partial crowds pull the other way).
 - id: a08
   text: Adjust the home goal edge down by {expected.adj_goals} when crowds are absent (range {expected.adj_goals_lo}–{expected.adj_goals_hi});
     trigger on closed doors; with fans back the edge is {expected.gd_back} against {expected.gd_fans}, so drop the

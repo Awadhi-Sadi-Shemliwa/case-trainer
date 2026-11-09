@@ -2,85 +2,90 @@
 step: s09_chart_gd
 answers:
 - id: a01
-  text: 'The line is a rolling average of home minus away goals per match, four leagues pooled; the grey band is
-    the ghost period. The home edge falls inside the band and recovers afterwards: {expected.gd_fans} with fans,
-    {expected.gd_ghost} ghost, {expected.gd_back} back. The rolling window lags and the edge never reaches zero.
-    It can''t prove crowds caused it because schedules were congested. So the model should shrink the home term,
-    not remove it.'
+  text: 'Each point is the average home minus away goals per match in a half-season, leagues pooled, with a dashed
+    confidence band; grey is the ghost period. With fans the line zigzags, spring higher than autumn ({expected.gd_fans_spring}
+    vs {expected.gd_fans_autumn}). In ghost games both halves sit lower: {expected.gd_drop_autumn} and {expected.gd_drop_spring}
+    goals below the matching halves. The rise inside the band is the spring pattern. It never hits zero and bands
+    are wide. Can''t prove crowds caused it: pre-trend, rule changes, congestion. Shrink, don''t remove, the home
+    term.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a02
-  text: 'Plotted: rolling home goal difference over time with ghost games shaded. Pattern: a clear dip during ghost
-    games and recovery when fans return. Size: from {expected.gd_fans} to {expected.gd_ghost} goals, about {expected.gd_share_lost}
-    of the edge. Anomalies: lag from the rolling window; flat segments are summer breaks. Limits: confounded by
-    congestion, pooled leagues. So what: reduce the home term in empty stadiums.'
+  text: 'Plotted: half-season home goal difference with confidence bands; grey = no crowds. Pattern: a seasonal
+    zigzag, and lower values in both ghost halves. Size: the ghost autumn was {expected.gd_drop_autumn} below a
+    normal autumn, the ghost spring {expected.gd_drop_spring} below a normal spring. Anomalies: wide bands, a downward
+    drift before COVID. Limits: confounders overlap and the rebound with fans isn''t significant. So: reduce the
+    home term without fans.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a03
-  text: Home goal difference per match, smoothed over a season of matches, with the ghost window in grey. It drops
-    during ghost games and climbs back after; it falls from {expected.gd_fans} to {expected.gd_ghost} then {expected.gd_back}.
-    The lowest point lags because of the rolling window. The chart can't separate the crowd from congestion. The
-    pricing model should cut home advantage, not to zero.
+  text: 'The line shows home goal edge per half-season. Spring is always higher than autumn, so I compare like with
+    like: in ghost games the autumn was {expected.gd_drop_autumn} and the spring {expected.gd_drop_spring} goals
+    below normal. The climb inside the grey band is mostly seasonality, not recovery. Edge stays above zero; intervals
+    are wide; it was already drifting down. Association only. Pricing: smaller home term without crowds.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a04
-  text: The y-axis is home minus away goals per match, rolling; the band is ghost games. The edge shrinks by about
-    {expected.gd_share_lost} in ghost games and recovers with fans. It stays above zero. Rolling averages smear
-    timing, and other factors like fixture congestion changed too, so this is consistent with a crowd effect, not
-    proof.
+  text: Half-season averages of home minus away goals, all four leagues, dashed 95% bands, ghost period shaded.
+    Every pre-COVID season goes low in autumn and high in spring. Both ghost halves are below their normal halves
+    ({expected.gd_drop_autumn}, {expected.gd_drop_spring}). After fans returned it rose but not significantly. Can't
+    establish causation given the pre-trend and congested fixtures. Reduce, don't zero, home advantage.
   label: acceptable
   kind: strong
   owner_review: false
 - id: a05
-  text: 'Rolling pooled home goal difference with the empty-stadium period shaded. Before: about {expected.gd_fans};
-    during: {expected.gd_ghost}; after: {expected.gd_back}. The straight lines are breaks without matches; the minimum
-    is delayed by smoothing. Pooling hides league differences and congestion is a confounder. Implication: a smaller,
-    not zero, home edge without crowds.'
+  text: 'What is plotted: home goal difference per half-season with a confidence band and the ghost window in grey.
+    Pattern: seasonal; lower during ghost games in both halves. Size: about {expected.gd_drop_autumn} goals in autumn
+    and {expected.gd_drop_spring} in spring versus normal. Anomalies: home edge already falling from {expected.gd_season_1718}
+    to {expected.gd_season_1819}; never below zero. Can''t show: cause. So what: adjust like for like.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a06
-  text: 'It shows home advantage in goals over time with ghost games shaded. It drops during the band and comes
-    back when crowds return; never below zero. The drop is from {expected.gd_fans} to {expected.gd_ghost} goals.
-    Caveats: smoothing lag, pooled leagues, congested schedule. Recommendation: reduce the model''s home term in
-    empty stadiums.'
+  text: 'It''s a seasonal series: the spring half is usually stronger for home teams. Ghost games lowered both halves:
+    {expected.gd_ghost_h1} in the first half of the ghost season against a normal {expected.gd_fans_autumn}, and
+    {expected.gd_ghost_h2} against a normal {expected.gd_fans_spring}. The apparent recovery inside the band is
+    seasonal. Bands are wide, the reversal with fans isn''t significant, confounders overlap. Shrink the home edge,
+    compare like with like.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a07
-  text: 'Home minus away goals per match (rolling), grey = ghost games. Falls inside, recovers outside. Around {expected.gd_share_lost}
-    of the edge lost. Lag due to rolling window. Can''t establish causation because schedules also changed. So:
-    scale down home advantage when stadiums are empty.'
+  text: 'Home goal difference per half-season, pooled, grey ghost window. The zigzag means comparing neighbouring
+    halves misleads; matched to the same half of earlier seasons, ghost games are lower by {expected.gd_drop_autumn}
+    and {expected.gd_drop_spring} goals. Uncertainty is large and the edge stays positive. A pre-COVID decline and
+    congestion mean it''s consistent with a crowd effect, not proof. Model: reduce home advantage without fans.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a08
-  text: A rolling average of home goal difference; the ghost window is shaded. It dips to around {expected.gd_ghost}
-    from {expected.gd_fans}, then recovers to {expected.gd_back}. The rolling window delays the dip and summer breaks
-    appear as straight lines. Confounders such as congestion mean it isn't proof. The model's home term should shrink
-    for ghost games.
+  text: 'Axes: time vs goals per match (home minus away), dashed confidence bands, shaded ghost period. Seasonal
+    pattern each year. Ghost halves below the same halves with fans ({expected.gd_drop_autumn}, {expected.gd_drop_spring}).
+    The line rises inside the band because spring is normally higher. Wide intervals, prior downward drift, non-significant
+    rebound. So the home term should shrink, not vanish.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a09
-  text: The rolling home goal difference drops during the grey ghost period from {expected.gd_fans} to {expected.gd_ghost}
-    and recovers later. It does not prove crowds caused it. So reduce the home term.
+  text: 'Half-season home goal difference; it''s seasonal, so compare the same halves: ghost autumn and spring are
+    both lower than normal. Bands are wide and it isn''t proof. Reduce the home term.'
   label: acceptable
   kind: partial
   owner_review: true
-  note: No anomalies mentioned; acceptable?
+  note: No numbers; acceptable?
 - id: a10
-  text: Home edge in goals, rolling, ghost period shaded; dips by about {expected.gd_share_lost} and recovers; smoothing
-    lag; congestion confounds; reduce but don't remove the home term.
+  text: Home edge per half-season with bands. Both ghost halves are below the matching halves with fans ({expected.gd_drop_autumn},
+    {expected.gd_drop_spring}). The rise inside the band is seasonal. Pre-trend and congestion confound. Shrink
+    the home advantage.
   label: acceptable
   kind: partial
   owner_review: false
 - id: a11
-  text: The line shows home goal difference over time and drops in ghost games from {expected.gd_fans} to {expected.gd_ghost},
-    recovering after. Rolling averages lag. Not causal. Shrink the home advantage term.
+  text: The chart is seasonal; ghost games sit lower than the same halves of earlier seasons by about {expected.gd_drop_spring}
+    goals in spring; it's not causal; the model should lower the home term.
   label: acceptable
   kind: partial
   owner_review: false
@@ -90,23 +95,23 @@ answers:
   kind: partial
   owner_review: false
 - id: a13
-  text: The chart shows home advantage over time.
+  text: The chart shows home advantage by half-season.
   label: not_acceptable
   kind: partial
   owner_review: false
 - id: a14
-  text: The home edge fell from {expected.gd_fans} to {expected.gd_ghost}.
+  text: Home goal difference was {expected.gd_ghost_h1} then {expected.gd_ghost_h2} in the ghost season.
   label: not_acceptable
   kind: partial
   owner_review: false
 - id: a15
-  text: It drops then recovers, showing crowds matter.
+  text: There is a zigzag pattern every season.
   label: not_acceptable
   kind: partial
   owner_review: true
-  note: No limits; pattern only.
+  note: Seasonality only.
 - id: a16
-  text: The rolling average lags so the dip is late.
+  text: The confidence bands are wide.
   label: not_acceptable
   kind: partial
   owner_review: false
@@ -126,7 +131,8 @@ answers:
   kind: partial
   owner_review: false
 - id: a20
-  text: The chart shows away teams scoring more than home teams during ghost games.
+  text: Home advantage recovered during the ghost period because teams got used to empty stadiums, so crowds don't
+    matter.
   label: not_acceptable
   kind: wrong
   owner_review: false
@@ -146,7 +152,7 @@ answers:
   kind: wrong
   owner_review: false
 - id: a24
-  text: Home advantage disappeared completely in ghost games and stayed gone.
+  text: The dashed lines are the Premier League and Serie A.
   label: not_acceptable
   kind: wrong
   owner_review: false
@@ -156,7 +162,7 @@ answers:
   kind: wrong
   owner_review: false
 - id: a26
-  text: 'This proves crowds cause home advantage: the edge fell from {expected.gd_fans} to {expected.gd_ghost}.'
+  text: 'This proves crowds cause home advantage: it dropped in ghost games.'
   label: not_acceptable
   kind: red_flag
   owner_review: false
@@ -172,7 +178,7 @@ answers:
   owner_review: true
   note: Good observation framed as corruption.
 - id: a29
-  text: The rolling home goal difference drops in ghost games, which proves referees cheat for home teams.
+  text: The line drops in the grey band and climbs back when fans return, so fans caused the recovery.
   label: not_acceptable
   kind: red_flag
   owner_review: false

@@ -34,6 +34,34 @@
     "display": "34.1%",
     "produced_by": "__main__:win_rates"
   },
+  "fouls_away_fans": {
+    "value": 12.489567430025446,
+    "unit": "fouls per match",
+    "description": "Away team fouls per match, period 'fans'",
+    "display": "12.49",
+    "produced_by": "__main__:cards"
+  },
+  "fouls_away_ghost": {
+    "value": 12.533980582524272,
+    "unit": "fouls per match",
+    "description": "Away team fouls per match, period 'ghost'",
+    "display": "12.53",
+    "produced_by": "__main__:cards"
+  },
+  "fouls_home_fans": {
+    "value": 12.172773536895674,
+    "unit": "fouls per match",
+    "description": "Home team fouls per match, period 'fans'",
+    "display": "12.17",
+    "produced_by": "__main__:cards"
+  },
+  "fouls_home_ghost": {
+    "value": 12.673678532901834,
+    "unit": "fouls per match",
+    "description": "Home team fouls per match, period 'ghost'",
+    "display": "12.67",
+    "produced_by": "__main__:cards"
+  },
   "gd_back": {
     "value": 0.26625172890733056,
     "unit": "goals per match",
@@ -48,11 +76,32 @@
     "display": "-0.148",
     "produced_by": "__main__:goal_diff"
   },
+  "gd_change_bund": {
+    "value": -0.16021309130370442,
+    "unit": "goals per match",
+    "description": "Bundesliga: goal-difference change, ghost minus fans",
+    "display": "-0.16",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_change_epl": {
+    "value": -0.25346099107258374,
+    "unit": "goals per match",
+    "description": "Premier League: goal-difference change, ghost minus fans",
+    "display": "-0.25",
+    "produced_by": "__main__:goal_diff"
+  },
   "gd_change_hi": {
     "value": -0.045645185597219,
     "unit": "goals per match",
     "description": "95% CI upper bound (Welch)",
     "display": "-0.046",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_change_liga": {
+    "value": -0.16988309887061623,
+    "unit": "goals per match",
+    "description": "La Liga: goal-difference change, ghost minus fans",
+    "display": "-0.17",
     "produced_by": "__main__:goal_diff"
   },
   "gd_change_lo": {
@@ -69,11 +118,60 @@
     "display": "0.0046",
     "produced_by": "__main__:goal_diff"
   },
+  "gd_change_seria": {
+    "value": -0.013998250218722669,
+    "unit": "goals per match",
+    "description": "Serie A: goal-difference change, ghost minus fans",
+    "display": "-0.01",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_change_strict": {
+    "value": -0.15524247867085766,
+    "unit": "goals per match",
+    "description": "Goal-difference change vs fans, strict ghost window only",
+    "display": "-0.155",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_change_strict_p": {
+    "value": 0.13402129149803788,
+    "unit": "p-value",
+    "description": "Strict window goal-difference p-value (Welch)",
+    "display": "0.134",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_drop_autumn": {
+    "value": -0.19433744541665973,
+    "unit": "goals per match",
+    "description": "Ghost Aug-Dec 2020 minus with-fans Jul-Dec average",
+    "display": "-0.19",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_drop_spring": {
+    "value": -0.14027504390677495,
+    "unit": "goals per match",
+    "description": "Ghost Jan-May 2021 minus with-fans Jan-Jun average",
+    "display": "-0.14",
+    "produced_by": "__main__:goal_diff"
+  },
   "gd_fans": {
     "value": 0.3292620865139949,
     "unit": "goals per match",
     "description": "Average home goal difference with fans",
     "display": "0.329",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_fans_autumn": {
+    "value": 0.28283302063789867,
+    "unit": "goals per match",
+    "description": "With fans: home goal difference in Jul-Dec halves",
+    "display": "0.283",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_fans_spring": {
+    "value": 0.3843159065628476,
+    "unit": "goals per match",
+    "description": "With fans: home goal difference in Jan-Jun halves",
+    "display": "0.384",
     "produced_by": "__main__:goal_diff"
   },
   "gd_ghost": {
@@ -83,11 +181,67 @@
     "display": "0.181",
     "produced_by": "__main__:goal_diff"
   },
+  "gd_ghost_h1": {
+    "value": 0.08849557522123894,
+    "unit": "goals per match",
+    "description": "Home goal difference, 2020/21 Aug-Dec (empty stadiums)",
+    "display": "0.088",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_ghost_h2": {
+    "value": 0.24404086265607264,
+    "unit": "goals per match",
+    "description": "Home goal difference, 2020/21 Jan-May (still empty)",
+    "display": "0.244",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_pre_1920": {
+    "value": 0.2976878612716763,
+    "unit": "goals per match",
+    "description": "Home goal difference, 2019/20 before the pause",
+    "display": "0.298",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_reversal_p": {
+    "value": 0.19391278246755822,
+    "unit": "p-value",
+    "description": "Welch p-value: fans-back vs ghost goal difference",
+    "display": "0.194",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_season_1718": {
+    "value": 0.35408022130013833,
+    "unit": "goals per match",
+    "description": "Home goal difference, season 2017/18 (with fans)",
+    "display": "0.354",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_season_1819": {
+    "value": 0.32710926694329184,
+    "unit": "goals per match",
+    "description": "Home goal difference, season 2018/19 (with fans)",
+    "display": "0.327",
+    "produced_by": "__main__:goal_diff"
+  },
   "gd_share_lost": {
     "value": 0.4495880914151948,
     "unit": "share",
     "description": "Share of the with-fans home goal edge that disappeared in ghost games",
     "display": "45%",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_share_lost_hi": {
+    "value": 0.7605474506842763,
+    "unit": "share",
+    "description": "Share lost, high end (from the CI of the change)",
+    "display": "76%",
+    "produced_by": "__main__:goal_diff"
+  },
+  "gd_share_lost_lo": {
+    "value": 0.13862873214611335,
+    "unit": "share",
+    "description": "Share lost, low end (from the CI of the change)",
+    "display": "14%",
     "produced_by": "__main__:goal_diff"
   },
   "hw_back": {
@@ -168,10 +322,10 @@
     "produced_by": "__main__:win_rates"
   },
   "hw_change_p": {
-    "value": 0.002561632665857171,
+    "value": 0.0024313206154031345,
     "unit": "p-value",
     "description": "Two-sided p-value of the pooled change",
-    "display": "0.0026",
+    "display": "0.0024",
     "produced_by": "__main__:win_rates"
   },
   "hw_change_seria": {
@@ -186,6 +340,27 @@
     "unit": "share",
     "description": "Change vs fans using only the strict ghost window",
     "display": "-3.5%",
+    "produced_by": "__main__:win_rates"
+  },
+  "hw_change_strict_hi": {
+    "value": 0.015116142567816834,
+    "unit": "share",
+    "description": "Strict window: 95% CI upper bound",
+    "display": "1.5%",
+    "produced_by": "__main__:win_rates"
+  },
+  "hw_change_strict_lo": {
+    "value": -0.08541250538775395,
+    "unit": "share",
+    "description": "Strict window: 95% CI lower bound",
+    "display": "-8.5%",
+    "produced_by": "__main__:win_rates"
+  },
+  "hw_change_strict_p": {
+    "value": 0.17051114362665365,
+    "unit": "p-value",
+    "description": "Strict window: two-sided p-value",
+    "display": "0.171",
     "produced_by": "__main__:win_rates"
   },
   "hw_fans": {
@@ -244,6 +419,20 @@
     "display": "39.6%",
     "produced_by": "__main__:win_rates"
   },
+  "hw_ghost_h1": {
+    "value": 0.35929203539823007,
+    "unit": "share",
+    "description": "Home win rate, 2020/21 Aug-Dec",
+    "display": "35.9%",
+    "produced_by": "__main__:goal_diff"
+  },
+  "hw_ghost_h2": {
+    "value": 0.43473325766174803,
+    "unit": "share",
+    "description": "Home win rate, 2020/21 Jan-May",
+    "display": "43.5%",
+    "produced_by": "__main__:goal_diff"
+  },
   "hw_ghost_liga": {
     "value": 0.4142857142857143,
     "unit": "share",
@@ -256,6 +445,34 @@
     "unit": "share",
     "description": "Serie A: home win rate in ghost games",
     "display": "41.7%",
+    "produced_by": "__main__:win_rates"
+  },
+  "hw_reversal": {
+    "value": 0.020849839082929367,
+    "unit": "share",
+    "description": "Home win rate change when fans returned (fans back minus ghost)",
+    "display": "2.1%",
+    "produced_by": "__main__:win_rates"
+  },
+  "hw_reversal_hi": {
+    "value": 0.05477056651187251,
+    "unit": "share",
+    "description": "Reversal: 95% CI upper bound",
+    "display": "5.5%",
+    "produced_by": "__main__:win_rates"
+  },
+  "hw_reversal_lo": {
+    "value": -0.013070888346013776,
+    "unit": "share",
+    "description": "Reversal: 95% CI lower bound",
+    "display": "-1.3%",
+    "produced_by": "__main__:win_rates"
+  },
+  "hw_reversal_p": {
+    "value": 0.228303376683627,
+    "unit": "p-value",
+    "description": "Reversal: two-sided p-value",
+    "display": "0.228",
     "produced_by": "__main__:win_rates"
   },
   "hw_strict_ghost": {
@@ -322,31 +539,31 @@
     "produced_by": "__main__:descriptives"
   },
   "p_holm_bund": {
-    "value": 0.2383749834923051,
+    "value": 0.23363106513891593,
     "unit": "p-value",
     "description": "Bundesliga: Holm-adjusted p-value for the change",
-    "display": "0.238",
+    "display": "0.234",
     "produced_by": "__main__:win_rates"
   },
   "p_holm_epl": {
-    "value": 0.07497864065775346,
+    "value": 0.07079999939751445,
     "unit": "p-value",
     "description": "Premier League: Holm-adjusted p-value for the change",
-    "display": "0.075",
+    "display": "0.071",
     "produced_by": "__main__:win_rates"
   },
   "p_holm_liga": {
-    "value": 0.2383749834923051,
+    "value": 0.23363106513891593,
     "unit": "p-value",
     "description": "La Liga: Holm-adjusted p-value for the change",
-    "display": "0.238",
+    "display": "0.234",
     "produced_by": "__main__:win_rates"
   },
   "p_holm_seria": {
-    "value": 0.7237305588397965,
+    "value": 0.7234458625944009,
     "unit": "p-value",
     "description": "Serie A: Holm-adjusted p-value for the change",
-    "display": "0.724",
+    "display": "0.723",
     "produced_by": "__main__:win_rates"
   },
   "rest_fans": {
@@ -375,6 +592,20 @@
     "unit": "rate ratio",
     "description": "Difference-in-differences: change in home/away card-per-foul ratio in ghost games",
     "display": "1.079",
+    "produced_by": "__main__:cards"
+  },
+  "rr_did_cov": {
+    "value": 1.088448390468868,
+    "unit": "rate ratio",
+    "description": "Sensitivity: interaction with log(fouls) as a covariate instead of an offset",
+    "display": "1.088",
+    "produced_by": "__main__:cards"
+  },
+  "rr_did_cov_p": {
+    "value": 0.00021915191268237556,
+    "unit": "p-value",
+    "description": "Sensitivity model p-value",
+    "display": "0.0002",
     "produced_by": "__main__:cards"
   },
   "rr_did_hi": {

@@ -160,9 +160,8 @@ answers:
 - id: a28
   text: Match rows; missing dates can be filled with the previous date.
   label: not_acceptable
-  kind: red_flag
-  owner_review: true
-  note: Proposes filling dates; red flag?
+  kind: wrong
+  owner_review: false
 - id: a29
   text: Each row is a game, and referees in the ghost games were clearly corrupt.
   label: not_acceptable
