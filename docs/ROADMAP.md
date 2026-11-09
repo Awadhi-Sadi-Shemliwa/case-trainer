@@ -6,7 +6,7 @@ Prompts come from docs/spec.pdf §10. Status: TODO / IN PROGRESS / DONE / BLOCKE
 |---|--------|--------|-------|
 | 1 | Read spec, plan, set up repo | DONE (pending S21 run by owner) | arm64 debug APK builds; pytest + flutter test pass |
 | 2 | Pipeline framework (provenance, results, charts, content build) | DONE | 28 tests; build fails on missing keys, weights≠100, unverified sources, missing calibration, hand-typed numbers |
-| 3 | Solve P50 yield curve end to end | DONE (awaiting owner review) | 25 steps, 94 results, 9 graded steps × 32 calibration answers (45 flagged for owner). NY Fed benchmark NOT obtained — see docs/knowledge/cases/p50_yield_curve.md |
+| 3 | Solve P50 yield curve end to end | DONE (awaiting owner review) | 25 steps, 94 results, 9 graded steps × 32 calibration answers (36 flagged for owner review). NY Fed benchmark NOT obtained — see docs/knowledge/cases/p50_yield_curve.md |
 | 4 | Flutter app shell and case player | TODO | |
 | 5 | Interactive charts (Syncfusion + fl_chart fallback) | TODO | Owner registers Syncfusion Community Licence |
 | 6 | Examiner: grading engine, 3 attempts, 85% | TODO | flutter_onnxruntime + MiniLM; verify 16 KB pages |
