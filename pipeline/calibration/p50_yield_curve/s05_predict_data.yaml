@@ -1,0 +1,233 @@
+# Calibration answers for s05_predict_data (data_expectation). Labels are the human judgement:
+# acceptable = should pass (>= 85, no critical red flag). owner_review: true = Awadhi should check the label.
+# {expected.key} placeholders are resolved exactly like content text; deliberately wrong numbers are typed.
+step: s05_predict_data
+answers:
+- id: a01
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    T10Y2Y should be one row per trading day with the 10-year minus 2-year yield in percentage points, starting
+    in the seventies. Bond market holidays like Christmas and July 4th will be blank because there is no
+    trading. USREC is monthly and just a one or zero dummy. The trap is that daily and monthly do not join
+    directly, so I need to average the spread to months first, and USREC is announced late by NBER so the
+    latest zeros are provisional.
+- id: a02
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Grain: daily business-day observations for the spread, monthly for the recession flag. Units: percent
+    (percentage points) for the spread, binary indicator for USREC. Missing values: market holidays will appear
+    as empty cells or a marker, not zero. Trap: frequency mismatch, resample daily to monthly mean before the
+    merge; also NBER dates recessions after the fact so USREC was not known in real time.
+- id: a03
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    I expect a daily file with a date column and the spread in percentage points. Gaps on holidays when the
+    bond market is closed. The recession series is monthly 0/1. Joining them naively on date would leave
+    most daily rows unmatched, so aggregate to monthly averages first. Recent recession values may be
+    revised later.
+- id: a04
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    One row per trading day for T10Y2Y, measured in percentage points. USREC is a monthly dummy equal to one
+    in recession months. Missing days will be holidays with no trading, so I would drop them rather than
+    fill. Main trap: different frequencies, so I align by averaging the daily spread within each month before
+    merging with USREC.
+- id: a05
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Daily Treasury spread in percent, business days only, with blanks on federal holidays. USREC monthly,
+    binary. Before joining I need to resample the spread to monthly means. Another trap: the recession
+    indicator is dated with a delay, so it was not available in real time and the last months are provisional.
+- id: a06
+  kind: strong
+  label: acceptable
+  owner_review: true
+  note: Does not mention units explicitly for USREC but covers the trap well.
+  text: >-
+    The spread is daily, in percentage points, and will have empty values on holidays like New Year since
+    markets are closed. The recession data is monthly. The big risk is the join: daily vs monthly, so
+    average to months first. Also NBER announces recessions months later.
+- id: a07
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Expect: date plus value, one row per business day, value in percentage points, start mid 1970s.
+    Missing values on market holidays (blank). USREC monthly one/zero indicator. Trap one: frequency
+    mismatch so aggregate daily to monthly before merging. Trap two: USREC is revised after the fact.
+- id: a08
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Each row of T10Y2Y is a trading day and the value is the yield difference in percentage points. Days
+    with no trading such as Christmas will show as missing. USREC has monthly frequency and is a dummy. You
+    cannot merge them on date directly; resample the spread to monthly averages first.
+- id: a09
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The spread is daily and in percent. USREC is monthly. I would join them on the date.
+- id: a10
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It is a time series of yields with some missing values. I would clean the missing values and then
+    merge the two datasets.
+- id: a11
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Daily data in percentage points, with holidays missing. USREC is a 0/1 flag.
+- id: a12
+  kind: partial
+  label: not_acceptable
+  owner_review: true
+  note: Has frequency and join trap but no missing-value pattern and no units.
+  text: >-
+    T10Y2Y is daily but USREC is monthly, so I need to resample the spread to monthly before joining, otherwise
+    the merge breaks.
+- id: a13
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    I expect missing values on holidays when markets close. The values should be in percent. Not sure about
+    the recession data.
+- id: a14
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    One row per day. There might be some NaNs. The recession indicator tells us when recessions happened.
+- id: a15
+  kind: partial
+  label: acceptable
+  owner_review: true
+  note: Borderline - all four areas touched briefly.
+  text: >-
+    Daily spread in percentage points with holiday gaps; monthly 0/1 recession flag; average to monthly
+    before merging.
+- id: a16
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The file has dates and a spread column. Some rows will be empty. I will drop them.
+- id: a17
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Both series are monthly so they can be merged directly on the date column. Values are in dollars.
+- id: a18
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The spread is measured in basis points and is quarterly. The recession indicator is GDP growth.
+- id: a19
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    I expect it to be clean with no missing values because FRED is an official source.
+- id: a20
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It will have prices of bonds for each maturity and I will compute the spread myself.
+- id: a21
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Weekly data with weekends missing. The recession variable is continuous.
+- id: a22
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Yield curve data. Lots of rows.
+- id: a23
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    I think the data starts in 2000 and is annual, with recessions marked as text labels.
+- id: a24
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The spread should always be positive since long rates are higher than short rates.
+- id: a25
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Daily spread in percentage points, holidays missing. I will forward fill the missing days with the
+    previous value and then join with USREC, which is also daily.
+- id: a26
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Daily data in percent; missing values on holidays should be replaced with zero. USREC is monthly and
+    is known in real time so we can use it immediately.
+- id: a27
+  kind: red_flag
+  label: not_acceptable
+  owner_review: true
+  note: Good on grain and units but proposes zero fill.
+  text: >-
+    T10Y2Y is one row per trading day in percentage points, USREC monthly 0/1. Holidays are blank, fill with
+    zero, then resample to monthly and merge.
+- id: a28
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Both series are daily so a simple merge on date works. Missing values filled with zero.
+- id: a29
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Business-day frequency, so roughly two hundred and fifty rows a year, spread quoted in percentage points.
+    No yield is published on bond holidays, so those dates are empty rather than zero. USREC: monthly
+    binary from NBER, published with a lag. Need to aggregate the spread to months before the merge.
+- id: a30
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Grain is a trading day. The spread is percent. I expect blank or dot markers on holidays. USREC
+    monthly dummy. Trap: daily versus monthly frequency, so resample, and the recession dates are only known
+    after NBER announces them.
+- id: a31
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Daily spread; recession indicator monthly. Missing values should be removed.
+- id: a32
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The data will show that recessions always follow inversions.

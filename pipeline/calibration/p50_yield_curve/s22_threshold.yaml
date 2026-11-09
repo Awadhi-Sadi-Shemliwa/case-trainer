@@ -1,0 +1,229 @@
+step: s22_threshold
+answers:
+- id: a01
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Trigger metric: the probit probability of recession within twelve months from the 10y-3m spread. Value:
+    {expected.threshold}, which is the 10y-3m spread falling to about {expected.trigger_spread_10y3m} points.
+    Action: start reducing equity exposure in steps. Expected error: it caught {expected.oos_hit_rate} of
+    pre-recession months but was on in {expected.oos_false_alarm_rate} of calm months, and only
+    {expected.oos_signal_precision} of signal months were followed by a recession. Today the probability is
+    {expected.latest_prob_10y3m}, so the signal is off and no de-risking is triggered.
+- id: a02
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Watch the 10y-3m spread. When it drops below about {expected.trigger_spread_10y3m} percentage points (model
+    probability above {expected.threshold}), cut equity weight gradually. Expect false alarms: precision was
+    {expected.oos_signal_precision}, with a false alarm rate of {expected.oos_false_alarm_rate}. Currently
+    10y-3m is {expected.latest_spread_10y3m}, above the trigger, so no action.
+- id: a03
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Rule: if the recession probability from the 10y-3m probit exceeds {expected.threshold} (spread under
+    {expected.trigger_spread_10y3m}), de-risk in stages. Error: hit rate {expected.oos_hit_rate}, but a
+    recession followed only {expected.oos_signal_precision} of the time the signal was on. Now the
+    probability is {expected.latest_prob_10y3m}, below the threshold, so the signal is off.
+- id: a04
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Metric: 10y-3m-based recession probability. Value: {expected.threshold}, equivalent to roughly
+    {expected.trigger_spread_10y3m} points on the spread. Action: lower equity exposure step by step. Errors:
+    on in {expected.oos_false_alarm_rate} of calm months, and when on it was right only
+    {expected.oos_signal_precision} of the time. Today: {expected.latest_prob_10y3m}, signal off, hold.
+- id: a05
+  kind: strong
+  label: acceptable
+  owner_review: true
+  note: No hit rate; error given only as precision.
+  text: >-
+    Trigger: probability above {expected.threshold} from the 10y-3m model, which is a spread of about
+    {expected.trigger_spread_10y3m}. Then reduce equities gradually. Only {expected.oos_signal_precision} of
+    signals were followed by a recession, so expect false alarms. Today the probability is
+    {expected.latest_prob_10y3m}, not triggered.
+- id: a06
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Sell equities when the curve inverts.
+- id: a07
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The threshold is {expected.threshold}. Today we are below it.
+- id: a08
+  kind: partial
+  label: not_acceptable
+  owner_review: true
+  note: Metric, value, action and today, but no error rate.
+  text: >-
+    When the 10y-3m probability exceeds {expected.threshold} (spread around {expected.trigger_spread_10y3m}),
+    reduce equity exposure gradually. Today it is {expected.latest_prob_10y3m}, so no action.
+- id: a09
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Watch the 10y-3m spread and reduce risk if it falls a lot.
+- id: a10
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Precision is {expected.oos_signal_precision}, so there are many false alarms.
+- id: a11
+  kind: partial
+  label: acceptable
+  owner_review: true
+  note: Compact but complete.
+  text: >-
+    10y-3m probability above {expected.threshold} (spread under {expected.trigger_spread_10y3m}) means stage
+    out of equities; false alarm rate {expected.oos_false_alarm_rate}, precision {expected.oos_signal_precision};
+    today {expected.latest_prob_10y3m}, off.
+- id: a12
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The current probability is {expected.latest_prob_10y3m}, so there is a small chance of recession.
+- id: a13
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Trigger when the probability is above fifty percent.
+- id: a14
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Trigger when 2s10s goes below zero and buy more equities.
+- id: a15
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Today the signal is on so we should sell now.
+- id: a16
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The trigger is when the spread is above two percentage points.
+- id: a17
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    There is no useful threshold because the model is wrong.
+- id: a18
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Use the Brier score as the trigger.
+- id: a19
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    When the probability passes {expected.threshold} a recession is certain, so the rule never gives false
+    alarms.
+- id: a20
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Sell all equities immediately when the curve inverts.
+- id: a21
+  kind: red_flag
+  label: not_acceptable
+  owner_review: true
+  note: Complete rule but threshold chosen on test data.
+  text: >-
+    I would choose the threshold that worked best in the test period, around {expected.threshold}, which is
+    10y-3m near {expected.trigger_spread_10y3m}, then de-risk in steps. Precision
+    {expected.oos_signal_precision}. Today {expected.latest_prob_10y3m}, off.
+- id: a22
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Choose the threshold that worked best in the test period; it will then catch every recession.
+- id: a23
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The PM watches one number: the 10y-3m probit recession probability. If it rises above
+    {expected.threshold}, roughly the spread dropping to {expected.trigger_spread_10y3m} points, begin staged
+    de-risking. It fired a median {expected.oos_signal_median_lead} months before recessions, caught
+    {expected.oos_hit_rate} of pre-recession months, but false alarms were common: precision
+    {expected.oos_signal_precision}. Right now the spread is {expected.latest_spread_10y3m} and the probability
+    {expected.latest_prob_10y3m}, so the signal is off.
+- id: a24
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    If P(recession within a year, 10y-3m) > {expected.threshold}, equivalently 10y-3m below
+    {expected.trigger_spread_10y3m}, cut equity weight gradually. Expected errors: false-alarm rate
+    {expected.oos_false_alarm_rate}, precision {expected.oos_signal_precision}. Current reading
+    {expected.latest_prob_10y3m}: below the trigger, no action.
+- id: a25
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Reduce equity risk gradually when the probability is high.
+- id: a26
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The threshold should be the base rate.
+- id: a27
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The trigger spread is {expected.trigger_spread_10y3m}. We are above it.
+- id: a28
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The threshold is zero because inversion is when the spread goes below zero.
+- id: a29
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It catches {expected.oos_hit_rate} of pre-recession months, which is very good.
+- id: a30
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Act when the probability is below the threshold.
+- id: a31
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Threshold {expected.threshold}, reduce equities.
+- id: a32
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Increase leverage when the curve inverts because the market keeps rising for a while.

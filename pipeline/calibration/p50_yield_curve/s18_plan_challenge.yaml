@@ -1,0 +1,231 @@
+step: s18_plan_challenge
+answers:
+- id: a01
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The random split assumes months are independent, but they are time-ordered and their twelve-month targets
+    overlap, so shuffling leaks future information into training and inflates AUC. Fix: an expanding window
+    where each forecast uses only rows whose target was known at that date (a twelve-month embargo). Adding the
+    current recession indicator is target leakage; NBER publishes it months later, so drop it. And AUC alone
+    only measures ranking: also report the Brier score against the base rate and hit/false-alarm rates at a
+    threshold. Our honest out-of-sample AUC was {expected.auc_oos_10y3m} with Brier skill {expected.bss_oos_10y3m}.
+- id: a02
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Three flaws. One: shuffling a time series puts neighbouring, overlapping months into both train and test,
+    which leaks the future. Use a walk-forward, time-based split with an embargo. Two: this month's USREC is
+    part of the target and not known in real time, which is leakage. Three: a high AUC does not mean calibrated
+    probabilities; check the Brier score versus the base rate and the false-alarm rate. I would check the fix by
+    comparing in-sample and out-of-sample AUC.
+- id: a03
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Assumption: observations are independent. Fails because targets overlap by most of a year, so random
+    train/test splits leak. Fix: expanding-window out-of-sample test, training only on rows with a known
+    target at the forecast date. The recession dummy as a feature is leakage, since it is what we predict and
+    NBER dates it after the fact. Finally, report calibration (Brier) and a threshold's false alarms, not just
+    AUC. Out-of-sample AUC was {expected.auc_oos_10y3m}, lower than in-sample {expected.auc_insample_10y3m}.
+- id: a04
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    For time series you must split by time, not randomly. Overlapping targets mean neighbours are nearly
+    duplicates, so a random split leaks. Use an expanding window with an embargo cutoff. The current recession
+    indicator cannot be a feature: it is not known in real time and is basically the answer. And AUC measures
+    ranking only. Add the Brier score against climatology and the hit and false alarm rates.
+- id: a05
+  kind: strong
+  label: acceptable
+  owner_review: true
+  note: Fix for split is described without the word embargo.
+  text: >-
+    The random split leaks future data because months are ordered and overlap. Instead train on the past and
+    test on later months only, refitting as time moves forward. Using this month's recession flag is leakage:
+    the flag is announced later and is part of the target. AUC is not enough because it ignores calibration;
+    use the Brier score and a threshold with false-alarm rates.
+- id: a06
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Leakage twice: a random split mixes overlapping future months into training, and the current USREC
+    feature is the target itself and unknown in real time. Fix with a time-based expanding window and an
+    embargo, and remove the recession feature. Then report Brier skill against the base rate as well as AUC:
+    our out-of-sample AUC {expected.auc_oos_10y3m} looked fine but Brier skill was {expected.bss_oos_10y3m}.
+- id: a07
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The random split is wrong for time series. Use a time-based split instead.
+- id: a08
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Using the recession indicator as a feature is leakage, so remove it.
+- id: a09
+  kind: partial
+  label: not_acceptable
+  owner_review: true
+  note: Covers split and fix and leakage but not metrics.
+  text: >-
+    Shuffling time-ordered months leaks the future because targets overlap; use an expanding window with an
+    embargo. The current recession indicator is leakage because NBER announces it later.
+- id: a10
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    AUC is not enough; also report the Brier score and false alarm rate.
+- id: a11
+  kind: partial
+  label: acceptable
+  owner_review: true
+  note: Compact but complete.
+  text: >-
+    Random split leaks overlapping future months, so use a time-based expanding window with embargo; the
+    recession feature is target leakage unknown in real time; report Brier skill and false alarms, not just AUC.
+- id: a12
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The plan might overfit. I would use cross-validation with more folds.
+- id: a13
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The data should be split by time and the model tested on later years.
+- id: a14
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The plan is good but eighty percent is too much, use seventy.
+- id: a15
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    They should use a neural network instead of a simple model.
+- id: a16
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The problem is that the dataset is too small, so we should simulate more recessions.
+- id: a17
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    They should use accuracy instead of AUC because it is easier to explain.
+- id: a18
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Stratified shuffling would fix the imbalance and make the split fine.
+- id: a19
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The plan should add more features like the stock market to improve the AUC.
+- id: a20
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Nothing wrong, but they should also try logistic regression.
+- id: a21
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The random eighty twenty split is a good way to validate, but the recession feature should be removed.
+- id: a22
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Adding the current recession indicator is a good idea because recession months make good predictors.
+    Just make sure to use a time split.
+- id: a23
+  kind: red_flag
+  label: not_acceptable
+  owner_review: true
+  note: Correct on leakage and metrics but endorses random split.
+  text: >-
+    The recession indicator is leakage since NBER announces it later. The Brier score should be reported too.
+    The random split is fine as long as the classes are balanced.
+- id: a24
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    A high AUC proves the model is reliable, so the only change is to remove the recession feature.
+- id: a25
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    It assumes rows are exchangeable. They are not: each target covers the next twelve months, so random
+    splits let the model see the future. Fix it with walk-forward validation that only trains on rows with
+    targets known at the forecast date, then check that the out-of-sample AUC ({expected.auc_oos_10y3m}) is
+    below in-sample. The current recession indicator is leakage and unavailable in real time. And measure
+    calibration with the Brier score versus the base rate, plus false alarms at a threshold.
+- id: a26
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Random split equals look-ahead for overlapping time-series targets; replace with an expanding window and a
+    twelve-month embargo. USREC today is target leakage (NBER dates it months later). A high AUC is ranking,
+    not calibration; show Brier against the base rate and the false-alarm rate. The fix is checked by the
+    honest out-of-sample metrics.
+- id: a27
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Time series need time-based splits, and leakage should be avoided.
+- id: a28
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The test set should be the first twenty percent of the data.
+- id: a29
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Remove the recession feature and use a time split.
+- id: a30
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The AUC should be computed on the training data to show the full fit.
+- id: a31
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The months overlap so the random split leaks information.
+- id: a32
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The plan is fine because AUC is robust to class imbalance.

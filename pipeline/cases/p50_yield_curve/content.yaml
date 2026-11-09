@@ -1,0 +1,1178 @@
+# P50 · Does yield-curve inversion predict US recessions?
+# Every number in prose is an {expected.key} placeholder (expected_results.json) or a {captured.name}
+# output. Words that contain digits but are names (T10Y2Y, 2s10s, 10-year ...) are in allowed_literals.
+id: p50_yield_curve
+number: 50
+domain: finance
+title: Does yield-curve inversion predict US recessions?
+tier: A
+decision_maker: Portfolio manager at a UK asset manager running a global equity book
+decision: Should we cut equity risk when the US yield curve inverts, and at what trigger level?
+money_at_stake: >-
+  Timing the equity weight. Cutting too early gives up the late-cycle rally; cutting too late takes the
+  recession drawdown. A false alarm that lasts years is expensive too, because cash earns less than equities in a calm economy.
+concepts: [time series, lagged predictor, forward-looking target, probit, HAC standard errors,
+           look-ahead leakage, expanding window, AUC, Brier score, calibration vs discrimination,
+           decision threshold, base rate, regime change]
+sources: [estrella_mishkin_1996, nyfed_ycfaq, johansson_meldrum_2018]
+datasets: [fred_T10Y2Y, fred_T10Y3M, fred_USREC]
+allowed_literals: [T10Y2Y, T10Y3M, 2s10s, 10y-3m, 10-year, 2-year, 3-month, 10y, "0/1", R2]
+
+steps:
+# ============================================================== 1 BRIEF
+- id: s01_brief
+  phase: brief
+  type: mcq
+  title: Who decides what?
+  body: >-
+    You work for a portfolio manager at a UK asset manager. Every time US Treasury yields invert,
+    clients ask the same question: is a recession coming, and should we sell equities? The PM wants
+    evidence, not headlines. Our data: daily yield spreads from FRED (10-year minus 2-year, called
+    2s10s, and 10-year minus 3-month) and the monthly NBER recession indicator, from
+    {expected.sample_start} to {expected.sample_end}.
+  prompt: What decision will this analysis actually inform?
+  options:
+    - id: a
+      text: Whether, and at what spread level, to reduce equity exposure ahead of a possible US recession
+      correct: true
+      explanation: The output has to be an action with a trigger. A forecast with no trigger changes nothing.
+    - id: b
+      text: Whether the Federal Reserve should cut interest rates
+      explanation: That is the Fed's decision, not our client's. We use the curve as a signal; we don't set policy.
+    - id: c
+      text: Proving that inverted yield curves cause recessions
+      explanation: We can show timing and association. Proving cause needs a different research design, and it isn't the PM's question.
+    - id: d
+      text: Forecasting the exact month the next recession starts
+      explanation: No model does that reliably. The useful output is a probability over a window, with a stated error rate.
+
+# ============================================================== 2 FRAME
+- id: s02_question
+  phase: frame
+  type: mcq
+  title: Turn the worry into a testable question
+  prompt: Which question can the data answer AND the PM act on?
+  options:
+    - id: a
+      text: Given this month's spread, what is the probability of a US recession starting within the next {expected.horizon_months} months, and how often has that probability been wrong?
+      correct: true
+      explanation: It is forward-looking (no hindsight), gives a probability, and asks for the error rate. That makes it actionable.
+    - id: b
+      text: Is the spread lower during recessions than during expansions?
+      explanation: That is coincident, not predictive. By the time you know you're in a recession, the market has already fallen.
+    - id: c
+      text: What is the correlation between the spread and GDP?
+      explanation: GDP isn't the decision variable, and a correlation says nothing about lead time or false alarms.
+    - id: d
+      text: Did the curve invert before the last recession?
+      explanation: That is one event, and you only see it after the fact. You need every recession and every false alarm.
+
+- id: s03_kpis
+  phase: frame
+  type: kpi_builder
+  title: Pick the KPIs that judge the signal
+  prompt: Select every KPI that tells the PM whether the signal is worth acting on.
+  options:
+    - id: auc
+      text: Out-of-sample AUC (does the model rank risky months above calm ones?)
+      correct: true
+      explanation: It measures how well the model separates risky months from calm ones, on months it never trained on.
+    - id: brier
+      text: Out-of-sample Brier score compared with always guessing the base rate
+      correct: true
+      explanation: It checks calibration. Is a forecast of thirty percent really right about thirty percent of the time?
+    - id: lead
+      text: Lead time from first signal to recession start
+      correct: true
+      explanation: A signal that fires the day the recession starts is useless for repositioning a portfolio.
+    - id: fa
+      text: Hit rate and false-alarm rate at the chosen trigger
+      correct: true
+      explanation: These are the two costs the PM trades off when choosing the trigger.
+    - id: acc
+      text: Accuracy (share of months classified correctly)
+      explanation: >-
+        A trap. Only {expected.base_rate_next12} of expansion months are followed by a recession, so a
+        model that always says "no recession" already scores high accuracy while being useless.
+    - id: r2
+      text: R-squared of a straight-line regression of the recession dummy on the spread
+      explanation: The target is a yes/no outcome, so a straight line can predict probabilities below zero or above one. Use a probit or logit.
+
+- id: s04_order
+  phase: frame
+  type: order_steps
+  title: Plan the analysis
+  prompt: Put the analysis steps in a sensible order.
+  items:
+    - Download the raw files untouched and record where they came from
+    - Inspect the schema, units, frequency and missing-value markers
+    - Convert daily spreads to monthly and align them with the recession indicator
+    - Build the forward-looking target and flag months whose future is not yet known
+    - Explore the spread against recessions visually
+    - Fit the model and check its standard errors
+    - Test it out-of-sample using only information available at each date
+    - Choose a decision threshold and report its hit and false-alarm rates
+    - Write the recommendation with its limitations
+
+# ============================================================== 3 PREDICT (challenge mode)
+- id: s05_predict_data
+  phase: predict
+  type: data_expectation
+  title: Predict the data before you load it
+  dataset: fred_T10Y2Y
+  prompt: >-
+    Before you see the file: describe what you expect the FRED series T10Y2Y and USREC to look like.
+    Cover the grain (one row = ?), units, frequency and start date, how missing values will appear,
+    and at least one trap that will bite when you combine the two.
+  scaffold: predict_data
+  analysis_pointer: Think about what a "daily" bond yield means on a day when the bond market is closed.
+  redo_step: Re-read the FRED series titles and units, then compare the frequency of the two series.
+  model_answer: >-
+    T10Y2Y has one row per US trading day: the 10-year minus 2-year Treasury constant-maturity yield, in
+    percentage points (percent, not seasonally adjusted). It starts in the mid-seventies. Days when
+    the bond market is closed (Independence Day, Christmas, New Year) have no yield, so I expect blank or
+    marker cells rather than zeros. USREC is monthly and coded one/zero: one means the month is inside an NBER
+    recession. The trap: the two series have different frequencies, so I must aggregate the daily spread to
+    months before joining. Also, USREC is dated after the fact. NBER announces recessions months
+    later, so the latest zeros are provisional.
+  rubric:
+    points:
+      - id: grain
+        label: Grain and frequency
+        weight: 25
+        paraphrases:
+          - one row per trading day for the spread
+          - the spread is daily while the recession indicator is monthly
+          - T10Y2Y is a daily series with one observation per business day
+        keywords: [[daily, day, trading day, business day], [monthly, month]]
+        hint: How often do bond yields get quoted, and how often does NBER date the business cycle?
+        why: Frequencies decide every join you do afterwards.
+      - id: units
+        label: Units
+        weight: 20
+        paraphrases:
+          - the spread is in percentage points
+          - values are percent yield differences, not basis points
+          - USREC is a one or zero dummy
+        keywords: [[percentage point, percent, percentage], [dummy, binary, zero, indicator, one or zero]]
+        hint: Look at the FRED units line for both series.
+        why: Mixing basis points and percentage points, or treating a dummy as continuous, ruins any coefficient.
+      - id: missing
+        label: Missing-value pattern
+        weight: 25
+        paraphrases:
+          - holidays will show up as missing values because the market is closed
+          - expect blank cells on days with no trading
+          - there will be gaps on bond-market holidays which should not be filled with zero
+        keywords: [[holiday, closed, no trading, market closed], [missing, blank, gap, empty, NaN, marker]]
+        hint: What happens to a daily price series on Christmas Day?
+        why: Treating a holiday blank as zero would create fake inversions.
+      - id: trap
+        label: Joining trap
+        weight: 30
+        paraphrases:
+          - you must aggregate the daily spread to monthly before joining it to the recession indicator
+          - the recession dating is announced with a delay so recent zeros are provisional
+          - the frequencies differ so a naive join on date loses or duplicates rows
+          - USREC is revised after the fact, it was not known in real time
+        keywords: [[aggregate, resample, average, monthly mean, join, merge, align], [delay, after the fact, provisional, revised, lag, frequency]]
+        hint: You have daily rows and monthly rows. What happens if you join them on the date?
+        why: Most real data bugs live in joins, not in models.
+    red_flags:
+      - id: forward_fill
+        critical: false
+        penalty: 15
+        paraphrases:
+          - fill the missing days with the previous value
+          - replace blanks with zero
+        keywords: [[forward fill, ffill, fill with zero, replace with zero]]
+        feedback: Filling invents trading days that never happened. Here dropping is safer, because we average to months anyway.
+      - id: realtime
+        critical: false
+        penalty: 10
+        paraphrases:
+          - the recession indicator is known in real time
+          - we know immediately when a recession starts
+        feedback: NBER dates recessions months after the fact, so USREC was not available in real time.
+      - id: same_freq
+        critical: false
+        penalty: 15
+        paraphrases:
+          - both series are daily
+          - both series are monthly so they can be joined directly
+        feedback: They have different frequencies. Check the FRED page before assuming.
+
+# ============================================================== 4 DATA
+- id: s06_read_load
+  phase: data
+  type: code_read
+  title: Read the real loading code
+  snippet: {file: clean.py, name: load_daily}
+  prompt: >-
+    This is the actual code that loads each spread file. It prints how many rows are blank and which
+    calendar days the blanks fall on. Read it line by line before the next question.
+
+- id: s07_predict_output
+  phase: data
+  type: code_predict
+  title: Predict the output
+  snippet: {file: clean.py, name: load_daily}
+  output_name: load_daily_t10y2y
+  prompt: Which calendar days will dominate the list of blank dates?
+  options:
+    - id: a
+      text: US bond-market holidays such as Independence Day, Christmas, New Year and Veterans Day
+      correct: true
+      explanation: "Real output: {captured.load_daily_t10y2y}"
+    - id: b
+      text: Saturdays and Sundays
+      explanation: Weekends aren't in the file at all. FRED lists business days only, so they can't be blank.
+    - id: c
+      text: Random days spread evenly through the year
+      explanation: The blanks follow the holiday calendar. They aren't random noise.
+    - id: d
+      text: The first days of the series, before the data starts
+      explanation: The series starts with values. The blanks fall throughout the history.
+
+- id: s08_clean_blanks
+  phase: data
+  type: cleaning_justification
+  title: Justify dropping the blank days
+  transform: drop_blank_t10y2y
+  prompt: >-
+    The pipeline DROPPED every blank day instead of forward-filling it. Justify that choice: what was
+    done, why, which alternative you rejected, and what would break if you skipped the step.
+  scaffold: justify_clean
+  analysis_pointer: Look at which days are blank and what the next step (monthly averaging) does with them.
+  redo_step: Compare the blank dates with the US holiday calendar, then re-read the to_monthly snippet.
+  model_answer: >-
+    We dropped the blank rows of T10Y2Y. They fall on bond-market holidays (Veterans Day, Independence Day, Christmas, New Year), so no yield
+    exists that day. Dropping is right because the next step averages each month, and a mean over the
+    remaining trading days is unbiased. Forward-filling would invent a trading day and give the previous
+    day extra weight. Filling with zero would be far worse: zero means "flat curve" and would create fake
+    inversions. If we skipped the step entirely, the blanks would parse as missing and the monthly mean
+    would still work, but we would lose the audit trail of what was removed and why.
+  rubric:
+    points:
+      - id: what
+        label: What was done
+        weight: 20
+        paraphrases:
+          - blank rows were dropped
+          - the missing days were removed before averaging
+          - rows with no spread value were deleted and logged
+        keywords: [[drop, dropped, remove, removed, delete, exclude]]
+        hint: State the action in one sentence.
+        why: An audit trail starts with a plain description of the action.
+      - id: why
+        label: Why the values are missing
+        weight: 30
+        paraphrases:
+          - the blanks are market holidays when no yield is quoted
+          - there is no trading on those days so there is no true value
+          - missing values come from the holiday calendar not from errors
+        keywords: [[holiday, closed, no trading, Christmas, Independence]]
+        hint: Which days were blank in the captured output?
+        why: The reason something is missing tells you how to treat it.
+      - id: alternative
+        label: Alternative rejected
+        weight: 25
+        paraphrases:
+          - forward filling would invent trading days
+          - filling with zero would create fake inversions
+          - interpolating would add values that never existed
+        keywords: [[forward fill, ffill, fill, interpolate, zero, impute]]
+        hint: What are the two common ways people fill gaps, and what would each do here?
+        why: A justification without the rejected alternative is just a description.
+      - id: consequence
+        label: Effect downstream
+        weight: 25
+        paraphrases:
+          - the monthly mean over the remaining trading days is unaffected
+          - dropping is safe because we average to months next
+          - zero filling would pull the monthly average toward inversion
+        keywords: [[monthly, average, mean, resample], [bias, unaffected, safe, distort, fake]]
+        hint: The next step averages each month. How would each option change that average?
+        why: Cleaning choices matter only through what they do to the next step.
+    red_flags:
+      - id: zero_fill_ok
+        critical: true
+        penalty: 30
+        paraphrases:
+          - filling blanks with zero is fine
+          - replace missing spread with zero
+        feedback: A zero spread means a flat curve. Filling with zero creates false inversion signals.
+      - id: silent
+        critical: false
+        penalty: 15
+        paraphrases:
+          - just drop them, no need to record it
+          - remove missing values without logging
+        feedback: Every dropped row needs a logged count and a reason (provenance.json).
+      - id: outlier
+        critical: false
+        penalty: 10
+        paraphrases:
+          - the blanks are outliers
+          - they are data errors from FRED
+        feedback: They aren't outliers or errors. They are days with no trading.
+
+- id: s09_fill_target
+  phase: data
+  type: code_fill
+  title: Build the forward-looking target
+  snippet: {file: clean.py, name: make_target}
+  prompt: >-
+    The target is "a recession in ANY of the next {expected.horizon_months} months". Fill the blanks
+    so each column of `future` looks FORWARD in time.
+  blanks:
+    - token: "shift(-k)"
+      accept: ["shift(periods=-k)"]
+    - token: "range(1, HORIZON + 1)"
+
+- id: s10_fix_target
+  phase: data
+  type: code_fix
+  title: Find the look-ahead bug
+  snippet: {file: clean.py, name: make_target}
+  prompt: This version produced a suspiciously perfect model. Find and fix the bug.
+  buggy_code: |
+    future = pd.concat([panel["USREC"].shift(k) for k in range(0, HORIZON)], axis=1)
+    panel["rec_next12"] = future.max(axis=1)
+    panel.loc[future.isna().any(axis=1), "rec_next12"] = pd.NA
+  bug_explanation: >-
+    A positive shift looks BACKWARD, and starting the range at zero includes the current month. The
+    "target" becomes "were we in recession recently, including now", which the spread explains
+    trivially because the curve re-steepens during recessions. Use a negative shift starting one
+    month ahead.
+
+- id: s11_clean_recession_months
+  phase: data
+  type: cleaning_justification
+  title: Why drop months already in recession?
+  transform: exclude_current_recession
+  prompt: >-
+    Our FIRST plan kept every month. It failed: in-sample pseudo R-squared was only
+    {expected.pseudo_r2_all_months_10y3m} (AUC {expected.auc_insample_all_months_10y3m}). Dropping the
+    {expected.n_recession_months_excluded} months already in recession raised them to
+    {expected.pseudo_r2_10y3m} and {expected.auc_insample_10y3m}. Justify this change. Is it cheating?
+  scaffold: justify_clean
+  analysis_pointer: Look at what the spread does DURING the shaded recessions on the first chart.
+  redo_step: Re-read the make_target snippet and ask what the target equals for a month inside a recession.
+  model_answer: >-
+    We removed months that are already inside a recession from fitting and scoring. Inside a recession,
+    the next-{expected.horizon_months}-month target is almost always one, but the curve has re-steepened
+    because the Fed is cutting short rates. Those months teach the model "steep curve means recession", the
+    opposite of the pre-recession pattern. The PM's decision is made during expansions; once a
+    recession is underway the warning is too late to act on. So the modelling sample should match the
+    decision. It isn't cheating, because the rule is fixed by the decision and doesn't depend on the test
+    results, and the out-of-sample test uses the same rule. The cost: the model says nothing about when a
+    recession ends, and in real time you don't know instantly that a recession has started, because NBER
+    dates it later.
+  rubric:
+    points:
+      - id: mechanism
+        label: Why recession months mislead
+        weight: 30
+        paraphrases:
+          - during recessions the curve steepens because the Fed cuts rates
+          - inside a recession the target is one while the spread is high, the reverse of the warning pattern
+          - recession months pair a steep curve with a positive target and confuse the model
+        keywords: [[steep, steepens, re-steepen, cut, cuts, positive spread], [recession, during, inside]]
+        hint: On the first chart, what does the spread do inside the grey bars?
+        why: You must explain the mechanism, not just quote a better score.
+      - id: decision_match
+        label: Sample matches the decision
+        weight: 25
+        paraphrases:
+          - the decision is made during expansions so we model expansion months
+          - once in a recession the warning is too late to be useful
+          - the population we model should be the one where we will use the model
+        keywords: [[expansion, before, ahead, decision, act], [too late, useful, population, match]]
+        hint: When does the PM actually need the warning?
+        why: The modelling sample should be the population where you will use the model.
+      - id: numbers
+        label: Evidence of the change
+        weight: 20
+        paraphrases:
+          - pseudo R-squared rose from {expected.pseudo_r2_all_months_10y3m} to {expected.pseudo_r2_10y3m}
+          - AUC improved from {expected.auc_insample_all_months_10y3m} to {expected.auc_insample_10y3m}
+          - the first plan fitted poorly and the revised one much better
+        keywords: [[R-squared, R2, AUC, fit], [rose, improved, increase, better, from]]
+        numeric: {key: pseudo_r2_10y3m, tolerance: 0.03}
+        hint: Quote the before-and-after numbers from the prompt.
+        why: A justification needs evidence, not just reasoning.
+      - id: not_cheating
+        label: Why it is not data snooping
+        weight: 25
+        paraphrases:
+          - the rule comes from the decision and not from the test results
+          - the same rule is applied in the out-of-sample test
+          - we did not choose the sample by looking at which months improve the score
+        keywords: [[rule, principle, decision, before], [test, out-of-sample, same, snoop, cherry]]
+        hint: Would you apply the same rule if it had made the score worse?
+        why: Improving a score by deleting rows is a red flag unless the rule comes from the decision itself.
+    red_flags:
+      - id: score_only
+        critical: true
+        penalty: 30
+        paraphrases:
+          - we removed them because it made the model score higher
+          - dropping rows that hurt accuracy is fine
+        feedback: Never justify dropping rows only by the score going up. That is data snooping. Give the mechanism and the decision logic.
+      - id: outliers
+        critical: false
+        penalty: 15
+        paraphrases:
+          - recession months are outliers
+          - they are noisy data points
+        feedback: They aren't outliers. They are a different regime, where the target is trivial.
+      - id: realtime_known
+        critical: false
+        penalty: 10
+        paraphrases:
+          - we always know immediately whether we are in a recession
+        feedback: NBER dates recessions after the fact, so in real time you may not know.
+
+# ============================================================== 5 EXPLORE
+- id: s12_chart_spread
+  phase: explore
+  type: chart_explain
+  title: Read the spread-and-recession chart
+  chart: p50_spread_recessions
+  prompt: Explain what this chart shows and what it does NOT show.
+  scaffold: chart_6q
+  analysis_pointer: Trace each grey bar back in time and find where the line first went below zero.
+  redo_step: Use the lead-time table (captured output) and compare it with the shaded bars.
+  model_answer: >-
+    The chart plots the monthly average 2s10s and 10y-3m Treasury spreads in percentage points from
+    {expected.sample_start} to {expected.sample_end}; grey bars are NBER recession months. Pattern: before
+    almost every recession the spread falls below zero, and during recessions it shoots back up as the Fed cuts rates. Strength:
+    {expected.recessions_signalled_2s10s} of {expected.recessions_evaluable_2s10s} recessions were preceded by a 2s10s
+    inversion, with a median lead of {expected.median_lead_months} months (range {expected.min_lead_months}
+    to {expected.max_lead_months}). Anomalies: 2s10s gave {expected.false_alarm_episodes_2s10s} false-alarm
+    episodes, including the long inversion from {expected.split_from} onwards with no recession so far, and it missed
+    the pandemic recession, which was an external shock. What it can't show: that inversion causes recessions.
+    Both may be driven by tight monetary policy, and with a handful of events chance is a real
+    risk. So what: inversion is a warning with a long, variable lead, not a sell-today trigger.
+  rubric:
+    points:
+      - id: axes
+        label: What is plotted
+        weight: 15
+        paraphrases:
+          - the lines are the 10-year minus 2-year and 10-year minus 3-month spreads in percentage points over time
+          - shaded areas are NBER recession periods
+          - the chart shows monthly yield spreads with recessions shaded
+        keywords: [[spread, difference, yield], [recession, shaded, grey, NBER]]
+        hint: Name both lines, their units and what the grey bars are.
+        why: If the axes are wrong, everything after them is wrong.
+        evidence: chart axes and legend
+      - id: lead
+        label: Timing pattern
+        weight: 25
+        paraphrases:
+          - the spread usually turns negative some months before recessions start
+          - inversions come before recessions, not during them
+          - the curve inverts ahead of the downturn
+        keywords: [[negative, invert, inverted, below zero, inversion], [before, ahead, lead, precede, prior]]
+        hint: Look at the spread about a year before each grey bar.
+        why: The lead is the entire value of the signal.
+        evidence: lead_table_2s10s
+      - id: strength
+        label: Size of the effect (a number)
+        weight: 20
+        paraphrases:
+          - the median lead is about {expected.median_lead_months} months
+          - "{expected.recessions_signalled_2s10s} of {expected.recessions_evaluable_2s10s} recessions were preceded by an inversion"
+          - the lead ranges from {expected.min_lead_months} to {expected.max_lead_months} months
+        keywords: [[median, typical, average, range, months, of]]
+        numeric: {key: median_lead_months, tolerance: 4}
+        hint: Quote the median lead and how many recessions were signalled.
+        why: Without a number, "usually" could mean anything.
+        evidence: median_lead_months
+      - id: anomalies
+        label: Anomalies and false alarms
+        weight: 15
+        paraphrases:
+          - there was a long inversion recently with no recession so far
+          - the curve gave false alarms
+          - 2s10s missed the pandemic recession, which was an external shock
+        keywords: [[false alarm, false signal, no recession, missed, exception, pandemic, covid]]
+        hint: Find an inversion with no grey bar after it, and a grey bar with no inversion before it.
+        why: The exceptions decide how much to trust the next signal.
+        evidence: inversion_episodes_2s10s
+      - id: limits
+        label: What it can't show
+        weight: 15
+        paraphrases:
+          - the chart shows timing not causation
+          - few recessions so the pattern could partly be chance
+          - a common driver such as tight monetary policy could explain both
+        keywords: [[cause, causal, causation, chance, few, small sample, confound, policy]]
+        hint: Can a timing pattern alone prove a mechanism?
+        why: Overclaiming is the most common way analysis misleads decisions.
+      - id: so_what
+        label: So what for the PM
+        weight: 10
+        paraphrases:
+          - inversion is a warning with a long and variable lead, not a sell signal for today
+          - the PM should treat inversion as raising risk over the next year or two
+          - acting immediately on inversion would often be too early
+        keywords: [[warning, signal, risk, act, sell, reduce, early]]
+        hint: Turn the pattern into one sentence of advice.
+        why: Charts exist to inform decisions.
+    red_flags:
+      - id: causation
+        critical: true
+        penalty: 35
+        paraphrases:
+          - inversion causes recessions
+          - the inverted curve makes the economy go into recession
+        keywords: [[causes, cause, makes, leads to, triggers]]
+        feedback: The chart shows timing, not cause. Say "precedes" or "is associated with".
+      - id: perfect
+        critical: true
+        penalty: 30
+        paraphrases:
+          - inversion predicts every recession perfectly
+          - it is one hundred percent accurate
+          - every inversion is followed by a recession
+        feedback: There are false alarms and a miss on this very chart. Never claim perfect prediction.
+      - id: during
+        critical: false
+        penalty: 15
+        paraphrases:
+          - the spread is negative during recessions
+          - recessions happen when the spread is lowest
+        feedback: Look again. During recessions the spread usually rises sharply. The inversion comes before.
+      - id: exact_timing
+        critical: false
+        penalty: 10
+        paraphrases:
+          - a recession starts exactly one year after inversion
+        feedback: The lead varies a lot. Quote the range, not a single fixed delay.
+
+- id: s13_chart_forward
+  phase: explore
+  type: chart_explain
+  title: Spread today vs recession ahead
+  chart: p50_spread_vs_forward
+  prompt: Explain what this chart shows and what it does NOT show.
+  scaffold: chart_6q
+  analysis_pointer: Compare the dashed fitted curve with the dots at zero and one on the left side of the chart.
+  redo_step: Look at where the observed-share line sits for spreads below zero versus above one point.
+  model_answer: >-
+    Each dot is one expansion month: the x-axis is that month's 2s10s spread in percentage points; the y-axis
+    is one if a recession began within the next {expected.horizon_months} months and zero otherwise. The dashed
+    curves are the probit fit and the observed share per spread bin. Pattern: the lower the spread, the
+    higher the chance of a recession ahead. Above roughly one point almost no month is followed by a
+    recession; near or below zero the share rises sharply. Strength: the probit slope is
+    {expected.probit_slope_2s10s} and pseudo R-squared {expected.pseudo_r2_2s10s}. That is a clear relationship,
+    but most months near zero are still NOT followed by a recession, and the base rate is only
+    {expected.base_rate_next12}. Anomaly: the most inverted bin has a low observed share, because those
+    months come from the recent false alarm. It can't show causation, and the dots aren't independent:
+    neighbouring months share the same future recession. So what: the spread shifts the odds; it doesn't
+    give certainty.
+  rubric:
+    points:
+      - id: axes
+        label: What is plotted
+        weight: 20
+        paraphrases:
+          - x is the spread this month and y is whether a recession followed within the horizon
+          - each dot is a month coded one if a recession began within the next year
+          - the dashed line is the fitted probability from the probit model
+        keywords: [[spread, x-axis, horizontal], [recession, one, zero, binary, probability, followed]]
+        hint: What does a dot at the top of the chart mean?
+        why: A zero/one y-axis is easy to misread as a continuous outcome.
+      - id: pattern
+        label: Direction of the relationship
+        weight: 25
+        paraphrases:
+          - the lower or more negative the spread the higher the probability of recession
+          - probability falls as the spread rises
+          - steep curves are almost never followed by recession
+        keywords: [[lower, negative, flatter, inverted, falls, rises], [probability, chance, likely, risk]]
+        hint: Follow the dashed line from left to right.
+        why: The direction is the hypothesis being tested.
+      - id: strength
+        label: Strength (a number) and base rate
+        weight: 20
+        paraphrases:
+          - the probit slope is {expected.probit_slope_2s10s}
+          - only {expected.base_rate_next12} of months are followed by a recession
+          - pseudo R-squared is {expected.pseudo_r2_2s10s}
+        keywords: [[slope, R-squared, R2, base rate, share, coefficient]]
+        numeric: {key: base_rate_next12, tolerance: 0.03, accept_percent: true}
+        hint: Quote the base rate or the fitted slope.
+        why: Probabilities only mean something next to the base rate.
+      - id: uncertainty
+        label: Most low-spread months still have no recession
+        weight: 15
+        paraphrases:
+          - even at low spreads most months are not followed by a recession
+          - the signal raises the odds but does not give certainty
+          - there is a lot of overlap between the zero and one dots
+        keywords: [[most, majority, many, overlap], [not followed, no recession, uncertain, odds]]
+        hint: Count the dots at zero to the left of the vertical line.
+        why: Confusing "higher odds" with "will happen" is the classic decision error.
+      - id: limits
+        label: What it can't show
+        weight: 20
+        paraphrases:
+          - the months are not independent because neighbouring months share the same recession
+          - the chart shows association not causation
+          - the recent false alarm drags down the most inverted bin
+        keywords: [[independent, overlap, autocorrelation, cause, causation, association, false alarm]]
+        hint: Do two neighbouring months give two separate pieces of evidence?
+        why: Overlapping observations are why we need HAC standard errors later.
+    red_flags:
+      - id: causation
+        critical: true
+        penalty: 35
+        paraphrases:
+          - a low spread causes a recession
+        keywords: [[causes, cause, makes]]
+        feedback: The chart shows association. Inversion may reflect expectations of rate cuts, which is not a cause.
+      - id: certain
+        critical: true
+        penalty: 30
+        paraphrases:
+          - when the spread is negative a recession will definitely follow
+          - inversion guarantees a recession
+        feedback: Many inverted months are not followed by a recession. The model gives probabilities.
+      - id: linear
+        critical: false
+        penalty: 10
+        paraphrases:
+          - a straight line regression fits this well
+        feedback: The outcome is zero or one. Use a probit or logit, which keep probabilities between zero and one.
+
+# ============================================================== 6 MODEL
+- id: s14_method
+  phase: model
+  type: mcq
+  title: Choose the method
+  prompt: Which modelling approach fits a yes/no outcome predicted from one lagged spread, with overlapping monthly targets?
+  options:
+    - id: a
+      text: Probit (or logit) of the recession-ahead dummy on the spread, with HAC (Newey-West) standard errors
+      correct: true
+      explanation: >-
+        Probit keeps probabilities between zero and one, which is the Estrella-Mishkin approach. Because each target spans
+        {expected.horizon_months} months, neighbouring errors are correlated. HAC standard errors were
+        {expected.se_ratio_10y3m} times the naive ones here.
+    - id: b
+      text: Ordinary least squares of the dummy on the spread with ordinary standard errors
+      explanation: The linear model can produce impossible probabilities, and its ordinary standard errors ignore the overlap.
+    - id: c
+      text: A random forest with a random train/test split
+      explanation: A random split leaks the future into training for time-ordered data, and with a single predictor a forest adds nothing.
+    - id: d
+      text: A t-test of the mean spread in recession versus non-recession months
+      explanation: That compares the spread at the same time. It doesn't forecast anything.
+
+- id: s15_hac_card
+  phase: model
+  type: concept_card
+  title: Why HAC standard errors?
+  prompt: Overlapping targets make the evidence look stronger than it is.
+  body: >-
+    Each month's target covers the next {expected.horizon_months} months, so neighbouring months share
+    most of their future. Their errors are therefore correlated, and the ordinary standard error treats them as
+    independent pieces of evidence. Newey-West (HAC) standard errors correct this. Here they are
+    {expected.se_ratio_10y3m} times larger than the naive ones for the 10y-3m slope. The slope is still
+    clearly negative (HAC p-value {expected.probit_p_hac_10y3m}), but the true uncertainty is much wider than
+    the naive output suggests. Real output: {captured.probit_summary}
+
+- id: s16_read_oos
+  phase: model
+  type: code_read
+  title: Read the expanding-window test
+  snippet: {file: analyse.py, name: expanding_oos}
+  prompt: >-
+    For each forecast month t the model is refit using only rows whose target was already known at t.
+    Find the line that enforces this, and say why the cutoff is {expected.horizon_months} months back
+    rather than one.
+
+- id: s17_fill_embargo
+  phase: model
+  type: code_fill
+  title: Enforce the embargo
+  snippet: {file: analyse.py, name: expanding_oos}
+  prompt: Fill in the cutoff so that no training row's target reaches past the forecast month.
+  blanks:
+    - token: "t - pd.DateOffset(months=HORIZON)"
+      accept: ["t-pd.DateOffset(months=HORIZON)"]
+
+- id: s18_plan_challenge
+  phase: model
+  type: plan_challenge
+  title: Attack this plan
+  flawed_plan: >-
+    "I'll put all months in one table, shuffle them, and train a model on a random eighty percent. Then I'll
+    report the AUC on the other twenty percent. To give the model the best chance, I'll also add this
+    month's recession indicator as a second feature. If the AUC is high, we tell the PM the curve is a
+    reliable recession predictor."
+  prompt: >-
+    A junior analyst proposes the plan above. Challenge it: what does each part assume, why does that
+    fail here, how would you fix it, and how would you check the fix worked?
+  scaffold: challenge_plan
+  analysis_pointer: Think about what a random split does to months whose targets overlap by most of a year.
+  redo_step: Re-read the expanding_oos snippet and the embargo line.
+  model_answer: >-
+    Three problems. First, the random split: months are time-ordered and their targets overlap by up to
+    {expected.horizon_months} months, so shuffling puts near-identical neighbours in both train and test.
+    That leaks the future into training and inflates the AUC. Fix it with an expanding-window,
+    out-of-sample test where each forecast uses only rows whose target was known at that date (a
+    {expected.horizon_months}-month embargo). Second, using the current recession indicator as a feature
+    is target leakage. It is part of what we are predicting, and NBER only publishes it months later,
+    so it isn't available in real time. Drop it. Third, a high AUC alone isn't enough. It measures
+    ranking, not whether the probabilities are calibrated, so also report the Brier score against the base
+    rate, plus the hit and false-alarm rates at a decision threshold. Check: our honest out-of-sample AUC
+    for 10y-3m is {expected.auc_oos_10y3m}, below the in-sample {expected.auc_insample_10y3m}, and the Brier
+    skill score is {expected.bss_oos_10y3m}. Those are the numbers the PM should see.
+  rubric:
+    points:
+      - id: random_split
+        label: Random split on time series
+        weight: 30
+        paraphrases:
+          - a random split leaks future information because months overlap in time
+          - shuffling time series puts neighbouring months in both train and test
+          - for time-ordered data you must split by time not randomly
+        keywords: [[random, shuffle, split], [time, future, leak, leakage, overlap, neighbour, order]]
+        hint: Two neighbouring months share most of their future. What happens if one is in train and one in test?
+        why: This is the most common way time-series results get inflated.
+      - id: fix_split
+        label: Correct validation design
+        weight: 20
+        paraphrases:
+          - use an expanding window and test only on later months
+          - train only on rows whose target was known at the forecast date
+          - apply a twelve month embargo between training targets and the forecast date
+        keywords: [[expanding, rolling, walk-forward, out-of-sample, time-based, embargo, cutoff]]
+        hint: How did our pipeline decide which rows each forecast could learn from?
+        why: Proposing the fix shows you understand the failure.
+      - id: leak_feature
+        label: Current recession indicator is leakage
+        weight: 25
+        paraphrases:
+          - using this month's recession indicator as a feature is target leakage
+          - USREC is not known in real time because NBER dates recessions later
+          - the recession dummy is part of what we predict so it cannot be an input
+        keywords: [[recession indicator, USREC, dummy, feature], [leak, leakage, not known, real time, later, cheat]]
+        hint: When does NBER announce that a recession has started?
+        why: A feature you can't observe at decision time makes the model useless in practice.
+      - id: metrics
+        label: AUC alone is not enough
+        weight: 25
+        paraphrases:
+          - AUC measures ranking but not calibration so also report the Brier score
+          - report hit rate and false alarm rate at a threshold the PM can act on
+          - compare the Brier score with simply forecasting the base rate
+          - our out-of-sample AUC is {expected.auc_oos_10y3m} but the Brier skill is {expected.bss_oos_10y3m}
+        keywords: [[Brier, calibration, calibrated, false alarm, threshold, base rate, skill]]
+        numeric: {key: auc_oos_10y3m, tolerance: 0.03}
+        hint: Does a high AUC tell you whether a forecast of eighty percent is trustworthy?
+        why: Decisions use probabilities, not rankings.
+    red_flags:
+      - id: random_ok
+        critical: true
+        penalty: 35
+        paraphrases:
+          - the random split is fine
+          - a random eighty twenty split is a good way to validate
+        feedback: For overlapping time-series targets, a random split leaks the future. Use a time-based design.
+      - id: recession_feature_ok
+        critical: true
+        penalty: 30
+        paraphrases:
+          - adding the current recession indicator is a good idea
+          - recession months make good predictors
+        feedback: The current recession indicator is part of the target and not known in real time. That is leakage.
+      - id: auc_enough
+        critical: false
+        penalty: 15
+        paraphrases:
+          - a high AUC proves the model is reliable
+        feedback: AUC ignores calibration and false-alarm cost. Our model has a good AUC but negative Brier skill overall.
+
+- id: s19_result
+  phase: model
+  type: result_explain
+  title: Interpret the out-of-sample results
+  chart: p50_oos_probability
+  prompt: >-
+    Out-of-sample from {expected.oos_start}: 10y-3m AUC {expected.auc_oos_10y3m}, 2s10s AUC
+    {expected.auc_oos_2s10s}; Brier skill vs base rate {expected.bss_oos_10y3m} (10y-3m). Before
+    {expected.split_from} the skill was {expected.bss_oos_pre_split_10y3m}. Explain what these results mean
+    for the PM, using Claim, Evidence, Reasoning and one limitation.
+  scaffold: cer
+  analysis_pointer: Look at the probability line from the split month onwards on the chart. What happened afterwards?
+  redo_step: Compare AUC (ranking) with the Brier skill score (calibration) and look at the split diagnostic.
+  model_answer: >-
+    Claim: the curve, especially 10y-3m, ranks risky months well out-of-sample, but its probabilities
+    can't be taken at face value. Evidence: out-of-sample AUC is {expected.auc_oos_10y3m} for 10y-3m against
+    {expected.auc_oos_2s10s} for 2s10s, so the literature's choice of 10y-3m holds up. Yet the Brier skill
+    score is {expected.bss_oos_10y3m}, worse than always forecasting the base rate. Splitting the period
+    shows why: before {expected.split_from} the skill was {expected.bss_oos_pre_split_10y3m}, but from then
+    on the model averaged {expected.mean_prob_post_split_10y3m} recession probability over
+    {expected.n_post_split_months_10y3m} months, and no recession followed. Reasoning: the signal timing
+    worked for all {expected.n_oos_recessions} recessions in the test period, but one long false alarm
+    destroyed its calibration. That fits the Fed's warning that a lower term premium can make the raw
+    slope overstate recession risk. Limitation: only {expected.n_oos_recessions} recessions are in the test,
+    the split is a post-hoc diagnostic rather than a model choice, and USREC is revised after the fact.
+  rubric:
+    points:
+      - id: claim
+        label: Clear claim
+        weight: 15
+        paraphrases:
+          - the curve ranks risk well but its probabilities are not reliable
+          - good discrimination but poor calibration out of sample
+          - the signal is useful as a warning but overconfident recently
+        keywords: [[rank, ranking, discrimination, warning, useful], [calibration, overconfident, probabilities, not reliable]]
+        hint: Say in one sentence what the PM can and cannot trust.
+        why: Results start with a claim the reader can act on.
+      - id: auc
+        label: AUC evidence and spread comparison
+        weight: 20
+        paraphrases:
+          - out-of-sample AUC is {expected.auc_oos_10y3m} for 10y-3m versus {expected.auc_oos_2s10s} for 2s10s
+          - 10y-3m ranks months better than 2s10s
+          - the literature benchmark 10y-3m beats 2s10s out of sample
+        keywords: [[AUC], [10y-3m, 3-month, 2s10s, better, higher, beats]]
+        numeric: {key: auc_oos_10y3m, tolerance: 0.03}
+        hint: Compare the two AUCs.
+        why: The PM asked about 2s10s, and the evidence says to watch 10y-3m.
+      - id: brier
+        label: Calibration evidence
+        weight: 25
+        paraphrases:
+          - the Brier skill score is negative so the probabilities are worse than the base rate
+          - before the split the skill was positive at {expected.bss_oos_pre_split_10y3m}
+          - from the split month the model gave high probabilities and no recession followed
+        keywords: [[Brier, skill, calibration], [negative, worse, base rate, positive, before]]
+        numeric: {key: bss_oos_pre_split_10y3m, tolerance: 0.05}
+        hint: What sign is the Brier skill score, and what was it before the split?
+        why: The PM uses probability levels, not just rankings.
+      - id: reasoning
+        label: Why it happened
+        weight: 25
+        paraphrases:
+          - one long false alarm destroyed calibration while timing worked for earlier recessions
+          - a lower term premium can make the slope overstate recession risk
+          - the relationship may have changed, a regime shift
+        keywords: [[false alarm, term premium, regime, changed, overstate, structural]]
+        hint: Look at the recent period on the chart and think about what else moves long rates.
+        why: Explaining a failure is what separates analysis from reporting.
+      - id: limitation
+        label: Limitation
+        weight: 15
+        paraphrases:
+          - only {expected.n_oos_recessions} recessions in the test period so estimates are noisy
+          - the split is post-hoc and not used to choose the model
+          - USREC is revised after the fact so real-time performance could differ
+        keywords: [[few, only, small sample, post-hoc, revised, real time, noisy]]
+        hint: How many recessions does the test actually contain?
+        why: Every result needs its error bars in words.
+    red_flags:
+      - id: perfect
+        critical: true
+        penalty: 30
+        paraphrases:
+          - the model is very accurate and reliable
+          - the AUC proves the model works perfectly
+        feedback: With negative Brier skill and a long false alarm, "reliable" overclaims.
+      - id: causation
+        critical: true
+        penalty: 30
+        paraphrases:
+          - inversion causes recessions
+        keywords: [[causes, cause]]
+        feedback: Prediction isn't causation.
+      - id: pick_split
+        critical: false
+        penalty: 15
+        paraphrases:
+          - we should only use data before the split because the model works better there
+        feedback: Choosing the period by its score is cherry-picking. The split explains the failure; it doesn't fix it.
+      - id: wrong_spread
+        critical: false
+        penalty: 10
+        paraphrases:
+          - 2s10s is clearly the better predictor
+        feedback: Out-of-sample, 10y-3m has the higher AUC.
+
+- id: s19b_roc_card
+  phase: model
+  type: concept_card
+  title: Ranking is not the same as calibration
+  chart: p50_roc
+  prompt: The ROC curve shows ranking skill at every possible threshold.
+  body: >-
+    Each point on a curve is one threshold: the hit rate on the vertical axis against the false-alarm rate on
+    the horizontal axis. The area under it (AUC) is the chance that a random pre-recession month gets a higher
+    probability than a random calm month. Here that is {expected.auc_oos_10y3m} for 10y-3m and
+    {expected.auc_oos_2s10s} for 2s10s. AUC doesn't care whether a forecast of eighty percent comes true eighty
+    percent of the time. That is calibration, which the Brier score measures, and which failed here
+    (skill {expected.bss_oos_10y3m}).
+
+- id: s20_numeric_lead
+  phase: model
+  type: numeric
+  title: Read the lead time
+  prompt: >-
+    From the 2s10s lead-time table, what is the median number of months between the first inversion and
+    the start of the recession? {captured.lead_table_2s10s}
+  answer_key: median_lead_months
+  tolerance: 0.5
+  unit: months
+
+# ============================================================== 7 DECIDE
+- id: s21_threshold_card
+  phase: decide
+  type: concept_card
+  title: How the trigger was chosen
+  prompt: The trigger was chosen BEFORE the test period, using only data known at the time.
+  body: >-
+    Using only training data up to the first forecast month, we chose the probability threshold that maximises
+    hit rate minus false-alarm rate (Youden's J). Result: {expected.threshold}. In spread terms the full-sample
+    probit reaches that probability when 10y-3m falls to {expected.trigger_spread_10y3m} percentage points.
+    Out-of-sample it was on in {expected.oos_hit_rate} of pre-recession months and in
+    {expected.oos_false_alarm_rate} of calm months. When it was on, a recession followed only
+    {expected.oos_signal_precision} of the time. Real output: {captured.threshold_episodes}
+
+- id: s22_threshold
+  phase: decide
+  type: decision_threshold
+  title: State the trigger
+  prompt: >-
+    Write the rule the PM can follow: the trigger metric, its value, the action, and the error rate to
+    expect at that value. Then say what today's reading ({expected.latest_month}: 10y-3m at
+    {expected.latest_spread_10y3m} points, probability {expected.latest_prob_10y3m}) implies.
+  scaffold: threshold
+  analysis_pointer: Use the threshold card. Convert the probability trigger into a spread level.
+  redo_step: Re-read the threshold card and the today_signal captured output.
+  model_answer: >-
+    Trigger metric: the out-of-sample probit probability of a recession within {expected.horizon_months}
+    months, driven by the 10y-3m spread. Value: {expected.threshold}, which corresponds to the 10y-3m spread
+    falling to about {expected.trigger_spread_10y3m} percentage points. Action: when it crosses, start
+    reducing equity risk in steps rather than all at once, because the signal fired a median
+    {expected.oos_signal_median_lead} months before recessions. Expected error: it caught
+    {expected.oos_hit_rate} of pre-recession months, but it was also on in {expected.oos_false_alarm_rate} of
+    calm months, and a recession followed only {expected.oos_signal_precision} of the time it was on. So
+    expect false alarms. Today the spread is {expected.latest_spread_10y3m} points with a probability of
+    {expected.latest_prob_10y3m}, so the signal is {expected.latest_signal_10y3m}: no de-risking is
+    triggered by this model.
+  rubric:
+    points:
+      - id: metric
+        label: Trigger metric
+        weight: 20
+        paraphrases:
+          - the trigger is the model probability of recession within the next year based on 10y-3m
+          - watch the 10y-3m spread
+          - the signal is the probit recession probability
+        keywords: [[probability, spread, 10y-3m, 3-month, probit]]
+        hint: Which number does the PM watch each month?
+        why: A rule needs one unambiguous metric.
+      - id: value
+        label: Trigger value
+        weight: 25
+        paraphrases:
+          - act when the probability exceeds {expected.threshold}
+          - act when 10y-3m falls below about {expected.trigger_spread_10y3m} points
+          - the threshold is {expected.threshold} chosen on training data
+        keywords: [[threshold, trigger, exceeds, below, above, falls]]
+        numeric: {key: trigger_spread_10y3m, tolerance: 0.15}
+        hint: Give the probability AND the spread level it corresponds to.
+        why: A rule of the form "act once we reach this value" needs the value itself.
+      - id: action
+        label: Action
+        weight: 15
+        paraphrases:
+          - reduce equity exposure gradually when the trigger is hit
+          - start de-risking in steps rather than all at once
+          - cut equity weight when the signal turns on
+        keywords: [[reduce, cut, de-risk, sell, lower], [equity, exposure, risk, weight, gradually, steps]]
+        hint: What does the PM physically do when the signal turns on?
+        why: Decisions are actions, not forecasts.
+      - id: errors
+        label: Expected error rate
+        weight: 25
+        paraphrases:
+          - the signal caught {expected.oos_hit_rate} of pre-recession months
+          - it was on in {expected.oos_false_alarm_rate} of calm months
+          - when on, a recession followed only {expected.oos_signal_precision} of the time
+        keywords: [[false alarm, hit rate, precision, wrong, error]]
+        numeric: {key: oos_signal_precision, tolerance: 0.05, accept_percent: true}
+        hint: How often was the signal on and wrong?
+        why: The PM must know how often the rule will cost money for nothing.
+      - id: today
+        label: Today's reading
+        weight: 15
+        paraphrases:
+          - today the probability is {expected.latest_prob_10y3m} so the signal is off
+          - the current spread of {expected.latest_spread_10y3m} is above the trigger
+          - no de-risking is triggered right now
+        keywords: [[today, current, latest, now], ["off", below, above, not triggered, no action]]
+        numeric: {key: latest_prob_10y3m, tolerance: 0.02, accept_percent: true}
+        hint: Compare today's probability with the threshold.
+        why: The rule only matters if you apply it to now.
+    red_flags:
+      - id: certain
+        critical: true
+        penalty: 30
+        paraphrases:
+          - when the trigger is hit a recession is certain
+          - the rule never gives false alarms
+        feedback: Precision when the signal was on was low. Say "raises the odds".
+      - id: sell_all
+        critical: false
+        penalty: 15
+        paraphrases:
+          - sell all equities immediately when the curve inverts
+        feedback: The lead is long and variable, and false alarms happen. Scale in.
+      - id: hindsight_threshold
+        critical: false
+        penalty: 15
+        paraphrases:
+          - choose the threshold that worked best in the test period
+        feedback: Choosing on the test data overstates performance. We chose the threshold on training data only.
+
+- id: s23_memo
+  phase: decide
+  type: memo
+  title: Write the recommendation memo
+  prompt: >-
+    Write a short memo to the PM: recommendation (with a number), evidence (two or three numbers), the risk left
+    over, limitations, and the next step.
+  scaffold: memo
+  analysis_pointer: Re-read your threshold rule and the out-of-sample results.
+  redo_step: Use the memo template and pull the numbers from the threshold card and the results step.
+  model_answer: >-
+    Recommendation: use the 10y-3m spread, not 2s10s, as a recession early-warning input. Begin staged
+    equity de-risking when the model probability exceeds {expected.threshold} (10y-3m below about
+    {expected.trigger_spread_10y3m} points). Today it is {expected.latest_prob_10y3m}, so no action. Evidence:
+    out-of-sample AUC {expected.auc_oos_10y3m} against {expected.auc_oos_2s10s} for 2s10s; the signal fired a
+    median {expected.oos_signal_median_lead} months before each of the {expected.n_oos_recessions} test-period
+    recessions. Risk left over: when the signal was on, a recession followed only
+    {expected.oos_signal_precision} of the time, and the recent inversion produced a long false alarm that made the
+    probabilities overconfident (Brier skill {expected.bss_oos_10y3m}). Limitations: few recessions,
+    association not causation, USREC dated after the fact, and a possible regime change in term premiums.
+    Next step: add a term-premium-adjusted spread and a second indicator (for example credit spreads), then re-test
+    out-of-sample before increasing the weight on this signal.
+  rubric:
+    points:
+      - id: rec
+        label: Recommendation with a number
+        weight: 25
+        paraphrases:
+          - start staged de-risking when the probability exceeds {expected.threshold}
+          - use 10y-3m as the warning indicator with a trigger near {expected.trigger_spread_10y3m} points
+          - today no action because the probability is {expected.latest_prob_10y3m}
+        keywords: [[recommend, use, start, de-risk, reduce, no action], [threshold, trigger, probability, spread]]
+        numeric: {key: threshold, tolerance: 0.03, accept_percent: true}
+        hint: Lead with what the PM should do and at what number.
+        why: Busy readers read the first line only.
+      - id: evidence
+        label: Evidence (numbers)
+        weight: 25
+        paraphrases:
+          - out-of-sample AUC {expected.auc_oos_10y3m} versus {expected.auc_oos_2s10s}
+          - the signal fired a median {expected.oos_signal_median_lead} months before recessions
+          - it caught all {expected.n_oos_recessions} test-period recessions
+        keywords: [[AUC, lead, months, recessions, caught]]
+        numeric: {key: auc_oos_10y3m, tolerance: 0.03}
+        hint: Two or three numbers that support the recommendation.
+        why: Claims without numbers won't survive an investment committee.
+      - id: risk
+        label: Risk left over
+        weight: 20
+        paraphrases:
+          - false alarms are frequent, only {expected.oos_signal_precision} of signals were followed by recession
+          - the recent long false alarm made the probabilities overconfident
+          - Brier skill was negative
+        keywords: [[false alarm, overconfident, precision, Brier, risk]]
+        hint: What can still go wrong if the PM follows the rule?
+        why: Leaving out the downside destroys trust.
+      - id: limits
+        label: Limitations
+        weight: 15
+        paraphrases:
+          - few recessions in the sample
+          - association not causation
+          - USREC is dated after the fact
+          - term premium regime change
+        keywords: [[few, causation, association, revised, after the fact, term premium, regime]]
+        hint: Name at least two.
+        why: Limitations tell the reader how far to trust the result.
+      - id: next
+        label: Next step
+        weight: 15
+        paraphrases:
+          - add a term premium adjusted spread and re-test out of sample
+          - combine with another indicator such as credit spreads
+          - monitor monthly and re-estimate
+        keywords: [[next, add, combine, test, monitor, re-estimate, term premium, credit]]
+        hint: What would you do with one more week?
+        why: Good memos end with the next decision.
+    red_flags:
+      - id: causation
+        critical: true
+        penalty: 30
+        paraphrases:
+          - inversion causes recessions so we must sell
+        keywords: [[causes, cause]]
+        feedback: Association, not cause.
+      - id: certainty
+        critical: true
+        penalty: 30
+        paraphrases:
+          - a recession is certain
+          - the model is always right
+        feedback: Low precision and a recent false alarm. Never promise certainty to a PM.
+      - id: no_number
+        critical: false
+        penalty: 15
+        paraphrases:
+          - reduce risk if the curve looks worrying
+        feedback: Give a trigger value. "Worrying" isn't a rule.
+
+# ============================================================== 8 DEBRIEF
+- id: s24_debrief_card
+  phase: debrief
+  type: concept_card
+  title: What this case taught
+  prompt: Discrimination is not calibration, and the first plan is rarely the final plan.
+  body: >-
+    Our first plan kept recession months and fitted badly. Understanding WHY (the curve steepens inside
+    recessions) fixed it, and the fix follows from the decision, not from the score. A model can rank risk
+    well (AUC {expected.auc_oos_10y3m}) and still give overconfident probabilities (Brier skill
+    {expected.bss_oos_10y3m}). Always test out-of-sample with an embargo when targets overlap, and turn
+    probabilities into a trigger with a stated error rate.
+
+debrief:
+  concepts_learned:
+    - Forward-looking targets must use negative shifts and flag months whose future is unknown
+    - Overlapping targets need HAC standard errors and an embargo in validation
+    - The modelling sample should match the decision population
+    - AUC measures ranking; the Brier score against the base rate measures calibration
+    - A threshold must be chosen on training data and reported with hit and false-alarm rates
+  common_mistakes:
+    - Saying inversion causes recessions
+    - Using a random train/test split on time series
+    - Reporting accuracy or AUC alone
+    - Filling holiday blanks with zero
+    - Choosing the threshold or the period on the test results
+  interview_summary: >-
+    I tested whether yield-curve inversion predicts US recessions using FRED data from
+    {expected.sample_start}. My first model fitted poorly because months already in recession, when
+    the curve re-steepens, confused it. Matching the sample to the decision fixed that. In an
+    expanding-window test with an embargo, the 10y-3m spread reached AUC {expected.auc_oos_10y3m} and warned a median
+    {expected.oos_signal_median_lead} months before each recession. But a long recent false alarm made its probabilities
+    overconfident, so I recommended a staged de-risking trigger at {expected.threshold} with explicit
+    false-alarm rates, rather than treating inversion as a sell signal.

@@ -15,6 +15,7 @@ If this doc and the code disagree, the code wins — fix the doc.
 | `content.yaml` | human/Claude | the case (below) |
 | `test_case.py` | human/Claude | pytest asserting every result key |
 Calibration: `pipeline/calibration/<case_id>/<step_id>.yaml` → `answers: [{id, text, label: acceptable|not_acceptable, kind: strong|partial|wrong|red_flag, owner_review: bool, note}]`, ≥ 30 per graded step.
+Correct numbers in answer `text` use `{expected.key}` (the build checks the key exists); deliberately wrong numbers are typed.
 
 ## content.yaml
 Top level: `id, number, domain (aviation|f1|football|finance), title, tier (A|A*), decision_maker,

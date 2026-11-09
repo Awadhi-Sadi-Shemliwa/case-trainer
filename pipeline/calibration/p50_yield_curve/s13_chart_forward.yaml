@@ -1,0 +1,227 @@
+step: s13_chart_forward
+answers:
+- id: a01
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Each dot is an expansion month: x is the 2s10s spread that month, y is one if a recession began within the
+    next twelve months. The dashed line is the probit fitted probability. The lower the spread, the higher the
+    probability. But only {expected.base_rate_next12} of months are followed by a recession, and even at low
+    spreads most months have no recession. The months overlap so they are not independent, and it shows
+    association not causation.
+- id: a02
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    x-axis: current spread in percentage points; y-axis: binary outcome, recession ahead or not, plus the
+    fitted probability curve. Probability falls as the spread rises; steep curves are almost never followed by
+    recession. The probit slope is {expected.probit_slope_2s10s}. Many dots at zero sit left of the vertical
+    line, so the signal shifts odds rather than giving certainty. Neighbouring months share the same future
+    recession, so they are not independent.
+- id: a03
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    It plots this month's 2s10s spread against whether a recession followed within the year (0/1), with a
+    probit curve and observed shares per bin. Flatter or inverted curves are linked to higher recession
+    probability. The base rate is only {expected.base_rate_next12}. There is a lot of overlap between the
+    zero and one dots, so it raises the odds, not certainty. The most inverted bin is low because of the
+    recent false alarm. Association, not causation.
+- id: a04
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Dots: months coded one if a recession followed within twelve months, against the current spread. Dashed:
+    probit fit with slope {expected.probit_slope_2s10s} and pseudo R-squared {expected.pseudo_r2_2s10s}. Lower
+    spread, higher chance. Still, most low-spread months were not followed by a recession. Observations
+    overlap in time so they are autocorrelated; this is association only.
+- id: a05
+  kind: strong
+  label: acceptable
+  owner_review: true
+  note: Mentions base rate without number but gives slope.
+  text: >-
+    The chart relates the spread now to recession within the horizon. The fitted probability declines as the
+    spread increases, slope {expected.probit_slope_2s10s}. Most months near zero still show no recession, so
+    it is a probability, not a guarantee. Months are not independent. Does not show cause.
+- id: a06
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Horizontal axis is the 2s10s spread; vertical is the recession-ahead indicator (one or zero) and fitted
+    probability. Negative spreads come with higher probability; above about one point almost no recession
+    follows. Only {expected.base_rate_next12} of expansion months precede a recession. Even inverted months are
+    mostly zeros. The points overlap in time and the relationship is not causal.
+- id: a07
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Lower spread means higher recession probability.
+- id: a08
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The dots are months and the line is a fitted probability. The probability decreases with the spread.
+- id: a09
+  kind: partial
+  label: not_acceptable
+  owner_review: true
+  note: Good axes and pattern plus base rate, but no uncertainty or limits.
+  text: >-
+    x is the spread, y is whether a recession followed within twelve months. As the spread falls the
+    probability rises. Base rate {expected.base_rate_next12}.
+- id: a10
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It is a scatter plot of spread versus recession with a curve.
+- id: a11
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Most months are not followed by recessions, and the months are not independent.
+- id: a12
+  kind: partial
+  label: acceptable
+  owner_review: true
+  note: Very compact.
+  text: >-
+    x spread, y recession-ahead dummy with probit curve; lower spread, higher probability (base rate
+    {expected.base_rate_next12}); most low-spread months still no recession; overlapping months, not causal.
+- id: a13
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The probit slope is {expected.probit_slope_2s10s}, so the spread matters.
+- id: a14
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The y-axis shows GDP growth, which rises with the spread.
+- id: a15
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Higher spread means higher recession probability.
+- id: a16
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The chart shows the spread over time.
+- id: a17
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The dots show stock returns and the line is a moving average.
+- id: a18
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    There is no pattern; the dots are random.
+- id: a19
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Half of all months are followed by a recession.
+- id: a20
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    A linear regression line would fit these points better than the curve.
+- id: a21
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    A low spread causes a recession, as the curve clearly shows.
+- id: a22
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    When the spread is negative a recession will definitely follow within twelve months.
+- id: a23
+  kind: red_flag
+  label: not_acceptable
+  owner_review: true
+  note: Correct description then claims a guarantee.
+  text: >-
+    x is the spread, y is whether a recession followed; the probit curve slopes down with slope
+    {expected.probit_slope_2s10s}. Inversion guarantees a recession within the year.
+- id: a24
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    A straight line regression fits this well and shows the effect is linear.
+- id: a25
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Each point is a month in expansion: spread on x, and whether a recession started within the next year on
+    y. The probit curve shows probability rising as the spread falls toward and below zero. Strength: base rate
+    {expected.base_rate_next12}, slope {expected.probit_slope_2s10s}. Most points near zero are still zeros,
+    so it is about odds. Points are not independent because adjacent months share the same recession. Not causal.
+- id: a26
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Binary outcome versus current spread with a fitted probit and binned empirical shares. Clear negative
+    relationship: probability of recession ahead increases as the curve flattens or inverts. Pseudo R-squared
+    {expected.pseudo_r2_2s10s}. Much overlap: many inverted months had no recession, including the recent
+    false alarm. The observations overlap so standard errors need HAC; association only.
+- id: a27
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It shows that recessions are more likely when the curve is inverted. The model fits well.
+- id: a28
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The dots at one are recession months and the dots at zero are expansion months right now.
+- id: a29
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The dashed line falls from left to right, meaning steep curves rarely precede recessions.
+- id: a30
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The curve shows that the spread predicts recessions with a hundred percent probability below zero.
+- id: a31
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It shows association and not causation.
+- id: a32
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Each dot is a recession and its size is the spread.

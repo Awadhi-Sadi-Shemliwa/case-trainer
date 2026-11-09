@@ -1,0 +1,232 @@
+step: s19_result
+answers:
+- id: a01
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Claim: the curve, especially 10y-3m, ranks risky months well but its probabilities are not reliable at face
+    value. Evidence: out-of-sample AUC {expected.auc_oos_10y3m} for 10y-3m versus {expected.auc_oos_2s10s} for
+    2s10s, but the Brier skill score is {expected.bss_oos_10y3m}, worse than the base rate. Before the split it
+    was {expected.bss_oos_pre_split_10y3m}. Reasoning: one long recent false alarm with high probabilities and
+    no recession ruined calibration, consistent with a lower term premium making the slope overstate risk.
+    Limitation: only {expected.n_oos_recessions} recessions in the test.
+- id: a02
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The model discriminates well but is poorly calibrated. AUC is {expected.auc_oos_10y3m} for 10y-3m, beating
+    2s10s at {expected.auc_oos_2s10s}. Brier skill is negative overall, but it was positive at
+    {expected.bss_oos_pre_split_10y3m} before the recent inversion. Since then the model averaged
+    {expected.mean_prob_post_split_10y3m} and no recession came, so overconfidence comes from that false alarm,
+    possibly a regime change in term premiums. Caveat: few recessions, and the split is post-hoc.
+- id: a03
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The yield curve is a useful warning but overconfident lately. 10y-3m ranks months better than 2s10s
+    (AUC {expected.auc_oos_10y3m} vs {expected.auc_oos_2s10s}). Yet calibration failed: Brier skill
+    {expected.bss_oos_10y3m}, driven by the recent false alarm; before it skill was
+    {expected.bss_oos_pre_split_10y3m}. The relationship may have shifted because term premiums fell. Limitation:
+    {expected.n_oos_recessions} test recessions and USREC is revised, so real-time results could differ.
+- id: a04
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Claim: good at ranking, bad at probability levels recently. Evidence: AUC {expected.auc_oos_10y3m}
+    (10y-3m), higher than 2s10s; Brier skill negative, though {expected.bss_oos_pre_split_10y3m} before the
+    split. Reasoning: one long false alarm with high predicted probability and no recession. That matches the
+    Fed note that the slope may overstate risk when term premiums are low. Limitation: small number of
+    recessions, so noisy estimates.
+- id: a05
+  kind: strong
+  label: acceptable
+  owner_review: true
+  note: No explicit 2s10s comparison number.
+  text: >-
+    The signal discriminates (AUC {expected.auc_oos_10y3m}, and 10y-3m beats 2s10s) but is miscalibrated:
+    Brier skill {expected.bss_oos_10y3m}, whereas before the split it was {expected.bss_oos_pre_split_10y3m}.
+    The cause is the recent long false alarm, perhaps a structural change in term premium. Only
+    {expected.n_oos_recessions} recessions were tested.
+- id: a06
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The out-of-sample AUC is {expected.auc_oos_10y3m}, so the model is good at predicting recessions.
+- id: a07
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    10y-3m is better than 2s10s. The Brier skill is negative.
+- id: a08
+  kind: partial
+  label: not_acceptable
+  owner_review: true
+  note: Claim, AUC and Brier but no reasoning or limitation.
+  text: >-
+    It ranks well but the probabilities are off: AUC {expected.auc_oos_10y3m} vs {expected.auc_oos_2s10s}, and
+    Brier skill {expected.bss_oos_10y3m}, which was {expected.bss_oos_pre_split_10y3m} before the split.
+- id: a09
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The recent inversion was a false alarm, which made the model look bad.
+- id: a10
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The results are mixed. Some metrics are good and some are bad.
+- id: a11
+  kind: partial
+  label: acceptable
+  owner_review: true
+  note: Compact but complete.
+  text: >-
+    Good ranking, poor calibration: AUC {expected.auc_oos_10y3m} (beats 2s10s); Brier skill negative but
+    {expected.bss_oos_pre_split_10y3m} pre-split; the recent false alarm and lower term premium explain it;
+    only {expected.n_oos_recessions} test recessions.
+- id: a12
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The AUC is above one half so the model is better than random, and the Brier score is small.
+- id: a13
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The Brier score is negative so the model has negative accuracy.
+- id: a14
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The AUC means the model is correct {expected.auc_oos_10y3m} of the time.
+- id: a15
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The model failed completely and the yield curve has no predictive power.
+- id: a16
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The in-sample results are better, so we should use the in-sample model.
+- id: a17
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    A Brier score closer to one is better, so the model is good.
+- id: a18
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The results show the economy will be in recession next year.
+- id: a19
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The model is very accurate and reliable; the AUC proves it works perfectly, so the PM can trust its
+    probabilities.
+- id: a20
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The high AUC confirms that inversion causes recessions.
+- id: a21
+  kind: red_flag
+  label: not_acceptable
+  owner_review: true
+  note: Good analysis but recommends cherry-picking the period.
+  text: >-
+    It ranks well (AUC {expected.auc_oos_10y3m}) but recent calibration failed. Before the split skill was
+    {expected.bss_oos_pre_split_10y3m}, so we should only use data before the split because the model works
+    better there.
+- id: a22
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    2s10s is clearly the better predictor, as the owner asked about it.
+- id: a23
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Claim: watch 10y-3m, and read its probabilities with caution. Evidence: AUC {expected.auc_oos_10y3m} vs
+    {expected.auc_oos_2s10s}; Brier skill {expected.bss_oos_10y3m} overall but
+    {expected.bss_oos_pre_split_10y3m} before the latest inversion, after which the mean forecast was
+    {expected.mean_prob_post_split_10y3m} with no recession. Reasoning: timing worked for all
+    {expected.n_oos_recessions} test recessions, but a long false alarm broke calibration; lower term
+    premiums may have changed the relationship. Limitation: tiny event count and a post-hoc split.
+- id: a24
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Discrimination yes, calibration no. Out of sample, 10y-3m reached AUC {expected.auc_oos_10y3m}, ahead of
+    2s10s. But the probabilities were overconfident: negative Brier skill, entirely from the recent false
+    alarm, since skill was {expected.bss_oos_pre_split_10y3m} before it. Possible regime change (term premium).
+    With only {expected.n_oos_recessions} recessions the estimates are noisy.
+- id: a25
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The probabilities are too high recently because there has been no recession.
+- id: a26
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The model needs more features before we can say anything.
+- id: a27
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    AUC {expected.auc_oos_10y3m} is good but there are few recessions.
+- id: a28
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Negative skill means the spread predicts expansions instead of recessions.
+- id: a29
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The model is overconfident, maybe because of a regime change.
+- id: a30
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Brier and AUC measure the same thing so the results contradict each other.
+- id: a31
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    10y-3m has the higher AUC so the literature is right.
+- id: a32
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The test period is too short so the results mean nothing.

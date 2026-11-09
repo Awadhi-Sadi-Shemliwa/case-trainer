@@ -1,0 +1,233 @@
+step: s11_clean_recession_months
+answers:
+- id: a01
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    During recessions the Fed cuts short rates so the curve steepens, yet the next-year target is one. Those
+    months teach the model that a steep curve means recession, the reverse of the warning pattern. The PM
+    acts during expansions, so we model expansion months. Pseudo R-squared rose from
+    {expected.pseudo_r2_all_months_10y3m} to {expected.pseudo_r2_10y3m}. It is not cheating because the rule
+    comes from the decision, not from the score, and the same rule is used out of sample.
+- id: a02
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Inside a recession the spread re-steepens because of rate cuts while the target stays at one, which
+    confuses the model. Once you are in a recession the warning is too late anyway, so the population that
+    matters is expansion months. AUC went from {expected.auc_insample_all_months_10y3m} to
+    {expected.auc_insample_10y3m}. The rule is set by the decision before looking at results and applied in
+    the test too, so it is not snooping.
+- id: a03
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The mechanism: recession months pair a high spread with a positive target. That is the opposite of the
+    pre-recession relationship. We only need the signal before a recession, so the sample should match the
+    decision. The fit improved from {expected.pseudo_r2_all_months_10y3m} to {expected.pseudo_r2_10y3m}
+    pseudo R2, but the reason is the principle, and we would keep the rule even if the score fell.
+- id: a04
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Not cheating. The decision is made in expansions, and once a recession is underway the warning has no
+    value. Inside recessions the curve steepens because the Fed cuts rates, so those rows reverse the
+    pattern. R-squared rose to {expected.pseudo_r2_10y3m}. The same exclusion is applied out-of-sample, and it
+    was chosen by logic not by test results.
+- id: a05
+  kind: strong
+  label: acceptable
+  owner_review: true
+  note: Number quoted for AUC only; check whether that is enough evidence.
+  text: >-
+    Recession months have a steep curve after rate cuts but the target equals one, so they push the
+    relationship the wrong way. The PM needs a warning before, not during. In-sample AUC rose from
+    {expected.auc_insample_all_months_10y3m} to {expected.auc_insample_10y3m}. This is a principled rule
+    matching the population where the model is used, applied identically in testing.
+- id: a06
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Why remove them: during a recession the target is trivially one and the spread is high because the Fed
+    has cut, which is the opposite of the signal we want. Our population is expansions because that is when we
+    decide. Evidence: fit went from {expected.pseudo_r2_all_months_10y3m} to {expected.pseudo_r2_10y3m}.
+    Not data snooping because the rule is decided by the use case and kept in the out-of-sample test.
+- id: a07
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The curve steepens during recessions as rates are cut, while the target says recession ahead, so
+    including them inverts the relationship. We model only expansions, matching when the PM acts. AUC improved
+    to {expected.auc_insample_10y3m} from {expected.auc_insample_all_months_10y3m}. It is not cherry
+    picking: the rule follows from the decision and is the same in the test.
+- id: a08
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    We removed recession months because the R-squared went up from {expected.pseudo_r2_all_months_10y3m} to
+    {expected.pseudo_r2_10y3m}.
+- id: a09
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    During recessions the curve steepens, so those months confuse the model.
+- id: a10
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The PM only needs a warning before a recession, so recession months are not useful.
+- id: a11
+  kind: partial
+  label: not_acceptable
+  owner_review: true
+  note: Mechanism and decision but no numbers and no snooping argument.
+  text: >-
+    Inside recessions the Fed cuts so the spread is steep while the target is one, the reverse of the
+    warning. And the PM acts during expansions so that is the right population.
+- id: a12
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It is not cheating because we apply the same rule out of sample.
+- id: a13
+  kind: partial
+  label: acceptable
+  owner_review: true
+  note: Compact; all four areas present.
+  text: >-
+    Steep curve during recessions (rate cuts) plus target one reverses the pattern; we decide in expansions;
+    pseudo R2 rose to {expected.pseudo_r2_10y3m}; rule fixed by the decision and reused in the test, so no snooping.
+- id: a14
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Recession months are a different regime and the model fits better without them.
+- id: a15
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The score improved a lot and the reasoning is that recessions are special.
+- id: a16
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The spread is negative during recessions so they would make the model too good.
+- id: a17
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    We removed them because there were missing values in those months.
+- id: a18
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It reduces the size of the dataset which makes training faster.
+- id: a19
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Recession months have too much volatility in the stock market.
+- id: a20
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It is cheating because we removed data, so we should keep all months.
+- id: a21
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The class imbalance is fixed by removing positive cases.
+- id: a22
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Because NBER data is not reliable during recessions.
+- id: a23
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The model needed fewer rows to converge.
+- id: a24
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    We removed them because it made the model score higher, and dropping rows that hurt accuracy is fine
+    if the result improves.
+- id: a25
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Recession months are outliers and noisy data points, so it is standard to remove them.
+- id: a26
+  kind: red_flag
+  label: not_acceptable
+  owner_review: true
+  note: Good mechanism but says real-time recession status is always known.
+  text: >-
+    During recessions the Fed cuts so the curve is steep and the target is one, which is backwards. We
+    always know immediately whether we are in a recession, so excluding those months costs nothing.
+    Pseudo R2 rose to {expected.pseudo_r2_10y3m}.
+- id: a27
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Higher AUC is what matters, so any row that lowers it should go.
+- id: a28
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    In a recession the short rate is cut, so the spread is wide, but the 12-month target is one. That pairs a
+    steep curve with recession and fights the real lead pattern. We only use the model in expansions, so we
+    fit on expansions. Pseudo R2 went from {expected.pseudo_r2_all_months_10y3m} to {expected.pseudo_r2_10y3m}.
+    The rule is set by the decision, not the score, and also applies in the out-of-sample test. Cost: real
+    time recession status is only known later.
+- id: a29
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    These rows do not represent the decision situation, and they reverse the relationship: steep curve from
+    rate cuts while target is one. Removing them raised AUC to {expected.auc_insample_10y3m}. Because we would
+    use the same rule regardless of the score, and the test uses it too, this is not snooping.
+- id: a30
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The model was bad before and good after, so the change was right.
+- id: a31
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    We should remove expansion months instead because recessions are what we predict.
+- id: a32
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It matches the decision population: the warning is only useful before a recession.

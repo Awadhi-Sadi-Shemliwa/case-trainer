@@ -1,0 +1,244 @@
+step: s12_chart_spread
+answers:
+- id: a01
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The chart shows the monthly 2s10s and 10y-3m Treasury spreads in percentage points since the seventies,
+    with NBER recessions shaded. Before almost every recession the spread goes negative, and during
+    recessions it jumps back up. The median lead for 2s10s is {expected.median_lead_months} months, ranging
+    from {expected.min_lead_months} to {expected.max_lead_months}. There are false alarms, including the long
+    recent inversion with no recession so far, and 2s10s missed the pandemic recession. It shows timing, not
+    causation, and there are few recessions. For the PM, inversion is an early warning, not a sell-today signal.
+- id: a02
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Plotted: two yield spreads (10y minus 2y and 10y minus 3m) in percentage points over time; grey bars are
+    recession months. Pattern: the curve inverts ahead of recessions. Strength:
+    {expected.recessions_signalled_2s10s} of {expected.recessions_evaluable_2s10s} recessions were preceded by a
+    2s10s inversion, median lead about {expected.median_lead_months} months. Anomalies: false alarms
+    (recent long inversion) and a miss in the pandemic. Cannot show: causation, and it could be chance with
+    so few events. So what: treat inversion as raising risk over the next year or two.
+- id: a03
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The lines are yield spreads (long minus short Treasury rates) and the shaded areas are NBER recessions.
+    The spread tends to fall below zero roughly {expected.median_lead_months} months before a recession
+    starts, then rises sharply during the recession. But not every inversion was followed by a recession;
+    the latest one so far was a false alarm. The chart shows association and timing, not cause, since tight
+    monetary policy could drive both. For the PM it is a warning to prepare, not an immediate sell trigger.
+- id: a04
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Monthly spreads in percentage points with recessions shaded. Inversion precedes recessions with a median
+    lead of {expected.median_lead_months} months but a wide range ({expected.min_lead_months} to
+    {expected.max_lead_months}). There were {expected.false_alarm_episodes_2s10s} false-alarm episodes for 2s10s.
+    This does not prove causation and the sample of recessions is small. The PM should see inversion as an
+    early, imprecise warning.
+- id: a05
+  kind: strong
+  label: acceptable
+  owner_review: true
+  note: Strength given as a count rather than lead months.
+  text: >-
+    It plots 10y-2y and 10y-3m spreads (percentage points) with grey recession bars. The curve usually inverts
+    before recessions and steepens during them. {expected.recessions_signalled_2s10s} of
+    {expected.recessions_evaluable_2s10s} recessions had a prior 2s10s inversion. False alarms exist, like the
+    recent one, and the pandemic recession was missed. It is association, not cause. So the PM gets a
+    heads-up, not a precise timing tool.
+- id: a06
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Axes: time versus spread in percentage points; shading marks NBER recessions. Pattern: spreads drop below
+    zero ahead of each downturn, then rebound once the Fed cuts. Size: a median lead of
+    {expected.median_lead_months} months. Exceptions: the recent long inversion without a recession, and the
+    pandemic miss. Limits: few events, so chance and common drivers cannot be ruled out. Business: use it as an
+    early warning with a long, variable lead.
+- id: a07
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    This shows yield spreads over time with recessions in grey. Inversions come before recessions, typically
+    around {expected.median_lead_months} months ahead, but the lead varies from {expected.min_lead_months} to
+    {expected.max_lead_months} months. Some inversions were false signals. We can't say the inversion causes
+    anything; it precedes recessions. The PM should consider reducing risk gradually over the following
+    year rather than selling immediately.
+- id: a08
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The spread goes negative before recessions. Recessions are shaded.
+- id: a09
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The yield curve inverts before recessions with a lead of about {expected.median_lead_months} months, so it
+    is a good predictor.
+- id: a10
+  kind: partial
+  label: not_acceptable
+  owner_review: true
+  note: Good description but no number and no limitation.
+  text: >-
+    The chart shows two Treasury spreads with recessions shaded. Before each recession the curve inverts, then
+    it steepens during the recession. There were also false alarms, like the recent inversion.
+- id: a11
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Spreads over time. They go up and down. The shaded areas are recessions.
+- id: a12
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The chart shows the spread and recessions. Correlation is not causation.
+- id: a13
+  kind: partial
+  label: acceptable
+  owner_review: true
+  note: Short but covers the six areas.
+  text: >-
+    Spreads in pp with NBER recessions shaded; inversion precedes recessions (median
+    {expected.median_lead_months} months); false alarms and a pandemic miss; timing not cause, few events; for
+    the PM an early warning.
+- id: a14
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Inversions preceded {expected.recessions_signalled_2s10s} recessions. The latest inversion has not been
+    followed by a recession.
+- id: a15
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It shows how interest rates move. Long rates and short rates differ. Recessions happen sometimes.
+- id: a16
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The spread is lowest during recessions, so recessions happen when the curve is inverted.
+- id: a17
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The chart shows GDP growth and inflation, with recessions in grey.
+- id: a18
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The lines show stock prices falling before recessions.
+- id: a19
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    There is no relationship between the spread and recessions.
+- id: a20
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The recession starts exactly one year after the inversion every time.
+- id: a21
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The spread rises before recessions and falls after them.
+- id: a22
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The chart proves that an inverted yield curve causes recessions, because every time it inverts the
+    economy goes into recession about {expected.median_lead_months} months later.
+- id: a23
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Inversion predicts every recession perfectly; it is one hundred percent accurate, so the PM should sell
+    all equities when it inverts.
+- id: a24
+  kind: red_flag
+  label: not_acceptable
+  owner_review: true
+  note: Strong description spoiled by a causal claim at the end.
+  text: >-
+    Spreads in percentage points with recessions shaded. Inversion comes before recessions with a median lead
+    of {expected.median_lead_months} months, with false alarms such as the recent one. This shows that
+    inverted curves cause recessions by choking bank lending.
+- id: a25
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Every inversion is followed by a recession, so the current situation guarantees one.
+- id: a26
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The inverted yield curve makes the economy go into recession because banks stop lending.
+- id: a27
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    What is plotted: monthly average Treasury spreads (10-year minus 2-year, 10-year minus 3-month), percentage
+    points, with NBER recessions shaded grey. Pattern: inversion leads recessions; during recessions the
+    spread widens as policy rates are cut. Strength: median lead {expected.median_lead_months} months for
+    2s10s. Anomalies: {expected.false_alarm_episodes_2s10s} false alarm episodes and the pandemic miss.
+    Limitations: timing is not cause; few recessions. So what: an early warning, not a precise timer.
+- id: a28
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Two spreads in pp over decades, grey bars for recessions. Inversion tends to precede downturns by around
+    {expected.median_lead_months} months, although the lead ranges widely. The latest long inversion has no
+    recession after it yet, a false alarm so far. This is association; common drivers like Fed tightening
+    could explain both. PM: raise caution after an inversion, scale out gradually.
+- id: a29
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It shows a negative spread before recessions. We can use it to predict them.
+- id: a30
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The red line is always higher than the blue line, which means 3-month rates are higher than 2-year rates.
+- id: a31
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The grey bars are recessions and the spread is in percentage points. Spread falls before them.
+- id: a32
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    This chart shows recession probabilities from the model.

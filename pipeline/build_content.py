@@ -210,8 +210,13 @@ def validate_case(case_dir: Path, sources: dict[str, dict], cal_root: Path = CAL
                 if st.buggy_code is not None and st.buggy_code.strip() == code.strip():
                     errs.append(f"{where}: buggy_code is identical to the real snippet")
         if st.type in GRADED_TYPES:
-            _, cerrs = load_calibration(case.id, st.id, cal_root)
+            answers, cerrs = load_calibration(case.id, st.id, cal_root)
             errs += [f"{where}: {e}" for e in cerrs]
+            # calibration answers may quote real numbers only via placeholders, which must resolve
+            for a in answers:
+                for key in PLACEHOLDER_RE.findall(str(a.get("text", ""))):
+                    if key not in results:
+                        errs.append(f"{where}: calibration {a.get('id')}: placeholder {{expected.{key}}} not in results")
     return case, errs
 
 

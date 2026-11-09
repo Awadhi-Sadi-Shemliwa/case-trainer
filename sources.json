@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "key": "estrella_mishkin_1996",
+    "title": "The Yield Curve as a Predictor of U.S. Recessions",
+    "authors": ["Arturo Estrella", "Frederic S. Mishkin"],
+    "year": 1996,
+    "url": "https://www.newyorkfed.org/research/current_issues/ci2-7.html",
+    "verified_on": "2026-11-09",
+    "quote": "significantly outperforms other financial and macroeconomic indicators in predicting recessions",
+    "status": "VERIFIED",
+    "note": "Federal Reserve Bank of New York, Current Issues in Economics and Finance, Vol. 2, No. 7, June 1996. Uses the 10-year minus 3-month spread."
+  },
+  {
+    "key": "nyfed_ycfaq",
+    "title": "The Yield Curve as a Leading Indicator: Frequently Asked Questions",
+    "authors": ["Arturo Estrella"],
+    "year": 2005,
+    "url": "https://www.newyorkfed.org/medialibrary/media/research/capital_markets/ycfaq.pdf",
+    "verified_on": "2026-11-09",
+    "quote": "with a lead time of about four to six quarters",
+    "status": "VERIFIED",
+    "note": "PDF opened and text extracted on 2026-11-09 (dated October 2005). The live recession-probability data sits behind an interactive page (ycfaq#/interactive) with no direct file link found, so the NY Fed benchmark series was NOT obtained."
+  },
+  {
+    "key": "johansson_meldrum_2018",
+    "title": "Predicting Recession Probabilities Using the Slope of the Yield Curve",
+    "authors": ["Peter Johansson", "Andrew Meldrum"],
+    "year": 2018,
+    "url": "https://www.federalreserve.gov/econres/notes/feds-notes/predicting-recession-probabilities-using-the-slope-of-the-yield-curve-20180301.html",
+    "verified_on": "2026-11-09",
+    "quote": "may overstate the current probability of a recession",
+    "status": "VERIFIED",
+    "note": "FEDS Notes, Board of Governors of the Federal Reserve System, 1 March 2018. Argues lower term premiums can make the raw slope overstate recession risk."
+  }
+]

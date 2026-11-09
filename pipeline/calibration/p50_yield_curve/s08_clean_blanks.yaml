@@ -1,0 +1,223 @@
+step: s08_clean_blanks
+answers:
+- id: a01
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    We dropped the blank rows. They are bond market holidays such as Christmas and July 4th when there is no
+    trading, so no true yield exists. I rejected forward filling because it would invent a trading day, and
+    filling with zero would create fake inversions. Since the next step averages each month, dropping keeps
+    the monthly mean unbiased.
+- id: a02
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Action: removed and logged the empty days. Reason: they line up with market holidays (Veterans Day,
+    Independence Day, Christmas, New Year), not errors. Alternative: ffill or interpolation would add values
+    that never existed; zero would look like a flat curve. Downstream we take a monthly mean, which is
+    unaffected by dropping holidays.
+- id: a03
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The missing values are holidays when the market is closed, so I deleted those rows and recorded the count.
+    Imputing them with zero would pull the monthly average towards zero and look like inversion. Forward fill
+    double counts the previous day. Because we resample to monthly averages next, removing them is safe.
+- id: a04
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Dropped. No trading on holidays means no spread to observe. If we filled with zero we would distort the
+    monthly average and create false signals; forward filling gives extra weight to the day before. The
+    monthly mean over the real trading days is what we want.
+- id: a05
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    The pipeline excluded the blank dates after checking they were the holiday calendar. Removing them is
+    fine because the monthly mean only needs actual trading days. I rejected interpolation, which invents
+    data, and zero fill, which creates fake inversions. Skipping the log would lose the audit trail.
+- id: a06
+  kind: strong
+  label: acceptable
+  owner_review: true
+  note: Does not explicitly say "monthly" but says averaging.
+  text: >-
+    We removed the empty days because they are Christmas, New Year and other holidays with no trading.
+    Filling them with zero would fake an inverted curve, and forward fill adds a made-up observation. Since we
+    average later, dropping does not bias the result.
+- id: a07
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Holidays have no bond trading, so the blank values are not errors, they are days with no data. We drop
+    and log them. Alternatives like ffill or zero imputation would distort the monthly mean; zero in
+    particular would create fake inversions in the averages.
+- id: a08
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Dropped holiday blanks. Market closed so there is no value. Zero fill is wrong (fake inversion) and
+    forward fill invents a trading day. Monthly averaging next means the drop does not distort anything.
+- id: a09
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    We dropped the missing values because models cannot handle NaN.
+- id: a10
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The rows were removed since they were holidays.
+- id: a11
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Dropping is better than filling with zero because zero would create fake inversions.
+- id: a12
+  kind: partial
+  label: not_acceptable
+  owner_review: true
+  note: Has why and alternative but nothing on the monthly averaging effect.
+  text: >-
+    We removed the blank holiday rows because there is no trading those days; forward fill would invent
+    values that never existed.
+- id: a13
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Missing data was deleted so the dataset is clean before analysis.
+- id: a14
+  kind: partial
+  label: acceptable
+  owner_review: true
+  note: Brief but hits all four areas.
+  text: >-
+    Dropped the holiday blanks (no trading). Ffill or zero would invent or fake values; the monthly mean is
+    unaffected by dropping.
+- id: a15
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The blank values were dropped and the monthly average was then computed.
+- id: a16
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Holidays have no data. Interpolation could also work.
+- id: a17
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    We dropped them because they were outliers that would affect the regression.
+- id: a18
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    FRED made errors on those days so the rows are corrupted and should be deleted.
+- id: a19
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    It does not matter how we treat missing values in time series.
+- id: a20
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The missing values are weekends.
+- id: a21
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Forward filling is always the best approach for financial data so the pipeline should have done that.
+- id: a22
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    We should keep them as zero so we have a complete daily series.
+- id: a23
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Dropping rows reduces the sample size so we lose statistical power.
+- id: a24
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The pipeline removed recession months.
+- id: a25
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Filling blanks with zero is fine because one day does not matter much in a monthly average, and it
+    keeps every row.
+- id: a26
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    Just drop them, there is no need to record it anywhere since it is only a few rows.
+- id: a27
+  kind: red_flag
+  label: not_acceptable
+  owner_review: true
+  note: Good reasoning but explicitly endorses zero fill as alternative.
+  text: >-
+    The blanks are holidays with no trading. We could drop them, but replacing missing spread with zero is
+    equally fine since we average to months.
+- id: a28
+  kind: red_flag
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    They are outliers from data errors at FRED, so we delete them without logging.
+- id: a29
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    What: dropped the empty spread rows and logged the count. Why: they fall on US bond market holidays,
+    when no Treasury trading happens. Rejected: forward fill (adds a fake trading day) and zero (fake
+    inversion). If skipped with zero fill, the monthly averages would be biased toward inversion.
+- id: a30
+  kind: strong
+  label: acceptable
+  owner_review: false
+  text: >-
+    Holidays mean the market is closed, so we remove those rows instead of imputing. Imputing zero would
+    distort the monthly mean and create false inversions. The monthly average over the remaining days is
+    unbiased.
+- id: a31
+  kind: partial
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    We removed them, as is standard practice.
+- id: a32
+  kind: wrong
+  label: not_acceptable
+  owner_review: false
+  text: >-
+    The blank values mean the curve was flat that day.

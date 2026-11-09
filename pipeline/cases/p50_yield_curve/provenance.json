@@ -1,0 +1,269 @@
+{
+  "datasets": {
+    "fred_T10Y2Y": {
+      "key": "fred_T10Y2Y",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y2Y",
+      "source_page": "https://fred.stlouisfed.org/series/T10Y2Y",
+      "file": "raw/T10Y2Y.csv",
+      "retrieved_utc": "2026-11-05T19:44:33Z",
+      "sha256": "1b57cd017bdc93261734db2fdb6746795cc80f66bfb5b8fbc2a2c28a3a0e3f58",
+      "bytes": 210373,
+      "licence_note": "FRED: 'Copyrighted: Citation Required'. Cite as: Federal Reserve Bank of St. Louis, 10-Year Treasury Constant Maturity Minus 2-Year Treasury Constant Maturity [T10Y2Y], retrieved from FRED, Federal Reserve Bank of St. Louis; https://fred.stlouisfed.org/series/T10Y2Y",
+      "sid": "T10Y2Y",
+      "title": "10-Year Treasury Constant Maturity Minus 2-Year Treasury Constant Maturity",
+      "units": "Percent, Not Seasonally Adjusted",
+      "frequency": "Daily",
+      "verified_on": "2026-11-05",
+      "verified_how": "Opened FRED series page; title/units/frequency copied from page",
+      "schema": {
+        "rows": 13157,
+        "columns": [
+          "observation_date",
+          "T10Y2Y"
+        ],
+        "dtypes": {
+          "observation_date": "str",
+          "T10Y2Y": "str"
+        },
+        "missing": {
+          "observation_date": 0,
+          "T10Y2Y": 0
+        },
+        "head": [
+          {
+            "observation_date": "1976-06-01",
+            "T10Y2Y": "0.68"
+          },
+          {
+            "observation_date": "1976-06-02",
+            "T10Y2Y": "0.71"
+          },
+          {
+            "observation_date": "1976-06-03",
+            "T10Y2Y": "0.70"
+          },
+          {
+            "observation_date": "1976-06-04",
+            "T10Y2Y": "0.77"
+          },
+          {
+            "observation_date": "1976-06-07",
+            "T10Y2Y": "0.79"
+          }
+        ]
+      },
+      "non_numeric_markers": {
+        "": 553
+      }
+    },
+    "fred_T10Y3M": {
+      "key": "fred_T10Y3M",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y3M",
+      "source_page": "https://fred.stlouisfed.org/series/T10Y3M",
+      "file": "raw/T10Y3M.csv",
+      "retrieved_utc": "2026-11-05T19:44:34Z",
+      "sha256": "2ce7bc7dde8ef862b354fa4cd85c8b7ca8d7690d318ef30506945661015cc21c",
+      "bytes": 186481,
+      "licence_note": "FRED: 'Copyrighted: Citation Required'. Cite as: Federal Reserve Bank of St. Louis, 10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity [T10Y3M], retrieved from FRED, Federal Reserve Bank of St. Louis; https://fred.stlouisfed.org/series/T10Y3M",
+      "sid": "T10Y3M",
+      "title": "10-Year Treasury Constant Maturity Minus 3-Month Treasury Constant Maturity",
+      "units": "Percent, Not Seasonally Adjusted",
+      "frequency": "Daily",
+      "verified_on": "2026-11-05",
+      "verified_how": "Opened FRED series page; title/units/frequency copied from page",
+      "schema": {
+        "rows": 11698,
+        "columns": [
+          "observation_date",
+          "T10Y3M"
+        ],
+        "dtypes": {
+          "observation_date": "str",
+          "T10Y3M": "str"
+        },
+        "missing": {
+          "observation_date": 0,
+          "T10Y3M": 0
+        },
+        "head": [
+          {
+            "observation_date": "1982-01-04",
+            "T10Y3M": "2.32"
+          },
+          {
+            "observation_date": "1982-01-05",
+            "T10Y3M": "2.24"
+          },
+          {
+            "observation_date": "1982-01-06",
+            "T10Y3M": "2.43"
+          },
+          {
+            "observation_date": "1982-01-07",
+            "T10Y3M": "2.46"
+          },
+          {
+            "observation_date": "1982-01-08",
+            "T10Y3M": "2.50"
+          }
+        ]
+      },
+      "non_numeric_markers": {
+        "": 485
+      }
+    },
+    "fred_USREC": {
+      "key": "fred_USREC",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=USREC",
+      "source_page": "https://fred.stlouisfed.org/series/USREC",
+      "file": "raw/USREC.csv",
+      "retrieved_utc": "2026-11-05T19:44:34Z",
+      "sha256": "7d28698513be7460870afa883c2325d3502ddaecd6b1e781ed5f655126341b44",
+      "bytes": 26842,
+      "licence_note": "FRED: 'Copyrighted: Citation Required'. Cite as: Federal Reserve Bank of St. Louis, NBER based Recession Indicators for the United States from the Period following the Peak through the Trough [USREC], retrieved from FRED, Federal Reserve Bank of St. Louis; https://fred.stlouisfed.org/series/USREC",
+      "sid": "USREC",
+      "title": "NBER based Recession Indicators for the United States from the Period following the Peak through the Trough",
+      "units": "+1 or 0, Not Seasonally Adjusted",
+      "frequency": "Monthly",
+      "dating_note": "Trough method: peak month excluded, trough month included (FRED series notes).",
+      "verified_on": "2026-11-05",
+      "verified_how": "Opened FRED series page; title/units/frequency copied from page",
+      "schema": {
+        "rows": 2063,
+        "columns": [
+          "observation_date",
+          "USREC"
+        ],
+        "dtypes": {
+          "observation_date": "str",
+          "USREC": "str"
+        },
+        "missing": {
+          "observation_date": 0,
+          "USREC": 0
+        },
+        "head": [
+          {
+            "observation_date": "1854-12-01",
+            "USREC": "1"
+          },
+          {
+            "observation_date": "1855-01-01",
+            "USREC": "0"
+          },
+          {
+            "observation_date": "1855-02-01",
+            "USREC": "0"
+          },
+          {
+            "observation_date": "1855-03-01",
+            "USREC": "0"
+          },
+          {
+            "observation_date": "1855-04-01",
+            "USREC": "0"
+          }
+        ]
+      },
+      "non_numeric_markers": {}
+    }
+  },
+  "transforms": [
+    {
+      "id": "drop_blank_t10y2y",
+      "dataset": "fred_T10Y2Y",
+      "rows_before": 13157,
+      "rows_after": 12604,
+      "rows_dropped": 553,
+      "reason": "Blank values fall on US bond-market holidays (Nov-11, Jul-04, Dec-25, Jan-01 most common); no trading -> no yield. Dropped, not filled: forward-filling would invent a trading day.",
+      "details": {
+        "top_blank_month_days": {
+          "11-11": 36,
+          "07-04": 36,
+          "12-25": 35,
+          "01-01": 35,
+          "05-30": 10,
+          "09-05": 8,
+          "10-10": 8,
+          "11-24": 8
+        }
+      }
+    },
+    {
+      "id": "drop_blank_t10y3m",
+      "dataset": "fred_T10Y3M",
+      "rows_before": 11698,
+      "rows_after": 11213,
+      "rows_dropped": 485,
+      "reason": "Blank values fall on US bond-market holidays (Nov-11, Jul-04, Dec-25, Jan-01 most common); no trading -> no yield. Dropped, not filled: forward-filling would invent a trading day.",
+      "details": {
+        "top_blank_month_days": {
+          "11-11": 32,
+          "07-04": 32,
+          "12-25": 31,
+          "01-01": 31,
+          "02-15": 7,
+          "05-30": 7,
+          "09-05": 7,
+          "10-10": 7
+        }
+      }
+    },
+    {
+      "id": "monthly_mean_t10y2y",
+      "dataset": "fred_T10Y2Y",
+      "rows_before": 12604,
+      "rows_after": 606,
+      "rows_dropped": 11998,
+      "reason": "Recession indicator is monthly, so daily spreads are averaged within each calendar month. Mean (not month-end) smooths day-to-day noise, matching Estrella-Mishkin style monthly averages.",
+      "details": {
+        "min_trading_days_in_a_month": 3
+      }
+    },
+    {
+      "id": "monthly_mean_t10y3m",
+      "dataset": "fred_T10Y3M",
+      "rows_before": 11213,
+      "rows_after": 539,
+      "rows_dropped": 10674,
+      "reason": "Recession indicator is monthly, so daily spreads are averaged within each calendar month. Mean (not month-end) smooths day-to-day noise, matching Estrella-Mishkin style monthly averages.",
+      "details": {
+        "min_trading_days_in_a_month": 3
+      }
+    },
+    {
+      "id": "align_months",
+      "dataset": "fred_USREC",
+      "rows_before": 2063,
+      "rows_after": 605,
+      "rows_dropped": 1458,
+      "reason": "Keep only months where both the 2s10s spread and USREC exist: USREC starts 1854 but the spread starts mid-1976; the current month has spreads but no USREC value yet.",
+      "details": {
+        "first_month": "1976-06",
+        "last_month": "2026-10"
+      }
+    },
+    {
+      "id": "target_unknown_last_months",
+      "dataset": "fred_USREC",
+      "rows_before": 605,
+      "rows_after": 593,
+      "rows_dropped": 12,
+      "reason": "The last 12 months do not yet have a full 12-month future, so their target is unknown. They are excluded from model fitting/evaluation but kept for the 'signal today' reading.",
+      "details": {
+        "rows_flagged_unknown": 12
+      }
+    },
+    {
+      "id": "exclude_current_recession",
+      "dataset": "fred_USREC",
+      "rows_before": 593,
+      "rows_after": 535,
+      "rows_dropped": 58,
+      "reason": "Months already IN a recession are excluded from fitting and scoring. The decision is made during expansions; inside a recession the target is trivially 1 while the curve has re-steepened (rate cuts), which teaches the model the opposite relationship. First attempt kept them: in-sample pseudo-R2 was about 0.05 and out-of-sample skill was negative (kept as results *_all_months).",
+      "details": {
+        "recession_months_excluded": 58
+      }
+    }
+  ]
+}

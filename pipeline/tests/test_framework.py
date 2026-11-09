@@ -192,6 +192,16 @@ def test_build_fails_without_calibration(fixture_case):
     assert run_build(fixture_case, check_only=True) == 1
 
 
+def test_build_fails_on_unknown_calibration_placeholder(fixture_case):
+    import yaml
+
+    p = fixture_case["cal"] / "fx_case" / "s3_chart.yaml"
+    data = yaml.safe_load(p.read_text())
+    data["answers"][0]["text"] = "the value is {expected.no_such_key}"
+    p.write_text(yaml.safe_dump(data))
+    assert run_build(fixture_case, check_only=True) == 1
+
+
 def test_build_fails_on_unverified_source(fixture_case):
     s = json.loads(fixture_case["sources"].read_text())
     s[0]["status"] = "UNVERIFIED"
