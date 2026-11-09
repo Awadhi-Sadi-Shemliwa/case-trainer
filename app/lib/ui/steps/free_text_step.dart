@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../grading/grader.dart';
 import '../widgets/code_view.dart';
 import '../widgets/prose.dart';
+import '../../charts/chart_view.dart';
 import 'step_common.dart';
 
 /// Examiner steps: free_text, chart_explain, result_explain, memo, and the challenge-mode types
@@ -59,7 +60,7 @@ class _FreeTextStepState extends State<FreeTextStep> {
     final cs = Theme.of(context).colorScheme;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
-      if (step.chart != null) ChartImage(step.chart!),
+      if (step.chart != null) InteractiveChart(step.chart!),
       if (step.flawedPlan != null)
         Container(
           padding: const EdgeInsets.all(14),

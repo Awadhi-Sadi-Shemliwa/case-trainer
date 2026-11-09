@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../engine/checker.dart';
 import '../widgets/prose.dart';
+import '../../charts/chart_view.dart';
 import 'step_common.dart';
 
 /// Stable 32-bit FNV-1a hash, so the shuffled order is the same on every run and device.
@@ -196,7 +197,7 @@ class _ConceptCardStepState extends State<ConceptCardStep> {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       Text(s.step.title, style: t.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
       Prose(s.step.prompt, resolver: s.resolver, style: t.titleMedium),
-      if (s.step.chart != null) ChartImage(s.step.chart!),
+      if (s.step.chart != null) InteractiveChart(s.step.chart!),
       if (s.step.body != null) Prose(s.step.body!, resolver: s.resolver),
     ]);
   }

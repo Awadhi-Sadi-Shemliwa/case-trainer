@@ -2,10 +2,12 @@
 // test that fails if any hard-coded number appears in step text."
 //
 // Each P50 step is rendered from the REAL bundle. Text is collected from every RichText EXCEPT
-// pipeline value chips ({expected.*}) and code blocks (real code and {captured.*} outputs). Pipeline
+// pipeline value chips ({expected.*}), code blocks (real code and {captured.*} outputs) and
+// interactive charts (labels from the pipeline's chart JSON). Pipeline
 // values sit inside paragraphs as widget spans, so they never appear in the paragraph's own text.
 // Allowed literals (names such as T10Y2Y) are removed. Any digit left was typed by hand and fails.
 // (Stripping display STRINGS instead would be vacuous: displays like "1" or "5" erase most digits.)
+import 'package:case_trainer/charts/chart_view.dart';
 import 'package:case_trainer/data/content_db.dart';
 import 'package:case_trainer/data/progress_db.dart';
 import 'package:case_trainer/ui/steps/step_view.dart';
@@ -45,6 +47,8 @@ void main() {
       final excluded = {
         ...find.descendant(of: find.byKey(CodeView.codeKey), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
         ...find.descendant(of: find.byType(ValueChip), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
+        // chart labels/legends come from the pipeline's chart JSON, not from authored text
+        ...find.descendant(of: find.byKey(InteractiveChart.chartKey), matching: find.byType(RichText)).evaluate().map((e) => e.widget),
       };
       for (final el in find.byType(RichText).evaluate()) {
         if (excluded.contains(el.widget)) continue;
