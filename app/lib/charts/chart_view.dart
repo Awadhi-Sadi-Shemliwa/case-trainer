@@ -135,7 +135,13 @@ class _ChartPanelState extends State<ChartPanel> {
             onPressed: _openFullScreen,
           ),
       ]),
-      if (widget.fullScreen) Expanded(child: chart) else SizedBox(height: widget.height, child: chart),
+      // Heatmaps size to their rows (a fixed box overflows with many categories); full screen scrolls vertically.
+      if (widget.fullScreen)
+        Expanded(child: isHeat ? SingleChildScrollView(child: chart) : chart)
+      else if (isHeat)
+        chart
+      else
+        SizedBox(height: widget.height, child: chart),
       Wrap(spacing: 12, children: [
         if (shadedLabel != null) Text('Grey bands: $shadedLabel', style: t.labelSmall),
         if (!isHeat) Text('Pinch to zoom · drag to pan · tap a point · tap legend to hide a series', style: t.labelSmall?.copyWith(color: cs.onSurfaceVariant)),

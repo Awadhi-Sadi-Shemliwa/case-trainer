@@ -1,0 +1,180 @@
+# Generated from _answers.py. Edit there.
+step: s09_chart_heatmap
+answers:
+- id: a01
+  text: 'Rows are the {expected.n_top_hubs} busiest airports, columns scheduled departure hours, colour late-aircraft
+    minutes per departure. Delay builds through the day: {expected.la_morning} in the morning versus {expected.la_evening}
+    in the evening, about {expected.la_evening_ratio} times. The brightest cell rests on only {expected.worst_cell_deps}
+    departures, so it''s noisy. Late aircraft is a downstream label, not the start. So buffer evening turns at the
+    worst airports.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: Heatmap of late-aircraft delay per departure by airport and hour. Each row gets brighter towards the evening
+    because late arrivals feed later flights; evening is about {expected.la_evening_ratio} times the morning. The
+    single brightest cell has a tiny denominator. It can't show what started delays. Target afternoon and evening
+    buffers at bad airports.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'What: airports by hour, colour = late-aircraft minutes per departure. Pattern: accumulation over the day.
+    Size: from {expected.la_morning} to {expected.la_evening} minutes per departure. Anomaly: the brightest late-night
+    cell has {expected.worst_cell_deps} departures versus a median {expected.hub_median_cell_deps}. Can''t show:
+    root causes (carrier labels). So what: put slack where delay builds.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'The chart shows propagated delay building from morning to evening at the busiest airports, roughly {expected.la_evening_ratio}
+    times higher in the evening. Watch denominators: the most extreme colour comes from very few flights. Codes
+    are carrier labels, not causes. Planners should add buffer in the late part of the day at the worst airports.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: Rows airports, columns hours, colour minutes of late-aircraft delay per departure. Clear left-to-right build-up,
+    evening several times morning. {expected.worst_cell_airport} at hour {expected.worst_cell_hour} looks worst
+    but is based on {expected.worst_cell_deps} departures. Late aircraft is a symptom of earlier delay. Buffers
+    belong on evening banks.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Late-aircraft delay per scheduled departure for the ten busiest airports by hour: it accumulates across
+    the day, morning {expected.la_morning} minutes, evening {expected.la_evening}. Small-sample cells at night exaggerate.
+    It doesn''t tell us what started the chains. Target slack where it builds.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'The heatmap shows accumulation: each airport''s row darkens to brightens from morning to evening, about
+    {expected.la_evening_ratio} times higher at night. The worst cell is noise from few departures. Coded late-aircraft
+    minutes say where delay came from, not why. Use it to target evening buffers.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'Colour = late-aircraft minutes per departure; rows = busy airports; columns = hour. Delay snowballs through
+    the day (ratio {expected.la_evening_ratio}). Check denominators: the brightest square is {expected.worst_cell_deps}
+    flights. Labels aren''t causes. Targeted evening buffers.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Late-aircraft delay per departure builds through the day at busy airports, about {expected.la_evening_ratio}
+    times higher in the evening; target evening buffers.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No anomaly or limits.
+- id: a10
+  text: Airports by hour; colour is late-aircraft minutes per departure; it builds through the day from {expected.la_morning}
+    to {expected.la_evening}; the brightest cell is a small sample; buffers in the evening.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: The chart shows propagated delay accumulating into the evening, but the brightest cell has few departures
+    and the label isn't a root cause; target evening turns.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: The evening is worse.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: It shows late-aircraft delay by airport and hour.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: ORD looks bad.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Delay builds up through the day.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Pattern only.
+- id: a16
+  text: The brightest cell has few departures.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: Late aircraft is a label, not a cause.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Colour means minutes per departure.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: Evening is {expected.la_evening_ratio} times morning.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: Mornings are the worst time for delays.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: The colour shows the number of flights.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: The heatmap shows weather delays by airport.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Delays are the same at all hours.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The rows are airlines.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: The brightest cell has the most flights.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: The brightest cell is clearly the biggest problem in the network, so fix it first.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Weather causes most delays, as the heatmap shows.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Late aircraft is the root cause of delays, so the heatmap shows what starts them.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Label read as cause.
+- id: a29
+  text: Weather and the brightest cell explain everything.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: The chart proves turn times are too short at every airport.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

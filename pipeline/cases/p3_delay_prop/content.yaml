@@ -1,0 +1,815 @@
+# P3 · How much US flight delay is passed on from earlier flights, and how much buffer stops it?
+id: p3_delay_prop
+number: 3
+domain: aviation
+title: How much flight delay is passed on, and where?
+tier: A
+decision_maker: Head of network operations at a US airline
+decision: Where and by how much should scheduled aircraft turn times be lengthened to stop delays spreading through the day?
+money_at_stake: >-
+  Every extra minute of scheduled turn time costs aircraft utilisation: fewer flights per aircraft per day. Every minute
+  of delay that rolls into the next flight costs crew hours, missed connections and compensation. The buffer has to go
+  where it buys the most.
+concepts: [delay attribution, proration, reconstructing aircraft rotations, slack and pass-through, non-linear effects,
+           sufficient statistics, time-based validation, small denominators, carrier-reported labels]
+sources: [bts_delay_cause_stats]
+datasets: [bts_ontime_2025_01, bts_ontime_2025_07, bts_ontime_2025_12]
+allowed_literals: ["2025", hhmm]
+
+steps:
+# ============================================================== BRIEF
+- id: s01_brief
+  phase: brief
+  type: mcq
+  title: What is being decided?
+  body: >-
+    You support the head of network operations at a US airline. A late aircraft arriving at a hub makes its next
+    flight late, and that one makes the next. Our data: every domestic flight reported to the US Bureau of
+    Transportation Statistics in 2025, {expected.n_flights} flights, with scheduled and actual times, delay minutes by
+    cause, and the aircraft's tail number.
+  prompt: Which decision does this analysis inform?
+  options:
+    - id: a
+      text: Where and how much to lengthen scheduled turn times so delays stop spreading
+      correct: true
+      explanation: The output is a schedule rule with a place, a time of day and a number of minutes.
+    - id: b
+      text: Which airline is the best
+      explanation: Ranking airlines doesn't change our own schedule.
+    - id: c
+      text: How to control the weather
+      explanation: Nobody can. We decide how much slack absorbs whatever disruption arrives.
+    - id: d
+      text: Whether to cancel more flights
+      explanation: Cancellations are a last resort, and the question is how to keep flights running.
+
+# ============================================================== FRAME
+- id: s02_question
+  phase: frame
+  type: mcq
+  title: Frame the question
+  prompt: Which question can this data answer AND the airline act on?
+  options:
+    - id: a
+      text: When the same aircraft arrives late, how much of that delay shows up on its next departure, and how does that depend on the scheduled turn time?
+      correct: true
+      explanation: It follows the mechanism (aircraft rotation) and links it to a lever the airline controls (turn time).
+    - id: b
+      text: Which delay cause has the biggest share of minutes?
+      explanation: Useful context, but cause shares don't tell you what a buffer would fix.
+    - id: c
+      text: Are flights later in summer?
+      explanation: Seasonality is real but isn't a lever.
+    - id: d
+      text: Do delays cause passenger complaints?
+      explanation: There's no complaint data here.
+
+- id: s03_kpis
+  phase: frame
+  type: kpi_builder
+  title: Choose the KPIs
+  prompt: Select every KPI that helps decide where turn buffers should go.
+  options:
+    - id: la_share
+      text: Share of delay minutes coded as late-arriving aircraft
+      correct: true
+      explanation: The size of the propagation problem as carriers report it.
+    - id: pass
+      text: Share of an inbound delay that passes to the same aircraft's next departure, by scheduled turn time
+      correct: true
+      explanation: This directly measures what a longer turn buys.
+    - id: hub_hour
+      text: Late-aircraft minutes per departure by airport and hour of day
+      correct: true
+      explanation: It shows WHERE the buffer is needed.
+    - id: mean_delay_all
+      text: Average arrival delay of all flights including early ones
+      explanation: Early arrivals cancel late ones in an average, which hides the problem.
+    - id: cancel_count
+      text: Number of cancelled flights per airline
+      explanation: Cancellations drop out of delay data entirely, so this measures something else.
+
+# ============================================================== PREDICT
+- id: s04_predict_data
+  phase: predict
+  type: data_expectation
+  title: Predict the file before you load it
+  dataset: bts_ontime_2025_01
+  prompt: >-
+    Before you look: describe one monthly BTS on-time file. One row = ? How are times written? Which flights will have
+    missing delay values, and which will have delay-cause minutes? How would you find "the same aircraft's next flight"?
+  scaffold: predict_data
+  analysis_pointer: Think about what a cancelled flight's arrival delay could possibly be.
+  redo_step: Read the real schema and the clean log.
+  model_answer: >-
+    One row per scheduled flight, with date, airline, tail number, origin and destination, and scheduled and actual times
+    written as local hhmm numbers. Delays are in minutes, negative when early. Cancelled and diverted flights have no
+    arrival delay. Cause minutes (carrier, weather, NAS, security, late aircraft) exist only for flights arriving at
+    least fifteen minutes late, and BTS prorates them by minutes. To find the next flight of the same aircraft, sort
+    by tail number and scheduled time and match the arrival airport to the next origin. Traps: local times in
+    different time zones, midnight crossings, missing tail numbers, and a file of over a hundred columns.
+  rubric:
+    points:
+      - id: grain
+        label: Grain and key columns
+        weight: 20
+        paraphrases:
+          - one row per scheduled flight with times delays and tail number
+          - each row is a flight leg with origin destination and delay minutes
+          - flight level file with scheduled and actual times
+        keywords: [[flight, leg, row], [tail, origin, destination, scheduled, delay]]
+        hint: What is the natural unit of an on-time report?
+        why: Grain decides how you reconstruct rotations.
+      - id: times
+        label: Time format
+        weight: 20
+        paraphrases:
+          - times are local hhmm numbers not timestamps
+          - times are in each airport's local time zone
+          - midnight crossings need care
+        keywords: [[hhmm, local, time zone, midnight, clock]]
+        hint: Is a departure at Boston and an arrival in Denver on the same clock?
+        why: Mixing time zones silently creates wrong turn times.
+      - id: missing
+        label: Which values are missing
+        weight: 30
+        paraphrases:
+          - cancelled and diverted flights have no arrival delay
+          - cause minutes exist only for flights at least fifteen minutes late
+          - on time flights have blank cause fields
+        keywords: [[cancel, divert, blank, missing, empty], [cause, fifteen, late, delayed]]
+        hint: Which flights never arrived as planned, and which flights need a cause?
+        why: Missing by design is not missing at random.
+      - id: rotation
+        label: Linking aircraft
+        weight: 30
+        paraphrases:
+          - sort by tail number and time and match the arrival airport to the next origin
+          - the tail number lets you follow one aircraft through the day
+          - the next flight of the same aircraft must depart from the airport where it landed
+        keywords: [[tail, aircraft, same plane], [next, sort, follow, rotation, match]]
+        hint: What identifies a physical aircraft in this file?
+        why: Propagation lives in the aircraft's chain of flights.
+    red_flags:
+      - id: cancel_zero
+        critical: false
+        penalty: 15
+        paraphrases:
+          - cancelled flights have a delay of zero
+        feedback: Cancelled flights have no delay at all. Zero would make the worst disruptions look punctual.
+      - id: utc
+        critical: false
+        penalty: 10
+        paraphrases:
+          - all times are in UTC
+        feedback: BTS writes local hhmm times.
+      - id: causes_all
+        critical: false
+        penalty: 10
+        paraphrases:
+          - every flight has delay cause minutes
+        feedback: Causes are reported only for flights at least fifteen minutes late.
+
+# ============================================================== DATA
+- id: s05_read_rotations
+  phase: data
+  type: code_read
+  title: Read how rotations are rebuilt
+  snippet: {file: clean.py, name: build_rotations}
+  prompt: >-
+    This is the real code that follows each aircraft. Find the lines that make sure the next flight leaves from the
+    airport where the aircraft landed, and that drop overnight arrivals.
+
+- id: s06_fill_hhmm
+  phase: data
+  type: code_fill
+  title: Convert hhmm to minutes
+  snippet: {file: clean.py, name: hhmm}
+  prompt: BTS writes a clock time such as twenty-five to three in the afternoon as the number fourteen thirty-five. Fill the blank that turns it into minutes after midnight.
+  blanks:
+    - token: "(x // 100) * 60 + (x % 100)"
+      accept: ["x // 100 * 60 + x % 100", "(x//100)*60 + x%100"]
+
+- id: s07_justify_turns
+  phase: data
+  type: cleaning_justification
+  title: Justify the turn-time window
+  transform: rotation_turn_window
+  prompt: >-
+    The pipeline kept only aircraft turns with a scheduled ground time inside a fixed window, and dropped the rest.
+    Justify it: what was done, why, the alternative you rejected, and what would break if you skipped it.
+  scaffold: justify_clean
+  analysis_pointer: Think about what a three-hour or overnight sit at the gate means for "propagation".
+  redo_step: Look at the logged counts for the turn window and the delay range.
+  model_answer: >-
+    Pairs of consecutive flights by the same aircraft were kept only when the scheduled turn was within a normal range;
+    very short gaps and very long sits were dropped, with the count logged. A very short gap is usually a data error or
+    a through-flight. A long sit means the aircraft was parked for hours, so lateness is reset and there is nothing to
+    propagate. I rejected keeping everything, because those pairs would drag the pass-through towards zero and make
+    buffers look more powerful than they are. I also rejected a narrow window, which would hide how pass-through falls
+    as turns get longer. If I skipped the step, the propagation curve would mix real turns with overnight parking and
+    the buffer rule would be wrong.
+  rubric:
+    points:
+      - id: what
+        label: What was done
+        weight: 20
+        paraphrases:
+          - turns outside a normal scheduled ground time were dropped and counted
+          - only consecutive flights of the same aircraft with a normal turn were kept
+          - very short and very long gaps were removed
+        keywords: [[turn, gap, ground time, window], [drop, remove, keep, exclude]]
+        hint: Which pairs survived?
+        why: A cleaning step starts with a plain description.
+      - id: why_long
+        label: Why long sits go
+        weight: 25
+        paraphrases:
+          - a long sit at the gate resets lateness so it is not propagation
+          - an aircraft parked for hours has plenty of slack
+          - overnight or long gaps are not turns
+        keywords: [[long, parked, hours, overnight, reset, slack], [not, propagation, turn]]
+        hint: Can a three-hour sit pass a one-hour delay on?
+        why: The population must match the mechanism.
+      - id: why_short
+        label: Why very short gaps go
+        weight: 20
+        paraphrases:
+          - very short gaps are data errors or through-flights
+          - a turn shorter than any real minimum turn is not physically possible
+          - impossible ground times signal bad records
+        keywords: [[short, error, through, impossible, minimum]]
+        hint: Can a narrow-body aircraft really turn in a few minutes?
+        why: Impossible values are errors, not observations.
+      - id: consequence
+        label: What breaks if skipped
+        weight: 35
+        paraphrases:
+          - keeping long sits would pull pass-through toward zero and overstate buffers
+          - the propagation curve would mix real turns with parking
+          - the buffer rule would recommend the wrong number of minutes
+        keywords: [[overstate, bias, pull, mix, wrong], [buffer, pass, propagation, curve, rule]]
+        hint: How would including parked aircraft change the curve?
+        why: Cleaning matters through its effect on the decision.
+    red_flags:
+      - id: outliers
+        critical: false
+        penalty: 15
+        paraphrases:
+          - long turns were removed because they are outliers
+        feedback: They aren't statistical outliers. They're a different mechanism (parking, not turning).
+      - id: silent
+        critical: false
+        penalty: 15
+        paraphrases:
+          - drop them without recording how many
+        feedback: Every drop needs a logged count and reason.
+      - id: helps_result
+        critical: true
+        penalty: 30
+        paraphrases:
+          - we removed them because the result looked better
+        feedback: Never justify a filter by its effect on the result. Justify it by the mechanism.
+
+# ============================================================== EXPLORE
+- id: s08_cause_card
+  phase: explore
+  type: concept_card
+  title: What delay minutes are coded as
+  chart: p3_cause_share_by_month
+  prompt: Carriers label each delayed flight's minutes by cause, and BTS prorates them by minutes.
+  body: >-
+    In {expected.analysis_year_label} the largest share of delay minutes was coded late-arriving aircraft
+    ({expected.share_lateaircraft}), then air carrier ({expected.share_carrier}), National Aviation System
+    ({expected.share_nas}) and extreme weather ({expected.share_weather}). Labels are carrier-reported categories, not
+    measured causes: "late-arriving aircraft" says WHERE the delay came from (the previous flight), not what started
+    it. The late-aircraft share ranged from {expected.la_share_min} in {expected.la_share_min_month} to
+    {expected.la_share_max} in {expected.la_share_max_month}. Real output: {captured.cause_shares}
+
+- id: s09_chart_heatmap
+  phase: explore
+  type: chart_explain
+  title: Read the airport-by-hour heatmap
+  chart: p3_hub_hour_heatmap
+  prompt: Explain what this chart shows and what it does NOT show.
+  scaffold: chart_6q
+  analysis_pointer: Look at how colour changes from left to right in each row, then ask how many flights sit behind the brightest cell.
+  redo_step: Compare the morning and evening values and the size of the worst cell.
+  model_answer: >-
+    Each row is one of the {expected.n_top_hubs} busiest airports and each column a scheduled departure hour; colour is
+    late-aircraft delay minutes per departure. Delay builds through the day: at these airports it averages
+    {expected.la_morning} minutes per departure in the morning and {expected.la_evening} in the evening, about
+    {expected.la_evening_ratio} times higher, because each late arrival feeds the next flight. Some airports,
+    {expected.top_hub} among them, are much worse in the evening. Anomaly: the brightest cell ({expected.worst_cell_airport}
+    at hour {expected.worst_cell_hour}) rests on only {expected.worst_cell_deps} departures, against a median of
+    {expected.hub_median_cell_deps} per cell, so it's noisy. The chart can't show what started the delay: late aircraft is a
+    downstream label. So what: put buffers on afternoon and evening turns at the worst airports, not everywhere.
+  rubric:
+    points:
+      - id: axes
+        label: What is plotted
+        weight: 15
+        paraphrases:
+          - rows are busy airports columns are scheduled departure hours and colour is late aircraft minutes per departure
+          - the heatmap shows late aircraft delay per departure by airport and hour
+          - colour means minutes of late aircraft delay per scheduled departure
+        keywords: [[airport, hub, row], [hour, column, time of day], [colour, color, minutes, per departure]]
+        hint: Name rows, columns and colour.
+        why: A heatmap you can't read is decoration.
+      - id: buildup
+        label: Build-up through the day
+        weight: 25
+        paraphrases:
+          - late aircraft delay builds up from morning to evening
+          - each late arrival feeds the next flight so delay accumulates
+          - evening departures carry far more propagated delay than morning ones
+        keywords: [[build, accumulate, grows, increase, more], [evening, afternoon, later, day, morning]]
+        hint: Read each row from left to right.
+        why: Accumulation is the signature of propagation.
+      - id: size
+        label: Size (a number)
+        weight: 20
+        paraphrases:
+          - evening late aircraft minutes per departure are about {expected.la_evening_ratio} times the morning level
+          - from {expected.la_morning} to {expected.la_evening} minutes per departure
+          - evening values are several times the morning values
+        keywords: [[times, ratio, from, minutes per departure]]
+        numeric: {key: la_evening_ratio, tolerance: 0.6}
+        hint: Quote the morning and evening averages.
+        why: The size tells you whether a buffer is worth its cost.
+      - id: small_n
+        label: Small-denominator anomaly
+        weight: 20
+        paraphrases:
+          - the brightest cell has very few departures so it is noisy
+          - late night cells rest on small samples
+          - a rate from a handful of flights is unreliable
+        keywords: [[few, small, sample, noisy, denominator, departures], [bright, worst, cell, night, late]]
+        hint: How many departures are behind the brightest cell?
+        why: Rates from small samples produce the most dramatic and least reliable colours.
+      - id: limits
+        label: What it can't show
+        weight: 10
+        paraphrases:
+          - late aircraft is a downstream label not the original cause
+          - the chart does not show what started the delay
+          - carrier coded categories are not measured causes
+        keywords: [[label, downstream, original, root, started, carrier, coded, not cause]]
+        hint: If a delay is labelled late aircraft, where did it begin?
+        why: Labels describe accounting, not mechanisms.
+      - id: so_what
+        label: So what
+        weight: 10
+        paraphrases:
+          - target buffers at afternoon and evening turns at the worst airports
+          - add slack where delay accumulates not everywhere
+          - focus schedule changes on the late part of the day
+        keywords: [[target, focus, buffer, slack], [evening, afternoon, worst, where]]
+        hint: Where would one extra minute buy most?
+        why: Charts exist to direct scarce resources.
+    red_flags:
+      - id: worst_cell_real
+        critical: false
+        penalty: 15
+        paraphrases:
+          - the brightest cell is clearly the biggest problem in the network
+        feedback: That cell has very few departures. Check the denominator before acting on a colour.
+      - id: weather_most
+        critical: false
+        penalty: 15
+        paraphrases:
+          - weather causes most delays
+        feedback: In the coded data, extreme weather is a small share. How weather spreads across categories is a definition question; don't guess.
+      - id: la_root
+        critical: false
+        penalty: 15
+        paraphrases:
+          - late aircraft is the root cause of delays
+        feedback: Late aircraft is a downstream label. Something earlier started the delay.
+
+# ============================================================== MODEL
+- id: s10_method
+  phase: model
+  type: mcq
+  title: Choose the measurement
+  prompt: Which measurement best tells the airline what a longer turn buys?
+  options:
+    - id: a
+      text: For the same aircraft, the share of a one-hour-late arrival that shows up as departure delay on its next flight, by scheduled turn band
+      correct: true
+      explanation: >-
+        It follows the physical chain and measures the lever directly. The linear slope alone can mislead, because a turn
+        absorbs delay up to its slack and passes the rest on almost minute for minute.
+    - id: b
+      text: Correlation between average departure delay and average arrival delay per airport
+      explanation: Airport averages mix different aircraft and say nothing about turn time.
+    - id: c
+      text: The share of minutes coded late-arriving aircraft
+      explanation: That sizes the problem but doesn't say what a buffer would change.
+    - id: d
+      text: A classifier predicting which flights are delayed
+      explanation: Prediction doesn't answer "how much does an extra ten minutes absorb?".
+
+- id: s11_read_suff
+  phase: model
+  type: code_read
+  title: Exact regression from sums
+  snippet: {file: analyse.py, name: ols_from_sums}
+  prompt: >-
+    The pipeline never ships millions of flight pairs. It stores counts, sums and cross-products per group, and this
+    code rebuilds the exact least-squares slope from them. Why is this as exact as fitting on the raw pairs?
+
+- id: s12_plan_challenge
+  phase: model
+  type: plan_challenge
+  title: Attack this plan
+  flawed_plan: >-
+    "Late-arriving aircraft is the biggest cause, so I'll tell the airline to add thirty minutes to every turn in the
+    network. To prove it works I'll show that flights with longer turns have lower average delay across all
+    flights, early ones included. The worst cell on the heatmap gets the biggest buffer."
+  prompt: >-
+    Challenge this plan: what does each part assume, why does that fail here, how would you fix it, and how would you
+    check the fix?
+  scaffold: challenge_plan
+  analysis_pointer: Think about cost, what an average over all flights hides, and the denominator behind a heatmap cell.
+  redo_step: Look at the pass-through by turn band and the size of the worst cell.
+  model_answer: >-
+    First, the label "late-arriving aircraft" says where delay came from, not what started it, and a blanket buffer
+    ignores cost. Every added minute reduces aircraft utilisation, so buffers should go where delay accumulates
+    (evenings, the worst airports). Second, comparing average delay of all flights by turn length confounds things: long
+    turns are scheduled at different times and places, and averaging in early flights hides propagation. Measure it
+    directly on the same aircraft: the share of a one-hour-late arrival passed on falls from {expected.pass_b1} for the
+    shortest turns to {expected.pass_b5} at {expected.buffer_min_turn}-minute turns. Third, the brightest heatmap cell
+    has only {expected.worst_cell_deps} departures, so it's noise. Check the fix by estimating the rule on Jan-Sep
+    and confirming it on Oct-Dec (largest slope shift {expected.max_slope_shift}).
+  rubric:
+    points:
+      - id: cost_target
+        label: Blanket buffer ignores cost and targeting
+        weight: 25
+        paraphrases:
+          - adding time to every turn is expensive because it cuts aircraft utilisation
+          - buffers should go where delay accumulates not everywhere
+          - target evening turns at the worst airports
+        keywords: [[cost, utilisation, utilization, expensive, every turn, blanket], [target, where, evening, worst]]
+        hint: What does an extra minute of turn cost the airline?
+        why: A decision without cost is not a decision.
+      - id: average_confound
+        label: Averages over all flights mislead
+        weight: 25
+        paraphrases:
+          - comparing average delay by turn length confounds time of day and airport
+          - averaging in early flights hides propagation
+          - measure pass-through on the same aircraft instead
+        keywords: [[average, all flights, confound, early], [same aircraft, pass, propagation, rotation]]
+        hint: Who schedules long turns, and when?
+        why: The right comparison holds the aircraft fixed.
+      - id: evidence
+        label: Correct evidence
+        weight: 25
+        paraphrases:
+          - pass-through falls from {expected.pass_b1} at short turns to {expected.pass_b5} at {expected.buffer_min_turn} minute turns
+          - longer scheduled turns absorb more of an inbound delay
+          - the pass-through curve shows where extra minutes start to work
+        keywords: [[pass, share, absorb], [turn, band, longer, shorter]]
+        numeric: {key: pass_b5, tolerance: 0.05, accept_percent: true}
+        hint: What does the propagation table show?
+        why: Replace a wrong proof with the right one.
+      - id: small_cell
+        label: Worst cell is noise
+        weight: 25
+        paraphrases:
+          - the brightest cell rests on very few departures
+          - check the denominator before acting on a heatmap colour
+          - a rate from a small sample is unreliable
+        keywords: [[few, small, sample, denominator, departures, noise]]
+        hint: How many flights are behind that cell?
+        why: The most extreme colours often come from the smallest samples.
+    red_flags:
+      - id: blanket_ok
+        critical: true
+        penalty: 30
+        paraphrases:
+          - adding thirty minutes to every turn is the right fix
+        feedback: Ignoring cost and targeting is not a recommendation an airline can use.
+      - id: weather_most
+        critical: false
+        penalty: 15
+        paraphrases:
+          - weather causes most delays so buffers will not help
+        feedback: Extreme weather is a small coded share, and buffers absorb delay whatever started it.
+      - id: la_root
+        critical: false
+        penalty: 15
+        paraphrases:
+          - late aircraft is the root cause so fixing turns fixes delays
+        feedback: Buffers stop propagation; they don't remove the delay that started the chain.
+
+- id: s13_result
+  phase: model
+  type: result_explain
+  title: Interpret the propagation curve
+  chart: p3_propagation_by_turn
+  prompt: >-
+    Share of a one-hour-late arrival passed on to the same aircraft's next departure: {expected.pass_b1} (shortest turns),
+    {expected.pass_b3}, {expected.pass_b4}, {expected.pass_b5}, {expected.pass_b6} (longest turns). Explain what this
+    means using Claim, Evidence, Reasoning and one limitation. {captured.propagation_table}
+  scaffold: cer
+  analysis_pointer: Look at where the lines sit relative to the dashed line where outbound delay equals inbound delay.
+  redo_step: Compare the pass-through column with the slope column in the propagation table.
+  model_answer: >-
+    Claim: short turns pass delay on in full, or even amplify it, and the buffer only starts to absorb delay once the
+    scheduled turn leaves real slack. Evidence: the shortest turns pass on {expected.pass_b1} of a one-hour delay, more
+    than all of it, while turns of {expected.band_b5} minutes pass on {expected.pass_b5}, absorbing about
+    {expected.absorbed_b5} minutes, and the longest turns {expected.pass_b6}. The pattern was stable from Jan-Sep to
+    Oct-Dec (largest slope shift {expected.max_slope_shift}). Reasoning: a turn has a minimum ground time; any slack
+    above it absorbs delay, and beyond the slack the rest passes on almost minute for minute. That's why the linear slopes
+    stay near one for short turns and the effect is non-linear. Limitation: this is observational. Long turns are
+    scheduled at particular times and places, and airlines also swap aircraft, so the curve describes association, not a
+    controlled experiment.
+  rubric:
+    points:
+      - id: claim
+        label: Claim
+        weight: 15
+        paraphrases:
+          - short turns pass delay on in full and longer turns absorb it
+          - buffers only work once the turn leaves real slack
+          - pass-through falls as scheduled turn time grows
+        keywords: [[short, long, turn, buffer, slack], [pass, absorb, propagate]]
+        hint: One sentence about how turn time changes propagation.
+        why: Start with what it means.
+      - id: evidence
+        label: Evidence (numbers)
+        weight: 25
+        paraphrases:
+          - the shortest turns pass on {expected.pass_b1} and turns of {expected.band_b5} minutes pass on {expected.pass_b5}
+          - about {expected.absorbed_b5} minutes of a one hour delay are absorbed at that turn length
+          - the longest turns pass on only {expected.pass_b6}
+        keywords: [[pass, share, absorb, minutes], [shortest, longest, band, turn]]
+        numeric: {key: pass_b5, tolerance: 0.05, accept_percent: true}
+        hint: Quote the pass-through at short and long turns.
+        why: The size of the effect justifies the buffer.
+      - id: amplify
+        label: Amplification at short turns
+        weight: 20
+        paraphrases:
+          - the shortest turns pass on more than the whole inbound delay
+          - very short turns amplify delay
+          - outbound delay can exceed inbound delay when the turn is tight
+        keywords: [[more than, amplify, exceed, above], [short, tight]]
+        hint: What does a pass-through above one hundred percent mean?
+        why: Amplification is the strongest argument for buffers on tight turns.
+      - id: mechanism
+        label: Slack mechanism and non-linearity
+        weight: 20
+        paraphrases:
+          - slack above the minimum turn absorbs delay and the rest passes on minute for minute
+          - the relationship is non linear so a single slope misleads
+          - the effect kicks in only after the slack is used up
+        keywords: [[slack, minimum turn, kink, non linear, nonlinear, absorb]]
+        hint: Why do the slopes stay near one for short turns?
+        why: Understanding the mechanism tells you where extra minutes work.
+      - id: limitation
+        label: Limitation
+        weight: 20
+        paraphrases:
+          - this is observational because long turns are scheduled at particular times and places
+          - aircraft swaps break the link between flights
+          - the curve shows association not a controlled experiment
+        keywords: [[observational, association, swap, scheduled, selection, not experiment, confound]]
+        hint: Who chooses turn times, and why?
+        why: The airline should know how far to trust the curve.
+    red_flags:
+      - id: always_full
+        critical: false
+        penalty: 15
+        paraphrases:
+          - delay always passes on in full regardless of turn time
+        feedback: Long turns absorb much of it. Look at the pass-through for the longest bands.
+      - id: causal_certain
+        critical: true
+        penalty: 30
+        paraphrases:
+          - lengthening every turn to the longest band is guaranteed to remove most delay
+        feedback: The curve is observational and ignores cost. Recommend targeted, tested buffers.
+      - id: weather_most
+        critical: false
+        penalty: 15
+        paraphrases:
+          - weather causes most delays
+        feedback: Extreme weather is a small coded share in this data.
+
+- id: s14_numeric
+  phase: model
+  type: numeric
+  title: Read the evening build-up
+  prompt: At the busiest airports, how many times higher is late-aircraft delay per departure in the evening than in the morning?
+  answer_key: la_evening_ratio
+  tolerance: 0.2
+  unit: times
+
+# ============================================================== DECIDE
+- id: s15_threshold
+  phase: decide
+  type: decision_threshold
+  title: Set the buffer rule
+  prompt: >-
+    State the rule for the schedule planners: the metric, the target, the minimum turn, where to apply it, and what to
+    expect. Then say how you would test it before rolling it out.
+  scaffold: threshold
+  analysis_pointer: Use the buffer rule chosen on Jan-Sep and the heatmap.
+  redo_step: Re-read the propagation table and the hub-hour heatmap.
+  model_answer: >-
+    Metric: the share of a one-hour-late arrival passed to the same aircraft's next departure. Target: less than
+    {expected.pass_target}. Rule: schedule turns of at least {expected.buffer_min_turn} minutes, which met the target on
+    Jan-Sep data and passed on {expected.buffer_pass_test} over the whole year. Where: on afternoon and evening turns at
+    the airports where late-aircraft delay accumulates, not network-wide, because extra minutes cost aircraft
+    utilisation. Expected effect: after a one-hour-late arrival the next departure leaves about
+    {expected.buffer_saving_ref} minutes earlier than on the shortest turns. Test it as a pilot on a few evening banks
+    against similar control banks before rolling it out, since the curve is observational.
+  rubric:
+    points:
+      - id: metric
+        label: Metric and target
+        weight: 20
+        paraphrases:
+          - the share of an inbound delay passed to the next departure kept below {expected.pass_target}
+          - pass-through of a one hour late arrival
+          - less than half of the delay should pass on
+        keywords: [[pass, share, propagat], [target, below, less than, half]]
+        hint: Which number does the rule control?
+        why: A rule needs one metric and one target.
+      - id: value
+        label: Minimum turn
+        weight: 25
+        paraphrases:
+          - schedule turns of at least {expected.buffer_min_turn} minutes
+          - a minimum scheduled turn of {expected.buffer_min_turn} minutes on targeted turns
+          - lengthen tight turns to {expected.buffer_min_turn} minutes
+        keywords: [[minimum, at least, schedule, lengthen], [turn, minutes]]
+        numeric: {key: buffer_min_turn, tolerance: 5}
+        hint: Which turn band first met the target on Jan-Sep?
+        why: Planners need the number.
+      - id: where
+        label: Where, not everywhere
+        weight: 25
+        paraphrases:
+          - apply it to afternoon and evening turns at the worst airports
+          - target where delay accumulates because extra minutes cost utilisation
+          - not network wide
+        keywords: [[evening, afternoon, worst, where, target], [cost, utilisation, utilization, not everywhere, network]]
+        hint: Look at the heatmap.
+        why: Targeting is what makes the buffer affordable.
+      - id: effect_test
+        label: Expected effect and test
+        weight: 30
+        paraphrases:
+          - after a one hour delay the next departure leaves about {expected.buffer_saving_ref} minutes earlier
+          - pilot it on a few banks against control banks before rolling out
+          - the curve is observational so test the rule
+        keywords: [[earlier, saving, minutes, effect], [pilot, test, control, trial]]
+        numeric: {key: buffer_saving_ref, tolerance: 6}
+        hint: How much should it help, and how will you know it did?
+        why: Observational evidence earns a trial, not a full rollout.
+    red_flags:
+      - id: everywhere
+        critical: true
+        penalty: 30
+        paraphrases:
+          - apply the longer turn to every flight in the network
+        feedback: That ignores cost. Target where propagation accumulates.
+      - id: guaranteed
+        critical: false
+        penalty: 15
+        paraphrases:
+          - the rule will definitely cut delay by that amount
+        feedback: The curve is observational. Expect roughly that, and test it.
+      - id: worst_cell_only
+        critical: false
+        penalty: 15
+        paraphrases:
+          - put all the buffer into the single brightest heatmap cell
+        feedback: That cell has very few departures. Use the broad evening pattern.
+
+- id: s16_memo
+  phase: decide
+  type: memo
+  title: Write the memo to network operations
+  prompt: Recommendation (with a number), evidence (two or three numbers), the risk left over, limitations, next step.
+  scaffold: memo
+  analysis_pointer: Combine the cause shares, the heatmap and the pass-through curve.
+  redo_step: Re-read the threshold step.
+  model_answer: >-
+    Recommendation: lengthen tight afternoon and evening turns at the airports where delay accumulates to at least
+    {expected.buffer_min_turn} minutes, as a pilot. Evidence: late-arriving aircraft is the largest coded share of delay
+    minutes ({expected.share_lateaircraft}); at the busiest airports late-aircraft delay per departure is
+    {expected.la_evening_ratio} times higher in the evening than the morning; and the shortest turns pass on
+    {expected.pass_b1} of a one-hour delay, against {expected.pass_b5} at {expected.buffer_min_turn}-minute turns.
+    Risk left over: each extra minute costs aircraft utilisation, and buffers don't remove the delays that start the
+    chains. Limitations: cause codes are carrier labels, the curve is observational, aircraft swaps break chains, and
+    cancelled flights drop out of the data. Next step: a controlled pilot on selected banks, measured against similar
+    banks.
+  rubric:
+    points:
+      - id: rec
+        label: Recommendation with a number
+        weight: 25
+        paraphrases:
+          - lengthen targeted evening turns to at least {expected.buffer_min_turn} minutes as a pilot
+          - add buffer where delay accumulates with a minimum turn of {expected.buffer_min_turn} minutes
+          - pilot longer turns on the worst evening banks
+        keywords: [[lengthen, buffer, minimum, pilot], [turn, minutes, evening]]
+        numeric: {key: buffer_min_turn, tolerance: 5}
+        hint: Lead with the action and the number.
+        why: Busy readers read the first line.
+      - id: evidence
+        label: Evidence
+        weight: 25
+        paraphrases:
+          - late arriving aircraft is {expected.share_lateaircraft} of delay minutes
+          - evening late aircraft delay is {expected.la_evening_ratio} times the morning level
+          - short turns pass on {expected.pass_b1} of a delay against {expected.pass_b5} at longer turns
+        keywords: [[late aircraft, share, evening, pass, times]]
+        hint: Two or three numbers.
+        why: Numbers make the case.
+      - id: risk
+        label: Risk left over
+        weight: 20
+        paraphrases:
+          - extra minutes cost aircraft utilisation
+          - buffers do not remove the delays that start the chain
+          - the saving may be smaller in practice
+        keywords: [[cost, utilisation, utilization, start, original, smaller, risk]]
+        hint: What could still go wrong?
+        why: The downside belongs in the memo.
+      - id: limits
+        label: Limitations
+        weight: 15
+        paraphrases:
+          - cause codes are carrier reported labels
+          - the curve is observational and aircraft swaps break chains
+          - cancelled flights drop out of the delay data
+        keywords: [[label, carrier, observational, swap, cancel]]
+        hint: Name at least two.
+        why: They tell the reader how far to trust it.
+      - id: next
+        label: Next step
+        weight: 15
+        paraphrases:
+          - run a controlled pilot on selected banks
+          - compare piloted banks with similar control banks
+          - measure the effect before network rollout
+        keywords: [[pilot, control, trial, measure, test]]
+        hint: How will you know it worked?
+        why: Good memos end with the next decision.
+    red_flags:
+      - id: everywhere
+        critical: true
+        penalty: 30
+        paraphrases:
+          - add thirty minutes to every turn in the network
+        feedback: Blanket buffers ignore cost.
+      - id: weather
+        critical: false
+        penalty: 15
+        paraphrases:
+          - weather causes most delays so nothing can be done
+        feedback: Extreme weather is a small coded share, and buffers absorb delay whatever starts it.
+      - id: vague
+        critical: false
+        penalty: 15
+        paraphrases:
+          - add some buffer where it seems useful
+        feedback: Give the number and the place.
+
+# ============================================================== DEBRIEF
+- id: s17_debrief
+  phase: debrief
+  type: concept_card
+  title: What this case taught
+  prompt: Follow the mechanism, measure the lever, and check the denominator.
+  body: >-
+    Cause labels told us late aircraft is big ({expected.share_lateaircraft}) but not what to do. Rebuilding
+    {expected.n_pairs} aircraft turns showed the lever: tight turns pass on {expected.pass_b1} of a delay, and
+    pass-through only drops once the turn leaves slack. The effect is non-linear, the brightest heatmap colour came
+    from {expected.worst_cell_deps} flights, and sufficient statistics let us ship exact results without the raw data.
+
+debrief:
+  concepts_learned:
+    - Cause codes are carrier labels; late aircraft says where delay came from, not what started it
+    - Rebuild the mechanism (aircraft rotations) to measure the lever directly
+    - Turns absorb delay up to their slack; the effect is non-linear
+    - Rates from small denominators produce the most extreme and least reliable values
+    - Sufficient statistics give exact regressions without shipping raw data
+  common_mistakes:
+    - Saying weather causes most delays
+    - Recommending a buffer on every turn without cost
+    - Averaging delay over all flights, early ones included
+    - Acting on a heatmap cell without checking its denominator
+  interview_summary: >-
+    Using all {expected.n_flights} US domestic flights from {expected.analysis_year_label}, I rebuilt {expected.n_pairs}
+    aircraft turns from tail numbers to measure delay propagation directly. Short turns passed on {expected.pass_b1} of
+    a one-hour delay; turns of {expected.buffer_min_turn} minutes or more passed on {expected.pass_b5}, and the pattern
+    held out of time. Late-aircraft delay was {expected.la_evening_ratio} times higher in the evening at the busiest
+    airports, so I recommended a targeted, piloted minimum turn rather than a network-wide buffer.

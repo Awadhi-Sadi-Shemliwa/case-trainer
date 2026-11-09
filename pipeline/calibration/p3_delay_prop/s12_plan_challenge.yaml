@@ -1,0 +1,177 @@
+# Generated from _answers.py. Edit there.
+step: s12_plan_challenge
+answers:
+- id: a01
+  text: 'Late aircraft is a downstream label, and a blanket thirty minutes ignores cost: extra minutes reduce aircraft
+    utilisation, so target where delay accumulates. Comparing average delay of all flights by turn length confounds
+    time and place and averaging early flights hides propagation; measure pass-through on the same aircraft: {expected.pass_b1}
+    at the shortest turns vs {expected.pass_b5} at {expected.buffer_min_turn} minutes. The worst cell has {expected.worst_cell_deps}
+    departures, so it''s noise. Check on Oct-Dec after estimating on Jan-Sep.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Three flaws. A network-wide buffer is expensive and untargeted. Average delay over all flights by turn
+    length is confounded and hides propagation; use same-aircraft pass-through. The brightest heatmap cell has a
+    tiny denominator. Fix: target evening banks using the pass-through curve and validate on later months.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'The plan treats a label as a cause, ignores the cost of buffers, uses a confounded comparison of averages
+    that include early flights, and chases a noisy small-sample cell. Instead: same-aircraft pass-through by turn
+    band (falls from {expected.pass_b1} to {expected.pass_b5}), targeted to evening turns at bad airports, validated
+    out of time.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: Blanket buffers cost utilisation; put them where propagation accumulates. Long turns are scheduled at particular
+    times and places, so comparing all-flight averages misleads; follow the same aircraft. The worst cell rests
+    on {expected.worst_cell_deps} flights. Validate the rule on months not used to set it.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Assumes: the label is the cause, minutes are free, averages compare like with like, and colours are reliable.
+    Each fails: label is downstream, buffers cost utilisation, averages confound and include early flights, and
+    the worst cell is tiny. Fix with targeted buffers based on same-aircraft pass-through, checked out of time.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: Adding thirty minutes everywhere wastes aircraft time; the effect isn't linear either. Use pass-through
+    on the same aircraft to find where minutes start working ({expected.buffer_min_turn}-minute turns pass on {expected.pass_b5}).
+    Don't size buffers by one noisy heatmap cell. Test on Oct-Dec.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Wrong evidence: average delay of all flights by turn length is confounded. Right evidence: same-aircraft
+    pass-through. Wrong scope: every turn; right scope: evening turns at the worst airports, given cost. Wrong target:
+    the brightest small-sample cell. Check: time-split stability.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: The fix is to measure propagation per aircraft turn, target buffers where delay builds because minutes cost
+    utilisation, ignore the tiny-sample cell, and confirm the rule out of time.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: A blanket buffer ignores cost; use same-aircraft pass-through instead of average delay; the worst cell is
+    a small sample.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No check described.
+- id: a10
+  text: Target buffers rather than adding them everywhere; measure pass-through on the same aircraft; the brightest
+    cell has few departures; validate on later months.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: The plan is untargeted and uses a confounded average; the right measure is pass-through by turn band, which
+    drops to {expected.pass_b5} at {expected.buffer_min_turn} minutes.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Adding thirty minutes everywhere is expensive.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: Average delay is the wrong measure.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: The brightest cell has few departures.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Use the tail number to follow aircraft.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Method only.
+- id: a16
+  text: Late aircraft is a label, not a cause.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: Validate on later months.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Buffers should be targeted.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: Pass-through is the better measure.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: The plan is fine but should add sixty minutes.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Weather causes most delays so buffers won't help.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: Remove all short turns from the schedule.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Use machine learning to predict delays instead.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: Add buffers only in the morning.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: The heatmap proves every airport needs the same buffer.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Adding thirty minutes to every turn is the right fix.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Weather causes most delays so buffers will not help.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Late aircraft is the root cause so fixing turns fixes delays.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Misreads label.
+- id: a29
+  text: Every turn needs thirty minutes; weather explains the rest.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: Give the biggest buffer to the brightest cell.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

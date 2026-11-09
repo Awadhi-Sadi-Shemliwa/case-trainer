@@ -69,5 +69,18 @@
     "quote": "Since there were no significant changes in referee decisions against the away teams",
     "status": "VERIFIED",
     "note": "Frontiers in Sports and Active Living 3:720488. 8 leagues, 1,286 matches (2018/19 vs 2019/20 ghost games), transfermarkt data. Disagrees with the review on the referee mechanism."
+  },
+  {
+    "key": "bts_delay_cause_stats",
+    "title": "Airline On-Time Statistics and Delay Causes",
+    "authors": [
+      "US Bureau of Transportation Statistics"
+    ],
+    "year": 2026,
+    "url": "https://www.transtats.bts.gov/ot_delay/ot_delaycause1.asp",
+    "verified_on": "2026-11-09",
+    "quote": "each cause is prorated based on delayed minutes it is responsible for",
+    "status": "VERIFIED",
+    "note": "Also: 'A flight is considered delayed when it arrived 15 or more minutes than the schedule'; 'Delayed minutes are calculated for delayed flights only.' Category DEFINITIONS (e.g. whether non-extreme weather is coded NAS) could not be opened (bts.gov 403; eCFR anti-bot redirect) and are NOT taught."
   }
 ]

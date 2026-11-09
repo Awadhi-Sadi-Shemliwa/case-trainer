@@ -51,5 +51,20 @@ Syncfusion exports those names. Our chart model uses `SpecSeries` / `SpecAxis`.
 ### Progress gone after a perf run
 `flutter drive` reinstalls the app, which wipes app data. Expected. Don't run it on a phone with real progress you want to keep.
 
+### Raw data SHA-256 mismatch after clone
+Git normalised line endings in raw CSVs. Fixed by `pipeline/cases/*/raw/** binary` in `.gitattributes`.
+
+### FastF1: "Failed to load timing data!" / DataNotLoadedError
+FastF1 3.9 requires an active F1TV subscription for live-timing data. See DECISIONS (P13 blocked).
+
+### uv: fastf1 vs pandas 3 conflict
+FastF1 pins pandas<3. Use the isolated `pipeline/f1_fetch` env for downloads only.
+
+### provenance.log_transform called in a loop with the same id
+Entries are replaced by id, so per-month calls keep only the last month. Accumulate counts and log once (P3 clean.py).
+
+### Heatmap overflow ("RenderFlex overflowed") in a chart step
+A heatmap with many rows doesn't fit a fixed-height chart box. ChartPanel lets heatmaps size to their content.
+
 ### Gradle: "Conflicting configuration … abiFilters … splits"
 Don't set `ndk.abiFilters`; use `--split-per-abi --target-platform android-arm64`.

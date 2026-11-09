@@ -1,0 +1,179 @@
+# Generated from _answers.py. Edit there.
+step: s16_memo
+answers:
+- id: a01
+  text: 'Recommendation: pilot a minimum {expected.buffer_min_turn}-minute turn on tight afternoon/evening turns
+    at airports where delay accumulates. Evidence: late aircraft is {expected.share_lateaircraft} of delay minutes;
+    evening late-aircraft delay is {expected.la_evening_ratio} times morning; short turns pass on {expected.pass_b1}
+    of a one-hour delay versus {expected.pass_b5}. Risk: utilisation cost; buffers don''t remove initial delays.
+    Limits: carrier labels, observational curve, swaps, cancellations. Next: controlled pilot.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Lengthen targeted evening turns to at least {expected.buffer_min_turn} minutes as a pilot. Late aircraft
+    {expected.share_lateaircraft}; evening build-up {expected.la_evening_ratio}x; pass-through {expected.pass_b1}
+    vs {expected.pass_b5}. Risk: cost and root delays remain. Limitations: labels, observational, swaps. Next: pilot
+    vs control banks.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Recommend targeted buffers: {expected.buffer_min_turn}-minute minimum turns on late-day banks at the worst
+    hubs. Evidence: share of late aircraft, evening ratio, and pass-through drop. Risk: fewer flights per aircraft.
+    Limits: observational, labels. Next step: trial and measure.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'Action: pilot {expected.buffer_min_turn}-minute turns on tight evening turns. Why: {expected.share_lateaircraft}
+    of delay minutes are late aircraft and short turns pass on {expected.pass_b1}. Risk: utilisation cost. Limits:
+    carrier-coded causes, cancellations removed. Next: controlled pilot.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Targeted minimum turn of {expected.buffer_min_turn} minutes at the worst airports'' evening banks, piloted.
+    Evidence: evening late-aircraft delay {expected.la_evening_ratio} times morning, pass-through {expected.pass_b1}
+    to {expected.pass_b5}. Risk: cost, root causes. Limits: observational curve, swaps. Next: compare pilot and
+    control banks.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Pilot {expected.buffer_min_turn}-minute turns where delay accumulates; evidence: late aircraft {expected.share_lateaircraft},
+    pass-through {expected.pass_b5} at that length; risk: utilisation; limitations: labels and observational evidence;
+    next: controlled trial.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Recommendation with number: at least {expected.buffer_min_turn} minutes on targeted turns. Evidence: three
+    numbers above. Risk: cost, initial delays remain. Limitations: labels, swaps, cancellations. Next: pilot with
+    controls.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: Targeted, piloted {expected.buffer_min_turn}-minute minimum turns; late aircraft {expected.share_lateaircraft};
+    evening {expected.la_evening_ratio}x; pass-through {expected.pass_b1}→{expected.pass_b5}; cost risk; observational;
+    pilot next.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Pilot {expected.buffer_min_turn}-minute turns at evening banks; late aircraft is {expected.share_lateaircraft};
+    cost is a risk; next run a pilot.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Missing limitations.
+- id: a10
+  text: Lengthen targeted turns to {expected.buffer_min_turn} minutes; pass-through {expected.pass_b1} vs {expected.pass_b5};
+    utilisation cost; observational; pilot.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: Recommend {expected.buffer_min_turn}-minute turns where delay builds; evening is {expected.la_evening_ratio}
+    times morning; risk cost; limits labels; trial first.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Make turns longer in the evening.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: Late aircraft is {expected.share_lateaircraft} of delay minutes.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: 'Next step: pilot.'
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: 'Recommendation: add buffer.'
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: No number.
+- id: a16
+  text: The curve is observational.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: Short turns pass on {expected.pass_b1}.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Buffers cost utilisation.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: Cancelled flights drop out of the data.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: 'Recommendation: shorten turns.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: 'Recommendation: cancel evening flights.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: 'Recommendation: nothing; delays are random.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: 'Recommendation: blame air traffic control.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: 'Recommendation: add buffers in the morning only.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: 'Recommendation: replace aircraft.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Add thirty minutes to every turn in the network.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Weather causes most delays so nothing can be done.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Add some buffer where it seems useful.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Vague.
+- id: a29
+  text: Every turn should be lengthened; weather explains the rest.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: 'Recommendation: fly fewer routes.'
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

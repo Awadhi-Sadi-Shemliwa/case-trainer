@@ -1,0 +1,177 @@
+# Generated from _answers.py. Edit there.
+step: s07_justify_turns
+answers:
+- id: a01
+  text: Consecutive flights of the same aircraft were kept only if the scheduled turn was in a normal range; shorter
+    and longer gaps were dropped and counted. Very short gaps are errors or through-flights; long sits mean the
+    aircraft was parked, which resets lateness. Keeping everything would pull pass-through toward zero and overstate
+    buffers; a narrow window would hide the curve. Skipping it mixes turns with parking and breaks the buffer rule.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'What: dropped aircraft pairs with impossibly short or very long scheduled turns, logging the count. Why:
+    long sits aren''t turns, the delay is absorbed by hours of slack; very short gaps are bad records. Alternative:
+    keep all pairs, rejected because parked aircraft would make buffers look stronger than they are. Without it
+    the propagation curve and the rule would be wrong.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: The turn window keeps genuine turns. An aircraft parked for hours can't pass a one-hour delay on, so including
+    it biases pass-through down. Tiny gaps below any real minimum turn are errors. I rejected no filter and a too-narrow
+    filter. If skipped, the curve mixes mechanisms and recommends the wrong number of minutes.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: Removed pairs with scheduled ground time outside the normal turn range (logged). Long gaps are parking,
+    not propagation; short ones are physically impossible. Keeping them would overstate how much buffers absorb.
+    The rule depends on the curve, so skipping the step would give a wrong minimum turn.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Only real turns stay: same aircraft, same airport, scheduled ground time within the window. Parked aircraft
+    reset delay and impossible short gaps are errors. Including them would bias the pass-through and therefore the
+    buffer recommendation.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Done: filter on scheduled turn length with counts recorded. Why: long sits have enormous slack and aren''t
+    turns; very short ones are data errors. Rejected: no filter (biases curve) and a narrow filter (hides how pass-through
+    changes). Without it, the decision rule mixes parking and turning.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: The window drops overnight-style sits and impossible gaps. Long sits absorb almost any delay, so they would
+    flatter buffers; impossible gaps are errors. The curve, and so the minimum-turn rule, would be wrong without
+    this step.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'We keep turns within a realistic scheduled ground time, because outside it the pair isn''t a turn: either
+    parking (resets lateness) or an error. Otherwise pass-through is biased toward zero and the buffer looks better
+    than it is.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Very long gaps are parking and very short ones are errors, so they were dropped with counts; otherwise the
+    propagation estimate is biased.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Thin on alternative.
+- id: a10
+  text: 'Pairs outside the turn window were removed: long sits reset delays, short gaps are errors. Keeping them
+    would distort the pass-through curve and the buffer rule.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: Filter on scheduled turn length because parked aircraft can't propagate a delay and tiny gaps are errors;
+    skipping would overstate buffers.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Some aircraft pairs were dropped.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: Long turns were removed.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Very short turns are probably errors.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: The filter keeps normal turns.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Description only.
+- id: a16
+  text: We logged how many pairs were removed.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: Long sits at the gate are not turns.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: This makes the data cleaner.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: Keeping everything would bias the result.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: Long turns were removed because they have too much delay.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: We removed short turns because they never have delays.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: The window removes cancelled flights.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: It doesn't matter which pairs we keep.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: We dropped long turns to make the dataset smaller.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: The filter removes flights with missing tail numbers.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Long turns are outliers so we removed them.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: We removed them because the result looked better.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Drop them; no need to record how many.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Silent drop.
+- id: a29
+  text: Long turns are outliers and short ones too, so we deleted both without logging.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: We kept only the longest turns because they are most reliable.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

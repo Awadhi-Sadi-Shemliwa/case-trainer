@@ -78,3 +78,26 @@ pipeline PNG on parse failure, is implemented and tested. Revisit if Syncfusion'
 
 ### 2026-11-09 · LineSeries, not FastLineSeries
 Measured on the S21+: 9 runs, no difference in missed frames (ENVIRONMENT.md). Keep the simpler code path.
+
+### 2026-11-09 · Raw data is binary in git
+`.gitattributes` `* text=auto eol=lf` rewrote CRLF in football-data CSVs, so committed blobs failed their SHA-256.
+`pipeline/cases/*/raw/** binary` now keeps raw files byte-for-byte; verified with a fresh clone.
+
+### 2026-11-09 · P13 blocked: F1 timing data needs F1TV
+FastF1 3.9.2 signs in to a Formula 1 account and needs "An active F1TV subscription" (installed source,
+`internals/f1account`). No substitute data (rule). Kept: `cases/p13_tyre_deg/download.py` and an isolated env
+`pipeline/f1_fetch/` (FastF1 needs pandas<3; main pipeline is pandas 3). Owner options: F1TV login, or a Tier-B
+reframe on Jolpica lap times + pit stops (no tyre compounds).
+
+### 2026-11-09 · Large raw data: commit aggregates, not raw (P3)
+BTS 2025 is ~350 MB. Raw zips are git-ignored with SHA-256 in provenance; `clean.py` writes small aggregates
+(sufficient statistics for exact OLS) that are committed. Tests reproduce results from aggregates always, and
+aggregates from raw when raw is present.
+
+### 2026-11-09 · Unverifiable claims are not taught
+P3: BTS category definitions (e.g. non-extreme weather → NAS) could not be opened (403 / anti-bot redirect). No
+workaround attempted; the case teaches only verified statements (proration, 15-minute rule).
+
+### 2026-11-09 · Quality gate per case (spec Prompt 8)
+A fresh reviewer audits each new case. P34's review found over-claims (seasonality, inconclusive reversal,
+underpowered robustness check, pre-trend, negatable red-flag keywords); all fixed before marking done.

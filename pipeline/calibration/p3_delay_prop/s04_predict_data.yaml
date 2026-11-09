@@ -1,0 +1,177 @@
+# Generated from _answers.py. Edit there.
+step: s04_predict_data
+answers:
+- id: a01
+  text: One row per scheduled flight with date, airline, tail number, origin, destination, scheduled and actual
+    times as local hhmm, and delays in minutes. Cancelled and diverted flights have no arrival delay. Cause minutes
+    appear only for flights fifteen or more minutes late. To follow an aircraft, sort by tail number and time and
+    match arrival airport to the next origin; watch time zones and midnight.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Grain: a flight leg. Times are local hhmm numbers, so different airports are on different clocks. Missing
+    by design: delays for cancelled or diverted flights, and cause fields for flights under fifteen minutes late.
+    The tail number links one aircraft''s flights; the next leg must leave from where it landed.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Each row is a flight with scheduled/actual departure and arrival in local hhmm, delay minutes, cause minutes
+    and the tail number. I expect blank delays for cancellations and diversions and blank causes for on-time flights.
+    Rotations: group by tail, sort by scheduled time, check the destination equals the next origin. Traps: midnight
+    crossings and missing tails.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: Flight-level records, over a hundred columns. Local clock times as hhmm. Cancelled flights can't have an
+    arrival delay, so it's blank, and causes exist only for delayed flights. Following the same aircraft uses the
+    tail number and the airport chain. Time zones mean I should only compare times at the same airport.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: One row per flight. Times local hhmm, delays in minutes with negatives for early. Blank arrival delay for
+    cancelled and diverted flights. Cause minutes only when at least fifteen minutes late. Link flights via tail
+    number, sorting by time and matching airports; drop pairs that cross midnight.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Rows are flights, with tail number, airports, scheduled and actual times in local hhmm, delay minutes and
+    five cause columns. Missing: arrival delay when cancelled or diverted; causes when not delayed. Next flight
+    of the same aircraft: same tail, next departure from the arrival airport. Beware time zones.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: A row is a flight leg; scheduled times in local hhmm; cause minutes prorated across five categories only
+    for flights fifteen-plus minutes late; cancelled or diverted flights lack arrival delays. I would follow aircraft
+    by tail number and airport continuity, careful with midnight and time zones.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: Flight per row; local hhmm times; missing delays for cancellations; causes only for late flights; tail number
+    identifies the aircraft; match the landing airport with the next departure airport and sort by time.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: One row per flight with local hhmm times; cancelled flights have no delay; causes only for late flights;
+    tail number links flights.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Brief; how to link is thin.
+- id: a10
+  text: Flights with times, delays and causes. Times are local hhmm. Causes only for flights fifteen minutes late.
+    Follow the aircraft by tail number and matching airports.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: Each row is a flight; delays blank when cancelled or diverted; cause minutes for delayed flights only; tail
+    numbers chain flights; time zones complicate times.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No time format detail.
+- id: a12
+  text: A big CSV of flights with lots of columns.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: One row per flight with a delay column.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Some values will be missing.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Times are written as numbers like hhmm.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a16
+  text: Tail number identifies the aircraft.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Linking only.
+- id: a17
+  text: Cancelled flights have missing delay.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: There are five delay cause columns.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: I would sort the data by time.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: One row per airport per day with average delays.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Times are UTC timestamps so time zones are not an issue.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: Every flight has cause minutes, including early ones.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Cancelled flights have a delay of zero minutes.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The file has one row per passenger.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: Flight number alone identifies the aircraft through the day.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Cancelled flights are recorded with zero delay, so I'll keep them in the average.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: All times are UTC, so I can subtract any two times directly.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Every flight has cause minutes; weather causes most delays.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Two errors.
+- id: a29
+  text: Each row is a monthly airline summary.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a30
+  text: Delays are in hours.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

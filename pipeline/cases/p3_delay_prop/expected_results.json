@@ -1,0 +1,597 @@
+{
+  "absorbed_b1": {
+    "value": -8.900369929149164,
+    "unit": "minutes",
+    "description": "Minutes of a one-hour-late arrival absorbed, turn [20, 45)",
+    "display": "-9",
+    "produced_by": "__main__:propagation"
+  },
+  "absorbed_b2": {
+    "value": -5.125761083955069,
+    "unit": "minutes",
+    "description": "Minutes of a one-hour-late arrival absorbed, turn [45, 60)",
+    "display": "-5",
+    "produced_by": "__main__:propagation"
+  },
+  "absorbed_b3": {
+    "value": 1.943642611683842,
+    "unit": "minutes",
+    "description": "Minutes of a one-hour-late arrival absorbed, turn [60, 75)",
+    "display": "2",
+    "produced_by": "__main__:propagation"
+  },
+  "absorbed_b4": {
+    "value": 18.865003198976325,
+    "unit": "minutes",
+    "description": "Minutes of a one-hour-late arrival absorbed, turn [75, 90)",
+    "display": "19",
+    "produced_by": "__main__:propagation"
+  },
+  "absorbed_b5": {
+    "value": 38.39407970894659,
+    "unit": "minutes",
+    "description": "Minutes of a one-hour-late arrival absorbed, turn [90, 120)",
+    "display": "38",
+    "produced_by": "__main__:propagation"
+  },
+  "absorbed_b6": {
+    "value": 55.13338735818476,
+    "unit": "minutes",
+    "description": "Minutes of a one-hour-late arrival absorbed, turn [120, 240)",
+    "display": "55",
+    "produced_by": "__main__:propagation"
+  },
+  "analysis_year_label": {
+    "value": "2025",
+    "unit": "year",
+    "description": "Calendar year of the flight data",
+    "display": "2025",
+    "produced_by": "__main__:overview"
+  },
+  "band_b1": {
+    "value": "20-45",
+    "unit": "minutes",
+    "description": "Turn band b1 label (minutes)",
+    "display": "20-45",
+    "produced_by": "__main__:propagation"
+  },
+  "band_b2": {
+    "value": "45-60",
+    "unit": "minutes",
+    "description": "Turn band b2 label (minutes)",
+    "display": "45-60",
+    "produced_by": "__main__:propagation"
+  },
+  "band_b3": {
+    "value": "60-75",
+    "unit": "minutes",
+    "description": "Turn band b3 label (minutes)",
+    "display": "60-75",
+    "produced_by": "__main__:propagation"
+  },
+  "band_b4": {
+    "value": "75-90",
+    "unit": "minutes",
+    "description": "Turn band b4 label (minutes)",
+    "display": "75-90",
+    "produced_by": "__main__:propagation"
+  },
+  "band_b5": {
+    "value": "90-120",
+    "unit": "minutes",
+    "description": "Turn band b5 label (minutes)",
+    "display": "90-120",
+    "produced_by": "__main__:propagation"
+  },
+  "band_b6": {
+    "value": "120-240",
+    "unit": "minutes",
+    "description": "Turn band b6 label (minutes)",
+    "display": "120-240",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_band": {
+    "value": "b5",
+    "unit": "band",
+    "description": "Turn band chosen by the buffer rule",
+    "display": "b5",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_min_turn": {
+    "value": 90,
+    "unit": "minutes",
+    "description": "Shortest scheduled turn that meets the target (lower edge of the chosen band)",
+    "display": "90",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_pass_test": {
+    "value": 0.4231553787632211,
+    "unit": "share",
+    "description": "Pass-through in the chosen band over the whole year (check)",
+    "display": "42%",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_saving_ref": {
+    "value": 47.28002030367945,
+    "unit": "minutes",
+    "description": "Outbound delay avoided after a one-hour-late arrival: shortest band vs chosen band",
+    "display": "47",
+    "produced_by": "__main__:propagation"
+  },
+  "busiest_delay_month": {
+    "value": "Jul",
+    "unit": "month",
+    "description": "Month with the most flights 15+ minutes late",
+    "display": "Jul",
+    "produced_by": "__main__:causes"
+  },
+  "cancel_rate": {
+    "value": 0.01469317310753413,
+    "unit": "share",
+    "description": "Share of flights cancelled",
+    "display": "1.5%",
+    "produced_by": "__main__:overview"
+  },
+  "cause_minutes_total": {
+    "value": 111934625.0,
+    "unit": "minutes",
+    "description": "Total cause-coded delay minutes (delayed flights)",
+    "display": "111934625",
+    "produced_by": "__main__:causes"
+  },
+  "cause_missing": {
+    "value": 0,
+    "unit": "flights",
+    "description": "Delayed flights with any cause field missing",
+    "display": "0",
+    "produced_by": "__main__:overview"
+  },
+  "delay15_rate": {
+    "value": 0.22307454700460863,
+    "unit": "share",
+    "description": "Share of operated flights arriving 15+ minutes late",
+    "display": "22.3%",
+    "produced_by": "__main__:overview"
+  },
+  "divert_rate": {
+    "value": 0.0027505067042351205,
+    "unit": "share",
+    "description": "Share of flights diverted",
+    "display": "0.28%",
+    "produced_by": "__main__:overview"
+  },
+  "hub_median_cell_deps": {
+    "value": 11189,
+    "unit": "departures",
+    "description": "Median departures per busiest-ten airport x hour cell",
+    "display": "11,189",
+    "produced_by": "__main__:hubs"
+  },
+  "la_evening": {
+    "value": 10.865247446829606,
+    "unit": "minutes per departure",
+    "description": "Busiest airports: late-aircraft minutes per departure, 17-21h",
+    "display": "10.9",
+    "produced_by": "__main__:hubs"
+  },
+  "la_evening_ratio": {
+    "value": 4.689984133094169,
+    "unit": "ratio",
+    "description": "Evening vs morning late-aircraft minutes per departure",
+    "display": "4.7",
+    "produced_by": "__main__:hubs"
+  },
+  "la_morning": {
+    "value": 2.3166917282641997,
+    "unit": "minutes per departure",
+    "description": "Busiest airports: late-aircraft minutes per departure, 06-09h",
+    "display": "2.3",
+    "produced_by": "__main__:hubs"
+  },
+  "la_share_max": {
+    "value": 0.4105726638319802,
+    "unit": "share",
+    "description": "Highest monthly late-aircraft share",
+    "display": "41.1%",
+    "produced_by": "__main__:causes"
+  },
+  "la_share_max_month": {
+    "value": "Dec",
+    "unit": "month",
+    "description": "Month with the highest late-aircraft share",
+    "display": "Dec",
+    "produced_by": "__main__:causes"
+  },
+  "la_share_min": {
+    "value": 0.3471718149526051,
+    "unit": "share",
+    "description": "Lowest monthly late-aircraft share",
+    "display": "34.7%",
+    "produced_by": "__main__:causes"
+  },
+  "la_share_min_month": {
+    "value": "Jan",
+    "unit": "month",
+    "description": "Month with the lowest late-aircraft share",
+    "display": "Jan",
+    "produced_by": "__main__:causes"
+  },
+  "max_slope_shift": {
+    "value": 0.013464915818129058,
+    "unit": "minutes out per minute in",
+    "description": "Largest change in a band's slope between Jan-Sep and Oct-Dec",
+    "display": "0.01",
+    "produced_by": "__main__:propagation"
+  },
+  "mean_turn_b1": {
+    "value": 36.61027766662388,
+    "unit": "minutes",
+    "description": "Average scheduled turn in band [20, 45)",
+    "display": "37",
+    "produced_by": "__main__:propagation"
+  },
+  "mean_turn_b2": {
+    "value": 50.60327925586389,
+    "unit": "minutes",
+    "description": "Average scheduled turn in band [45, 60)",
+    "display": "51",
+    "produced_by": "__main__:propagation"
+  },
+  "mean_turn_b3": {
+    "value": 65.67252393430269,
+    "unit": "minutes",
+    "description": "Average scheduled turn in band [60, 75)",
+    "display": "66",
+    "produced_by": "__main__:propagation"
+  },
+  "mean_turn_b4": {
+    "value": 80.55605829002344,
+    "unit": "minutes",
+    "description": "Average scheduled turn in band [75, 90)",
+    "display": "81",
+    "produced_by": "__main__:propagation"
+  },
+  "mean_turn_b5": {
+    "value": 101.10849056603773,
+    "unit": "minutes",
+    "description": "Average scheduled turn in band [90, 120)",
+    "display": "101",
+    "produced_by": "__main__:propagation"
+  },
+  "mean_turn_b6": {
+    "value": 160.88102338882646,
+    "unit": "minutes",
+    "description": "Average scheduled turn in band [120, 240)",
+    "display": "161",
+    "produced_by": "__main__:propagation"
+  },
+  "n_bands": {
+    "value": 6,
+    "unit": "bands",
+    "description": "Scheduled turn bands analysed",
+    "display": "6",
+    "produced_by": "__main__:propagation"
+  },
+  "n_delayed15": {
+    "value": 1534638,
+    "unit": "flights",
+    "description": "Flights arriving 15+ minutes late",
+    "display": "1,534,638",
+    "produced_by": "__main__:overview"
+  },
+  "n_flights": {
+    "value": 7001619,
+    "unit": "flights",
+    "description": "Flights reported by carriers in 2025",
+    "display": "7,001,619",
+    "produced_by": "__main__:overview"
+  },
+  "n_pairs": {
+    "value": 1724795,
+    "unit": "turns",
+    "description": "Aircraft turns analysed (late inbound arrival, normal turn)",
+    "display": "1,724,795",
+    "produced_by": "__main__:propagation"
+  },
+  "n_pairs_b1": {
+    "value": 397347,
+    "unit": "turns",
+    "description": "Aircraft turns in band [20, 45) with a late inbound arrival",
+    "display": "397,347",
+    "produced_by": "__main__:propagation"
+  },
+  "n_pairs_b2": {
+    "value": 566348,
+    "unit": "turns",
+    "description": "Aircraft turns in band [45, 60) with a late inbound arrival",
+    "display": "566,348",
+    "produced_by": "__main__:propagation"
+  },
+  "n_pairs_b3": {
+    "value": 408723,
+    "unit": "turns",
+    "description": "Aircraft turns in band [60, 75) with a late inbound arrival",
+    "display": "408,723",
+    "produced_by": "__main__:propagation"
+  },
+  "n_pairs_b4": {
+    "value": 147195,
+    "unit": "turns",
+    "description": "Aircraft turns in band [75, 90) with a late inbound arrival",
+    "display": "147,195",
+    "produced_by": "__main__:propagation"
+  },
+  "n_pairs_b5": {
+    "value": 107272,
+    "unit": "turns",
+    "description": "Aircraft turns in band [90, 120) with a late inbound arrival",
+    "display": "107,272",
+    "produced_by": "__main__:propagation"
+  },
+  "n_pairs_b6": {
+    "value": 97910,
+    "unit": "turns",
+    "description": "Aircraft turns in band [120, 240) with a late inbound arrival",
+    "display": "97,910",
+    "produced_by": "__main__:propagation"
+  },
+  "n_top_hubs": {
+    "value": 10,
+    "unit": "airports",
+    "description": "Number of busiest airports shown",
+    "display": "10",
+    "produced_by": "__main__:hubs"
+  },
+  "pass_b1": {
+    "value": 1.1337509280930467,
+    "unit": "share",
+    "description": "Pass-through of a one-hour-late arrival, turn [20, 45) min",
+    "display": "113%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_b2": {
+    "value": 1.0770737965983674,
+    "unit": "share",
+    "description": "Pass-through of a one-hour-late arrival, turn [45, 60) min",
+    "display": "108%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_b3": {
+    "value": 0.9707819683756228,
+    "unit": "share",
+    "description": "Pass-through of a one-hour-late arrival, turn [60, 75) min",
+    "display": "97%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_b4": {
+    "value": 0.716360768017238,
+    "unit": "share",
+    "description": "Pass-through of a one-hour-late arrival, turn [75, 90) min",
+    "display": "72%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_b5": {
+    "value": 0.4231553787632211,
+    "unit": "share",
+    "description": "Pass-through of a one-hour-late arrival, turn [90, 120) min",
+    "display": "42%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_b6": {
+    "value": 0.17675715312515883,
+    "unit": "share",
+    "description": "Pass-through of a one-hour-late arrival, turn [120, 240) min",
+    "display": "18%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_target": {
+    "value": 0.5,
+    "unit": "share",
+    "description": "Target: less than this share of a one-hour-late arrival passes on",
+    "display": "50%",
+    "produced_by": "__main__:propagation"
+  },
+  "proration_gap": {
+    "value": 0.9999681163339119,
+    "unit": "ratio",
+    "description": "Cause minutes divided by arrival delay minutes of delayed flights (prorated, should be close to one)",
+    "display": "1.000",
+    "produced_by": "__main__:causes"
+  },
+  "share_carrier": {
+    "value": 0.3245320829010684,
+    "unit": "share",
+    "description": "Share of 2025 delay minutes coded 'Air carrier'",
+    "display": "32.5%",
+    "produced_by": "__main__:causes"
+  },
+  "share_lateaircraft": {
+    "value": 0.3918624018260659,
+    "unit": "share",
+    "description": "Share of 2025 delay minutes coded 'Late-arriving aircraft'",
+    "display": "39.2%",
+    "produced_by": "__main__:causes"
+  },
+  "share_nas": {
+    "value": 0.21873268436821938,
+    "unit": "share",
+    "description": "Share of 2025 delay minutes coded 'National Aviation System'",
+    "display": "21.9%",
+    "produced_by": "__main__:causes"
+  },
+  "share_security": {
+    "value": 0.0013651003878379902,
+    "unit": "share",
+    "description": "Share of 2025 delay minutes coded 'Security'",
+    "display": "0.1%",
+    "produced_by": "__main__:causes"
+  },
+  "share_weather": {
+    "value": 0.06350773051680836,
+    "unit": "share",
+    "description": "Share of 2025 delay minutes coded 'Extreme weather'",
+    "display": "6.4%",
+    "produced_by": "__main__:causes"
+  },
+  "slope_b1": {
+    "value": 1.0329747907194047,
+    "unit": "minutes out per minute in",
+    "description": "Propagation slope, scheduled turn [20, 45) min",
+    "display": "1.03",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b1_test": {
+    "value": 1.0264088009133658,
+    "unit": "minutes out per minute in",
+    "description": "Slope [20, 45) re-estimated Oct-Dec",
+    "display": "1.03",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b1_train": {
+    "value": 1.035702352425443,
+    "unit": "minutes out per minute in",
+    "description": "Slope [20, 45) estimated Jan-Sep",
+    "display": "1.04",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b2": {
+    "value": 1.0461367569830056,
+    "unit": "minutes out per minute in",
+    "description": "Propagation slope, scheduled turn [45, 60) min",
+    "display": "1.05",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b2_test": {
+    "value": 1.0445663100638818,
+    "unit": "minutes out per minute in",
+    "description": "Slope [45, 60) re-estimated Oct-Dec",
+    "display": "1.04",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b2_train": {
+    "value": 1.0466730867406506,
+    "unit": "minutes out per minute in",
+    "description": "Slope [45, 60) estimated Jan-Sep",
+    "display": "1.05",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b3": {
+    "value": 0.9837223493751525,
+    "unit": "minutes out per minute in",
+    "description": "Propagation slope, scheduled turn [60, 75) min",
+    "display": "0.98",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b3_test": {
+    "value": 0.9853721369359107,
+    "unit": "minutes out per minute in",
+    "description": "Slope [60, 75) re-estimated Oct-Dec",
+    "display": "0.99",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b3_train": {
+    "value": 0.9831127838893567,
+    "unit": "minutes out per minute in",
+    "description": "Slope [60, 75) estimated Jan-Sep",
+    "display": "0.98",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b4": {
+    "value": 0.8291405688481358,
+    "unit": "minutes out per minute in",
+    "description": "Propagation slope, scheduled turn [75, 90) min",
+    "display": "0.83",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b4_test": {
+    "value": 0.819461253329923,
+    "unit": "minutes out per minute in",
+    "description": "Slope [75, 90) re-estimated Oct-Dec",
+    "display": "0.82",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b4_train": {
+    "value": 0.8320569403280523,
+    "unit": "minutes out per minute in",
+    "description": "Slope [75, 90) estimated Jan-Sep",
+    "display": "0.83",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b5": {
+    "value": 0.6338523210184414,
+    "unit": "minutes out per minute in",
+    "description": "Propagation slope, scheduled turn [90, 120) min",
+    "display": "0.63",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b5_test": {
+    "value": 0.6437546732183484,
+    "unit": "minutes out per minute in",
+    "description": "Slope [90, 120) re-estimated Oct-Dec",
+    "display": "0.64",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b5_train": {
+    "value": 0.6304839335807255,
+    "unit": "minutes out per minute in",
+    "description": "Slope [90, 120) estimated Jan-Sep",
+    "display": "0.63",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b6": {
+    "value": 0.22337813916873847,
+    "unit": "minutes out per minute in",
+    "description": "Propagation slope, scheduled turn [120, 240) min",
+    "display": "0.22",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b6_test": {
+    "value": 0.23342795893211363,
+    "unit": "minutes out per minute in",
+    "description": "Slope [120, 240) re-estimated Oct-Dec",
+    "display": "0.23",
+    "produced_by": "__main__:propagation"
+  },
+  "slope_b6_train": {
+    "value": 0.21996304311398457,
+    "unit": "minutes out per minute in",
+    "description": "Slope [120, 240) estimated Jan-Sep",
+    "display": "0.22",
+    "produced_by": "__main__:propagation"
+  },
+  "top_hub": {
+    "value": "ORD",
+    "unit": "airport",
+    "description": "Airport with the most departures in 2025",
+    "display": "ORD",
+    "produced_by": "__main__:hubs"
+  },
+  "worst_cell_airport": {
+    "value": "ORD",
+    "unit": "airport",
+    "description": "Busiest-ten airport x hour cell with most late-aircraft minutes per departure",
+    "display": "ORD",
+    "produced_by": "__main__:hubs"
+  },
+  "worst_cell_deps": {
+    "value": 76,
+    "unit": "departures",
+    "description": "Scheduled departures behind that worst cell in 2025",
+    "display": "76",
+    "produced_by": "__main__:hubs"
+  },
+  "worst_cell_hour": {
+    "value": 23,
+    "unit": "hour",
+    "description": "Scheduled departure hour of that worst cell",
+    "display": "23",
+    "produced_by": "__main__:hubs"
+  },
+  "worst_cell_value": {
+    "value": 28.736842105263158,
+    "unit": "minutes per departure",
+    "description": "Late-aircraft minutes per departure in that cell",
+    "display": "28.7",
+    "produced_by": "__main__:hubs"
+  }
+}

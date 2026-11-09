@@ -1,0 +1,177 @@
+# Generated from _answers.py. Edit there.
+step: s13_result
+answers:
+- id: a01
+  text: 'Claim: short turns pass delay on fully, even amplify it, and buffers only absorb delay once the turn leaves
+    slack. Evidence: the shortest turns pass on {expected.pass_b1} of a one-hour delay; {expected.band_b5}-minute
+    turns pass on {expected.pass_b5}, absorbing about {expected.absorbed_b5} minutes; the longest {expected.pass_b6};
+    stable out of time. Reasoning: slack above minimum turn absorbs delay, the rest passes minute for minute, so
+    it''s non-linear. Limitation: observational; turn times are chosen, aircraft swaps.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Pass-through falls with turn length: over one hundred percent at tight turns ({expected.pass_b1}), {expected.pass_b5}
+    at {expected.band_b5} minutes. A turn absorbs delay up to its slack, then passes the rest on almost one for
+    one, which is why linear slopes stay near one. The Jan-Sep to Oct-Dec shift was only {expected.max_slope_shift}.
+    It''s observational: long turns are scheduled at particular places and times.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Claim: buffers work only beyond the slack threshold. Evidence: {expected.pass_b1} passed on at the shortest
+    turns, {expected.pass_b4} at {expected.band_b4}, {expected.pass_b5} at {expected.band_b5}. Reasoning: non-linear
+    slack mechanism; tight turns even amplify delay. Limitation: association, not experiment; aircraft swaps.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'Short turns amplify delay ({expected.pass_b1} passed on), while longer turns absorb it ({expected.absorbed_b5}
+    minutes absorbed at {expected.band_b5}). The effect is kinked rather than linear. Stable across months. Caution:
+    observational, scheduled turn length isn''t random.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'The curve shows outbound delay above the out-equals-in line for short turns and well below it for long
+    turns. A one-hour delay passes on at {expected.pass_b1} when turns are tight but {expected.pass_b5} with {expected.band_b5}-minute
+    turns. Slack explains it. Limitation: selection in who gets long turns.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Claim: extra turn minutes absorb delay only once there is slack. Evidence: pass-through from {expected.pass_b1}
+    to {expected.pass_b5} to {expected.pass_b6} as turns lengthen; out-of-time stability. Reasoning: minimum ground
+    time plus slack. Limitation: observational and swaps break chains.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Tight turns pass on more than the whole inbound delay; longer turns absorb part; the longest absorb most.
+    That''s the slack mechanism, non-linear. Numbers: {expected.pass_b1}, {expected.pass_b5}, {expected.pass_b6}.
+    Limitation: not a controlled experiment.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'Short turns amplify, long turns absorb: {expected.pass_b1} versus {expected.pass_b5}. Mechanism: slack
+    beyond the minimum turn. Validated out of time. Limitation: observational, swaps.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: 'Pass-through falls from {expected.pass_b1} at short turns to {expected.pass_b5} at {expected.band_b5} minutes
+    because longer turns have slack. Limitation: observational.'
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No amplification or stability.
+- id: a10
+  text: Short turns pass on all of a delay and more; long turns absorb it; it's non-linear; observational evidence
+    only.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: 'Claim: longer turns absorb delay. Evidence: {expected.pass_b5} passed on at {expected.band_b5} versus {expected.pass_b1}
+    at short turns. Reasoning: slack. Limitation: swaps and selection.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Longer turns are better.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: Pass-through falls as turns get longer.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Short turns pass on {expected.pass_b1}.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: The effect is non-linear.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Mechanism only.
+- id: a16
+  text: It's observational.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: Delay propagates.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: The slope is near one for short turns.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: Long turns absorb {expected.absorbed_b5} minutes.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: Longer turns make delays worse.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Delay always passes on in full regardless of turn time.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: The slope of one means turns have no effect.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Pass-through above one hundred percent is a data error.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The curve shows weather delays by turn time.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: Turn time has no relationship to delay.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Lengthening every turn to the longest band is guaranteed to remove most delay.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Delay always passes on in full regardless of turn time.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Weather causes most delays, so the curve doesn't matter.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Weather myth.
+- id: a29
+  text: This proves buffers will remove all delay.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a30
+  text: The shortest turns are best because aircraft fly more.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
