@@ -10,3 +10,6 @@ __pycache__/
 Thumbs.db
 .idea/
 .vscode/
+
+# Gemini reference PDF: local only (unreliable citations; owner chose not to publish)
+docs/source/
