@@ -34,14 +34,36 @@ restart lap), rain (latest weather sample shows rainfall), traffic (median gap t
 2. **Fix:** a driver-race fixed effect. Pit stops reset tyre age but not lap number (`share_multi_stint` of
    driver-races have 2+ stints). Wear `deg_soft` > `deg_medium` > `deg_hard`; lap effect `fuel_slope` (fuel burn and
    track evolution together; they can't be split). SEs clustered by race.
-3. **Cliff:** hinge `max(0, age − k)` per compound, k on a grid with `MIN_LAPS_SIDE` laps each side, chosen on the
-   training races inside each leave-one-race-out fold. A cliff counts only if it beats the line out of sample AND the
-   extra slope is positive and significant (`cliff_supported_*`, `n_cliffs_supported`). Censoring (teams pit
-   first, `p13_stint_survival`) means the old-tyre laps come from survivors.
+3. **Cliff:** hinge `max(0, age - k)` per compound, k on a grid with `MIN_LAPS_SIDE` laps each side, chosen on the
+   training races inside each leave-one-race-out fold. A cliff needs lower held-out error AND more race wins than
+   chance (sign test `loro_sign_p_*`) AND a positive extra slope (`cliff_supported_*`, `n_compounds_with_cliff`). No
+   in-sample p-value: the break age was picked on the same data. Result: the break helps by under 1% and bends the
+   wrong way (flattens). **Fixed-set check** (`fixedset_*`): on stints that run well past the break, the flattening
+   remains, so survivor selection is NOT the whole explanation (tyre management, warm-up/graining, fuel-saving,
+   non-linear track evolution are open). One break age is shared by all circuits, so a circuit-specific cliff is
+   untested.
 4. **Decision:** split a stint when the wear saved by an extra stop beats the pit loss. Linear wear s: L* =
-   2·sqrt(P/s) (`split_len_*`, range `split_len_*_short`–`split_len_*_long`), compared with observed stint lengths.
-5. **Checks:** traffic gap and incident thresholds varied (`deg_*_gap05/gap20/inc3/inc8`); a separate lap slope per
-   race (`deg_*_racelap`); out-of-time 2023–24 vs 2025 (`deg_*_train/test`, `oot_gain`).
+   2*sqrt(P/s) (`split_len_*`). The real range comes from circuits (`split_len_hard_circ_*`, each circuit's own wear
+   and pit loss), not from the pooled CI (`split_len_*_short/long`, too narrow). Over a median race (`race_laps_median`)
+   wear alone justifies `stops_wear_*` stop(s). Stint lengths use Kaplan-Meier (`stint_len_median_*`): stints that run
+   to the flag are censored, not stops (`share_stints_to_flag_*`).
+5. **Checks:** traffic gap and incident thresholds varied (`deg_*_gap05/gap20/inc3/inc8`; soft moves about 11% with
+   the looser gap); per-race lap slope (`deg_*_racelap`); compound offset per race (`deg_*_raceoffset`); track
+   temperature (`deg_*_temp`, `temp_slope`); out-of-time 2023-24 vs 2025 (`deg_*_train/test`, `oot_gain`; soft wear
+   shifted, taught in the memo).
+
+## Quality-gate review (fresh reviewer, 2026-11-10): what changed
+- **SC/VSC windows never closed** when a VSC became a SC or a SC ended in a red flag: whole races were neutralised
+  (Interlagos 2023 had 0 clean laps). Windows now close at the SC deployment / red flag; red flag runs to the next
+  SESSION STARTED plus two restart laps. Test: every kept race has clean laps and under 40% neutralised.
+- **Lusail 2024 was labelled wet** because of an UNKNOWN compound. Wet now = INTERMEDIATE/WET used; unknown-compound
+  laps drop as `no_stint`. **Miami 2025 feed is incomplete** (58% lap coverage): excluded and logged.
+- **Content said the break "never beat" the line**; it was slightly better (under 1%) but not reliably and bent the
+  wrong way. Wording fixed everywhere; key renamed `n_compounds_with_cliff`; claims locked in `test_crosscheck.py`.
+- **Censoring was taught as the proven cause** of the flattening; the fixed-set check showed it isn't the whole story.
+- **Split-length range was far too narrow**; now per circuit. **Decision reframed**: wear justifies one stop, not two.
+- Numeric tolerances tightened so wrong answers (e.g. the line's RMSE, the medium slope) can't pass. The vacuous LORO
+  test was replaced by one that records every training mask the cliff search uses.
 
 ## Limitations
 Observational; lap number mixes fuel with track evolution; temperature, set-up and tyre pressures not modelled;

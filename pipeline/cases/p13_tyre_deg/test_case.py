@@ -99,15 +99,70 @@ def test_every_drop_is_logged_once_with_a_reason():
     assert "wet_races_excluded" in t
 
 
-def test_loro_holds_out_whole_races():
-    """Leave-one-race-out: the training mask never contains a lap from the held-out race."""
+def test_cliff_search_never_trains_on_the_held_out_race(tmp_path):
+    """Run the real cliff() on a few races and record every training mask it fits on. Apart from the one full-data
+    fit, each mask must leave out exactly one whole race and keep every other race (no leakage, nothing else lost)."""
     c = A.clean_laps(A.load()[0])
+    keep = c["session_key"].drop_duplicates().iloc[:6]
+    c = c[c["session_key"].isin(keep)].reset_index(drop=True)
     races = c["session_key"].to_numpy()
-    for r in np.unique(races)[:5]:
-        test = races == r
-        train = ~test
-        assert not set(races[train]) & {r}
-        assert test.sum() > 0
+    seen = []
+    real = A.lstsq_resid
+
+    def spy(y, X, train):
+        seen.append(train.copy())
+        return real(y, X, train)
+
+    mp = pytest.MonkeyPatch()
+    mp.setattr(A, "lstsq_resid", spy)
+    mp.setattr(A, "MIN_LAPS_SIDE", 50)
+    try:
+        rs = ResultStore(tmp_path)
+        A.identification(c, rs)
+        A.main_model(c, rs)
+        seen.clear()
+        A.cliff(c, rs)
+    finally:
+        mp.undo()
+    loro = [m for m in seen if not m.all()]
+    assert loro, "cliff() made no leave-one-race-out fits"
+    for m in loro:
+        out = set(races[~m])
+        assert len(out) == 1, "a training mask dropped more than one race"
+        assert not (set(races[m]) & out), "held-out race leaked into training"
+        assert set(races[m]) == set(races) - out
+
+
+def test_every_kept_race_is_sane():
+    races = pd.read_csv(CASE_DIR / "aggregates" / "races.csv")
+    kept = races[~races.wet & ~races.incomplete]
+    g = LAPS.groupby("session_key").agg(clean=("drop_reason", lambda s: s.isna().sum()), neut=("neutralised", "mean"))
+    assert set(g.index) == set(kept.session_key)
+    assert (g["clean"] > 0).all(), "a kept race has no clean laps"
+    assert (g["neut"] < 0.4).all(), g[g.neut >= 0.4]
+    assert (kept["lap_coverage"] >= C.MIN_LAP_COVERAGE).all()
+
+
+def test_wet_means_inters_or_wets_were_used():
+    races = pd.read_csv(CASE_DIR / "aggregates" / "races.csv").fillna({"other_compounds": ""})
+    used_wet = races["other_compounds"].str.contains("INTERMEDIATE|WET")
+    assert (races["wet"] == used_wet).all()
+
+
+def test_race_control_windows_close():
+    """VSC upgraded to SC, SC ended by a red flag, red flag until the session restarts."""
+    t = lambda s: f"2025-01-01T00:{s}+00:00"
+    rc = pd.DataFrame([
+        {"date": t("00:00"), "category": "SafetyCar", "flag": None, "message": "VIRTUAL SAFETY CAR DEPLOYED"},
+        {"date": t("01:00"), "category": "SafetyCar", "flag": None, "message": "SAFETY CAR DEPLOYED"},
+        {"date": t("02:00"), "category": "Flag", "flag": "RED", "message": "RED FLAG"},
+        {"date": t("05:00"), "category": "SessionStatus", "flag": None, "message": "SESSION STARTED"},
+        {"date": t("30:00"), "category": "Flag", "flag": "CHEQUERED", "message": "CHEQUERED FLAG"},
+    ])
+    w = C.windows(rc)
+    ends = sorted(b for _, b, _ in w)
+    assert max(ends) == pd.Timestamp(t("05:00")), "a window stayed open to the end of the race"
+    assert len(w) == 3
 
 
 def test_wear_ordering_and_fuel_sign():

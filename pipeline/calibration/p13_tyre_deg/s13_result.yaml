@@ -2,84 +2,92 @@
 step: s13_result
 answers:
 - id: a01
-  text: 'Claim: within the ages teams run, no cliff holds up out of sample. Evidence: held-out error for hards is
-    {expected.loro_rmse_line_hard} s with a line and {expected.loro_rmse_hinge_hard} s with a break; the break won
-    {expected.loro_wins_hard} of {expected.loro_races_hard} races; and the best in-sample break (age {expected.cliff_age_hard})
-    has extra slope {expected.cliff_extra_slope_hard}, a flattening. Reasoning: teams pit before the cliff, so old-tyre
-    laps come from drivers whose tyres held up. Limitation: no cliff in the data doesn''t prove none exists beyond
-    those ages.'
+  text: 'Claim: no common-age cliff within the ages teams run; wear if anything slows with age. Evidence: the break
+    cuts held-out error only from {expected.loro_rmse_line_hard} to {expected.loro_rmse_hinge_hard} s on hards,
+    wins {expected.loro_wins_hard} of {expected.loro_races_hard} races (sign test p {expected.loro_sign_p_hard},
+    not more than chance), and its extra slope is {expected.cliff_extra_slope_hard}, the wrong way for a cliff.
+    Reasoning: survivor selection could flatten the tail, but the flattening remains on the same long stints ({expected.fixedset_extra_slope_hard}),
+    so tyre management, warm-up or fuel-saving may also play a part. Limitation: one break age for all circuits,
+    and nothing beyond the ages run, so a cliff there is untested.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a02
-  text: 'There''s no reliable cliff. Leave-one-race-out RMSE barely changes with a break (hards {expected.loro_rmse_line_hard}
-    vs {expected.loro_rmse_hinge_hard}), and the in-sample break bends the curve flatter, not steeper ({expected.cliff_extra_slope_hard}).
-    That''s what censoring produces: worn tyres get changed, so the tail is survivors. Limitation: a cliff beyond
-    the ages run is untested.'
+  text: 'There''s no cliff to plan around: the break helps held-out error by only {expected.loro_gain_hard} and
+    bends the curve flatter ({expected.cliff_extra_slope_hard}), not steeper. Survivor selection was my first explanation,
+    but the same long stints still flatten ({expected.fixedset_extra_slope_hard}), so it''s not the whole story;
+    tyre management early in long stints could explain it too. A cliff at a specific circuit or past the ages teams
+    run is untested.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a03
-  text: 'Claim: the straight line is as good as a broken line on unseen races. Evidence: {expected.loro_rmse_line_hard}
-    vs {expected.loro_rmse_hinge_hard} s for hards, with the break winning in only {expected.loro_wins_hard} races
-    of {expected.loro_races_hard}. Reasoning: teams stop before tyres fall away, so the data contain selected long
-    stints. Limitation: absence of evidence isn''t evidence of absence.'
+  text: 'Claim: the data show steady or slowing wear, not a cliff. Evidence: held-out RMSE {expected.loro_rmse_line_hard}
+    vs {expected.loro_rmse_hinge_hard} for hards; the break wins {expected.loro_wins_hard} of {expected.loro_races_hard}
+    races, about what chance gives; extra slope {expected.cliff_extra_slope_hard}. Reasoning: a cliff would steepen
+    the line. The flattening persists in a fixed set of long stints, so selection alone doesn''t explain it. Limitation:
+    absence of a cliff here isn''t proof of none at older ages.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a04
-  text: 'No cliff survives validation. The break gives almost the same held-out error as the line, and its extra
-    slope is negative ({expected.cliff_extra_slope_hard}), so the curve flattens. Selection explains it: those still
-    out on old tyres are the ones whose tyres were fine. We can''t rule out a cliff at older ages.'
+  text: 'No reliable cliff. The break barely improves held-out error and wins about half the races (p {expected.loro_sign_p_hard}).
+    Its extra slope is negative ({expected.cliff_extra_slope_hard}): wear slows after age {expected.cliff_age_hard}.
+    Using only stints that run well past the break it still flattens, so it isn''t just survivors; management or
+    a warm-up phase are possible. One shared break age can''t find a circuit-specific cliff.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a05
-  text: 'Claim: no cliff within observed ages. Evidence: held-out RMSE line {expected.loro_rmse_line_hard}, break
-    {expected.loro_rmse_hinge_hard}; break wins {expected.loro_wins_hard} of {expected.loro_races_hard}. Reasoning:
-    censoring by pit stops; the in-sample break flattens. Limitation: beyond the ages run, unknown.'
+  text: 'Claim: no common cliff. Evidence: tiny held-out gain ({expected.loro_gain_hard}), race wins not above chance,
+    extra slope {expected.cliff_extra_slope_hard}. Reasoning: flattening, which survives the fixed-set check ({expected.fixedset_extra_slope_hard}),
+    so selection is only one candidate explanation. Limitation: untested beyond the observed ages and per circuit.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a06
-  text: 'The data show steady wear, not a cliff: out of sample a break doesn''t beat the line, and the best break
-    even has a negative extra slope. That''s survivor selection from teams pitting early. A cliff past the observed
-    ages remains possible.'
+  text: The curve doesn't fall off a cliff; it flattens. Held-out error is almost the same with the break ({expected.loro_rmse_line_hard}
+    vs {expected.loro_rmse_hinge_hard}), and the break wins {expected.loro_wins_hard} of {expected.loro_races_hard}.
+    I suspected survivors, but the same-stint check still shows flattening, so tyre management or non-linear track
+    evolution could be involved. We can't rule out a cliff past where teams pit.
   label: acceptable
   kind: strong
   owner_review: false
 - id: a07
-  text: 'Held-out comparison says no: hards {expected.loro_rmse_line_hard} s line vs {expected.loro_rmse_hinge_hard}
-    s break. The in-sample break at age {expected.cliff_age_hard} flattens wear. Censoring explains the tail. We
-    haven''t ruled out a cliff beyond the data.'
+  text: 'Claim: no cliff that generalises. Evidence: break vs line held-out error {expected.loro_rmse_hinge_hard}
+    vs {expected.loro_rmse_line_hard}; extra slope {expected.cliff_extra_slope_hard}. Reasoning: wrong direction
+    for a cliff, and the flattening remains on a fixed set of stints. Limitation: a common break age can''t detect
+    a cliff at one circuit.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a08
-  text: 'No cliff that generalises: similar held-out error, break wins only some races, and the curve flattens after
-    the break because only good tyres stay out. Not finding a cliff isn''t proof there is none.'
+  text: Out of sample the break adds almost nothing and wins about half the races, and it makes wear slower after
+    age {expected.cliff_age_hard}, not faster. That flattening also appears on the same long stints, so it isn't
+    only selection. Not finding a cliff doesn't prove there is none beyond the ages run.
   label: acceptable
   kind: strong
   owner_review: false
 - id: a09
-  text: 'No cliff holds out of sample: the break doesn''t reduce held-out error and the curve flattens; a cliff
-    beyond the observed ages is still possible.'
+  text: 'No cliff holds out of sample: the break barely changes held-out error and the curve flattens; a cliff beyond
+    the observed ages is still possible.'
   label: acceptable
   kind: partial
   owner_review: true
-  note: No numbers.
+  note: No numbers; no test of the explanation.
 - id: a10
   text: Held-out error is about the same with or without the break ({expected.loro_rmse_line_hard} vs {expected.loro_rmse_hinge_hard}),
-    so no cliff; teams pit before it.
+    and the break bends the wrong way, so there is no cliff; older ages are untested.
   label: acceptable
   kind: partial
   owner_review: false
 - id: a11
-  text: There's no reliable cliff because the break doesn't win on unseen races; censoring by pit stops explains
-    the flat tail.
+  text: 'There''s no reliable cliff: the break wins only about half the held-out races and its extra slope is negative.
+    The flattening might be selection or tyre management.'
   label: acceptable
   kind: partial
-  owner_review: false
+  owner_review: true
+  note: Thin limitation.
 - id: a12
   text: There is no cliff.
   label: not_acceptable
@@ -127,7 +135,7 @@ answers:
   kind: wrong
   owner_review: false
 - id: a21
-  text: The break model wins, so there is a big cliff.
+  text: The break model wins most races, so there is a big cliff.
   label: not_acceptable
   kind: wrong
   owner_review: false
@@ -162,11 +170,11 @@ answers:
   kind: red_flag
   owner_review: false
 - id: a28
-  text: No cliff exists anywhere, so a stint can run forever on hards.
+  text: The flattening is proven to be survivor selection, so there's nothing else to check.
   label: not_acceptable
   kind: red_flag
   owner_review: true
-  note: Over-reach.
+  note: Asserts an explanation the fixed-set check contradicts.
 - id: a29
   text: The test shows the soft tyre has a cliff at lap one.
   label: not_acceptable

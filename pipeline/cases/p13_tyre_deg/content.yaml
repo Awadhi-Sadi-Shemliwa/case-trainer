@@ -13,7 +13,7 @@ concepts: [fuel-corrected degradation, identification and collinearity, fixed ef
            leave-one-group-out validation, censoring, sensitivity analysis, decision thresholds]
 sources: []
 datasets: [openf1_laps_7953, openf1_stints_7953, openf1_race_control_7953, openf1_intervals_7953]
-allowed_literals: ["2023", "2024", "2025", "2026", "Formula 1", "OpenF1"]
+allowed_literals: ["2023-24", "2023", "2024", "2025", "2026", "Formula 1", "OpenF1"]
 
 steps:
 # ============================================================== BRIEF
@@ -178,7 +178,7 @@ steps:
   snippet: {file: clean.py, name: drop_rules}
   prompt: >-
     This is the real code that decides which laps are kept. Each lap gets the FIRST reason that applies. Why does the
-    order matter for the counts in the clean log, and which rule needs a second data feed?
+    order matter for the counts in the clean log, and which rules need a feed other than the lap table?
 
 - id: s06_fill_age
   phase: data
@@ -209,9 +209,11 @@ steps:
     tyres, so the lap is slow for reasons that look exactly like wear. Traffic is also not random over a stint: it
     clusters early (on fresh tyres after a stop, cars rejoin in the pack) and in battles, so it would bias the wear
     slope, not just add noise. I rejected keeping them, and I rejected a much stricter rule that would throw away
-    most laps. The threshold is a choice, so I checked it: with a {expected.n_laps_gap05}-lap sample under a looser rule
-    the hard-tyre slope is {expected.deg_hard_gap05}, and under a stricter rule ({expected.n_laps_gap20} laps) it is
-    {expected.deg_hard_gap20}, against {expected.deg_hard} in the main model. The conclusion doesn't depend on it.
+    most laps. The threshold is a choice, so I checked it: with a looser rule ({expected.n_laps_gap05} laps kept) the
+    hard-tyre slope is {expected.deg_hard_gap05} and the soft slope {expected.deg_soft_gap05}; with a stricter rule
+    ({expected.n_laps_gap20} laps) hards are {expected.deg_hard_gap20}, against {expected.deg_hard} in the main model.
+    So the slope moves by up to about a tenth with the rule, which is worth reporting, but the stint decision doesn't
+    change. One more caution: a car on fresh tyres catches the car ahead, so the traffic rule is itself linked to pace.
   rubric:
     points:
       - id: what
@@ -248,11 +250,11 @@ steps:
         label: Sensitivity check
         weight: 30
         paraphrases:
-          - with a looser or stricter gap rule the slope barely changes
-          - the hard tyre slope is {expected.deg_hard_gap05} and {expected.deg_hard_gap20} under other rules against {expected.deg_hard}
+          - with a looser or stricter gap rule the slope moves a little but the decision does not change
+          - the hard tyre slope is {expected.deg_hard_gap05} with a looser rule against {expected.deg_hard} in the main model
           - the threshold is a choice so it was varied
-        keywords: [[looser, stricter, varied, sensitivity, other rule, threshold, check], [same, barely, similar, slope]]
-        numeric: {key: deg_hard_gap20, tolerance: 0.02}
+        keywords: [[looser, stricter, varied, sensitivity, other rule, threshold, check], [same, barely, similar, slope, moves, change]]
+        numeric: {key: deg_hard_gap05, tolerance: 0.003}
         hint: What happens to the slope if the gap rule changes?
         why: A judgement call needs a check that could have broken it.
     red_flags:
@@ -303,10 +305,11 @@ steps:
     The x-axis is tyre age in laps; the y-axis is lap time lost against the freshest age shown, after removing driver,
     race and the lap-number (fuel) effect. Dots are averages per age; dashed lines are the straight-line fits. Softs wear
     fastest ({expected.deg_soft} s per lap of age). Mediums ({expected.deg_medium}) and hards ({expected.deg_hard}) wear
-    at about the same rate: their confidence intervals overlap, so the data can't rank them. Over a {expected.stint_len_median_hard}-lap hard stint that adds up to more than a
-    second a lap by the end. The lines stop at different ages because teams pit before tyres get very old, so the oldest
-    ages rest on few laps and on the drivers whose tyres were holding up. It can't show what happens beyond the ages teams
-    actually ran, and it averages over circuits that differ a lot. So what: the wear rate per compound feeds the stint
+    at about the same rate: their confidence intervals overlap, so the data can't rank them. Over a
+    {expected.stint_len_median_hard}-lap hard stint that adds up to more than a second a lap by the end. The lines stop at
+    different ages because teams pit before tyres get very old, so the oldest ages rest on few laps from the stints that
+    were kept out longest, which may not be typical. It can't show what happens beyond the ages teams actually ran, and
+    it averages over circuits that differ a lot. So what: the wear rate per compound feeds the stint
     decision, but a cliff can't be read off a curve that is thin at the end.
   rubric:
     points:
@@ -327,8 +330,8 @@ steps:
           - softs wear fastest at {expected.deg_soft} seconds per lap while mediums and hards are similar
           - hard tyres lose about {expected.deg_hard} seconds per lap of age
           - mediums and hards wear at about the same rate
-        keywords: [[soft, medium, hard], [fast, steep, more, per lap, order]]
-        numeric: {key: deg_hard, tolerance: 0.02}
+        keywords: [[soft, medium, hard], [fast, steep, more, per lap, order, similar, same]]
+        numeric: {key: deg_soft, tolerance: 0.005}
         hint: Quote the wear rate of each compound. Can you tell mediums and hards apart?
         why: The size of the effect sets the stint length.
       - id: censor
@@ -337,8 +340,8 @@ steps:
         paraphrases:
           - teams pit before tyres get old so the oldest ages have few laps
           - the lines stop because stints end before the tyre is worn out
-          - the drivers who run longest are those whose tyres hold up
-        keywords: [[pit, stop, end, few, censor, survivor, hold up], [old, oldest, long, tail]]
+          - the longest stints may not be typical of all stints
+        keywords: [[pit, stop, end, few, censor, survivor, hold up, typical], [old, oldest, long, tail]]
         hint: Why do the lines stop where they stop?
         why: Missing data at the end is the reason a cliff is hard to find.
       - id: limits
@@ -436,7 +439,8 @@ steps:
     in two or more stints, so the model can separate them: hards then lose {expected.deg_hard} s per lap of age, with
     a lap effect of {expected.fuel_slope}. Second, the break chosen as the best fit on all the data will always look
     like an improvement. Choose it on the other races and score it on a race the model never saw, one race at a time.
-    Done that way, {expected.n_cliffs_supported} compounds show a break that beats the straight line.
+    Done that way the break cuts held-out error by under one percent and bends the wrong way, so
+    {expected.n_compounds_with_cliff} compounds show a cliff.
   rubric:
     points:
       - id: collinear
@@ -467,7 +471,7 @@ steps:
           - the lap number effect is {expected.fuel_slope} seconds per lap
           - most driver races have two or more stints so the fix works
         keywords: [[improve, negative, fuel, lap number, slope, multi, two or more]]
-        numeric: {key: deg_hard, tolerance: 0.02}
+        numeric: {key: deg_hard, tolerance: 0.004}
         hint: Compare the slope with and without a fuel control.
         why: Replace a wrong estimate with the right one.
       - id: oos
@@ -508,61 +512,66 @@ steps:
   prompt: >-
     Leave-one-race-out error, straight line vs line with a break: soft {expected.loro_rmse_line_soft} vs
     {expected.loro_rmse_hinge_soft}, medium {expected.loro_rmse_line_medium} vs {expected.loro_rmse_hinge_medium}, hard
-    {expected.loro_rmse_line_hard} vs {expected.loro_rmse_hinge_hard} seconds. Best in-sample break for hards: age
-    {expected.cliff_age_hard}, extra slope {expected.cliff_extra_slope_hard}. Explain using Claim, Evidence, Reasoning
-    and one limitation.
+    {expected.loro_rmse_line_hard} vs {expected.loro_rmse_hinge_hard} seconds. The break won {expected.loro_wins_hard} of
+    {expected.loro_races_hard} held-out races for hards (sign test p {expected.loro_sign_p_hard}). Best in-sample break
+    for hards: age {expected.cliff_age_hard}, extra slope {expected.cliff_extra_slope_hard}; using only stints that run
+    well past it, the extra slope is {expected.fixedset_extra_slope_hard}. Explain using Claim, Evidence, Reasoning and
+    one limitation.
   scaffold: cer
-  analysis_pointer: Look at the sign of the extra slope after the break, and at how many held-out races the break won.
-  redo_step: Re-read the cliff results and the stint survival chart.
+  analysis_pointer: Look at how much the break helps, how often it wins, which way it bends, and whether that survives on the same stints.
+  redo_step: Re-read the cliff results, the fixed-set check and the stint survival chart.
   model_answer: >-
-    Claim: within the tyre ages teams actually run, there is no cliff that holds up out of sample. Evidence: the break
-    barely changes held-out error (hards {expected.loro_rmse_line_hard} vs {expected.loro_rmse_hinge_hard} s), it won in
-    {expected.loro_wins_hard} of {expected.loro_races_hard} held-out races, and the best in-sample break for hards
-    (age {expected.cliff_age_hard}) has an extra slope of {expected.cliff_extra_slope_hard}: the curve flattens, it
-    doesn't fall off a cliff. Reasoning: teams pit before the cliff, so the old-tyre laps come from drivers whose tyres
-    were still fine, and a flattening tail is what that selection produces. Limitation: the absence of a cliff in the
-    data is not proof that no cliff exists. It means the cliff, if any, lies beyond where teams let tyres go.
+    Claim: there is no common-age cliff in the ages teams run. Wear, if anything, slows down with age. Evidence: the break
+    lowers held-out error only slightly (hards {expected.loro_rmse_line_hard} to {expected.loro_rmse_hinge_hard} s, a
+    {expected.loro_gain_hard} gain), wins {expected.loro_wins_hard} of {expected.loro_races_hard} races, which is not more
+    than chance (p {expected.loro_sign_p_hard}), and bends the wrong way: the extra slope after age
+    {expected.cliff_age_hard} is {expected.cliff_extra_slope_hard}. Reasoning: a cliff would steepen the curve. The
+    flattening could be survivor selection, since teams pit worn tyres first, but it remains when only the same long
+    stints are used ({expected.fixedset_extra_slope_hard}), so selection is not the whole story. Tyre management early
+    in a planned long stint, a warm-up or graining phase, fuel-saving, or track evolution that isn't linear could all
+    produce it, and this data can't tell them apart. Limitation: one break age is shared by all circuits, and the data
+    stop where teams pitted, so a cliff at a particular circuit or at older ages is untested, not ruled out.
   rubric:
     points:
       - id: claim
         label: Claim
         weight: 20
         paraphrases:
-          - no cliff holds up out of sample within the ages teams run
-          - the straight line is as good as a line with a break on unseen races
-          - there is no reliable cliff in this data
-        keywords: [["no", not, isn't, doesn't], [cliff, break, hold, out of sample, unseen]]
-        hint: Did the break help on races it never saw?
+          - there is no common-age cliff within the ages teams run
+          - the break barely helps on unseen races and bends the wrong way for a cliff
+          - wear does not accelerate and if anything slows with age
+        keywords: [["no", not, isn't, doesn't, barely, slows, flatten], [cliff, break, accelerat, steepen]]
+        hint: Did the break help on races it never saw, and which way did it bend?
         why: Start with what it means.
       - id: evidence
         label: Evidence (numbers)
         weight: 25
         paraphrases:
-          - held out error is {expected.loro_rmse_line_hard} for the line and {expected.loro_rmse_hinge_hard} with the break for hards
-          - the break won in only {expected.loro_wins_hard} of {expected.loro_races_hard} races
-          - the extra slope after the break is {expected.cliff_extra_slope_hard} so the curve flattens
-        keywords: [[error, RMSE, won, races, extra slope, flatten], [line, break, hinge, held out]]
-        numeric: {key: loro_rmse_hinge_hard, tolerance: 0.05}
-        hint: Quote held-out error for both models.
+          - held out error falls only from {expected.loro_rmse_line_hard} to {expected.loro_rmse_hinge_hard} seconds for hards
+          - the break wins {expected.loro_wins_hard} of {expected.loro_races_hard} races which is not more than chance
+          - the extra slope after the break is {expected.cliff_extra_slope_hard} so the curve flattens instead of steepening
+        keywords: [[error, RMSE, gain, won, races, chance, extra slope, flatten], [line, break, hinge, held out]]
+        numeric: {key: cliff_extra_slope_hard, tolerance: 0.01}
+        hint: Quote held-out error for both models and the sign of the extra slope.
         why: The decision rests on the comparison, not on the shape of one curve.
-      - id: censoring
-        label: Censoring explains the flat tail
+      - id: reasoning
+        label: Why it flattens (hypotheses, tested)
         weight: 30
         paraphrases:
-          - teams pit before the cliff so old tyre laps come from drivers whose tyres held up
-          - the flattening is selection because worn tyres were already changed
-          - long stints are run only when the tyres are fine
-        keywords: [[pit, before, select, survivor, censor, held up, fine, changed], [old, long, tail, flatten]]
-        hint: Who is still out on very old tyres?
-        why: Censoring is the main pitfall the spec names for this case.
+          - survivor selection could flatten the tail but it remains on the same long stints so it is not the whole story
+          - tyre management early in long stints or a warm-up phase could also flatten the curve
+          - the data cannot separate selection from tyre management or fuel saving
+        keywords: [[select, survivor, censor, management, manag, warm-up, graining, fuel sav, track evolution], [same stints, fixed, remains, not the whole, cannot tell, hypothes, could]]
+        hint: If only the same long stints are used, does the flattening go away?
+        why: Testing your own explanation is what separates analysis from storytelling.
       - id: limitation
         label: Limitation
         weight: 25
         paraphrases:
           - not finding a cliff does not prove there is none beyond the ages run
-          - the cliff if any lies beyond where teams let tyres go
-          - absence of evidence is not evidence of absence
-        keywords: [[not prove, absence, beyond, if any, unseen, outside]]
+          - one break age for every circuit cannot find a cliff at a particular circuit
+          - the data stop where teams pitted so older ages are untested
+        keywords: [[not prove, absence, beyond, untested, circuit, shared, common, older]]
         hint: What would you need to see to rule a cliff out completely?
         why: The strategist must not read "no cliff found" as "tyres last forever".
     red_flags:
@@ -571,27 +580,33 @@ steps:
         penalty: 30
         paraphrases:
           - there is no cliff so tyres can run as long as you like
-        feedback: The data stop where teams pitted. A cliff beyond that is untested, not ruled out.
+        feedback: The data stop where teams pitted. A cliff beyond that, or at one circuit, is untested.
       - id: insample_cliff
         critical: false
         penalty: 15
         paraphrases:
           - the best fitting break proves there is a cliff at that age
-        feedback: It was chosen in-sample and didn't win out of sample. Its extra slope is the wrong sign for a cliff.
+        feedback: It was chosen in-sample, barely helped out of sample, and bends the wrong way for a cliff.
       - id: faster_after
         critical: false
         penalty: 15
         paraphrases:
           - the negative extra slope means tyres get faster after the break
-        feedback: It means the wear curve flattens, largely because only tyres in good shape are kept that long.
+        feedback: It means wear slows down after that age (the curve flattens). The tyres are still getting slower.
+      - id: survivor_proven
+        critical: false
+        penalty: 10
+        paraphrases:
+          - the flattening is proven to be survivor selection
+        feedback: The flattening remains on the same long stints, so selection can't be the whole explanation.
 
 - id: s14_numeric
   phase: model
   type: numeric
-  title: Read the hard-tyre wear rate
-  prompt: After removing the fuel effect, how many seconds per lap of tyre age does the hard compound lose?
-  answer_key: deg_hard
-  tolerance: 0.01
+  title: Read the soft-tyre wear rate
+  prompt: After removing the fuel effect, how many seconds per lap of tyre age does the soft compound lose?
+  answer_key: deg_soft
+  tolerance: 0.005
   unit: s per lap
 
 # ============================================================== DECIDE
@@ -609,11 +624,14 @@ steps:
     Trade-off: an extra stop costs the pit loss ({expected.pit_loss} s, middle half of races {expected.pit_loss_q25} to
     {expected.pit_loss_q75} s) and saves wear. With linear wear s per lap, splitting a stint of L laps into two saves
     s times L squared over four, so the extra stop pays when L is longer than twice the square root of pit loss over s.
-    Hards: about {expected.split_len_hard} laps (range {expected.split_len_hard_short} to {expected.split_len_hard_long});
-    mediums {expected.split_len_medium}; softs {expected.split_len_soft}. Teams already run shorter: the median hard
-    stint is {expected.stint_len_median_hard} laps and only {expected.share_stints_over_split_hard} of hard stints run
-    longer than the split length. So on wear alone a stop is rarely worth adding. Stops are driven by the two-compound
-    rule, track position, undercuts and the risk of an untested cliff, which this rule leaves out.
+    Pooled, that is about {expected.split_len_hard} laps on hards, {expected.split_len_medium} on mediums and
+    {expected.split_len_soft} on softs. The real range is set by the circuit: using each circuit's own wear and pit loss,
+    the hard split length runs from {expected.split_len_hard_circ_min} laps at {expected.split_len_hard_circ_min_at} to
+    {expected.split_len_hard_circ_max} at {expected.split_len_hard_circ_max_at} (median {expected.split_len_hard_circ_median}).
+    For a median race of {expected.race_laps_median} laps, wear alone justifies {expected.stops_wear_hard} stop, not
+    two. In practice the median hard stint ({expected.stint_len_median_hard} laps, counting stints that reach the flag
+    as unfinished) is shorter than the split length, yet {expected.km_running_at_split_hard} of hard stints would still
+    be running at it. Track position, undercuts, the two-compound rule and an untested cliff also shape stops.
   rubric:
     points:
       - id: tradeoff
@@ -638,26 +656,26 @@ steps:
         hint: How much wear does halving a stint save?
         why: The number should come from a rule you can re-run with new inputs.
       - id: value
-        label: Stint length per compound
+        label: Stint length per compound and its range
         weight: 25
         paraphrases:
           - hards about {expected.split_len_hard} laps mediums {expected.split_len_medium} softs {expected.split_len_soft}
-          - a hard stint can run about {expected.split_len_hard} laps before an extra stop pays
-          - the range for hards is {expected.split_len_hard_short} to {expected.split_len_hard_long} laps
-        keywords: [[laps, stint, length], [hard, medium, soft]]
+          - by circuit the hard split length runs from {expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max} laps
+          - the range depends mostly on the circuit's wear rate
+        keywords: [[laps, stint, length], [hard, medium, soft, circuit, range]]
         numeric: {key: split_len_hard, tolerance: 4}
-        hint: Plug in the hard-tyre slope and the pit loss.
-        why: The strategist needs the number and its range.
+        hint: Plug in the hard-tyre slope and the pit loss, then do it per circuit.
+        why: The strategist needs the number and its real range.
       - id: reality
-        label: Compared with what teams do
+        label: How many stops wear justifies
         weight: 20
         paraphrases:
-          - teams already stop earlier than the wear rule says
-          - the median hard stint is {expected.stint_len_median_hard} laps and few run past the split length
-          - on wear alone an extra stop is rarely worth it
-        keywords: [[teams, already, median, observed, actual, rarely], [shorter, earlier, few]]
-        hint: How long do real hard stints last?
-        why: A rule that ignores practice should explain the gap.
+          - wear alone justifies one stop in a median race but not a second
+          - a race of {expected.race_laps_median} laps on one set is longer than the split length so one stop pays
+          - the median hard stint is {expected.stint_len_median_hard} laps which is below the split length
+        keywords: [[one stop, single stop, second stop, not two, race], [wear, pays, justif, split]]
+        hint: Compare the split length with a full race distance.
+        why: A rule that ignores practice should explain how it compares.
       - id: leaves_out
         label: What the rule leaves out
         weight: 15
@@ -674,7 +692,7 @@ steps:
         penalty: 30
         paraphrases:
           - never make an extra stop because the wear rule says it does not pay
-        feedback: The rule covers wear only. Track position, regulations and cliff risk can still justify a stop.
+        feedback: The rule says one stop pays on wear in a normal race. Track position, regulations and cliff risk matter too.
       - id: exact
         critical: false
         penalty: 15
@@ -697,15 +715,17 @@ steps:
   analysis_pointer: Combine the fuel-corrected wear rates, the cliff test and the split lengths.
   redo_step: Re-read the threshold step.
   model_answer: >-
-    Recommendation: plan stints on linear wear: an extra stop pays for itself on wear alone only beyond about
-    {expected.split_len_hard} laps on hards, {expected.split_len_medium} on mediums and {expected.split_len_soft} on softs.
-    Evidence: fuel-corrected wear is {expected.deg_soft}, {expected.deg_medium} and {expected.deg_hard} s per lap of age
-    for softs, mediums and hards; the pit loss is {expected.pit_loss} s; and a break in the curve never beat a straight
-    line on held-out races. Risk left over: a cliff beyond the ages teams run is untested, and wear varies a lot by
-    circuit (hards from {expected.circuit_min_deg_hard} at {expected.circuit_min_hard} to {expected.circuit_max_deg_hard}
-    at {expected.circuit_max_hard}). Limitations: lap number mixes fuel with track evolution; temperature and car set-up
-    are not modelled; {expected.n_wet_races} wet races are excluded. Next step: re-estimate per circuit before each race
-    with practice long runs, and track the 2026 tyres separately.
+    Recommendation: plan on linear wear and one stop. An extra stop pays on wear alone only once a stint would pass about
+    {expected.split_len_hard} laps on hards, {expected.split_len_medium} on mediums and {expected.split_len_soft} on softs,
+    and for hards that ranges by circuit from {expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max}
+    laps. Evidence: fuel-corrected wear is {expected.deg_soft}, {expected.deg_medium} and {expected.deg_hard} s per lap of
+    age for softs, mediums and hards; the pit loss is {expected.pit_loss} s; and a break in the curve barely improved
+    held-out error and bent the wrong way, so there is no common cliff to plan around. Risk left over: a cliff beyond the
+    ages teams run, or at one circuit, is untested; circuit slopes come from two or three races each, so the extremes
+    are exaggerated by chance; soft wear moved from {expected.deg_soft_train} in 2023-24 to {expected.deg_soft_test} in
+    2025. Limitations: lap number mixes fuel with track evolution; set-up and pressures are not modelled;
+    {expected.n_wet_races} wet races are excluded. Next step: re-estimate per circuit from practice long runs, and track
+    the 2026 tyres separately.
   rubric:
     points:
       - id: rec
@@ -725,7 +745,7 @@ steps:
         paraphrases:
           - wear is {expected.deg_soft} {expected.deg_medium} and {expected.deg_hard} seconds per lap of age after fuel correction
           - the pit loss is {expected.pit_loss} seconds
-          - a break never beat a straight line on held out races
+          - a break barely improved held out error and bent the wrong way
         keywords: [[wear, per lap, pit loss, held out, break, fuel]]
         hint: Two or three numbers.
         why: Numbers make the case.
@@ -735,7 +755,7 @@ steps:
         paraphrases:
           - a cliff beyond the ages run is untested
           - wear differs a lot by circuit
-          - the hardest circuit wears much faster than the average
+          - circuit slopes rest on few races so the extremes are exaggerated
         keywords: [[cliff, untested, beyond, circuit, varies, differ, risk]]
         hint: What could still go wrong on Sunday?
         why: The downside belongs in the memo.
@@ -777,7 +797,7 @@ steps:
         penalty: 15
         paraphrases:
           - pit at the cliff age found in the data
-        feedback: No cliff held up out of sample. Plan on the linear wear rate.
+        feedback: No common cliff held up out of sample. Plan on the linear wear rate.
 
 # ============================================================== DEBRIEF
 - id: s17_debrief
@@ -787,11 +807,12 @@ steps:
   chart: p13_stint_survival
   prompt: Separate what you want from what moves with it, then test the shape out of sample.
   body: >-
-    Raw lap times made hard tyres look like they improve ({expected.naive_slope_hard} s per lap). The textbook fix,
-    a stint fixed effect plus lap number, was not identified: inside a stint the two are the same variable. A
-    driver-race fixed effect used pit stops to separate them: {expected.deg_hard} s per lap on hards. A cliff chosen
-    in-sample looked real but did not hold on unseen races, because teams pit before it: half of hard stints end by
-    {expected.stint_len_median_hard} laps. The decision is a trade-off with a formula, not a cliff to wait for.
+    Without a fuel control, hard tyres looked like they improve with age ({expected.naive_slope_hard} s per lap). The
+    textbook fix, a stint fixed effect plus lap number, was not identified: inside a stint the two are the same
+    variable. A driver-race fixed effect used pit stops to separate them: {expected.deg_hard} s per lap on hards. A break
+    chosen in-sample barely helped on unseen races and bent the wrong way, and the flattening survived on the same long
+    stints, so selection alone doesn't explain it. The decision is a trade-off with a formula (one stop pays on wear),
+    not a cliff to wait for.
 
 debrief:
   concepts_learned:
@@ -799,19 +820,22 @@ debrief:
     - A fixed effect can remove the very variation you need (stint FE makes age and lap number identical)
     - Identification comes from events that move one variable but not the other (pit stops)
     - A break chosen in-sample always fits better; choose and score it on different races
-    - Censoring - teams stop before the cliff - shapes what the data can show
+    - Censoring - teams stop before tyres get old, and stints end at the flag - shapes what the data can show
+    - Test your own explanation (the fixed-set check) instead of assuming it
     - Check judgement-call thresholds (traffic gap, incident rule) with sensitivity runs
     - A decision threshold can come from a simple trade-off formula with a range
   common_mistakes:
     - Reading faster laps as tyres improving
     - Adding lap number to a stint fixed-effect model
     - Reporting the best in-sample break as the cliff
+    - Saying a model "never beat" the line when it was slightly better but not reliably
     - Treating "no cliff found" as "no cliff exists"
     - Counting stint laps instead of tyre age
   interview_summary: >-
     Using {expected.n_laps_clean} clean laps from {expected.n_dry_races} dry Formula 1 races (OpenF1, 2023 to 2025), I
     estimated fuel-corrected tyre wear with a driver-race fixed effect, after showing the textbook stint-fixed-effect
     model can't separate fuel from wear. Wear was {expected.deg_soft}, {expected.deg_medium} and {expected.deg_hard} s
-    per lap of age on softs, mediums and hards. A tyre cliff did not hold up in leave-one-race-out validation, which
-    fits teams pitting before it. Weighing wear against a {expected.pit_loss} s pit loss, an extra stop pays on wear
-    alone only beyond about {expected.split_len_hard} laps on hards.
+    per lap of age on softs, mediums and hards. A tyre cliff did not hold up in leave-one-race-out validation: the
+    curve flattens with age instead, even on the same long stints. Weighing wear against a {expected.pit_loss} s pit
+    loss, wear alone justifies one stop in a typical race; on hards an extra stop pays only beyond about
+    {expected.split_len_hard} laps, from {expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max} by circuit.

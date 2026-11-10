@@ -1,71 +1,71 @@
-session_key,year,circuit,country,date,wet,rain_recorded,laps_raw,non_dry_compounds,laps_dry,laps_clean
-7953,2023,Sakhir,Bahrain,2023-03-05,False,False,1058,,1058.0,690.0
-7779,2023,Jeddah,Saudi Arabia,2023-03-19,False,False,945,,945.0,569.0
-7787,2023,Melbourne,Australia,2023-04-02,False,False,1006,,1006.0,435.0
-9070,2023,Baku,Azerbaijan,2023-04-30,False,False,963,,963.0,541.0
-9078,2023,Miami,United States,2023-05-07,False,False,1139,,1139.0,742.0
-9094,2023,Monte Carlo,Monaco,2023-05-28,True,True,1516,"INTERMEDIATE,WET",,
-9102,2023,Catalunya,Spain,2023-06-04,False,False,1312,,1312.0,969.0
-9110,2023,Montreal,Canada,2023-06-18,False,False,1318,,1318.0,657.0
-9118,2023,Spielberg,Austria,2023-07-02,False,True,1355,,1355.0,851.0
-9126,2023,Silverstone,United Kingdom,2023-07-09,False,False,974,,974.0,374.0
-9133,2023,Hungaroring,Hungary,2023-07-23,False,False,1255,,1255.0,950.0
-9141,2023,Spa-Francorchamps,Belgium,2023-07-30,False,True,817,,817.0,437.0
-9149,2023,Zandvoort,Netherlands,2023-08-27,True,True,1344,"INTERMEDIATE,WET",,
-9157,2023,Monza,Italy,2023-09-03,False,False,968,,968.0,544.0
-9165,2023,Singapore,Singapore,2023-09-17,False,False,1091,,1091.0,574.0
-9173,2023,Suzuka,Japan,2023-09-24,False,False,886,,886.0,546.0
-9221,2023,Lusail,Qatar,2023-10-08,False,False,1009,,1009.0,642.0
-9213,2023,Austin,United States,2023-10-22,False,False,1017,,1017.0,734.0
-9181,2023,Mexico City,Mexico,2023-10-29,False,False,1286,,1286.0,306.0
-9205,2023,Interlagos,Brazil,2023-11-05,False,True,1112,,1112.0,0.0
-9189,2023,Las Vegas,United States,2023-11-19,False,False,949,,949.0,408.0
-9197,2023,Yas Marina Circuit,United Arab Emirates,2023-11-26,False,False,1159,,1159.0,772.0
-9472,2024,Sakhir,Bahrain,2024-03-02,False,False,1129,,1129.0,776.0
-9480,2024,Jeddah,Saudi Arabia,2024-03-09,False,False,902,,902.0,521.0
-9488,2024,Melbourne,Australia,2024-03-24,False,False,998,,998.0,612.0
-9496,2024,Suzuka,Japan,2024-04-07,False,False,908,,908.0,596.0
-9673,2024,Shanghai,China,2024-04-21,False,False,1033,,1033.0,218.0
-9507,2024,Miami,United States,2024-05-05,False,False,1112,,1112.0,537.0
-9515,2024,Imola,Italy,2024-05-19,False,False,1239,,1239.0,912.0
-9523,2024,Monte Carlo,Monaco,2024-05-26,False,False,1237,,1237.0,705.0
-9531,2024,Montreal,Canada,2024-06-09,True,True,1272,"INTERMEDIATE,WET",,
-9539,2024,Catalunya,Spain,2024-06-23,False,True,1310,,1310.0,960.0
-9550,2024,Spielberg,Austria,2024-06-30,False,True,1407,,1407.0,942.0
-9558,2024,Silverstone,United Kingdom,2024-07-07,True,True,962,INTERMEDIATE,,
-9566,2024,Hungaroring,Hungary,2024-07-21,False,False,1356,,1356.0,974.0
-9574,2024,Spa-Francorchamps,Belgium,2024-07-28,False,False,842,,842.0,490.0
-9582,2024,Zandvoort,Netherlands,2024-08-25,False,False,1426,,1426.0,1012.0
-9590,2024,Monza,Italy,2024-09-01,False,False,1009,,1009.0,702.0
-9598,2024,Baku,Azerbaijan,2024-09-15,False,False,975,,975.0,660.0
-9606,2024,Singapore,Singapore,2024-09-22,False,False,1179,,1179.0,843.0
-9617,2024,Austin,United States,2024-10-20,False,False,1059,,1059.0,733.0
-9625,2024,Mexico City,Mexico,2024-10-27,False,False,1216,,1216.0,813.0
-9636,2024,Interlagos,Brazil,2024-11-03,True,True,1137,"INTERMEDIATE,WET",,
-9644,2024,Las Vegas,United States,2024-11-24,False,False,940,,940.0,560.0
-9655,2024,Lusail,Qatar,2024-12-01,True,False,944,UNKNOWN,,
-9662,2024,Yas Marina Circuit,United Arab Emirates,2024-12-08,False,False,1037,,1037.0,747.0
-9693,2025,Melbourne,Australia,2025-03-16,True,True,928,INTERMEDIATE,,
-9998,2025,Shanghai,China,2025-03-23,False,False,1066,,1066.0,761.0
-10006,2025,Suzuka,Japan,2025-04-06,False,False,1059,,1059.0,746.0
-10014,2025,Sakhir,Bahrain,2025-04-13,False,False,1129,,1129.0,608.0
-10022,2025,Jeddah,Saudi Arabia,2025-04-20,False,False,899,,899.0,611.0
-10033,2025,Miami,United States,2025-05-04,False,True,559,,559.0,340.0
-9987,2025,Imola,Italy,2025-05-18,False,False,1207,,1207.0,566.0
-9979,2025,Monte Carlo,Monaco,2025-05-25,False,False,1425,,1425.0,741.0
-9971,2025,Catalunya,Spain,2025-06-01,False,False,1204,,1204.0,745.0
-9963,2025,Montreal,Canada,2025-06-15,False,True,1349,,1349.0,778.0
-9955,2025,Spielberg,Austria,2025-06-29,False,False,1128,,1128.0,726.0
-9947,2025,Silverstone,United Kingdom,2025-07-06,True,True,827,INTERMEDIATE,,
-9939,2025,Spa-Francorchamps,Belgium,2025-07-27,True,True,879,INTERMEDIATE,,
-9928,2025,Hungaroring,Hungary,2025-08-03,False,False,1369,,1369.0,864.0
-9920,2025,Zandvoort,Netherlands,2025-08-31,False,False,1365,,1365.0,541.0
-9912,2025,Monza,Italy,2025-09-07,False,False,976,,976.0,574.0
-9904,2025,Baku,Azerbaijan,2025-09-21,False,False,968,,968.0,570.0
-9896,2025,Singapore,Singapore,2025-10-05,False,True,1229,,1229.0,863.0
-9888,2025,Austin,United States,2025-10-19,False,False,1067,,1067.0,752.0
-9877,2025,Mexico City,Mexico,2025-10-26,False,False,1266,,1266.0,872.0
-9869,2025,Interlagos,Brazil,2025-11-09,False,False,1252,,1252.0,694.0
-9858,2025,Las Vegas,United States,2025-11-23,False,False,888,,888.0,574.0
-9850,2025,Lusail,Qatar,2025-11-30,False,False,1070,,1070.0,574.0
-9839,2025,Yas Marina Circuit,United Arab Emirates,2025-12-07,False,False,1156,,1156.0,714.0
+session_key,year,circuit,country,date,wet,incomplete,lap_coverage,rain_recorded,laps_raw,other_compounds,laps_dry,laps_clean
+7953,2023,Sakhir,Bahrain,2023-03-05,False,False,1.0,False,1058,,1058.0,690.0
+7779,2023,Jeddah,Saudi Arabia,2023-03-19,False,False,0.98,False,945,,945.0,569.0
+7787,2023,Melbourne,Australia,2023-04-02,False,False,0.983,False,1006,,1006.0,435.0
+9070,2023,Baku,Azerbaijan,2023-04-30,False,False,1.0,False,963,,963.0,541.0
+9078,2023,Miami,United States,2023-05-07,False,False,0.983,False,1139,,1139.0,742.0
+9094,2023,Monte Carlo,Monaco,2023-05-28,True,False,0.975,True,1516,"INTERMEDIATE,WET",,
+9102,2023,Catalunya,Spain,2023-06-04,False,False,1.0,False,1312,,1312.0,969.0
+9110,2023,Montreal,Canada,2023-06-18,False,False,0.986,False,1318,,1318.0,657.0
+9118,2023,Spielberg,Austria,2023-07-02,False,False,0.986,True,1355,,1355.0,851.0
+9126,2023,Silverstone,United Kingdom,2023-07-09,False,False,0.981,False,974,,974.0,498.0
+9133,2023,Hungaroring,Hungary,2023-07-23,False,False,0.986,False,1255,,1255.0,950.0
+9141,2023,Spa-Francorchamps,Belgium,2023-07-30,False,False,1.0,True,817,,817.0,437.0
+9149,2023,Zandvoort,Netherlands,2023-08-27,True,False,1.0,True,1344,"INTERMEDIATE,WET",,
+9157,2023,Monza,Italy,2023-09-03,False,False,0.981,False,968,,968.0,544.0
+9165,2023,Singapore,Singapore,2023-09-17,False,False,0.984,False,1091,,1091.0,574.0
+9173,2023,Suzuka,Japan,2023-09-24,False,False,0.972,False,886,,886.0,546.0
+9221,2023,Lusail,Qatar,2023-10-08,False,False,0.983,False,1009,,1009.0,642.0
+9213,2023,Austin,United States,2023-10-22,False,False,1.0,False,1017,,1017.0,734.0
+9181,2023,Mexico City,Mexico,2023-10-29,False,False,0.986,False,1286,,1286.0,681.0
+9205,2023,Interlagos,Brazil,2023-11-05,False,False,0.986,True,1112,,1112.0,726.0
+9189,2023,Las Vegas,United States,2023-11-19,False,False,0.98,False,949,,949.0,408.0
+9197,2023,Yas Marina Circuit,United Arab Emirates,2023-11-26,False,False,0.983,False,1159,,1159.0,772.0
+9472,2024,Sakhir,Bahrain,2024-03-02,False,False,0.991,False,1129,,1129.0,776.0
+9480,2024,Jeddah,Saudi Arabia,2024-03-09,False,False,1.0,False,902,,902.0,521.0
+9488,2024,Melbourne,Australia,2024-03-24,False,False,0.983,False,998,,998.0,612.0
+9496,2024,Suzuka,Japan,2024-04-07,False,False,0.981,False,908,,908.0,592.0
+9673,2024,Shanghai,China,2024-04-21,False,False,1.0,False,1033,,1033.0,545.0
+9507,2024,Miami,United States,2024-05-05,False,False,0.983,False,1112,,1112.0,537.0
+9515,2024,Imola,Italy,2024-05-19,False,False,0.984,False,1239,,1239.0,912.0
+9523,2024,Monte Carlo,Monaco,2024-05-26,False,False,0.981,False,1237,,1237.0,705.0
+9531,2024,Montreal,Canada,2024-06-09,True,False,1.0,True,1272,"INTERMEDIATE,WET",,
+9539,2024,Catalunya,Spain,2024-06-23,False,False,1.0,True,1310,,1310.0,960.0
+9550,2024,Spielberg,Austria,2024-06-30,False,False,0.986,True,1407,,1407.0,942.0
+9558,2024,Silverstone,United Kingdom,2024-07-07,True,False,1.0,True,962,INTERMEDIATE,,
+9566,2024,Hungaroring,Hungary,2024-07-21,False,False,1.0,False,1356,,1356.0,974.0
+9574,2024,Spa-Francorchamps,Belgium,2024-07-28,False,False,1.0,False,842,,842.0,490.0
+9582,2024,Zandvoort,Netherlands,2024-08-25,False,False,0.986,False,1426,,1426.0,1012.0
+9590,2024,Monza,Italy,2024-09-01,False,False,1.0,False,1009,,1009.0,702.0
+9598,2024,Baku,Azerbaijan,2024-09-15,False,False,1.0,False,975,,975.0,660.0
+9606,2024,Singapore,Singapore,2024-09-22,False,False,0.984,False,1179,,1179.0,843.0
+9617,2024,Austin,United States,2024-10-20,False,False,1.0,False,1059,,1059.0,733.0
+9625,2024,Mexico City,Mexico,2024-10-27,False,False,0.986,False,1216,,1216.0,813.0
+9636,2024,Interlagos,Brazil,2024-11-03,True,False,1.0,True,1137,"INTERMEDIATE,WET",,
+9644,2024,Las Vegas,United States,2024-11-24,False,False,1.0,False,940,,940.0,560.0
+9655,2024,Lusail,Qatar,2024-12-01,False,False,1.0,False,944,UNKNOWN,944.0,503.0
+9662,2024,Yas Marina Circuit,United Arab Emirates,2024-12-08,False,False,0.991,False,1037,,1037.0,747.0
+9693,2025,Melbourne,Australia,2025-03-16,True,False,0.983,True,928,INTERMEDIATE,,
+9998,2025,Shanghai,China,2025-03-23,False,False,1.0,False,1066,,1066.0,761.0
+10006,2025,Suzuka,Japan,2025-04-06,False,False,1.0,False,1059,,1059.0,746.0
+10014,2025,Sakhir,Bahrain,2025-04-13,False,False,1.0,False,1129,,1129.0,608.0
+10022,2025,Jeddah,Saudi Arabia,2025-04-20,False,False,1.0,False,899,,899.0,611.0
+10033,2025,Miami,United States,2025-05-04,False,True,0.579,True,559,,,
+9987,2025,Imola,Italy,2025-05-18,False,False,1.0,False,1207,,1207.0,566.0
+9979,2025,Monte Carlo,Monaco,2025-05-25,False,False,0.974,False,1425,,1425.0,741.0
+9971,2025,Catalunya,Spain,2025-06-01,False,False,1.0,False,1204,,1204.0,745.0
+9963,2025,Montreal,Canada,2025-06-15,False,False,0.986,True,1349,,1349.0,778.0
+9955,2025,Spielberg,Austria,2025-06-29,False,False,0.986,False,1128,,1128.0,726.0
+9947,2025,Silverstone,United Kingdom,2025-07-06,True,False,1.0,True,827,INTERMEDIATE,,
+9939,2025,Spa-Francorchamps,Belgium,2025-07-27,True,False,1.0,True,879,INTERMEDIATE,,
+9928,2025,Hungaroring,Hungary,2025-08-03,False,False,0.986,False,1369,,1369.0,864.0
+9920,2025,Zandvoort,Netherlands,2025-08-31,False,False,1.0,False,1365,,1365.0,541.0
+9912,2025,Monza,Italy,2025-09-07,False,False,1.0,False,976,,976.0,574.0
+9904,2025,Baku,Azerbaijan,2025-09-21,False,False,1.0,False,968,,968.0,570.0
+9896,2025,Singapore,Singapore,2025-10-05,False,False,0.984,True,1229,,1229.0,863.0
+9888,2025,Austin,United States,2025-10-19,False,False,1.0,False,1067,,1067.0,752.0
+9877,2025,Mexico City,Mexico,2025-10-26,False,False,1.0,False,1266,,1266.0,872.0
+9869,2025,Interlagos,Brazil,2025-11-09,False,False,1.0,False,1252,,1252.0,694.0
+9858,2025,Las Vegas,United States,2025-11-23,False,False,1.0,False,888,,888.0,574.0
+9850,2025,Lusail,Qatar,2025-11-30,False,False,1.0,False,1070,,1070.0,574.0
+9839,2025,Yas Marina Circuit,United Arab Emirates,2025-12-07,False,False,1.0,False,1156,,1156.0,714.0

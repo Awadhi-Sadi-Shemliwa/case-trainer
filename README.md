@@ -23,9 +23,11 @@ cd app && flutter test && flutter build apk --release --split-per-abi --target-p
 | P50 | Finance | Does the yield curve warn of US recessions, and at what probability should a PM de-risk? |
 | P34 | Football | Did matches without crowds shrink home advantage? |
 | P3 | Aviation | How much flight delay is passed on to the next flight, and how long should turns be? |
-| P13 | Formula 1 | Tyre degradation (in progress, OpenF1 data) |
+| P13 | Formula 1 | Where is the tyre degradation cliff, and when does an extra pit stop pay? |
 
 ## Data and credits
+Repository: https://github.com/Awadhi-Sadi-Shemliwa/case-trainer
+
 Raw data is used under each provider's terms. Large or non-redistributable raw files are not committed; their
 SHA-256 is in `provenance.json` and `download.py` fetches them again.
 - **FRED**, Federal Reserve Bank of St. Louis: series T10Y2Y, T10Y3M, USREC ("Copyrighted: Citation Required";

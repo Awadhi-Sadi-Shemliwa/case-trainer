@@ -6342,11 +6342,11 @@
       "id": "wet_races_excluded",
       "dataset": "openf1_all",
       "rows_before": 77373,
-      "rows_after": 67564,
-      "rows_dropped": 9809,
+      "rows_after": 68508,
+      "rows_dropped": 8865,
       "reason": "Races where intermediate or wet tyres were used are excluded: wet running is a different tyre problem. Rain on slicks is handled lap by lap (drop_rain).",
       "details": {
-        "races": 9,
+        "races": 8,
         "of_races": 70,
         "which": [
           "2023-05-28 Monte Carlo",
@@ -6354,7 +6354,6 @@
           "2024-06-09 Montreal",
           "2024-07-07 Silverstone",
           "2024-11-03 Interlagos",
-          "2024-12-01 Lusail",
           "2025-03-16 Melbourne",
           "2025-07-06 Silverstone",
           "2025-07-27 Spa-Francorchamps"
@@ -6362,83 +6361,97 @@
       }
     },
     {
+      "id": "incomplete_races_excluded",
+      "dataset": "openf1_all",
+      "rows_before": 68508,
+      "rows_after": 67949,
+      "rows_dropped": 559,
+      "reason": "Races whose median driver has under 80% of the race's laps in the feed are excluded: missing laps would bias stint lengths, pit losses and wear.",
+      "details": {
+        "races": 1,
+        "which": [
+          "2025-05-04 Miami 0.579"
+        ]
+      }
+    },
+    {
       "id": "drop_no_time",
       "dataset": "openf1_all",
-      "rows_before": 67564,
-      "rows_after": 67343,
-      "rows_dropped": 221,
+      "rows_before": 67949,
+      "rows_after": 67726,
+      "rows_dropped": 223,
       "reason": "No lap time recorded, so the lap cannot be modelled. Totals over all dry races.",
       "details": {}
     },
     {
       "id": "drop_lap1",
       "dataset": "openf1_all",
-      "rows_before": 67343,
-      "rows_after": 66198,
-      "rows_dropped": 1145,
+      "rows_before": 67726,
+      "rows_after": 66582,
+      "rows_dropped": 1144,
       "reason": "Lap 1 starts from a standstill; its time measures the start, not tyre wear. Totals over all dry races.",
       "details": {}
     },
     {
       "id": "drop_no_stint",
       "dataset": "openf1_all",
-      "rows_before": 66198,
-      "rows_after": 66198,
+      "rows_before": 66582,
+      "rows_after": 66582,
       "rows_dropped": 0,
-      "reason": "The lap is not inside any stint, so compound and tyre age are unknown. Totals over all dry races.",
+      "reason": "The lap is not inside any stint with a known dry compound, so compound or tyre age is unknown. Totals over all dry races.",
       "details": {}
     },
     {
       "id": "drop_out_lap",
       "dataset": "openf1_all",
-      "rows_before": 66198,
-      "rows_after": 63898,
-      "rows_dropped": 2300,
+      "rows_before": 66582,
+      "rows_after": 64248,
+      "rows_dropped": 2334,
       "reason": "Out-lap: includes the pit exit and cold tyres, not racing pace. Totals over all dry races.",
       "details": {}
     },
     {
       "id": "drop_in_lap",
       "dataset": "openf1_all",
-      "rows_before": 63898,
-      "rows_after": 61981,
-      "rows_dropped": 1917,
+      "rows_before": 64248,
+      "rows_after": 62316,
+      "rows_dropped": 1932,
       "reason": "In-lap: includes slowing for the pit entry, not racing pace. Totals over all dry races.",
       "details": {}
     },
     {
       "id": "drop_neutralised",
       "dataset": "openf1_all",
-      "rows_before": 61981,
-      "rows_after": 56593,
-      "rows_dropped": 5388,
+      "rows_before": 62316,
+      "rows_after": 58970,
+      "rows_dropped": 3346,
       "reason": "Safety Car, Virtual Safety Car or red flag during the lap (or the restart lap after it): everyone drives a set slow pace, which says nothing about the tyres. Totals over all dry races.",
       "details": {}
     },
     {
       "id": "drop_rain",
       "dataset": "openf1_all",
-      "rows_before": 56593,
-      "rows_after": 56481,
-      "rows_dropped": 112,
+      "rows_before": 58970,
+      "rows_after": 58871,
+      "rows_dropped": 99,
       "reason": "Rain was falling (weather feed) when the lap started: a wet track on slicks, not tyre wear. Totals over all dry races.",
       "details": {}
     },
     {
       "id": "drop_traffic",
       "dataset": "openf1_all",
-      "rows_before": 56481,
-      "rows_after": 40326,
-      "rows_dropped": 16155,
+      "rows_before": 58871,
+      "rows_after": 42041,
+      "rows_dropped": 16830,
       "reason": "Median gap to the car ahead during the lap under 1 s: dirty air slows the car and overheats the tyres, which would be mistaken for wear. Totals over all dry races.",
       "details": {}
     },
     {
       "id": "drop_incident",
       "dataset": "openf1_all",
-      "rows_before": 40326,
-      "rows_after": 40268,
-      "rows_dropped": 58,
+      "rows_before": 42041,
+      "rows_after": 41979,
+      "rows_dropped": 62,
       "reason": "More than 5 s slower than the stint's median lap: spins, damage, blue flags or long battles, not gradual wear. Totals over all dry races.",
       "details": {}
     }

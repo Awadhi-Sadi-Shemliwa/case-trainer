@@ -4,1042 +4,1287 @@
     "unit": "s per lap of age",
     "description": "HARD: its wear slope",
     "display": "0.121",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "circuit_max_deg_medium": {
     "value": 0.17521369913881404,
     "unit": "s per lap of age",
     "description": "MEDIUM: its wear slope",
     "display": "0.175",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "circuit_max_hard": {
     "value": "Sakhir",
     "unit": "",
     "description": "HARD: highest-wear circuit",
     "display": "Sakhir",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "circuit_max_medium": {
     "value": "Spa-Francorchamps",
     "unit": "",
     "description": "MEDIUM: highest-wear circuit",
     "display": "Spa-Francorchamps",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "circuit_min_deg_hard": {
     "value": 0.01406070149159222,
     "unit": "s per lap of age",
     "description": "HARD: its wear slope",
     "display": "0.014",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "circuit_min_deg_medium": {
     "value": 0.0014834268878574086,
     "unit": "s per lap of age",
     "description": "MEDIUM: its wear slope",
     "display": "0.001",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "circuit_min_hard": {
     "value": "Jeddah",
     "unit": "",
     "description": "HARD: lowest-wear circuit",
     "display": "Jeddah",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "circuit_min_medium": {
     "value": "Monte Carlo",
     "unit": "",
     "description": "MEDIUM: lowest-wear circuit",
     "display": "Monte Carlo",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "cliff_age_hard": {
-    "value": 23,
+    "value": 24,
     "unit": "laps of age",
     "description": "HARD: best break age in-sample",
-    "display": "23",
-    "produced_by": "__main__:cliff"
+    "display": "24",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_age_medium": {
-    "value": 34,
+    "value": 35,
     "unit": "laps of age",
     "description": "MEDIUM: best break age in-sample",
-    "display": "34",
-    "produced_by": "__main__:cliff"
+    "display": "35",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_age_soft": {
     "value": 5,
     "unit": "laps of age",
     "description": "SOFT: best break age in-sample",
     "display": "5",
-    "produced_by": "__main__:cliff"
-  },
-  "cliff_extra_p_hard": {
-    "value": 1.5470585738853958e-05,
-    "unit": "p-value",
-    "description": "HARD: p-value of the extra slope",
-    "display": "0.0000",
-    "produced_by": "__main__:cliff"
-  },
-  "cliff_extra_p_medium": {
-    "value": 1.604069384857014e-13,
-    "unit": "p-value",
-    "description": "MEDIUM: p-value of the extra slope",
-    "display": "0.0000",
-    "produced_by": "__main__:cliff"
-  },
-  "cliff_extra_p_soft": {
-    "value": 0.0003395445394248886,
-    "unit": "p-value",
-    "description": "SOFT: p-value of the extra slope",
-    "display": "0.0003",
-    "produced_by": "__main__:cliff"
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_extra_slope_hard": {
-    "value": -0.034575893948374924,
+    "value": -0.034125254694559334,
     "unit": "s per lap of age",
     "description": "HARD: extra wear per lap after the break",
-    "display": "-0.035",
-    "produced_by": "__main__:cliff"
+    "display": "-0.034",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_extra_slope_medium": {
-    "value": -0.0784624033811992,
+    "value": -0.07732913602634989,
     "unit": "s per lap of age",
     "description": "MEDIUM: extra wear per lap after the break",
-    "display": "-0.078",
-    "produced_by": "__main__:cliff"
+    "display": "-0.077",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_extra_slope_soft": {
-    "value": -0.10164332560325369,
+    "value": -0.10038383618665882,
     "unit": "s per lap of age",
     "description": "SOFT: extra wear per lap after the break",
-    "display": "-0.102",
-    "produced_by": "__main__:cliff"
+    "display": "-0.100",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_grid_n_hard": {
     "value": 44,
     "unit": "ages",
     "description": "HARD: candidate break ages with enough laps both sides",
     "display": "44",
-    "produced_by": "__main__:cliff"
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_grid_n_medium": {
-    "value": 32,
+    "value": 33,
     "unit": "ages",
     "description": "MEDIUM: candidate break ages with enough laps both sides",
-    "display": "32",
-    "produced_by": "__main__:cliff"
+    "display": "33",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_grid_n_soft": {
-    "value": 19,
+    "value": 20,
     "unit": "ages",
     "description": "SOFT: candidate break ages with enough laps both sides",
-    "display": "19",
-    "produced_by": "__main__:cliff"
+    "display": "20",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
+  },
+  "cliff_post_slope_hard": {
+    "value": 0.020134345649723558,
+    "unit": "s per lap of age",
+    "description": "HARD: wear slope after the break",
+    "display": "0.020",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
+  },
+  "cliff_post_slope_medium": {
+    "value": -0.028278781353826096,
+    "unit": "s per lap of age",
+    "description": "MEDIUM: wear slope after the break",
+    "display": "-0.028",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
+  },
+  "cliff_post_slope_soft": {
+    "value": 0.06784242120668153,
+    "unit": "s per lap of age",
+    "description": "SOFT: wear slope after the break",
+    "display": "0.068",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_pre_slope_hard": {
-    "value": 0.055702072627235144,
+    "value": 0.05425960034428289,
     "unit": "s per lap of age",
     "description": "HARD: wear slope before the break",
-    "display": "0.056",
-    "produced_by": "__main__:cliff"
+    "display": "0.054",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_pre_slope_medium": {
-    "value": 0.05202758552144635,
+    "value": 0.04905035467252379,
     "unit": "s per lap of age",
     "description": "MEDIUM: wear slope before the break",
-    "display": "0.052",
-    "produced_by": "__main__:cliff"
+    "display": "0.049",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_pre_slope_soft": {
-    "value": 0.1709476249247381,
+    "value": 0.16822625739334035,
     "unit": "s per lap of age",
     "description": "SOFT: wear slope before the break",
-    "display": "0.171",
-    "produced_by": "__main__:cliff"
+    "display": "0.168",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_supported_hard": {
     "value": "no",
     "unit": "",
-    "description": "HARD: break beats the line out of sample, positive and significant",
+    "description": "HARD: break lowers held-out error, wins more races than chance, and steepens the curve",
     "display": "no",
-    "produced_by": "__main__:cliff"
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_supported_medium": {
     "value": "no",
     "unit": "",
-    "description": "MEDIUM: break beats the line out of sample, positive and significant",
+    "description": "MEDIUM: break lowers held-out error, wins more races than chance, and steepens the curve",
     "display": "no",
-    "produced_by": "__main__:cliff"
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "cliff_supported_soft": {
     "value": "no",
     "unit": "",
-    "description": "SOFT: break beats the line out of sample, positive and significant",
+    "description": "SOFT: break lowers held-out error, wins more races than chance, and steepens the curve",
     "display": "no",
-    "produced_by": "__main__:cliff"
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "deg_hard": {
-    "value": 0.0429521981192596,
+    "value": 0.04264411373332866,
     "unit": "s per lap of age",
     "description": "HARD: lap-time loss per lap of tyre age, fuel-controlled (driver-race FE)",
     "display": "0.043",
-    "produced_by": "__main__:main_model"
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_hard_gap05": {
-    "value": 0.03784615687320217,
+    "value": 0.037734113617449085,
     "unit": "s per lap of age",
     "description": "HARD: wear slope with traffic gap 0.5 s and incident 5 s",
     "display": "0.038",
-    "produced_by": "__main__:sensitivity"
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_hard_gap20": {
-    "value": 0.043673797144593844,
+    "value": 0.043207033823583436,
     "unit": "s per lap of age",
     "description": "HARD: wear slope with traffic gap 2 s and incident 5 s",
-    "display": "0.044",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.043",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_hard_hi": {
-    "value": 0.05034200646273411,
+    "value": 0.04999333649110977,
     "unit": "s per lap of age",
     "description": "HARD: 95% CI upper",
     "display": "0.050",
-    "produced_by": "__main__:main_model"
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_hard_inc3": {
-    "value": 0.04255740571197106,
+    "value": 0.04229938592682847,
     "unit": "s per lap of age",
     "description": "HARD: wear slope with traffic gap 1 s and incident 3 s",
-    "display": "0.043",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.042",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_hard_inc8": {
-    "value": 0.043063975718650734,
+    "value": 0.04281939438522578,
     "unit": "s per lap of age",
     "description": "HARD: wear slope with traffic gap 1 s and incident 8 s",
     "display": "0.043",
-    "produced_by": "__main__:sensitivity"
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_hard_lo": {
-    "value": 0.03556238977578509,
+    "value": 0.03529489097554755,
     "unit": "s per lap of age",
     "description": "HARD: 95% CI lower",
-    "display": "0.036",
-    "produced_by": "__main__:main_model"
+    "display": "0.035",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_hard_p": {
-    "value": 4.5830061588108615e-30,
+    "value": 5.715308823421426e-30,
     "unit": "p-value",
     "description": "HARD: p-value of the wear slope",
     "display": "0.0000",
-    "produced_by": "__main__:main_model"
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_hard_racelap": {
-    "value": 0.04944790640038846,
+    "value": 0.04925854501728973,
     "unit": "s per lap of age",
     "description": "HARD: wear slope with a separate lap slope per race",
     "display": "0.049",
-    "produced_by": "__main__:sensitivity"
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
+  },
+  "deg_hard_raceoffset": {
+    "value": 0.042117691309919415,
+    "unit": "s per lap of age",
+    "description": "HARD: wear slope with a compound offset per race",
+    "display": "0.042",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
+  },
+  "deg_hard_temp": {
+    "value": 0.04292975199876642,
+    "unit": "s per lap of age",
+    "description": "HARD: wear slope controlling for track temperature",
+    "display": "0.043",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_hard_test": {
-    "value": 0.03712572691569974,
+    "value": 0.037106057772971934,
     "unit": "s per lap of age",
     "description": "HARD: wear slope 2025 (refit)",
     "display": "0.037",
-    "produced_by": "__main__:out_of_time"
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "deg_hard_train": {
-    "value": 0.04619346257308835,
+    "value": 0.04535326978034153,
     "unit": "s per lap of age",
     "description": "HARD: wear slope 2023-24",
-    "display": "0.046",
-    "produced_by": "__main__:out_of_time"
+    "display": "0.045",
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "deg_medium": {
-    "value": 0.044245615728186,
+    "value": 0.04231184414517436,
     "unit": "s per lap of age",
     "description": "MEDIUM: lap-time loss per lap of tyre age, fuel-controlled (driver-race FE)",
-    "display": "0.044",
-    "produced_by": "__main__:main_model"
+    "display": "0.042",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_medium_gap05": {
-    "value": 0.04390753889992085,
+    "value": 0.04217817125841668,
     "unit": "s per lap of age",
     "description": "MEDIUM: wear slope with traffic gap 0.5 s and incident 5 s",
-    "display": "0.044",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.042",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_medium_gap20": {
-    "value": 0.04466878320295302,
+    "value": 0.04284689433031806,
     "unit": "s per lap of age",
     "description": "MEDIUM: wear slope with traffic gap 2 s and incident 5 s",
-    "display": "0.045",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.043",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_medium_hi": {
-    "value": 0.058604765563667005,
+    "value": 0.05601353004549127,
     "unit": "s per lap of age",
     "description": "MEDIUM: 95% CI upper",
-    "display": "0.059",
-    "produced_by": "__main__:main_model"
+    "display": "0.056",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_medium_inc3": {
-    "value": 0.045100057463623694,
+    "value": 0.04303819851361863,
     "unit": "s per lap of age",
     "description": "MEDIUM: wear slope with traffic gap 1 s and incident 3 s",
-    "display": "0.045",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.043",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_medium_inc8": {
-    "value": 0.04400210156330103,
+    "value": 0.042414671003247154,
     "unit": "s per lap of age",
     "description": "MEDIUM: wear slope with traffic gap 1 s and incident 8 s",
-    "display": "0.044",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.042",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_medium_lo": {
-    "value": 0.029886465892704994,
+    "value": 0.028610158244857454,
     "unit": "s per lap of age",
     "description": "MEDIUM: 95% CI lower",
-    "display": "0.030",
-    "produced_by": "__main__:main_model"
+    "display": "0.029",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_medium_p": {
-    "value": 1.5474417798286945e-09,
+    "value": 1.4259969847362418e-09,
     "unit": "p-value",
     "description": "MEDIUM: p-value of the wear slope",
     "display": "0.0000",
-    "produced_by": "__main__:main_model"
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_medium_racelap": {
-    "value": 0.0516917417466176,
+    "value": 0.0485730124836488,
     "unit": "s per lap of age",
     "description": "MEDIUM: wear slope with a separate lap slope per race",
-    "display": "0.052",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.049",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
+  },
+  "deg_medium_raceoffset": {
+    "value": 0.044225932628316936,
+    "unit": "s per lap of age",
+    "description": "MEDIUM: wear slope with a compound offset per race",
+    "display": "0.044",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
+  },
+  "deg_medium_temp": {
+    "value": 0.042524581659564874,
+    "unit": "s per lap of age",
+    "description": "MEDIUM: wear slope controlling for track temperature",
+    "display": "0.043",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_medium_test": {
-    "value": 0.045689248720341157,
+    "value": 0.04553754220378443,
     "unit": "s per lap of age",
     "description": "MEDIUM: wear slope 2025 (refit)",
     "display": "0.046",
-    "produced_by": "__main__:out_of_time"
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "deg_medium_train": {
-    "value": 0.043009840410617596,
+    "value": 0.04006428000606493,
     "unit": "s per lap of age",
     "description": "MEDIUM: wear slope 2023-24",
-    "display": "0.043",
-    "produced_by": "__main__:out_of_time"
+    "display": "0.040",
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "deg_soft": {
-    "value": 0.07628016391065319,
+    "value": 0.07444424610923178,
     "unit": "s per lap of age",
     "description": "SOFT: lap-time loss per lap of tyre age, fuel-controlled (driver-race FE)",
-    "display": "0.076",
-    "produced_by": "__main__:main_model"
+    "display": "0.074",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_soft_gap05": {
-    "value": 0.06826970383189353,
+    "value": 0.0663481329197758,
     "unit": "s per lap of age",
     "description": "SOFT: wear slope with traffic gap 0.5 s and incident 5 s",
-    "display": "0.068",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.066",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_soft_gap20": {
-    "value": 0.07462890057958485,
+    "value": 0.07209616833942972,
     "unit": "s per lap of age",
     "description": "SOFT: wear slope with traffic gap 2 s and incident 5 s",
-    "display": "0.075",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.072",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_soft_hi": {
-    "value": 0.08906491826928192,
+    "value": 0.08678565684764974,
     "unit": "s per lap of age",
     "description": "SOFT: 95% CI upper",
-    "display": "0.089",
-    "produced_by": "__main__:main_model"
+    "display": "0.087",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_soft_inc3": {
-    "value": 0.07488595255591048,
+    "value": 0.07330201954573137,
     "unit": "s per lap of age",
     "description": "SOFT: wear slope with traffic gap 1 s and incident 3 s",
-    "display": "0.075",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.073",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_soft_inc8": {
-    "value": 0.07623167103937471,
+    "value": 0.07443386961232522,
     "unit": "s per lap of age",
     "description": "SOFT: wear slope with traffic gap 1 s and incident 8 s",
-    "display": "0.076",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.074",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_soft_lo": {
-    "value": 0.06349540955202446,
+    "value": 0.062102835370813826,
     "unit": "s per lap of age",
     "description": "SOFT: 95% CI lower",
-    "display": "0.063",
-    "produced_by": "__main__:main_model"
+    "display": "0.062",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_soft_p": {
-    "value": 1.3660552846953039e-31,
+    "value": 2.9816916034285545e-32,
     "unit": "p-value",
     "description": "SOFT: p-value of the wear slope",
     "display": "0.0000",
-    "produced_by": "__main__:main_model"
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "deg_soft_racelap": {
-    "value": 0.07784728450268119,
+    "value": 0.07540466798316564,
     "unit": "s per lap of age",
     "description": "SOFT: wear slope with a separate lap slope per race",
-    "display": "0.078",
-    "produced_by": "__main__:sensitivity"
+    "display": "0.075",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
+  },
+  "deg_soft_raceoffset": {
+    "value": 0.07446001228089301,
+    "unit": "s per lap of age",
+    "description": "SOFT: wear slope with a compound offset per race",
+    "display": "0.074",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
+  },
+  "deg_soft_temp": {
+    "value": 0.07520921938787817,
+    "unit": "s per lap of age",
+    "description": "SOFT: wear slope controlling for track temperature",
+    "display": "0.075",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "deg_soft_test": {
-    "value": 0.06819643694009052,
+    "value": 0.0682000619801635,
     "unit": "s per lap of age",
     "description": "SOFT: wear slope 2025 (refit)",
     "display": "0.068",
-    "produced_by": "__main__:out_of_time"
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "deg_soft_train": {
-    "value": 0.08975350078022837,
+    "value": 0.0822140787314106,
     "unit": "s per lap of age",
     "description": "SOFT: wear slope 2023-24",
-    "display": "0.090",
-    "produced_by": "__main__:out_of_time"
+    "display": "0.082",
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "example_corrected_slope": {
-    "value": 0.03924727587119666,
+    "value": 0.039348764687830905,
     "unit": "s per lap",
     "description": "Example stint: trend after removing the lap-number effect",
     "display": "0.039",
-    "produced_by": "__main__:charts"
+    "produced_by": "cases.p13_tyre_deg.analyse:charts"
   },
   "example_raw_slope": {
-    "value": -0.012890470297029274,
+    "value": -0.012090479930342238,
     "unit": "s per lap",
     "description": "Example stint: raw lap-time trend per lap",
-    "display": "-0.013",
-    "produced_by": "__main__:charts"
+    "display": "-0.012",
+    "produced_by": "cases.p13_tyre_deg.analyse:charts"
   },
   "example_stint_circuit": {
-    "value": "Shanghai",
+    "value": "Mexico City",
     "unit": "",
     "description": "Circuit of the example stint",
-    "display": "Shanghai",
-    "produced_by": "__main__:charts"
+    "display": "Mexico City",
+    "produced_by": "cases.p13_tyre_deg.analyse:charts"
   },
   "example_stint_laps": {
-    "value": 32,
+    "value": 40,
     "unit": "laps",
     "description": "Clean laps in the example HARD stint",
-    "display": "32",
-    "produced_by": "__main__:charts"
+    "display": "40",
+    "produced_by": "cases.p13_tyre_deg.analyse:charts"
   },
   "example_stint_year": {
-    "value": 2025,
+    "value": 2024,
     "unit": "",
     "description": "Year of the example stint",
-    "display": "2025",
-    "produced_by": "__main__:charts"
+    "display": "2024",
+    "produced_by": "cases.p13_tyre_deg.analyse:charts"
+  },
+  "fixedset_extra_p_hard": {
+    "value": 0.0253538481379281,
+    "unit": "p-value",
+    "description": "HARD: p-value of that extra slope",
+    "display": "0.025",
+    "produced_by": "cases.p13_tyre_deg.analyse:fixed_set"
+  },
+  "fixedset_extra_p_soft": {
+    "value": 0.03806489745768233,
+    "unit": "p-value",
+    "description": "SOFT: p-value of that extra slope",
+    "display": "0.038",
+    "produced_by": "cases.p13_tyre_deg.analyse:fixed_set"
+  },
+  "fixedset_extra_slope_hard": {
+    "value": -0.024321702775870434,
+    "unit": "s per lap of age",
+    "description": "HARD: extra slope after the break using only stints that run well past it (same stints both sides)",
+    "display": "-0.024",
+    "produced_by": "cases.p13_tyre_deg.analyse:fixed_set"
+  },
+  "fixedset_extra_slope_medium": {
+    "value": "too few stints",
+    "unit": "",
+    "description": "MEDIUM: fixed-set extra slope not estimated",
+    "display": "too few stints",
+    "produced_by": "cases.p13_tyre_deg.analyse:fixed_set"
+  },
+  "fixedset_extra_slope_soft": {
+    "value": -0.07144820353165957,
+    "unit": "s per lap of age",
+    "description": "SOFT: extra slope after the break using only stints that run well past it (same stints both sides)",
+    "display": "-0.071",
+    "produced_by": "cases.p13_tyre_deg.analyse:fixed_set"
+  },
+  "fixedset_n_stints_hard": {
+    "value": 285,
+    "unit": "stints",
+    "description": "HARD: stints reaching break age + 10 laps",
+    "display": "285",
+    "produced_by": "cases.p13_tyre_deg.analyse:fixed_set"
+  },
+  "fixedset_n_stints_medium": {
+    "value": 11,
+    "unit": "stints",
+    "description": "MEDIUM: stints reaching break age + 10 laps",
+    "display": "11",
+    "produced_by": "cases.p13_tyre_deg.analyse:fixed_set"
+  },
+  "fixedset_n_stints_soft": {
+    "value": 216,
+    "unit": "stints",
+    "description": "SOFT: stints reaching break age + 10 laps",
+    "display": "216",
+    "produced_by": "cases.p13_tyre_deg.analyse:fixed_set"
   },
   "fuel_slope": {
-    "value": -0.05213774616822609,
+    "value": -0.051439244618171925,
     "unit": "s per lap",
     "description": "Lap-number slope (fuel burn + track evolution), driver-race FE",
-    "display": "-0.052",
-    "produced_by": "__main__:main_model"
+    "display": "-0.051",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "fuel_slope_hi": {
-    "value": -0.04786822944338062,
+    "value": -0.04745201909311653,
     "unit": "s per lap",
     "description": "95% CI upper, lap-number slope",
-    "display": "-0.048",
-    "produced_by": "__main__:main_model"
+    "display": "-0.047",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "fuel_slope_lo": {
-    "value": -0.05640726289307156,
+    "value": -0.05542647014322732,
     "unit": "s per lap",
     "description": "95% CI lower, lap-number slope",
-    "display": "-0.056",
-    "produced_by": "__main__:main_model"
+    "display": "-0.055",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "fuel_slope_race_q25": {
-    "value": -0.07739860378453087,
+    "value": -0.07159967300230637,
     "unit": "s per lap",
     "description": "Per-race lap slope, 25th percentile",
-    "display": "-0.077",
-    "produced_by": "__main__:sensitivity"
+    "display": "-0.072",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "fuel_slope_race_q75": {
-    "value": -0.04703381488670148,
+    "value": -0.04590836142596912,
     "unit": "s per lap",
     "description": "Per-race lap slope, 75th percentile",
-    "display": "-0.047",
-    "produced_by": "__main__:sensitivity"
+    "display": "-0.046",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "fuel_slope_test": {
-    "value": -0.04928966457585999,
+    "value": -0.04929804942483976,
     "unit": "s per lap",
     "description": "Lap slope 2025",
     "display": "-0.049",
-    "produced_by": "__main__:out_of_time"
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "fuel_slope_train": {
-    "value": -0.05387068850886207,
+    "value": -0.052579790298648114,
     "unit": "s per lap",
     "description": "Lap slope 2023-24",
-    "display": "-0.054",
-    "produced_by": "__main__:out_of_time"
+    "display": "-0.053",
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "incident_s": {
     "value": 5.0,
     "unit": "s",
     "description": "Incident rule: slower than the stint median by more than this",
     "display": "5",
-    "produced_by": "__main__:overview"
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
+  },
+  "km_running_at_split_hard": {
+    "value": 0.2877034278475521,
+    "unit": "share",
+    "description": "HARD: Kaplan-Meier share of stints not yet pitted at the split length",
+    "display": "28.8%",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "km_running_at_split_medium": {
+    "value": 0.03540985396792979,
+    "unit": "share",
+    "description": "MEDIUM: Kaplan-Meier share of stints not yet pitted at the split length",
+    "display": "3.5%",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "km_running_at_split_soft": {
+    "value": 0.10937746729354941,
+    "unit": "share",
+    "description": "SOFT: Kaplan-Meier share of stints not yet pitted at the split length",
+    "display": "10.9%",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "loro_gain_hard": {
-    "value": 0.007963761947364811,
+    "value": 0.007216433856081728,
     "unit": "share",
     "description": "HARD: LORO error reduction from the break",
-    "display": "0.80%",
-    "produced_by": "__main__:cliff"
+    "display": "0.72%",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_gain_medium": {
-    "value": 0.007973990620435356,
+    "value": 0.008913916366850128,
     "unit": "share",
     "description": "MEDIUM: LORO error reduction from the break",
-    "display": "0.80%",
-    "produced_by": "__main__:cliff"
+    "display": "0.89%",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_gain_soft": {
-    "value": 0.004929084271697248,
+    "value": 0.000918618782925984,
     "unit": "share",
     "description": "SOFT: LORO error reduction from the break",
-    "display": "0.49%",
-    "produced_by": "__main__:cliff"
+    "display": "0.09%",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_races_hard": {
     "value": 60,
     "unit": "races",
     "description": "HARD: held-out races with laps on this compound",
     "display": "60",
-    "produced_by": "__main__:cliff"
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_races_medium": {
-    "value": 59,
+    "value": 60,
     "unit": "races",
     "description": "MEDIUM: held-out races with laps on this compound",
-    "display": "59",
-    "produced_by": "__main__:cliff"
+    "display": "60",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_races_soft": {
-    "value": 47,
+    "value": 49,
     "unit": "races",
     "description": "SOFT: held-out races with laps on this compound",
-    "display": "47",
-    "produced_by": "__main__:cliff"
+    "display": "49",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_rmse_hinge_hard": {
-    "value": 0.7346853608022895,
+    "value": 0.7332522600547889,
     "unit": "s",
     "description": "HARD: LORO RMSE, line with a break",
-    "display": "0.735",
-    "produced_by": "__main__:cliff"
+    "display": "0.733",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_rmse_hinge_medium": {
-    "value": 0.6812166810693996,
+    "value": 0.7144171141530987,
     "unit": "s",
     "description": "MEDIUM: LORO RMSE, line with a break",
-    "display": "0.681",
-    "produced_by": "__main__:cliff"
+    "display": "0.714",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_rmse_hinge_soft": {
-    "value": 0.6765159921962987,
+    "value": 1.009727790371396,
     "unit": "s",
     "description": "SOFT: LORO RMSE, line with a break",
-    "display": "0.677",
-    "produced_by": "__main__:cliff"
+    "display": "1.010",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_rmse_line_hard": {
-    "value": 0.74058318902188,
+    "value": 0.7385821895731234,
     "unit": "s",
     "description": "HARD: LORO RMSE, straight line",
-    "display": "0.741",
-    "produced_by": "__main__:cliff"
+    "display": "0.739",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_rmse_line_medium": {
-    "value": 0.6866923595032027,
+    "value": 0.7208426452061252,
     "unit": "s",
     "description": "MEDIUM: LORO RMSE, straight line",
-    "display": "0.687",
-    "produced_by": "__main__:cliff"
+    "display": "0.721",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_rmse_line_soft": {
-    "value": 0.679867114497211,
+    "value": 1.0106561981380862,
     "unit": "s",
     "description": "SOFT: LORO RMSE, straight line",
-    "display": "0.680",
-    "produced_by": "__main__:cliff"
+    "display": "1.011",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
+  },
+  "loro_sign_p_hard": {
+    "value": 0.12253041651147285,
+    "unit": "p-value",
+    "description": "HARD: sign test, break wins more held-out races than chance",
+    "display": "0.12",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
+  },
+  "loro_sign_p_medium": {
+    "value": 0.0775009520016303,
+    "unit": "p-value",
+    "description": "MEDIUM: sign test, break wins more held-out races than chance",
+    "display": "0.08",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
+  },
+  "loro_sign_p_soft": {
+    "value": 0.12643486508380164,
+    "unit": "p-value",
+    "description": "SOFT: sign test, break wins more held-out races than chance",
+    "display": "0.13",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_wins_hard": {
-    "value": 32,
-    "unit": "races",
-    "description": "HARD: held-out races where the break model had lower error",
-    "display": "32",
-    "produced_by": "__main__:cliff"
-  },
-  "loro_wins_medium": {
     "value": 35,
     "unit": "races",
-    "description": "MEDIUM: held-out races where the break model had lower error",
+    "description": "HARD: held-out races where the break model had lower error",
     "display": "35",
-    "produced_by": "__main__:cliff"
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
+  },
+  "loro_wins_medium": {
+    "value": 36,
+    "unit": "races",
+    "description": "MEDIUM: held-out races where the break model had lower error",
+    "display": "36",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "loro_wins_soft": {
-    "value": 30,
+    "value": 29,
     "unit": "races",
     "description": "SOFT: held-out races where the break model had lower error",
-    "display": "30",
-    "produced_by": "__main__:cliff"
+    "display": "29",
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "n_circuits_hard": {
     "value": 20,
     "unit": "circuits",
     "description": "HARD: circuits with enough laps for their own slope",
     "display": "20",
-    "produced_by": "__main__:circuits"
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "n_circuits_medium": {
-    "value": 19,
+    "value": 20,
     "unit": "circuits",
     "description": "MEDIUM: circuits with enough laps for their own slope",
-    "display": "19",
-    "produced_by": "__main__:circuits"
+    "display": "20",
+    "produced_by": "cases.p13_tyre_deg.analyse:circuits"
   },
   "n_clean_hard": {
-    "value": 23111,
+    "value": 23492,
     "unit": "laps",
     "description": "Clean laps on HARD",
-    "display": "23,111",
-    "produced_by": "__main__:overview"
+    "display": "23,492",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_clean_medium": {
-    "value": 13673,
+    "value": 14426,
     "unit": "laps",
     "description": "Clean laps on MEDIUM",
-    "display": "13,673",
-    "produced_by": "__main__:overview"
+    "display": "14,426",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_clean_soft": {
-    "value": 3484,
+    "value": 4061,
     "unit": "laps",
     "description": "Clean laps on SOFT",
-    "display": "3484",
-    "produced_by": "__main__:overview"
+    "display": "4061",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
-  "n_cliffs_supported": {
+  "n_compounds_with_cliff": {
     "value": 0,
     "unit": "compounds",
-    "description": "Compounds with a cliff supported out of sample",
+    "description": "Compounds where a steepening break holds out of sample (lower error, more race wins than chance)",
     "display": "0",
-    "produced_by": "__main__:cliff"
+    "produced_by": "cases.p13_tyre_deg.analyse:cliff"
   },
   "n_driver_races": {
-    "value": 1153,
+    "value": 1170,
     "unit": "driver-races",
     "description": "Driver-race combinations with clean laps",
-    "display": "1153",
-    "produced_by": "__main__:overview"
+    "display": "1170",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_drop_in_lap": {
-    "value": 1917,
+    "value": 1932,
     "unit": "laps",
     "description": "Laps dropped as in_lap",
-    "display": "1917",
-    "produced_by": "__main__:overview"
+    "display": "1932",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_drop_incident": {
-    "value": 58,
+    "value": 62,
     "unit": "laps",
     "description": "Laps dropped as incident",
-    "display": "58",
-    "produced_by": "__main__:overview"
+    "display": "62",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_drop_lap1": {
-    "value": 1145,
+    "value": 1144,
     "unit": "laps",
     "description": "Laps dropped as lap1",
-    "display": "1145",
-    "produced_by": "__main__:overview"
+    "display": "1144",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_drop_neutralised": {
-    "value": 5388,
+    "value": 3346,
     "unit": "laps",
     "description": "Laps dropped as neutralised",
-    "display": "5388",
-    "produced_by": "__main__:overview"
+    "display": "3346",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_drop_no_time": {
-    "value": 221,
+    "value": 223,
     "unit": "laps",
     "description": "Laps dropped as no_time",
-    "display": "221",
-    "produced_by": "__main__:overview"
+    "display": "223",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_drop_out_lap": {
-    "value": 2300,
+    "value": 2334,
     "unit": "laps",
     "description": "Laps dropped as out_lap",
-    "display": "2300",
-    "produced_by": "__main__:overview"
+    "display": "2334",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_drop_rain": {
-    "value": 112,
+    "value": 99,
     "unit": "laps",
     "description": "Laps dropped as rain",
-    "display": "112",
-    "produced_by": "__main__:overview"
+    "display": "99",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_drop_traffic": {
-    "value": 16155,
+    "value": 16830,
     "unit": "laps",
     "description": "Laps dropped as traffic",
-    "display": "16,155",
-    "produced_by": "__main__:overview"
+    "display": "16,830",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_dry_races": {
     "value": 61,
     "unit": "races",
     "description": "Dry races analysed",
     "display": "61",
-    "produced_by": "__main__:overview"
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
+  },
+  "n_incomplete_races": {
+    "value": 1,
+    "unit": "races",
+    "description": "Dry races excluded because the lap feed is incomplete",
+    "display": "1",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_laps_clean": {
-    "value": 40268,
+    "value": 41979,
     "unit": "laps",
     "description": "Clean green-flag laps used for modelling",
-    "display": "40,268",
-    "produced_by": "__main__:overview"
+    "display": "41,979",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_laps_dry": {
-    "value": 67564,
+    "value": 67949,
     "unit": "laps",
     "description": "All laps in dry races",
-    "display": "67,564",
-    "produced_by": "__main__:overview"
+    "display": "67,949",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_laps_gap05": {
-    "value": 51407,
+    "value": 53606,
     "unit": "laps",
     "description": "Clean laps with traffic gap 0.5 s and incident 5 s",
-    "display": "51,407",
-    "produced_by": "__main__:sensitivity"
+    "display": "53,606",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "n_laps_gap20": {
-    "value": 28664,
+    "value": 29861,
     "unit": "laps",
     "description": "Clean laps with traffic gap 2 s and incident 5 s",
-    "display": "28,664",
-    "produced_by": "__main__:sensitivity"
+    "display": "29,861",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "n_laps_inc3": {
-    "value": 40099,
+    "value": 41805,
     "unit": "laps",
     "description": "Clean laps with traffic gap 1 s and incident 3 s",
-    "display": "40,099",
-    "produced_by": "__main__:sensitivity"
+    "display": "41,805",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "n_laps_inc8": {
-    "value": 40298,
+    "value": 42009,
     "unit": "laps",
     "description": "Clean laps with traffic gap 1 s and incident 8 s",
-    "display": "40,298",
-    "produced_by": "__main__:sensitivity"
+    "display": "42,009",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "n_long_hard_stints": {
-    "value": 194,
+    "value": 197,
     "unit": "stints",
     "description": "Hard stints with 30+ clean laps",
-    "display": "194",
-    "produced_by": "__main__:charts"
+    "display": "197",
+    "produced_by": "cases.p13_tyre_deg.analyse:charts"
   },
   "n_pit_stops_green": {
-    "value": 1499,
+    "value": 1540,
     "unit": "stops",
     "description": "Green-flag pit stops used for pit loss",
-    "display": "1499",
-    "produced_by": "__main__:decision"
+    "display": "1540",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "n_races": {
     "value": 70,
     "unit": "races",
     "description": "Completed Grand Prix races 2023-2025 in OpenF1",
     "display": "70",
-    "produced_by": "__main__:overview"
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "n_wet_races": {
-    "value": 9,
+    "value": 8,
     "unit": "races",
     "description": "Races excluded as wet (intermediate or wet tyres used)",
-    "display": "9",
-    "produced_by": "__main__:overview"
+    "display": "8",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "naive_slope_hard": {
-    "value": -0.01006418033674561,
+    "value": -0.009784051813720478,
     "unit": "s per lap",
     "description": "HARD: stint-FE slope on tyre age WITHOUT a fuel control (fuel + wear mixed)",
     "display": "-0.010",
-    "produced_by": "__main__:identification"
+    "produced_by": "cases.p13_tyre_deg.analyse:identification"
   },
   "naive_slope_medium": {
-    "value": -0.007466751117682431,
+    "value": -0.008423456089381666,
     "unit": "s per lap",
     "description": "MEDIUM: stint-FE slope on tyre age WITHOUT a fuel control (fuel + wear mixed)",
-    "display": "-0.007",
-    "produced_by": "__main__:identification"
+    "display": "-0.008",
+    "produced_by": "cases.p13_tyre_deg.analyse:identification"
   },
   "naive_slope_soft": {
-    "value": 0.03039049496570926,
+    "value": 0.027897051061260763,
     "unit": "s per lap",
     "description": "SOFT: stint-FE slope on tyre age WITHOUT a fuel control (fuel + wear mixed)",
-    "display": "0.030",
-    "produced_by": "__main__:identification"
+    "display": "0.028",
+    "produced_by": "cases.p13_tyre_deg.analyse:identification"
   },
   "oot_gain": {
-    "value": 0.32224950933898266,
+    "value": 0.32481922087783477,
     "unit": "share",
     "description": "Error reduction from fuel + wear terms out of time",
-    "display": "32.2%",
-    "produced_by": "__main__:out_of_time"
+    "display": "32.5%",
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "oot_rmse_fe_only": {
-    "value": 0.9496934221545857,
+    "value": 0.9574369277469448,
     "unit": "s",
     "description": "2025 within-race RMSE with driver-race means only",
-    "display": "0.950",
-    "produced_by": "__main__:out_of_time"
+    "display": "0.957",
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "oot_rmse_model": {
-    "value": 0.6436551828428112,
+    "value": 0.6464430108365143,
     "unit": "s",
     "description": "2025 within-race RMSE with 2023-24 coefficients",
-    "display": "0.644",
-    "produced_by": "__main__:out_of_time"
+    "display": "0.646",
+    "produced_by": "cases.p13_tyre_deg.analyse:out_of_time"
   },
   "pit_loss": {
-    "value": 23.214499999999987,
+    "value": 23.22999999999999,
     "unit": "s",
     "description": "Median pit-stop time loss (median of race medians, green-flag stops)",
     "display": "23.2",
-    "produced_by": "__main__:decision"
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "pit_loss_q25": {
-    "value": 21.389999999999997,
+    "value": 21.439499999999995,
     "unit": "s",
     "description": "Pit loss, 25th percentile of race medians",
     "display": "21.4",
-    "produced_by": "__main__:decision"
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "pit_loss_q75": {
-    "value": 24.57775000000003,
+    "value": 24.742999999999995,
     "unit": "s",
     "description": "Pit loss, 75th percentile of race medians",
-    "display": "24.6",
-    "produced_by": "__main__:decision"
+    "display": "24.7",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "race_laps_median": {
+    "value": 58.0,
+    "unit": "laps",
+    "description": "Median race length in laps",
+    "display": "58",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "rsq_within": {
-    "value": 0.4924817536988014,
+    "value": 0.4624558909353649,
     "unit": "R-squared",
     "description": "Within R-squared of the main model",
-    "display": "0.492",
-    "produced_by": "__main__:main_model"
+    "display": "0.462",
+    "produced_by": "cases.p13_tyre_deg.analyse:main_model"
   },
   "share_clean": {
-    "value": 0.5959978686874667,
+    "value": 0.6178015864839806,
     "unit": "share",
     "description": "Share of dry-race laps kept",
-    "display": "59.6%",
-    "produced_by": "__main__:overview"
+    "display": "61.8%",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "share_drop_traffic": {
-    "value": 0.239106624829791,
+    "value": 0.24768576432324244,
     "unit": "share",
     "description": "Share of dry-race laps dropped as traffic",
-    "display": "23.9%",
-    "produced_by": "__main__:overview"
+    "display": "24.8%",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "share_multi_stint": {
-    "value": 0.8759757155247181,
+    "value": 0.8982905982905983,
     "unit": "share",
     "description": "Driver-races with clean laps in 2+ stints (only these separate fuel from wear)",
-    "display": "87.6%",
-    "produced_by": "__main__:overview"
+    "display": "89.8%",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
-  "share_stints_over_split_hard": {
-    "value": 0.0555138784696174,
+  "share_stints_to_flag_hard": {
+    "value": 0.48604992657856094,
     "unit": "share",
-    "description": "HARD: share of stints longer than the split length",
-    "display": "5.6%",
-    "produced_by": "__main__:decision"
+    "description": "HARD: share of stints that ran to the chequered flag (censored)",
+    "display": "48.6%",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
-  "share_stints_over_split_medium": {
-    "value": 0.00944767441860465,
+  "share_stints_to_flag_medium": {
+    "value": 0.22631959508315258,
     "unit": "share",
-    "description": "MEDIUM: share of stints longer than the split length",
-    "display": "0.9%",
-    "produced_by": "__main__:decision"
+    "description": "MEDIUM: share of stints that ran to the chequered flag (censored)",
+    "display": "22.6%",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
-  "share_stints_over_split_soft": {
-    "value": 0.00825082508250825,
+  "share_stints_to_flag_soft": {
+    "value": 0.3937908496732026,
     "unit": "share",
-    "description": "SOFT: share of stints longer than the split length",
-    "display": "0.8%",
-    "produced_by": "__main__:decision"
+    "description": "SOFT: share of stints that ran to the chequered flag (censored)",
+    "display": "39.4%",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "share_stints_used_tyres": {
-    "value": 0.4822722073961113,
+    "value": 0.4968875869644819,
     "unit": "share",
     "description": "Stints whose first clean lap is on tyres already 3+ laps old (used sets)",
-    "display": "48.2%",
-    "produced_by": "__main__:overview"
+    "display": "49.7%",
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "split_len_hard": {
-    "value": 46.496146999293785,
+    "value": 46.67937731445413,
     "unit": "laps",
     "description": "HARD: stint length above which an extra stop saves time (2*sqrt(P/s))",
-    "display": "46",
-    "produced_by": "__main__:decision"
+    "display": "47",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_hard_circ_max": {
+    "value": 76.74006526330518,
+    "unit": "laps",
+    "description": "HARD: longest circuit split length",
+    "display": "77",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_hard_circ_max_at": {
+    "value": "Jeddah",
+    "unit": "",
+    "description": "HARD: circuit with the longest split length",
+    "display": "Jeddah",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_hard_circ_median": {
+    "value": 43.29596519448086,
+    "unit": "laps",
+    "description": "HARD: median circuit split length",
+    "display": "43",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_hard_circ_min": {
+    "value": 29.164941192459583,
+    "unit": "laps",
+    "description": "HARD: shortest circuit split length",
+    "display": "29",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_hard_circ_min_at": {
+    "value": "Sakhir",
+    "unit": "",
+    "description": "HARD: circuit with the shortest split length",
+    "display": "Sakhir",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_hard_circ_n": {
+    "value": 20,
+    "unit": "circuits",
+    "description": "HARD: circuits with their own split length",
+    "display": "20",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "split_len_hard_long": {
-    "value": 52.578184737855224,
+    "value": 52.954180430953464,
     "unit": "laps",
-    "description": "HARD: longest plausible split length",
+    "description": "HARD: pooled-uncertainty high end (slow wear, expensive stop)",
     "display": "53",
-    "produced_by": "__main__:decision"
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "split_len_hard_short": {
-    "value": 41.22589828549769,
+    "value": 41.417250151900205,
     "unit": "laps",
-    "description": "HARD: shortest plausible split length",
+    "description": "HARD: pooled-uncertainty low end (fast wear, cheap stop)",
     "display": "41",
-    "produced_by": "__main__:decision"
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "split_len_medium": {
-    "value": 45.81150306884418,
+    "value": 46.8623025328462,
     "unit": "laps",
     "description": "MEDIUM: stint length above which an extra stop saves time (2*sqrt(P/s))",
-    "display": "46",
-    "produced_by": "__main__:decision"
+    "display": "47",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_medium_circ_max": {
+    "value": 217.0045219237004,
+    "unit": "laps",
+    "description": "MEDIUM: longest circuit split length",
+    "display": "217",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_medium_circ_max_at": {
+    "value": "Monte Carlo",
+    "unit": "",
+    "description": "MEDIUM: circuit with the longest split length",
+    "display": "Monte Carlo",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_medium_circ_median": {
+    "value": 39.71479874348914,
+    "unit": "laps",
+    "description": "MEDIUM: median circuit split length",
+    "display": "40",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_medium_circ_min": {
+    "value": 21.52645870852778,
+    "unit": "laps",
+    "description": "MEDIUM: shortest circuit split length",
+    "display": "22",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_medium_circ_min_at": {
+    "value": "Spa-Francorchamps",
+    "unit": "",
+    "description": "MEDIUM: circuit with the shortest split length",
+    "display": "Spa-Francorchamps",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "split_len_medium_circ_n": {
+    "value": 20,
+    "unit": "circuits",
+    "description": "MEDIUM: circuits with their own split length",
+    "display": "20",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "split_len_medium_long": {
-    "value": 57.35400841390027,
+    "value": 58.816075555501165,
     "unit": "laps",
-    "description": "MEDIUM: longest plausible split length",
-    "display": "57",
-    "produced_by": "__main__:decision"
+    "description": "MEDIUM: pooled-uncertainty high end (slow wear, expensive stop)",
+    "display": "59",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "split_len_medium_short": {
-    "value": 38.2092859265437,
+    "value": 39.128288357895045,
     "unit": "laps",
-    "description": "MEDIUM: shortest plausible split length",
-    "display": "38",
-    "produced_by": "__main__:decision"
+    "description": "MEDIUM: pooled-uncertainty low end (fast wear, cheap stop)",
+    "display": "39",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "split_len_soft": {
-    "value": 34.890231733404946,
+    "value": 35.32962538565431,
     "unit": "laps",
     "description": "SOFT: stint length above which an extra stop saves time (2*sqrt(P/s))",
     "display": "35",
-    "produced_by": "__main__:decision"
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "split_len_soft_long": {
-    "value": 39.34865503450326,
+    "value": 39.92091241998358,
     "unit": "laps",
-    "description": "SOFT: longest plausible split length",
-    "display": "39",
-    "produced_by": "__main__:decision"
+    "description": "SOFT: pooled-uncertainty high end (slow wear, expensive stop)",
+    "display": "40",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "split_len_soft_short": {
-    "value": 30.994315611564165,
+    "value": 31.43499131051422,
     "unit": "laps",
-    "description": "SOFT: shortest plausible split length",
+    "description": "SOFT: pooled-uncertainty low end (fast wear, cheap stop)",
     "display": "31",
-    "produced_by": "__main__:decision"
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "stint_fe_columns": {
     "value": 4,
     "unit": "columns",
     "description": "Columns in that design",
     "display": "4",
-    "produced_by": "__main__:identification"
+    "produced_by": "cases.p13_tyre_deg.analyse:identification"
   },
   "stint_fe_rank": {
     "value": 3,
     "unit": "columns",
     "description": "Rank of [lap number, age by compound] after stint demeaning",
     "display": "3",
-    "produced_by": "__main__:identification"
+    "produced_by": "cases.p13_tyre_deg.analyse:identification"
   },
   "stint_len_median_hard": {
-    "value": 26.0,
+    "value": 32.0,
     "unit": "laps",
-    "description": "HARD: median observed stint length",
-    "display": "26",
-    "produced_by": "__main__:decision"
+    "description": "HARD: Kaplan-Meier median stint length (stints ending at the flag are censored)",
+    "display": "32",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "stint_len_median_medium": {
-    "value": 18.0,
+    "value": 20.0,
     "unit": "laps",
-    "description": "MEDIUM: median observed stint length",
-    "display": "18",
-    "produced_by": "__main__:decision"
+    "description": "MEDIUM: Kaplan-Meier median stint length (stints ending at the flag are censored)",
+    "display": "20",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
   "stint_len_median_soft": {
-    "value": 12.0,
+    "value": 15.0,
     "unit": "laps",
-    "description": "SOFT: median observed stint length",
-    "display": "12",
-    "produced_by": "__main__:decision"
+    "description": "SOFT: Kaplan-Meier median stint length (stints ending at the flag are censored)",
+    "display": "15",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
-  "stint_len_p90_hard": {
-    "value": 42.0,
-    "unit": "laps",
-    "description": "HARD: 90th percentile stint length",
-    "display": "42",
-    "produced_by": "__main__:decision"
+  "stops_wear_hard": {
+    "value": 1,
+    "unit": "stops",
+    "description": "HARD: stops that minimise wear + pit time over a median-length race (wear alone)",
+    "display": "1",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
-  "stint_len_p90_medium": {
-    "value": 31.0,
-    "unit": "laps",
-    "description": "MEDIUM: 90th percentile stint length",
-    "display": "31",
-    "produced_by": "__main__:decision"
+  "stops_wear_medium": {
+    "value": 1,
+    "unit": "stops",
+    "description": "MEDIUM: stops that minimise wear + pit time over a median-length race (wear alone)",
+    "display": "1",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
   },
-  "stint_len_p90_soft": {
-    "value": 24.0,
-    "unit": "laps",
-    "description": "SOFT: 90th percentile stint length",
-    "display": "24",
-    "produced_by": "__main__:decision"
+  "stops_wear_soft": {
+    "value": 1,
+    "unit": "stops",
+    "description": "SOFT: stops that minimise wear + pit time over a median-length race (wear alone)",
+    "display": "1",
+    "produced_by": "cases.p13_tyre_deg.analyse:decision"
+  },
+  "temp_slope": {
+    "value": 0.04321422301620823,
+    "unit": "s per degree C",
+    "description": "Lap-time change per degree of track temperature (within race)",
+    "display": "0.043",
+    "produced_by": "cases.p13_tyre_deg.analyse:sensitivity"
   },
   "traffic_gap_s": {
     "value": 1.0,
     "unit": "s",
     "description": "Traffic rule: median gap to the car ahead below this",
     "display": "1.0",
-    "produced_by": "__main__:overview"
+    "produced_by": "cases.p13_tyre_deg.analyse:overview"
   },
   "within_stint_corr_age_lap": {
-    "value": 1.0,
+    "value": 0.9999999999999999,
     "unit": "correlation",
     "description": "Correlation of tyre age and lap number after removing stint means (1 = cannot be separated)",
     "display": "1.000",
-    "produced_by": "__main__:identification"
+    "produced_by": "cases.p13_tyre_deg.analyse:identification"
   }
 }

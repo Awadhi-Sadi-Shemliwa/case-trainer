@@ -117,3 +117,14 @@ workaround attempted; the case teaches only verified statements (proration, 15-m
 ### 2026-11-09 · Quality gate per case (spec Prompt 8)
 A fresh reviewer audits each new case. P34's review found over-claims (seasonality, inconclusive reversal,
 underpowered robustness check, pre-trend, negatable red-flag keywords); all fixed before marking done.
+
+### 2026-11-10 · P13 design decisions
+- Seasons 2023-2025 only (OpenF1 starts in 2023; 2026 has new car and tyre rules).
+- Wet race = intermediate or wet tyres used. Rain on slicks is a per-lap rule. Races whose median driver has under 80%
+  of laps in the feed are excluded (Miami 2025).
+- Model: driver-race fixed effect (the spec's stint FE + lap number is not identified). SEs clustered by race.
+- Cliff rule: lower leave-one-race-out error AND race-level sign test AND a steepening break; no in-sample p-value.
+- Decision: split length 2*sqrt(P/s) with the spread taken across circuits, not from the pooled CI.
+- Stint lengths with Kaplan-Meier (stints to the flag are censored).
+- Repo published 2026-11-10 at https://github.com/Awadhi-Sadi-Shemliwa/case-trainer (public). The Gemini PDF was
+  removed from all history before the first push (owner's choice) and is kept locally, git-ignored.

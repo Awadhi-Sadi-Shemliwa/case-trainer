@@ -2,69 +2,70 @@
 step: s16_memo
 answers:
 - id: a01
-  text: 'Recommendation: plan on linear wear; an extra stop pays on wear alone only beyond about {expected.split_len_hard}
-    laps on hards, {expected.split_len_medium} on mediums and {expected.split_len_soft} on softs. Evidence: fuel-corrected
-    wear {expected.deg_soft}, {expected.deg_medium}, {expected.deg_hard} s per lap of age; pit loss {expected.pit_loss}
-    s; a break never beat a straight line on held-out races. Risk: a cliff beyond observed ages is untested; wear
-    varies by circuit, hards from {expected.circuit_min_deg_hard} to {expected.circuit_max_deg_hard}. Limits: lap
-    number mixes fuel and track evolution; no temperature; wet races excluded. Next: re-estimate per circuit from
-    practice long runs and track 2026 tyres separately.'
+  text: 'Recommendation: plan on linear wear and one stop; an extra stop pays on wear alone only past about {expected.split_len_hard}
+    laps on hards ({expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max} by circuit), {expected.split_len_medium}
+    on mediums and {expected.split_len_soft} on softs. Evidence: fuel-corrected wear {expected.deg_soft}, {expected.deg_medium},
+    {expected.deg_hard} s per lap of age; pit loss {expected.pit_loss} s; a break barely improved held-out error
+    and bent the wrong way. Risk: a cliff past the observed ages or at one circuit is untested; circuit slopes rest
+    on few races. Limits: lap number mixes fuel and track evolution; set-up not modelled; wet races excluded. Next:
+    re-estimate per circuit from practice long runs and track 2026 tyres separately.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a02
-  text: 'To the strategist: don''t add a stop for wear before about {expected.split_len_hard} laps on hards ({expected.split_len_medium}
-    mediums, {expected.split_len_soft} softs). Wear rates {expected.deg_soft}/{expected.deg_medium}/{expected.deg_hard}
-    s per lap; pit loss {expected.pit_loss} s; no cliff held out of sample. Risk: untested cliff beyond the data,
-    big circuit differences. Limits: fuel and track evolution are mixed; temperature not modelled. Next: per-circuit
-    updates from long runs.'
+  text: 'To the strategist: one stop on wear; don''t add a second before about {expected.split_len_hard} laps on
+    hards ({expected.split_len_medium} mediums, {expected.split_len_soft} softs), adjusted by circuit. Wear rates
+    {expected.deg_soft}/{expected.deg_medium}/{expected.deg_hard} s per lap; pit loss {expected.pit_loss} s; no
+    common cliff out of sample. Risk: untested cliff beyond the data, circuit differences, soft wear shifted in
+    2025. Limits: fuel and track evolution mixed. Next: per-circuit updates from long runs.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a03
   text: 'Recommendation: split lengths {expected.split_len_hard}, {expected.split_len_medium}, {expected.split_len_soft}
-    laps for hards, mediums, softs. Evidence: hards lose {expected.deg_hard} s per lap of age after fuel correction;
-    stops cost {expected.pit_loss} s; leave-one-race-out found no cliff. Risk: cliff beyond observed ages; high-wear
-    circuits like {expected.circuit_max_hard}. Limits: observational, temperature and set-up ignored. Next: update
-    with practice data each weekend.'
+    laps for hards, mediums, softs, with the hard figure from {expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max}
+    by circuit. Evidence: hards lose {expected.deg_hard} s per lap of age after fuel correction; stops cost {expected.pit_loss}
+    s; leave-one-race-out found no cliff. Risk: cliff beyond observed ages; high-wear circuits. Limits: observational;
+    set-up ignored. Next: update with practice data each weekend.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a04
-  text: 'Plan stints on steady wear: an extra stop pays only past {expected.split_len_hard} laps on hards. Evidence:
-    {expected.deg_hard} s per lap on hards, {expected.deg_soft} on softs; pit loss {expected.pit_loss} s; no out-of-sample
-    cliff. Risk: unseen cliff, circuit spread. Limitations: track evolution mixed with fuel; wet races out. Next:
-    per-circuit re-estimation.'
+  text: 'Plan one-stop races on steady wear: an extra stop pays only past {expected.split_len_hard} laps on hards.
+    Evidence: {expected.deg_hard} s per lap on hards, {expected.deg_soft} on softs; pit loss {expected.pit_loss}
+    s; the break added under one percent out of sample and flattened the curve. Risk: unseen cliff, circuit spread.
+    Limitations: track evolution mixed with fuel; wet races out. Next: per-circuit re-estimation.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a05
-  text: 'Memo: wear alone justifies an extra stop only beyond {expected.split_len_hard} laps (hards). Numbers: wear
-    {expected.deg_hard} s per lap of age; pit loss {expected.pit_loss} s; the break failed on held-out races. Risks:
-    a late cliff we never observed; circuits differ ({expected.circuit_min_hard} to {expected.circuit_max_hard}).
-    Limits: fuel vs track evolution, temperature. Next step: refresh before each race.'
+  text: 'Memo: wear alone justifies one stop; a second only if a hard stint would pass {expected.split_len_hard}
+    laps. Numbers: wear {expected.deg_hard} s per lap of age; pit loss {expected.pit_loss} s; the break failed to
+    help reliably on held-out races. Risks: a late or circuit-specific cliff we never observed; circuits differ
+    ({expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max} laps). Limits: fuel vs track evolution.
+    Next step: refresh before each race.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a06
   text: 'Recommend split lengths of about {expected.split_len_hard} (hard), {expected.split_len_medium} (medium),
-    {expected.split_len_soft} (soft) laps. Supported by fuel-corrected wear rates and a {expected.pit_loss} s pit
-    loss; no cliff validated. Risks: untested cliff, circuit variation. Limitations: lap number confounds fuel and
-    rubber build-up. Next: use practice long runs per circuit.'
+    {expected.split_len_soft} (soft) laps, adjusted by circuit. Supported by fuel-corrected wear rates and a {expected.pit_loss}
+    s pit loss; no cliff validated. Risks: untested cliff, circuit variation, few races per circuit. Limitations:
+    lap number confounds fuel and rubber build-up. Next: use practice long runs per circuit.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a07
-  text: 'Stints: extra stop pays beyond {expected.split_len_hard} laps on hards. Evidence: {expected.deg_hard} s/lap
-    wear, {expected.pit_loss} s pit loss, no held-out cliff. Risk: cliff beyond data, circuits differ. Limits: track
-    evolution, temperature. Next: per-circuit updates.'
+  text: 'Stints: one stop on wear; extra stop pays beyond {expected.split_len_hard} laps on hards. Evidence: {expected.deg_hard}
+    s/lap wear, {expected.pit_loss} s pit loss, no held-out cliff. Risk: cliff beyond data, circuits differ. Limits:
+    track evolution, set-up. Next: per-circuit updates.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a08
-  text: 'Advice: on wear alone, only add a stop when a hard stint would pass about {expected.split_len_hard} laps.
-    Evidence: wear rates by compound and the pit loss; cliff test negative. Risk and limits: unseen cliff, circuit
-    spread, fuel and track evolution mixed. Next: practice long runs to re-estimate.'
+  text: 'Advice: on wear alone, plan one stop and add another only when a hard stint would pass about {expected.split_len_hard}
+    laps. Evidence: wear rates by compound and the pit loss; the cliff test was negative. Risk and limits: unseen
+    cliff, circuit spread, fuel and track evolution mixed. Next: practice long runs to re-estimate.'
   label: acceptable
   kind: strong
   owner_review: false

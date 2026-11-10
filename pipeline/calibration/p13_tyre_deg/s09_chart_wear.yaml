@@ -5,8 +5,8 @@ answers:
   text: 'x: tyre age in laps; y: lap time lost against the freshest age shown, after removing driver, race and the
     lap-number (fuel) effect. Dots are averages per age, dashed lines straight-line fits. Softs wear fastest ({expected.deg_soft}
     s per lap of age); mediums ({expected.deg_medium}) and hards ({expected.deg_hard}) are about the same. Lines
-    stop where stints end: teams pit before tyres get old, so the oldest ages have few laps from drivers whose tyres
-    held up. It can''t show beyond those ages or circuit differences. So what: these rates feed the stint decision.'
+    stop where stints end: teams pit before tyres get old, so the oldest ages have few laps, from the stints kept
+    out longest. It can''t show beyond those ages or circuit differences. So what: these rates feed the stint decision.'
   label: acceptable
   kind: strong
   owner_review: false
@@ -21,8 +21,8 @@ answers:
 - id: a03
   text: 'The chart shows how much slower each compound gets per lap of age once fuel is removed: softs steepest
     at {expected.deg_soft} s, mediums and hards similar at about {expected.deg_hard}. Each line ends where few stints
-    reach, because teams pit first; the last points rest on survivors. It doesn''t show what happens beyond, nor
-    circuit variation. These slopes go into the pit-stop trade-off.'
+    reach, because teams pit first; the last points rest on the few longest stints. It doesn''t show what happens
+    beyond, nor circuit variation. These slopes go into the pit-stop trade-off.'
   label: acceptable
   kind: strong
   owner_review: false
@@ -58,8 +58,8 @@ answers:
   owner_review: false
 - id: a08
   text: Each compound's lap time rises with tyre age once fuel is removed, hard about {expected.deg_hard} s per
-    lap. The data thin out at old ages because stints end early, so the tails are survivors. The chart can't speak
-    to unseen ages. Use the rates in the stop decision.
+    lap. The data thin out at old ages because stints end early, so the tails rest on a few long stints. The chart
+    can't speak to unseen ages. Use the rates in the stop decision.
   label: acceptable
   kind: strong
   owner_review: false

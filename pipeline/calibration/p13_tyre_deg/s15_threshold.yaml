@@ -4,81 +4,85 @@ answers:
 - id: a01
   text: 'An extra stop costs the pit loss ({expected.pit_loss} s; middle half of races {expected.pit_loss_q25} to
     {expected.pit_loss_q75}) and saves wear. With linear wear s, halving a stint of L laps saves s L squared over
-    four, so it pays when L > 2 sqrt(pit loss / s). Hards about {expected.split_len_hard} laps ({expected.split_len_hard_short}
-    to {expected.split_len_hard_long}), mediums {expected.split_len_medium}, softs {expected.split_len_soft}. Teams
-    already run shorter: median hard stint {expected.stint_len_median_hard}, only {expected.share_stints_over_split_hard}
-    longer. So wear alone rarely justifies a stop; track position, the two-compound rule and an untested cliff drive
-    the rest.'
+    four, so it pays when L > 2 sqrt(pit loss / s). Pooled: hards about {expected.split_len_hard} laps, mediums
+    {expected.split_len_medium}, softs {expected.split_len_soft}. By circuit the hard figure runs from {expected.split_len_hard_circ_min}
+    to {expected.split_len_hard_circ_max}. A median race of {expected.race_laps_median} laps is longer than that,
+    so wear justifies one stop, not two. Track position, undercuts and the two-compound rule also matter.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a02
-  text: 'Rule: add a stop for wear only if the stint would exceed twice the square root of pit loss over wear rate.
-    With {expected.pit_loss} s pit loss: hards {expected.split_len_hard}, mediums {expected.split_len_medium}, softs
-    {expected.split_len_soft} laps. Range for hards {expected.split_len_hard_short} to {expected.split_len_hard_long}.
-    Observed hard stints are shorter (median {expected.stint_len_median_hard}), so other factors decide stops: undercuts,
-    track position, regulations, cliff risk.'
+  text: 'Rule: split a stint when it would exceed twice the square root of pit loss over wear rate. With {expected.pit_loss}
+    s pit loss that''s {expected.split_len_hard} laps on hards, {expected.split_len_medium} on mediums, {expected.split_len_soft}
+    on softs. The circuit decides the real number: hards from {expected.split_len_hard_circ_min} at {expected.split_len_hard_circ_min_at}
+    to {expected.split_len_hard_circ_max} at {expected.split_len_hard_circ_max_at}. Over a typical race that means
+    one stop on wear alone. Undercuts and regulations sit on top.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a03
   text: 'Trade-off: pit loss {expected.pit_loss} s vs wear saved s L squared over four. Split length 2 sqrt(P/s):
-    hards {expected.split_len_hard} laps, mediums {expected.split_len_medium}, softs {expected.split_len_soft}.
-    Teams stop earlier than that, so wear isn''t what drives most stops; the rule leaves out traffic, undercuts
-    and the two-compound rule.'
+    hards {expected.split_len_hard}. A {expected.race_laps_median}-lap race on one set would be past that, so one
+    stop pays; a second wouldn''t. Range by circuit {expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max}
+    laps. The rule leaves out track position and cliff risk.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a04
-  text: 'The stop pays when the wear saved by halving the stint beats the pit loss: L* = 2 sqrt(P/s). Hards {expected.split_len_hard}
-    laps (range {expected.split_len_hard_short} to {expected.split_len_hard_long}). Only {expected.share_stints_over_split_hard}
-    of hard stints run longer, so in practice teams stop for track position and rules, not wear alone.'
+  text: 'The stop pays when the wear saved by halving the stint beats the pit loss: L* = 2 sqrt(P/s), about {expected.split_len_hard}
+    laps on hards, but anywhere from {expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max} depending
+    on the circuit. Wear alone therefore supports a one-stop race. The median hard stint ({expected.stint_len_median_hard}
+    laps) is below the split length, though {expected.km_running_at_split_hard} of hard stints would still be running
+    at it.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a05
   text: 'Formula from linear wear: split a stint longer than 2 sqrt(pit loss / wear). Pit loss {expected.pit_loss}
-    s; hards about {expected.split_len_hard}, softs {expected.split_len_soft}. Real stints are shorter (median {expected.stint_len_median_hard}
-    on hards). Missing from the rule: undercut, traffic, cliff risk.'
+    s; hards about {expected.split_len_hard}, softs {expected.split_len_soft}. Per circuit the hard number ranges
+    {expected.split_len_hard_circ_min} to {expected.split_len_hard_circ_max}. One stop pays over a normal race distance.
+    Missing: undercut, traffic, cliff risk.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a06
-  text: 'Extra stop if s L squared / 4 > P. Hards: {expected.split_len_hard} laps, mediums {expected.split_len_medium},
-    softs {expected.split_len_soft}, with a range from the pit-loss spread and slope CI. Teams already pit before
-    that, so other strategy factors dominate.'
+  text: Extra stop if s L squared / 4 > P. Hards {expected.split_len_hard}, mediums {expected.split_len_medium},
+    softs {expected.split_len_soft} laps pooled; circuit wear moves the hard figure between {expected.split_len_hard_circ_min}
+    and {expected.split_len_hard_circ_max}. For a {expected.race_laps_median}-lap race that's one stop on wear.
+    Strategy factors decide the rest.
   label: acceptable
   kind: strong
   owner_review: false
 - id: a07
   text: 'Weigh {expected.pit_loss} s of pit loss against wear: the split length is 2 sqrt(P/s), about {expected.split_len_hard}
-    laps on hards. Teams run shorter stints, so wear alone rarely forces a stop; position and rules do.'
+    laps on hards, shorter at high-wear circuits like {expected.split_len_hard_circ_min_at}. A full race is longer
+    than that, so wear alone justifies one stop.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a08
-  text: 'Rule: L* = 2 sqrt(pit loss / wear rate). Numbers: hards {expected.split_len_hard} ({expected.split_len_hard_short}
-    to {expected.split_len_hard_long}), mediums {expected.split_len_medium}, softs {expected.split_len_soft}. Teams
-    stop sooner; the rule ignores track position and cliff risk.'
+  text: 'Rule: L* = 2 sqrt(pit loss / wear rate). Numbers: hards {expected.split_len_hard} (by circuit {expected.split_len_hard_circ_min}
+    to {expected.split_len_hard_circ_max}), mediums {expected.split_len_medium}, softs {expected.split_len_soft}.
+    One stop is justified by wear over a typical race; position and rules shape the timing.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a09
   text: An extra stop pays on hards only beyond about {expected.split_len_hard} laps, from 2 sqrt(pit loss / wear);
-    teams already stop sooner.
+    so wear supports one stop in a normal race.
   label: acceptable
   kind: partial
   owner_review: true
-  note: Thin on range and what is left out.
+  note: No range.
 - id: a10
   text: 'Split length is twice the square root of pit loss over wear: hards {expected.split_len_hard}, mediums {expected.split_len_medium},
-    softs {expected.split_len_soft} laps.'
+    softs {expected.split_len_soft} laps, and it varies a lot by circuit.'
   label: acceptable
   kind: partial
   owner_review: false
 - id: a11
   text: Pit loss {expected.pit_loss} s against wear; hards can run about {expected.split_len_hard} laps before a
-    stop pays; track position also matters.
+    stop pays, so a typical race needs one stop on wear; track position also matters.
   label: acceptable
   kind: partial
   owner_review: false
@@ -139,7 +143,7 @@ answers:
   kind: wrong
   owner_review: false
 - id: a23
-  text: Teams run far longer than the split length, so they waste time.
+  text: Wear never justifies a stop, so every stop is only for strategy.
   label: not_acceptable
   kind: wrong
   owner_review: false
@@ -175,7 +179,7 @@ answers:
   kind: wrong
   owner_review: false
 - id: a30
-  text: The rule is the same for every compound.
+  text: The split length is the same at every circuit.
   label: not_acceptable
   kind: wrong
   owner_review: false

@@ -17,6 +17,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+from scipy.stats import binomtest
 
 from common.charts import Axis, Chart, ReferenceLine, export_chart, make_series
 from common.io import capture_output
@@ -30,6 +31,9 @@ COMPOUNDS = ["SOFT", "MEDIUM", "HARD"]
 MIN_LAPS_SIDE = 300       # a hinge at age k needs this many clean laps of the compound on EACH side of k
 MIN_LAPS_AT_AGE = 30      # chart points: ages with at least this many laps
 MIN_CIRCUIT_LAPS = 300    # circuit-level wear slope only with this many clean laps of the compound
+FIXED_SET_MARGIN = 10     # fixed-set check: stints that reach at least break age + this many laps
+MIN_FIXED_SET_STINTS = 20
+MAX_STOPS = 4
 EXAMPLE_MIN_LAPS = 30     # example stint: drawn from hard stints with at least this many clean laps
 TRAIN_YEARS = (2023, 2024)
 TEST_YEAR = 2025
@@ -101,7 +105,9 @@ def overview(laps: pd.DataFrame, races: pd.DataFrame, c: pd.DataFrame, rs: Resul
     rs.put("incident_s", INCIDENT_S, "s", "Incident rule: slower than the stint median by more than this", decimals=0)
     rs.put("n_races", len(races), "races", "Completed Grand Prix races 2023-2025 in OpenF1")
     rs.put("n_wet_races", int(races["wet"].sum()), "races", "Races excluded as wet (intermediate or wet tyres used)")
-    rs.put("n_dry_races", int((~races["wet"]).sum()), "races", "Dry races analysed")
+    rs.put("n_incomplete_races", int((races["incomplete"] & ~races["wet"]).sum()), "races",
+           "Dry races excluded because the lap feed is incomplete")
+    rs.put("n_dry_races", int((~races["wet"] & ~races["incomplete"]).sum()), "races", "Dry races analysed")
     rs.put("n_laps_dry", len(laps), "laps", "All laps in dry races")
     rs.put("n_laps_clean", len(c), "laps", "Clean green-flag laps used for modelling")
     rs.put("share_clean", len(c) / len(laps), "share", "Share of dry-race laps kept", pct=True)
@@ -201,24 +207,54 @@ def cliff(c: pd.DataFrame, rs: ResultStore) -> dict:
         rmse_lin = float(np.sqrt(np.concatenate(lin_err).mean()))
         rmse_hin = float(np.sqrt(np.concatenate(hin_err).mean()))
         extra = float(full.params[f"hinge_{comp}"])
-        p = float(full.pvalues[f"hinge_{comp}"])
-        supported = bool(rmse_hin < rmse_lin and extra > 0 and p < 0.05)
+        sign_p = float(binomtest(wins, n_races, 0.5, alternative="greater").pvalue)
+        # a cliff = the break helps out of sample, in more races than chance, AND steepens the curve. (No in-sample
+        # p-value: the break age was picked on the same data, so that p-value would be optimistic.)
+        supported = bool(rmse_hin < rmse_lin and sign_p < 0.05 and extra > 0)
         lc = comp.lower()
         rs.put(f"cliff_age_{lc}", k_best, "laps of age", f"{comp}: best break age in-sample")
         rs.put(f"cliff_extra_slope_{lc}", extra, "s per lap of age", f"{comp}: extra wear per lap after the break", decimals=3)
-        rs.put(f"cliff_extra_p_{lc}", p, "p-value", f"{comp}: p-value of the extra slope", decimals=4)
-        rs.put(f"cliff_pre_slope_{lc}", float(full.params[f"age_{comp}"]), "s per lap of age",
-               f"{comp}: wear slope before the break", decimals=3)
+        pre = float(full.params[f"age_{comp}"])
+        rs.put(f"cliff_pre_slope_{lc}", pre, "s per lap of age", f"{comp}: wear slope before the break", decimals=3)
+        rs.put(f"cliff_post_slope_{lc}", pre + extra, "s per lap of age", f"{comp}: wear slope after the break", decimals=3)
+        rs.put(f"loro_sign_p_{lc}", sign_p, "p-value", f"{comp}: sign test, break wins more held-out races than chance",
+               decimals=2)
         rs.put(f"loro_rmse_line_{lc}", rmse_lin, "s", f"{comp}: LORO RMSE, straight line", decimals=3)
         rs.put(f"loro_rmse_hinge_{lc}", rmse_hin, "s", f"{comp}: LORO RMSE, line with a break", decimals=3)
         rs.put(f"loro_gain_{lc}", 1 - rmse_hin / rmse_lin, "share", f"{comp}: LORO error reduction from the break", pct=True, decimals=2)
         rs.put(f"loro_wins_{lc}", wins, "races", f"{comp}: held-out races where the break model had lower error")
         rs.put(f"loro_races_{lc}", n_races, "races", f"{comp}: held-out races with laps on this compound")
-        rs.put(f"cliff_supported_{lc}", "yes" if supported else "no", "", f"{comp}: break beats the line out of sample, positive and significant")
+        rs.put(f"cliff_supported_{lc}", "yes" if supported else "no", "",
+               f"{comp}: break lowers held-out error, wins more races than chance, and steepens the curve")
+        fixed_set(c, comp, k_best, rs)
         out[comp] = {"k": k_best, "supported": supported, "model": full}
-    rs.put("n_cliffs_supported", sum(1 for v in out.values() if v and v["supported"]), "compounds",
-           "Compounds with a cliff supported out of sample")
+    rs.put("n_compounds_with_cliff", sum(1 for v in out.values() if v and v["supported"]), "compounds",
+           "Compounds where a steepening break holds out of sample (lower error, more race wins than chance)")
     return out
+
+
+def fixed_set(c: pd.DataFrame, comp: str, k: int, rs: ResultStore) -> None:
+    """Survivor-selection check: keep only stints that reach age k + FIXED_SET_MARGIN, so the same stints are present
+    on both sides of the break. Fuel is removed with the main lap slope; stint fixed effect; hinge at the same k."""
+    d = c[c["compound"] == comp].copy()
+    d["stint"] = d["group"] + "_" + d["stint_number"].astype(int).astype(str)
+    reach = d.groupby("stint")["tyre_age"].transform("max")
+    d = d[reach >= k + FIXED_SET_MARGIN]
+    n = d["stint"].nunique()
+    lc = comp.lower()
+    rs.put(f"fixedset_n_stints_{lc}", int(n), "stints", f"{comp}: stints reaching break age + {FIXED_SET_MARGIN} laps")
+    if n < MIN_FIXED_SET_STINTS:
+        rs.put(f"fixedset_extra_slope_{lc}", "too few stints", "", f"{comp}: fixed-set extra slope not estimated")
+        return
+    y = d["lap_duration"] - rs.results["fuel_slope"]["value"] * d["lap_number"]
+    X = pd.DataFrame({"age": d["tyre_age"].astype(float), "hinge": (d["tyre_age"] - k).clip(lower=0).astype(float)})
+    yd, Xd = within(y.to_frame("y"), d["stint"])["y"], within(X, d["stint"])
+    m = sm.OLS(yd, Xd).fit(cov_type="cluster", cov_kwds={"groups": pd.factorize(d["session_key"])[0]})
+    rs.put(f"fixedset_extra_slope_{lc}", float(m.params["hinge"]), "s per lap of age",
+           f"{comp}: extra slope after the break using only stints that run well past it (same stints both sides)",
+           decimals=3)
+    rs.put(f"fixedset_extra_p_{lc}", float(m.pvalues["hinge"]), "p-value", f"{comp}: p-value of that extra slope",
+           decimals=3)
 
 
 def out_of_time(c: pd.DataFrame, rs: ResultStore) -> None:
@@ -271,38 +307,79 @@ def circuits(c: pd.DataFrame, rs: ResultStore) -> pd.DataFrame:
     return t
 
 
-def decision(c: pd.DataFrame, stints: pd.DataFrame, stops: pd.DataFrame, races: pd.DataFrame, rs: ResultStore) -> dict:
-    s = stops[(~stops["neutralised"]) & stops["session_key"].isin(races.loc[~races.wet, "session_key"])]
+def km_curve(length: pd.Series, event: pd.Series) -> pd.Series:
+    """Kaplan-Meier survival S(L) of stint length; stints that end at the flag (event False) are censored."""
+    out, s = {}, 1.0
+    for L in range(0, int(length.max()) + 1):
+        at_risk = int((length >= L).sum())
+        d = int(((length == L) & event).sum())
+        if at_risk:
+            s *= 1 - d / at_risk
+        out[L] = s
+    return pd.Series(out)
+
+
+def km_median(S: pd.Series) -> float:
+    below = S[S <= 0.5]
+    return float(below.index[0]) if len(below) else float("nan")
+
+
+def best_stops(s: float, P: float, R: float) -> int:
+    """Stops that minimise wear + pit time for a race of R laps with linear wear s (equal stints)."""
+    cost = {n: s * R ** 2 / (2 * (n + 1)) + n * P for n in range(MAX_STOPS + 1)}
+    return min(cost, key=cost.get)
+
+
+def decision(c: pd.DataFrame, stints: pd.DataFrame, stops: pd.DataFrame, laps: pd.DataFrame, circ: pd.DataFrame,
+             rs: ResultStore) -> dict:
+    s = stops[~stops["neutralised"]]
     per_race = s.groupby("session_key")["pit_loss"].median()
     P = float(per_race.median())
     rs.put("n_pit_stops_green", len(s), "stops", "Green-flag pit stops used for pit loss")
     rs.put("pit_loss", P, "s", "Median pit-stop time loss (median of race medians, green-flag stops)", decimals=1)
     rs.put("pit_loss_q25", float(per_race.quantile(0.25)), "s", "Pit loss, 25th percentile of race medians", decimals=1)
     rs.put("pit_loss_q75", float(per_race.quantile(0.75)), "s", "Pit loss, 75th percentile of race medians", decimals=1)
+    R = float(laps.groupby("session_key")["race_laps"].first().median())
+    rs.put("race_laps_median", R, "laps", "Median race length in laps", decimals=0)
+    circ_of = c.groupby("session_key")["circuit"].first()
+    circ_pit = per_race.groupby(per_race.index.map(circ_of)).median()
     out = {"pit_loss": P}
-    dry = stints[stints["session_key"].isin(races.loc[~races.wet, "session_key"])]
     for comp in COMPOUNDS:
         lc = comp.lower()
         sl, lo, hi = (rs.results[f"deg_{lc}"]["value"], rs.results[f"deg_{lc}_lo"]["value"], rs.results[f"deg_{lc}_hi"]["value"])
-        if sl <= 0:
-            rs.put(f"split_len_{lc}", "none", "", f"{comp}: no positive wear, so no split length")
-            continue
         # >>> snippet: split_length
         # linear wear s: a stint of L laps loses s*L^2/2; two stints of L/2 lose s*L^2/4; split when s*L^2/4 > P
         L = 2 * np.sqrt(P / sl)
         # <<< snippet
         rs.put(f"split_len_{lc}", float(L), "laps", f"{comp}: stint length above which an extra stop saves time (2*sqrt(P/s))", decimals=0)
-        # range: slow wear + expensive stop (long) to fast wear + cheap stop (short)
         q25, q75 = rs.results["pit_loss_q25"]["value"], rs.results["pit_loss_q75"]["value"]
-        rs.put(f"split_len_{lc}_short", float(2 * np.sqrt(q25 / hi)), "laps", f"{comp}: shortest plausible split length", decimals=0)
+        rs.put(f"split_len_{lc}_short", float(2 * np.sqrt(q25 / hi)), "laps",
+               f"{comp}: pooled-uncertainty low end (fast wear, cheap stop)", decimals=0)
         rs.put(f"split_len_{lc}_long", float(2 * np.sqrt(q75 / max(lo, 1e-6))), "laps",
-               f"{comp}: longest plausible split length", decimals=0)
-        st = dry[dry["compound"] == comp]
-        rs.put(f"stint_len_median_{lc}", float(st["length"].median()), "laps", f"{comp}: median observed stint length", decimals=0)
-        rs.put(f"stint_len_p90_{lc}", float(st["length"].quantile(0.9)), "laps", f"{comp}: 90th percentile stint length", decimals=0)
-        rs.put(f"share_stints_over_split_{lc}", float((st["length"] > L).mean()), "share",
-               f"{comp}: share of stints longer than the split length", pct=True)
-        out[comp] = L
+               f"{comp}: pooled-uncertainty high end (slow wear, expensive stop)", decimals=0)
+        rs.put(f"stops_wear_{lc}", best_stops(sl, P, R), "stops",
+               f"{comp}: stops that minimise wear + pit time over a median-length race (wear alone)")
+        st = stints[stints["compound"] == comp]
+        S = km_curve(st["length"], st["ended_in_pit"].astype(bool))
+        rs.put(f"stint_len_median_{lc}", km_median(S), "laps",
+               f"{comp}: Kaplan-Meier median stint length (stints ending at the flag are censored)", decimals=0)
+        rs.put(f"share_stints_to_flag_{lc}", float((~st["ended_in_pit"].astype(bool)).mean()), "share",
+               f"{comp}: share of stints that ran to the chequered flag (censored)", pct=True)
+        rs.put(f"km_running_at_split_{lc}", float(S.get(int(round(L)), S.iloc[-1])), "share",
+               f"{comp}: Kaplan-Meier share of stints not yet pitted at the split length", pct=True)
+        out[comp] = {"L": L, "km": S}
+        if comp in ("MEDIUM", "HARD"):
+            g = circ[(circ.compound == comp) & (circ.deg > 0)].copy()
+            g["pit"] = g["circuit"].map(circ_pit)
+            g = g.dropna(subset=["pit"])
+            g["L"] = 2 * np.sqrt(g["pit"] / g["deg"])
+            g = g.sort_values("L")
+            rs.put(f"split_len_{lc}_circ_n", len(g), "circuits", f"{comp}: circuits with their own split length")
+            rs.put(f"split_len_{lc}_circ_min", float(g["L"].iloc[0]), "laps", f"{comp}: shortest circuit split length", decimals=0)
+            rs.put(f"split_len_{lc}_circ_min_at", g["circuit"].iloc[0], "", f"{comp}: circuit with the shortest split length")
+            rs.put(f"split_len_{lc}_circ_median", float(g["L"].median()), "laps", f"{comp}: median circuit split length", decimals=0)
+            rs.put(f"split_len_{lc}_circ_max", float(g["L"].iloc[-1]), "laps", f"{comp}: longest circuit split length", decimals=0)
+            rs.put(f"split_len_{lc}_circ_max_at", g["circuit"].iloc[-1], "", f"{comp}: circuit with the longest split length")
     return out
 
 
@@ -317,6 +394,28 @@ def sensitivity(laps: pd.DataFrame, rs: ResultStore) -> None:
                f"{comp}: wear slope with a separate lap slope per race", decimals=3)
     rs.put("fuel_slope_race_q25", float(slopes.quantile(0.25)), "s per lap", "Per-race lap slope, 25th percentile", decimals=3)
     rs.put("fuel_slope_race_q75", float(slopes.quantile(0.75)), "s per lap", "Per-race lap slope, 75th percentile", decimals=3)
+    # compound offset per race; the pooled is_MEDIUM / is_HARD dummies are their sum, so they are dropped
+    X = design(c0).drop(columns=[f"is_{k}" for k in COMPOUNDS[1:]])
+    # In a race with no soft laps the medium and hard offsets sum to one, so only medium (vs hard) is kept there.
+    present = c0.groupby("session_key")["compound"].agg(set)
+    offs = {f"off_{comp}_{sk}": ((c0["compound"] == comp) & (c0["session_key"] == sk)).astype(float)
+            for sk, comps in present.items() for comp in COMPOUNDS[1:]
+            if comp in comps and not ("SOFT" not in comps and comp == "HARD")}
+    X = pd.concat([X, pd.DataFrame(offs, index=c0.index)], axis=1)
+    m = fit_fe(c0, X, c0["group"])
+    for comp in COMPOUNDS:
+        rs.put(f"deg_{comp.lower()}_raceoffset", float(m.params[f"age_{comp}"]), "s per lap of age",
+               f"{comp}: wear slope with a compound offset per race", decimals=3)
+    temp = c0["track_temp"].fillna(c0.groupby("session_key")["track_temp"].transform("mean"))
+    ok = temp.notna().to_numpy()
+    ct = c0[ok].reset_index(drop=True)
+    X = design(ct).assign(track_temp=temp[ok].to_numpy())
+    m = fit_fe(ct, X, ct["group"])
+    rs.put("temp_slope", float(m.params["track_temp"]), "s per degree C",
+           "Lap-time change per degree of track temperature (within race)", decimals=3)
+    for comp in COMPOUNDS:
+        rs.put(f"deg_{comp.lower()}_temp", float(m.params[f"age_{comp}"]), "s per lap of age",
+               f"{comp}: wear slope controlling for track temperature", decimals=3)
     base = laps[laps["drop_reason"].isna() | laps["drop_reason"].isin(["traffic", "incident"])]
     for tag, gap, inc in (("gap05", 0.5, 5.0), ("gap20", 2.0, 5.0), ("inc3", 1.0, 3.0), ("inc8", 1.0, 8.0)):
         keep = base[~(base["median_gap_ahead"] < gap)].copy()
@@ -331,7 +430,7 @@ def sensitivity(laps: pd.DataFrame, rs: ResultStore) -> None:
 
 
 # ----------------------------------------------------------------------------------------------- charts
-def charts(c: pd.DataFrame, stints: pd.DataFrame, fits: dict, cl: dict, rs: ResultStore) -> None:
+def charts(c: pd.DataFrame, stints: pd.DataFrame, fits: dict, cl: dict, dec: dict, rs: ResultStore) -> None:
     out = CASE_DIR / "charts"
     fuel = fits["main"].params["lap_number"]
     # 1. a TYPICAL long HARD stint (rule, not a hand pick): among hard stints with EXAMPLE_MIN_LAPS+ clean laps,
@@ -390,19 +489,18 @@ def charts(c: pd.DataFrame, stints: pd.DataFrame, fits: dict, cl: dict, rs: Resu
         result_keys=["deg_soft", "deg_medium", "deg_hard"],
     ), out)
 
-    # 3. censoring: share of stints still running at each tyre age (survival), per compound
-    st = stints.assign(end_age=stints["tyre_age_at_start"] + stints["length"] - 1)
+    # 3. Kaplan-Meier: share of stints not yet pitted at each stint length (stints run to the flag are censored)
     series = []
     for comp in COMPOUNDS:
-        e = st.loc[st.compound == comp, "end_age"]
-        ages = np.arange(0, int(e.quantile(0.995)) + 1)
-        series.append(make_series(comp.title(), ages, [(e >= a).mean() for a in ages], unit="share", downsample=False))
+        S = dec[comp]["km"]
+        S = S[S.index <= int(stints.loc[stints.compound == comp, "length"].quantile(0.99))]
+        series.append(make_series(comp.title(), S.index, S.to_numpy(), unit="share", downsample=False))
     export_chart(Chart(
-        id="p13_stint_survival", type="line", title="How long tyres are kept: share of stints still running",
-        subtitle="Teams pit before tyres get old, so the oldest ages have few laps (censoring)",
-        x_axis=Axis(title="Tyre age", unit="laps"), y_axis=Axis(title="Stints still running", unit="share", min=0, max=1),
+        id="p13_stint_survival", type="line", title="How long a stint lasts before the pit stop (Kaplan-Meier)",
+        subtitle="Stints that ran to the chequered flag count as censored, not as stops. Few stints reach old tyre ages",
+        x_axis=Axis(title="Stint length", unit="laps"), y_axis=Axis(title="Stints not yet pitted", unit="share", min=0, max=1),
         series=series, source_note=SOURCE_NOTE,
-        reference_lines=[ReferenceLine(axis="y", value=0.5, label="half of stints have ended")],
+        reference_lines=[ReferenceLine(axis="y", value=0.5, label="half of stints have pitted")],
         result_keys=["stint_len_median_hard", "stint_len_median_medium", "stint_len_median_soft"],
     ), out)
 
@@ -429,10 +527,10 @@ def analyse() -> ResultStore:
     fits = {**identification(c, rs), **main_model(c, rs)}
     cl = cliff(c, rs)
     out_of_time(c, rs)
-    circuits(c, rs)
-    decision(c, stints, stops, races, rs)
+    circ = circuits(c, rs)
+    dec = decision(c, stints, stops, laps, circ, rs)
     sensitivity(laps, rs)
-    charts(c, stints, fits, cl, rs)
+    charts(c, stints, fits, cl, dec, rs)
     for k in sorted(rs.results):
         print(f"{k:<34} {rs.results[k]['display']}")
     rs.save()

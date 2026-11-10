@@ -24,8 +24,9 @@ answers:
   text: 'Assumption: stint FE plus lap number controls fuel. Fails: within a stint the two are perfectly collinear
     ({expected.within_stint_corr_age_lap}). Fix: driver-race FE, identified by pit stops. Evidence: without fuel
     control hards seem to improve ({expected.naive_slope_hard}); with the fix they lose {expected.deg_hard}. Assumption:
-    best-fitting break is the cliff. Fails: in-sample search always finds one. Fix: leave-one-race-out; then {expected.n_cliffs_supported}
-    compounds show a break that beats the line.'
+    best-fitting break is the cliff. Fails: in-sample search always finds one. Fix: leave-one-race-out; then the
+    break helps by under one percent and bends the wrong way, so {expected.n_compounds_with_cliff} compounds show
+    a cliff.'
   label: acceptable
   kind: strong
   owner_review: false

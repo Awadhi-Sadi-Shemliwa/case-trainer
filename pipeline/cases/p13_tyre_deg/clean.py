@@ -28,12 +28,15 @@ SEASONS = (2023, 2024, 2025)
 DRY = {"SOFT", "MEDIUM", "HARD"}
 TRAFFIC_GAP_S = 1.0       # median gap to the car ahead during the lap below this = dirty air (DRS-gap convention)
 INCIDENT_S = 5.0          # slower than the stint's median clean lap by more than this = incident / damage / blue flags
-RESTART_LAPS = 1          # laps after a SC/VSC/red period that are also dropped (restart, tyres and brakes cold)
+RESTART_LAPS = 1          # laps after a SC/VSC period that are also dropped (restart, tyres and brakes cold)
+RESTART_LAPS_RED = 2      # after a red flag: standing or rolling restart, often behind the Safety Car
+WET = {"INTERMEDIATE", "WET"}
+MIN_LAP_COVERAGE = 0.8    # a race whose median driver has under this share of the race's laps has incomplete data
 
 REASONS = {
     "no_time": "No lap time recorded, so the lap cannot be modelled.",
     "lap1": "Lap 1 starts from a standstill; its time measures the start, not tyre wear.",
-    "no_stint": "The lap is not inside any stint, so compound and tyre age are unknown.",
+    "no_stint": "The lap is not inside any stint with a known dry compound, so compound or tyre age is unknown.",
     "out_lap": "Out-lap: includes the pit exit and cold tyres, not racing pace.",
     "in_lap": "In-lap: includes slowing for the pit entry, not racing pace.",
     "neutralised": ("Safety Car, Virtual Safety Car or red flag during the lap (or the restart lap after it): "
@@ -62,27 +65,43 @@ def ts(s: pd.Series) -> pd.Series:
     return pd.to_datetime(s, utc=True, format="ISO8601")
 
 
-def windows(rc: pd.DataFrame) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
-    """Neutralised periods from race control: SC deployed..in this lap, VSC deployed..ending, red flag (instant)."""
+def windows(rc: pd.DataFrame) -> list[tuple[pd.Timestamp, pd.Timestamp, int]]:
+    """Neutralised periods (start, end, restart laps to drop after) from race-control messages.
+
+    SC: DEPLOYED .. IN THIS LAP. VSC: DEPLOYED .. ENDING. A VSC that becomes a SC closes at the SC deployment; a SC or
+    VSC that ends in a red flag closes at the red flag. Red flag: RED FLAG .. next SESSION STARTED, then a standing or
+    rolling restart (RESTART_LAPS_RED laps). A window still open when the log ends ran to the finish (race ended
+    neutralised). Fixed 2026-11-10 after review: unclosed windows had neutralised whole races (e.g. Interlagos 2023).
+    """
     if rc.empty:
         return []
     rc = rc.assign(t=ts(rc["date"])).sort_values("t")
-    out, open_sc, open_vsc = [], None, None
+    out, open_sc, open_vsc, open_red = [], None, None, None
     for r in rc.itertuples():
         msg = str(r.message).upper()
-        if r.category == "SafetyCar":
-            if msg.startswith("VIRTUAL SAFETY CAR DEPLOYED"):
+        if open_red is not None:
+            if r.category == "SessionStatus" and msg.startswith("SESSION STARTED"):
+                out.append((open_red, r.t, RESTART_LAPS_RED)); open_red = None
+            continue
+        if r.flag == "RED":
+            for o in (open_sc, open_vsc):
+                if o is not None:
+                    out.append((o, r.t, 0))
+            open_sc = open_vsc = None
+            open_red = r.t
+        elif r.category == "SafetyCar":
+            if msg.startswith("VIRTUAL SAFETY CAR DEPLOYED") and open_vsc is None and open_sc is None:
                 open_vsc = r.t
             elif msg.startswith("VIRTUAL SAFETY CAR ENDING") and open_vsc is not None:
-                out.append((open_vsc, r.t)); open_vsc = None
-            elif msg.startswith("SAFETY CAR DEPLOYED"):
+                out.append((open_vsc, r.t, RESTART_LAPS)); open_vsc = None
+            elif msg.startswith("SAFETY CAR DEPLOYED") and open_sc is None:
+                if open_vsc is not None:                       # VSC upgraded to a full Safety Car
+                    out.append((open_vsc, r.t, 0)); open_vsc = None
                 open_sc = r.t
             elif msg.startswith("SAFETY CAR IN THIS LAP") and open_sc is not None:
-                out.append((open_sc, r.t)); open_sc = None
-        elif r.flag == "RED":
-            out.append((r.t, r.t))
+                out.append((open_sc, r.t, RESTART_LAPS)); open_sc = None
     end = rc["t"].max()
-    out += [(t, end) for t in (open_sc, open_vsc) if t is not None]   # never closed: neutral to the end of the log
+    out += [(t, end, 0) for t in (open_sc, open_vsc, open_red) if t is not None]
     return out
 
 
@@ -92,11 +111,15 @@ def race_laps(s: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, d
     rc, iv, wx = load("race_control", sk), load("intervals", sk), load("weather", sk)
     compounds = set(st["compound"].dropna().str.upper()) if not st.empty else set()
     rain = bool((wx["rainfall"] > 0).any()) if not wx.empty else False
-    wet = bool(compounds - DRY)   # inters/wets used; rain on slicks is handled lap by lap ("rain")
+    wet = bool(compounds & WET)   # inters/wets used; rain on slicks is handled lap by lap ("rain")
+    # incomplete feed: the median driver should have most of the race's laps (Miami 2025 has about 33 of 57)
+    per_driver = laps.groupby("driver_number")["lap_number"].nunique() if not laps.empty else pd.Series(dtype=float)
+    coverage = float(per_driver.median() / laps["lap_number"].max()) if not laps.empty else 0.0
+    incomplete = coverage < MIN_LAP_COVERAGE
     info = {"session_key": sk, "year": int(s["year"]), "circuit": s["circuit_short_name"], "country": s["country_name"],
-            "date": s["date_start"][:10], "wet": wet, "rain_recorded": rain, "laps_raw": len(laps),
-            "non_dry_compounds": ",".join(sorted(compounds - DRY))}
-    if wet or laps.empty:
+            "date": s["date_start"][:10], "wet": wet, "incomplete": incomplete, "lap_coverage": round(coverage, 3),
+            "rain_recorded": rain, "laps_raw": len(laps), "other_compounds": ",".join(sorted(compounds - DRY))}
+    if wet or incomplete or laps.empty:
         return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), info
 
     laps = laps[["driver_number", "lap_number", "date_start", "lap_duration", "is_pit_out_lap"]].copy()
@@ -120,20 +143,23 @@ def race_laps(s: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, d
     # neutralised: lap time window overlaps a SC/VSC/red period, plus the next RESTART_LAPS laps of each driver
     laps["end"] = laps["start"] + pd.to_timedelta(laps["lap_duration"].fillna(0), unit="s")
     neut = pd.Series(False, index=laps.index)
-    for a, b in windows(rc):
+    for a, b, k in windows(rc):
         hit = (laps["start"] <= b) & (laps["end"] >= a) & laps["start"].notna()
         neut |= hit
-        after = laps[(laps["start"] > b)].sort_values("start").groupby("driver_number").head(RESTART_LAPS).index
-        neut.loc[after] = True
+        if k:
+            after = laps[(laps["start"] > b)].sort_values("start").groupby("driver_number").head(k).index
+            neut.loc[after] = True
     laps["neutralised"] = neut
 
     # rain: the latest weather sample at or before the lap start shows rainfall
     laps["raining"] = False
+    laps["track_temp"] = np.nan
     if not wx.empty and laps["start"].notna().any():
-        w = wx.assign(t=ts(wx["date"])).sort_values("t")[["t", "rainfall"]]
+        w = wx.assign(t=ts(wx["date"])).sort_values("t")[["t", "rainfall", "track_temperature"]]
         lp = laps[["start"]].dropna().reset_index().sort_values("start")
         r = pd.merge_asof(lp, w, left_on="start", right_on="t", direction="backward")
         laps.loc[r["index"], "raining"] = (r["rainfall"].fillna(0) > 0).to_numpy()
+        laps.loc[r["index"], "track_temp"] = r["track_temperature"].to_numpy()
 
     # traffic: median interval to the car ahead over the samples taken during the lap
     laps["median_gap_ahead"] = np.nan
@@ -152,7 +178,7 @@ def race_laps(s: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, d
     conds = {
         "no_time": laps["lap_duration"].isna(),
         "lap1": laps["lap_number"] == 1,
-        "no_stint": laps["stint_number"].isna(),
+        "no_stint": laps["stint_number"].isna() | ~laps["compound"].isin(DRY),
         "out_lap": laps["is_pit_out_lap"].fillna(False).astype(bool)
                    | ((laps["lap_number"] == laps["lap_start"]) & (laps["stint_number"] > 1)),
         "in_lap": (laps["lap_number"] == laps["lap_end"]) & ~laps["last_stint"].fillna(True).astype(bool),
@@ -174,7 +200,8 @@ def race_laps(s: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, d
     laps["session_key"] = sk
     laps["race_laps"] = int(laps["lap_number"].max())
     cols = ["session_key", "driver_number", "lap_number", "lap_duration", "stint_number", "compound", "tyre_age",
-            "tyre_age_at_start", "median_gap_ahead", "delta_to_stint_median", "neutralised", "race_laps", "drop_reason"]
+            "tyre_age_at_start", "median_gap_ahead", "delta_to_stint_median", "neutralised", "track_temp", "race_laps",
+            "drop_reason"]
     out = laps[cols]
 
     stints = st.assign(session_key=sk, length=st["lap_end"] - st["lap_start"] + 1, ended_in_pit=~st["last_stint"])
@@ -219,11 +246,18 @@ def clean() -> None:
 
     total = int(races["laps_raw"].sum())
     dry = int(races.loc[~races.wet, "laps_raw"].sum())
+    kept = int(races.loc[~races.wet & ~races.incomplete, "laps_raw"].sum())
     prov.log_transform("openf1_all", "wet_races_excluded", total, dry,
                        reason=("Races where intermediate or wet tyres were used are excluded: wet running is a different "
                                "tyre problem. Rain on slicks is handled lap by lap (drop_rain)."),
                        details={"races": int(races.wet.sum()), "of_races": len(races),
                                 "which": races.loc[races.wet, ["date", "circuit"]].astype(str).agg(" ".join, axis=1).tolist()})
+    prov.log_transform("openf1_all", "incomplete_races_excluded", dry, kept,
+                       reason=(f"Races whose median driver has under {MIN_LAP_COVERAGE:.0%} of the race's laps in the feed are "
+                               "excluded: missing laps would bias stint lengths, pit losses and wear."),
+                       details={"races": int(races.incomplete.sum()),
+                                "which": races.loc[races.incomplete, ["date", "circuit", "lap_coverage"]].astype(str)
+                                .agg(" ".join, axis=1).tolist()})
     before = len(laps)
     for r in ORDER:
         n = int((laps.drop_reason == r).sum())
