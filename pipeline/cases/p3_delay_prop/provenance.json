@@ -197,7 +197,8 @@
       "month": 1,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_02": {
       "key": "bts_ontime_2025_02",
@@ -396,7 +397,8 @@
       "month": 2,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_03": {
       "key": "bts_ontime_2025_03",
@@ -595,7 +597,8 @@
       "month": 3,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_04": {
       "key": "bts_ontime_2025_04",
@@ -794,7 +797,8 @@
       "month": 4,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_05": {
       "key": "bts_ontime_2025_05",
@@ -993,7 +997,8 @@
       "month": 5,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_06": {
       "key": "bts_ontime_2025_06",
@@ -1192,7 +1197,8 @@
       "month": 6,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_07": {
       "key": "bts_ontime_2025_07",
@@ -1391,7 +1397,8 @@
       "month": 7,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_08": {
       "key": "bts_ontime_2025_08",
@@ -1590,7 +1597,8 @@
       "month": 8,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_09": {
       "key": "bts_ontime_2025_09",
@@ -1789,7 +1797,8 @@
       "month": 9,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_10": {
       "key": "bts_ontime_2025_10",
@@ -1988,7 +1997,8 @@
       "month": 10,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_11": {
       "key": "bts_ontime_2025_11",
@@ -2187,7 +2197,8 @@
       "month": 11,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     },
     "bts_ontime_2025_12": {
       "key": "bts_ontime_2025_12",
@@ -2386,7 +2397,8 @@
       "month": 12,
       "units": "times hhmm local; delays in minutes",
       "verified_on": "2026-11-09",
-      "verified_how": "Field definitions read in the zip's readme.html"
+      "verified_how": "Field definitions read in the zip's readme.html",
+      "committed": false
     }
   },
   "transforms": [

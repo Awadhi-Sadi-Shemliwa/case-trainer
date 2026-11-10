@@ -211,6 +211,10 @@ class Provenance:
         for key, e in self.data["datasets"].items():
             p = self.case_dir / e["file"]
             if not p.exists():
+                # Large raw data kept out of git on purpose (committed: false): absent is fine, but whenever the
+                # file is present (re-downloaded) its hash is still checked below.
+                if e.get("committed") is False:
+                    continue
                 problems.append(f"{key}: missing {p}")
             elif sha256_file(p) != e["sha256"]:
                 problems.append(f"{key}: sha256 mismatch for {p}")

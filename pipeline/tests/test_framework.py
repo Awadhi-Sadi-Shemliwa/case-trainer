@@ -42,6 +42,30 @@ def test_fetch_uses_cache_and_detects_tampering(tmp_path):
     assert prov.verify_hashes()
 
 
+def test_uncommitted_raw_may_be_absent_but_is_still_hashed_when_present(tmp_path):
+    prov = Provenance(tmp_path, downloader=FakeDownloader(b"x\n1\n"))
+    p = prov.fetch("big", "u", "big.csv", licence_note="l")
+    prov.annotate("big", committed=False)
+    p.unlink()
+    assert prov.verify_hashes() == []            # fresh clone: large raw not in git
+    p.write_bytes(b"x\n2\n")
+    assert prov.verify_hashes()                  # re-downloaded but different: still caught
+    prov.annotate("big", committed=True)
+    p.unlink()
+    assert prov.verify_hashes()                  # a committed raw file must exist
+
+
+def test_git_ignored_raw_files_are_marked_uncommitted():
+    import subprocess
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    for prov_file in (root / "cases").glob("*/provenance.json"):
+        for k, e in json.loads(prov_file.read_text(encoding="utf-8"))["datasets"].items():
+            f = prov_file.parent / e["file"]
+            ignored = subprocess.run(["git", "check-ignore", "-q", str(f)], cwd=root).returncode == 0
+            assert ignored == (e.get("committed") is False), (prov_file.parent.name, k, "ignored" if ignored else "tracked")
+
+
 def test_licence_and_reason_required(tmp_path):
     prov = Provenance(tmp_path, downloader=FakeDownloader(b"x"))
     with pytest.raises(ProvenanceError):

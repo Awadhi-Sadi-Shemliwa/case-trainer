@@ -105,6 +105,10 @@ needed for P13 once the OpenF1 download is written; keep it until then.
 BTS 2025 is ~350 MB. Raw zips are git-ignored with SHA-256 in provenance; `clean.py` writes small aggregates
 (sufficient statistics for exact OLS) that are committed. Tests reproduce results from aggregates always, and
 aggregates from raw when raw is present.
+**2026-11-10 fix (found by a fresh-clone cross-check):** `build_content.py` failed in a fresh clone because it
+required the git-ignored zips. Such datasets now carry `"committed": false` in provenance; `verify_hashes` skips
+them only when the file is absent and still checks the hash when it is present. A framework test asserts that
+every git-ignored raw file is marked `committed: false` and every tracked one is not.
 
 ### 2026-11-09 · Unverifiable claims are not taught
 P3: BTS category definitions (e.g. non-extreme weather → NAS) could not be opened (403 / anti-bot redirect). No

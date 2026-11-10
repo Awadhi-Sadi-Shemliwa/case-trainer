@@ -70,3 +70,7 @@ A heatmap with many rows doesn't fit a fixed-height chart box. ChartPanel lets h
 
 ### Gradle: "Conflicting configuration … abiFilters … splits"
 Don't set `ndk.abiFilters`; use `--split-per-abi --target-platform android-arm64`.
+
+### build_content: "provenance: <key>: missing ...raw/<file>" in a fresh clone
+The raw file is git-ignored (too big or not redistributable) but its provenance entry lacks `"committed": false`.
+Add it in the case's download.py (`prov.annotate(key, committed=False)`) and re-run the download, or add the field.

@@ -46,7 +46,8 @@ def download(refresh: bool = False) -> Provenance:
             "rows": rows, "columns": list(head.columns), "head": head.iloc[:3, :20].to_dict(orient="records"),
             "member": name}
         prov.annotate(k, year=YEAR, month=m, units="times hhmm local; delays in minutes",
-                      verified_on="2026-11-09", verified_how="Field definitions read in the zip's readme.html")
+                      verified_on="2026-11-09", verified_how="Field definitions read in the zip's readme.html",
+                      committed=False)  # ~350 MB: git-ignored; hash checked whenever the file is present
         print(f"{k}: {rows:,} flights, {len(head.columns)} columns")
         prov.save()
     return prov
