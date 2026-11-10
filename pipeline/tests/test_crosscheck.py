@@ -63,6 +63,23 @@ PROSE_CLAIMS = [
      lambda r: abs(r["pass_cw_b1"] - r["pass_b1"]) < 0.05 and abs(r["pass_clean_b1"] - r["pass_b1"]) < 0.05),
     ("p3_delay_prop", "out-of-time check fails", lambda r: r["buffer_rule_holds_octdec"] == "no"),
     ("p3_delay_prop", "Oct-Dec needs a longer turn", lambda r: r["buffer_turn_octdec"] > r["buffer_min_turn"]),
+    ("p13_tyre_deg", "without fuel control hards seem to improve", lambda r: r["naive_slope_hard"] < 0),
+    ("p13_tyre_deg", "example stint: raw falls, corrected rises",
+     lambda r: r["example_raw_slope"] < 0 < r["example_corrected_slope"]),
+    ("p13_tyre_deg", "softs wear fastest; mediums and hards overlap",
+     lambda r: r["deg_soft"] > max(r["deg_medium"], r["deg_hard"]) and r["deg_hard"] > 0
+     and r["deg_medium_lo"] < r["deg_hard_hi"] and r["deg_hard_lo"] < r["deg_medium_hi"]),
+    ("p13_tyre_deg", "example stint: median of long hard stints", lambda r: r["n_long_hard_stints"] >= 20),
+    ("p13_tyre_deg", "no cliff holds out of sample", lambda r: r["n_cliffs_supported"] == 0),
+    ("p13_tyre_deg", "the hard-tyre break flattens the curve", lambda r: r["cliff_extra_slope_hard"] < 0),
+    ("p13_tyre_deg", "the break barely changes held-out error",
+     lambda r: abs(r["loro_gain_hard"]) < 0.05),
+    ("p13_tyre_deg", "teams already run shorter than the split length",
+     lambda r: r["stint_len_median_hard"] < r["split_len_hard"] and r["share_stints_over_split_hard"] < 0.5),
+    ("p13_tyre_deg", "traffic-gap choice doesn't change the conclusion",
+     lambda r: all(abs(r[f"deg_hard_{t}"] - r["deg_hard"]) < 0.02 for t in ("gap05", "gap20"))),
+    ("p13_tyre_deg", "over a median hard stint wear adds more than a second a lap",
+     lambda r: r["deg_hard"] * r["stint_len_median_hard"] > 1),
 ]
 
 

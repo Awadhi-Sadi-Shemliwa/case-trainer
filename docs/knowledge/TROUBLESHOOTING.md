@@ -60,7 +60,7 @@ FastF1 3.9 requires an active F1TV subscription for live-timing data (re-confirm
 otherwise it raises NotADirectoryError; `enable_cache` is deprecated in 3.9.
 
 ### uv: fastf1 vs pandas 3 conflict
-FastF1 pins pandas<3. Use the isolated `pipeline/f1_fetch` env for downloads only.
+FastF1 pins pandas<3. Historical note: an isolated `pipeline/f1_fetch` env was used; removed when P13 moved to OpenF1.
 
 ### provenance.log_transform called in a loop with the same id
 Entries are replaced by id, so per-month calls keep only the last month. Accumulate counts and log once (P3 clean.py).

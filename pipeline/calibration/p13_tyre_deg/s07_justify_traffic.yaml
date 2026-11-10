@@ -1,0 +1,179 @@
+# Generated from _answers.py. Edit there.
+step: s07_justify_traffic
+answers:
+- id: a01
+  text: 'Laps where the median gap to the car ahead was under {expected.traffic_gap_s} seconds were dropped and
+    counted ({expected.n_drop_traffic}). Dirty air costs downforce and overheats the tyres, so the lap looks exactly
+    like wear. Traffic also clusters early in stints after a stop, so it biases the slope rather than adding noise.
+    I rejected keeping them and a far stricter rule. Checked: hard slope {expected.deg_hard_gap05} and {expected.deg_hard_gap20}
+    under looser and stricter rules vs {expected.deg_hard}.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'What: removed laps run mostly within {expected.traffic_gap_s} s of the car ahead, with the count logged.
+    Why: following loses downforce and heats the tyres, a non-wear slowdown. It''s not random over the stint (rejoining
+    traffic on fresh tyres), so it would bias the wear rate. Alternative rejected: keep all laps. Sensitivity: the
+    hard-tyre slope stays near {expected.deg_hard} with other gap rules.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Traffic laps were excluded using the intervals feed. A car in dirty air is slower and cooks its tyres,
+    which would be read as degradation. Because traffic happens at particular stint ages, it biases the slope. The
+    threshold is a judgement, so I varied it: {expected.deg_hard_gap05} looser, {expected.deg_hard_gap20} stricter,
+    {expected.deg_hard} main. Same conclusion.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'Dropped and counted the laps where the car followed within {expected.traffic_gap_s} seconds. Mechanism:
+    dirty air, lost downforce, overheated tyres. Bias: drivers rejoin behind others on fresh tyres, so early-stint
+    laps would look slow and the wear slope would flatten. Rejected: no filter. Check: looser and stricter thresholds
+    give hard slopes of {expected.deg_hard_gap05} and {expected.deg_hard_gap20}.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: The rule removes laps where the median interval ahead was below {expected.traffic_gap_s} s. Following closely
+    makes laps slow for reasons that mimic wear, and it isn't evenly spread through a stint, so leaving it in moves
+    the slope. A threshold is a choice, so it was varied and the slope barely changed.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'What: traffic laps out, counted ({expected.n_drop_traffic}). Why: dirty air and tyre overheating look like
+    wear. Why it matters: traffic clusters after stops and in battles, so it biases rather than just adds noise.
+    Alternative: keep them, rejected. Check: the slope is similar under looser and stricter rules.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: Laps spent close behind another car were removed because dirty air slows the car and heats the tyres, which
+    a regression would attribute to tyre age. I logged the count and reran with other gap thresholds; the hard slope
+    moved only from {expected.deg_hard} to {expected.deg_hard_gap20} with the stricter rule.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: Traffic laps (gap ahead under {expected.traffic_gap_s} s) were dropped and logged. They're slow because
+    of dirty air, not wear, and they're concentrated early in stints after pit stops, which would bias the slope.
+    I tested looser and stricter thresholds and the wear rate held.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Removed laps close behind another car because dirty air slows the car and overheats tyres, which looks like
+    wear; the count is logged.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No sensitivity check.
+- id: a10
+  text: Traffic laps were dropped since following closely costs time unrelated to tyre age; varying the threshold
+    barely changed the slope.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: Dirty-air laps out, counted; they mimic wear; looser and stricter rules gave similar slopes.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Some laps were removed.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: Laps in traffic were dropped.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: The threshold was {expected.traffic_gap_s} seconds.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Traffic makes laps slower.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a16
+  text: We used the intervals data.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a17
+  text: Removed laps with a small gap.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: No why.
+- id: a18
+  text: Following cars are slower.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: It makes the data cleaner.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: Traffic laps were removed because they are statistical outliers.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Traffic laps are faster because of the slipstream, so they make wear look smaller.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: Traffic doesn't matter because it is random noise.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: We dropped laps where the car was leading.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: Traffic was removed so that every driver has the same number of laps.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: The gap rule removes laps behind the Safety Car.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: We removed them because the slope looked better without them.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Drop them without recording how many.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Traffic laps are outliers, and removing outliers always improves a model.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Outlier framing plus a false general rule.
+- id: a29
+  text: Traffic laps were removed because they were missing a lap time.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a30
+  text: The rule keeps only laps within one second of the leader.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

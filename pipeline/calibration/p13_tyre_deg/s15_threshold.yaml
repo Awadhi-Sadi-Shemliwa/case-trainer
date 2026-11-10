@@ -1,0 +1,181 @@
+# Generated from _answers.py. Edit there.
+step: s15_threshold
+answers:
+- id: a01
+  text: 'An extra stop costs the pit loss ({expected.pit_loss} s; middle half of races {expected.pit_loss_q25} to
+    {expected.pit_loss_q75}) and saves wear. With linear wear s, halving a stint of L laps saves s L squared over
+    four, so it pays when L > 2 sqrt(pit loss / s). Hards about {expected.split_len_hard} laps ({expected.split_len_hard_short}
+    to {expected.split_len_hard_long}), mediums {expected.split_len_medium}, softs {expected.split_len_soft}. Teams
+    already run shorter: median hard stint {expected.stint_len_median_hard}, only {expected.share_stints_over_split_hard}
+    longer. So wear alone rarely justifies a stop; track position, the two-compound rule and an untested cliff drive
+    the rest.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Rule: add a stop for wear only if the stint would exceed twice the square root of pit loss over wear rate.
+    With {expected.pit_loss} s pit loss: hards {expected.split_len_hard}, mediums {expected.split_len_medium}, softs
+    {expected.split_len_soft} laps. Range for hards {expected.split_len_hard_short} to {expected.split_len_hard_long}.
+    Observed hard stints are shorter (median {expected.stint_len_median_hard}), so other factors decide stops: undercuts,
+    track position, regulations, cliff risk.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Trade-off: pit loss {expected.pit_loss} s vs wear saved s L squared over four. Split length 2 sqrt(P/s):
+    hards {expected.split_len_hard} laps, mediums {expected.split_len_medium}, softs {expected.split_len_soft}.
+    Teams stop earlier than that, so wear isn''t what drives most stops; the rule leaves out traffic, undercuts
+    and the two-compound rule.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'The stop pays when the wear saved by halving the stint beats the pit loss: L* = 2 sqrt(P/s). Hards {expected.split_len_hard}
+    laps (range {expected.split_len_hard_short} to {expected.split_len_hard_long}). Only {expected.share_stints_over_split_hard}
+    of hard stints run longer, so in practice teams stop for track position and rules, not wear alone.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Formula from linear wear: split a stint longer than 2 sqrt(pit loss / wear). Pit loss {expected.pit_loss}
+    s; hards about {expected.split_len_hard}, softs {expected.split_len_soft}. Real stints are shorter (median {expected.stint_len_median_hard}
+    on hards). Missing from the rule: undercut, traffic, cliff risk.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Extra stop if s L squared / 4 > P. Hards: {expected.split_len_hard} laps, mediums {expected.split_len_medium},
+    softs {expected.split_len_soft}, with a range from the pit-loss spread and slope CI. Teams already pit before
+    that, so other strategy factors dominate.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Weigh {expected.pit_loss} s of pit loss against wear: the split length is 2 sqrt(P/s), about {expected.split_len_hard}
+    laps on hards. Teams run shorter stints, so wear alone rarely forces a stop; position and rules do.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'Rule: L* = 2 sqrt(pit loss / wear rate). Numbers: hards {expected.split_len_hard} ({expected.split_len_hard_short}
+    to {expected.split_len_hard_long}), mediums {expected.split_len_medium}, softs {expected.split_len_soft}. Teams
+    stop sooner; the rule ignores track position and cliff risk.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: An extra stop pays on hards only beyond about {expected.split_len_hard} laps, from 2 sqrt(pit loss / wear);
+    teams already stop sooner.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Thin on range and what is left out.
+- id: a10
+  text: 'Split length is twice the square root of pit loss over wear: hards {expected.split_len_hard}, mediums {expected.split_len_medium},
+    softs {expected.split_len_soft} laps.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: Pit loss {expected.pit_loss} s against wear; hards can run about {expected.split_len_hard} laps before a
+    stop pays; track position also matters.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: Pit when tyres are worn.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: The pit loss is {expected.pit_loss} seconds.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Softs need shorter stints.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Use a formula with the square root.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a16
+  text: Hards can run about {expected.split_len_hard} laps.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Number without trade-off.
+- id: a17
+  text: Teams stop before the limit.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Compare pit loss and wear.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: There is a range.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: Stop every ten laps.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Stop when the lap time is one second slower than the fastest lap of the race.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: The split length is pit loss divided by wear rate.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Teams run far longer than the split length, so they waste time.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: Softs can run longer than hards.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: The pit loss doesn't matter.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Never make an extra stop because the wear rule says it does not pay.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: The tyre will fail at exactly that lap.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Tyres improve with age, so never stop.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Red flag.
+- id: a29
+  text: Pit at the cliff age from the in-sample fit.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a30
+  text: The rule is the same for every compound.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

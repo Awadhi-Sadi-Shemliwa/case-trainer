@@ -1,0 +1,181 @@
+# Generated from _answers.py. Edit there.
+step: s04_predict_data
+answers:
+- id: a01
+  text: 'One row per driver per lap with the lap time in seconds and a pit-out flag. Compound and tyre age sit in
+    a separate stints table (first lap, last lap, compound, age when fitted), so I must join by lap range; age at
+    fitting isn''t always zero because used sets are common. Odd laps: lap one, in-laps and out-laps, Safety Car
+    and VSC laps from race control, and traffic laps from the intervals feed. Some laps have no time.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Grain: driver x lap. Tyre info is not on the lap row; it comes from stints with a lap range and the tyre''s
+    age when fitted, so tyre age = age at fitting plus laps into the stint. Non-racing laps: the start, pit in and
+    out laps, neutralised laps behind a Safety Car or VSC, and laps stuck in dirty air, which I can find from the
+    gap to the car ahead.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: Each lap row has driver, lap number, lap time and whether it started from the pit lane. Stints are a second
+    table giving compound and age at fitting, sometimes already a few laps old from qualifying. I'd expect missing
+    times, slow first laps, pit laps, Safety Car periods in race-control messages and traffic visible in the interval
+    data. Timestamps are UTC.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'Laps table: one row per lap per driver. Stints table: compound and starting tyre age for a lap range; join
+    them. Race control lists Safety Car and VSC deployments; intervals give gap to the car ahead every few seconds.
+    Laps that don''t measure tyres: lap one, pit laps, neutralised laps, traffic laps. Watch for used tyres, so
+    age isn''t just the stint lap count.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'A lap per row with time in seconds. To get compound and age I need the stints table, matching each lap
+    to its stint; tyre age starts at the age when fitted, which can be non-zero. Slow laps unrelated to wear: standing
+    start, pit entry and exit, Safety Car and VSC, and following another car. Lapped cars run a different lap count
+    from the leader, so time windows beat lap numbers for neutralisation.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Rows are driver-laps. Compound and age come from stints by lap range; age = fitted age + (lap - first lap).
+    I expect lap one slow, pit in/out laps slow, Safety Car and VSC laps slow, traffic laps slow, and a few missing
+    times. Traps: used tyres, joins, UTC timestamps.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: Driver-lap grain, lap time in seconds. Tyre fields are joined from stints, where age at start may be several
+    laps for used sets. I'd drop the start lap, pit laps, neutralised laps found in race control, traffic laps found
+    in the intervals feed and laps with no time.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'One row per lap per driver; stints carry compound and the age of the set when fitted, so join by lap range
+    and add laps since fitting. Slow for non-tyre reasons: lap one, pit laps, Safety Car or VSC, close following.
+    Expect a few null lap times.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Driver-lap rows with lap times; compound comes from a separate stints table; lap one, pit laps and Safety
+    Car laps are slow for other reasons.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Misses traffic and used tyres.
+- id: a10
+  text: Each row is a lap. Tyre compound and age come from stints. Pit laps, Safety Car laps and traffic laps aren't
+    racing pace.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: One row per driver lap; tyre age must be computed from the stint's starting age because sets can be used;
+    out-laps and in-laps distort times.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No Safety Car or traffic.
+- id: a12
+  text: A table of lap times.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: One row per lap with a lap time.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Some laps will be slow.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Tyre compound is soft, medium or hard.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a16
+  text: Safety Car laps are slower.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Only one issue.
+- id: a17
+  text: There is a separate table for stints.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Some lap times are missing.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: I would sort laps by lap number.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: One row per race with the winner's average lap time.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Tyre age is the same as the lap number in the race.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: Every lap time measures racing pace, including pit laps.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Compound and tyre age are on every lap row already.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: Lap times are in minutes.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: One row per pit stop.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Every lap is racing pace, so I'll use all of them as they are.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: Tyre age is just the lap number within the stint, and every set starts new.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Faster laps late in the race mean the tyres improve, so the data will show that.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Red flag in a data prediction.
+- id: a29
+  text: Each row is a telemetry sample at a fixed distance.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a30
+  text: The data has one row per team per race.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

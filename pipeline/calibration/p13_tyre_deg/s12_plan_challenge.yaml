@@ -1,0 +1,182 @@
+# Generated from _answers.py. Edit there.
+step: s12_plan_challenge
+answers:
+- id: a01
+  text: 'Inside a stint tyre age and lap number rise together, so after removing stint means they''re identical:
+    correlation {expected.within_stint_corr_age_lap}, rank {expected.stint_fe_rank} of {expected.stint_fe_columns}.
+    The model can''t separate fuel from wear; dropping lap number makes hards look like they improve ({expected.naive_slope_hard}).
+    Fix: a driver-race fixed effect, since pit stops reset age but not lap number ({expected.share_multi_stint}
+    of driver-races have 2+ stints): hards lose {expected.deg_hard}. Second, a break chosen on all data always fits;
+    choose it on other races and score on the held-out race.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Part one fails: with a stint fixed effect, lap number and tyre age are the same variable within each stint,
+    so fuel and wear aren''t identified. Use a fixed effect per driver per race instead; the pit stop resets tyre
+    age while lap number keeps going, which separates them, giving {expected.deg_hard} for hards and a lap effect
+    of {expected.fuel_slope}. Part two fails: an in-sample best break always looks better. Pick it on training races
+    and test leave-one-race-out.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Assumption: stint FE plus lap number controls fuel. Fails: within a stint the two are perfectly collinear
+    ({expected.within_stint_corr_age_lap}). Fix: driver-race FE, identified by pit stops. Evidence: without fuel
+    control hards seem to improve ({expected.naive_slope_hard}); with the fix they lose {expected.deg_hard}. Assumption:
+    best-fitting break is the cliff. Fails: in-sample search always finds one. Fix: leave-one-race-out; then {expected.n_cliffs_supported}
+    compounds show a break that beats the line.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'The textbook model isn''t identified: inside a stint each lap adds one to tyre age and one to lap number,
+    so the design loses rank. Compare across stints of the same driver in the same race, where a stop resets age.
+    The cliff must be chosen and tested on different races; in-sample it''s guaranteed to look like an improvement.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: Stint fixed effects remove the only variation that separates fuel from wear, because age and lap number
+    move in lockstep within a stint. Use driver-race effects so pit-stop resets identify the wear rate ({expected.deg_hard}
+    on hards). For the cliff, use leave-one-race-out with the break chosen on the training races.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'Problem one: collinearity. In a stint, age = lap number minus a constant, so the stint-FE model can''t
+    tell them apart (rank {expected.stint_fe_rank} of {expected.stint_fe_columns}). Fix with a driver-race FE and
+    check most driver-races have several stints. Problem two: in-sample break search overfits; validate leave-one-race-out.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: With stint FE, tyre age and lap number are identical after demeaning, so fuel can't be controlled that way.
+    A driver-race FE works because a stop resets the tyre but not the race lap. The best break on all data isn't
+    evidence; choose it on other races and score on a held-out race.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: Age and lap number are perfectly collinear within a stint, so the plan can't separate fuel from wear. Fixed
+    effect per driver-race instead, using pit stops. Then test any cliff by leaving one race out, choosing the break
+    on the rest.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Within a stint tyre age and lap number are the same, so use a driver-race fixed effect instead; the cliff
+    should be tested out of sample.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No numbers.
+- id: a10
+  text: Stint FE plus lap number is collinear; use driver-race FE so pit stops separate fuel from wear; hards then
+    lose {expected.deg_hard} per lap.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: The break should be chosen on training races and checked on a held-out race, and the stint FE model can't
+    separate age from lap number.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: The plan might overfit.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: Use a different fixed effect.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: Lap number controls fuel.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Test the cliff on new data.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a16
+  text: The model has collinearity.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Names the problem only.
+- id: a17
+  text: Hards lose {expected.deg_hard} seconds per lap.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Use cross-validation.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: The textbook is wrong.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: The plan is fine because lap number controls fuel.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: Add more fixed effects to fix it.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: Use a random train-test split of laps to test the cliff.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Remove lap number and the stint fixed effect handles fuel.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The collinearity is solved by standardising the variables.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: Fit the break on all data; more data makes it more reliable.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Tyres get faster with age so there is no wear.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: The best fitting break on all the data is the cliff.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: The plan is fine; the in-sample break is the cliff and tyres improve without lap number.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Two red flags.
+- id: a29
+  text: Drop all pit-stop laps and the problem disappears.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a30
+  text: Use a stint fixed effect and a quadratic in lap number.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

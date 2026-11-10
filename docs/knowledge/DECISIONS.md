@@ -98,8 +98,8 @@ lap_start/lap_end) and `race_control` (Safety Car / VSC messages with lap number
 Terms (openf1.org, read 2026-11-10): "Licensed under CC BY-NC-SA 4.0"; intended for "educational purposes, personal
 learning projects, research". Free tier: historical sessions since 2023, 3 req/s and 30 req/min.
 Handling: raw JSON stays git-ignored (same as before); committed aggregates and charts carry a CC BY-NC-SA 4.0 notice
-and credit OpenF1 (ShareAlike applies to derived data we publish). FastF1 env `pipeline/f1_fetch/` is no longer
-needed for P13 once the OpenF1 download is written; keep it until then.
+and credit OpenF1 (ShareAlike applies to derived data we publish). FastF1 env `pipeline/f1_fetch/` was removed
+once the OpenF1 download was written (2026-11-10).
 
 ### 2026-11-09 · Large raw data: commit aggregates, not raw (P3)
 BTS 2025 is ~350 MB. Raw zips are git-ignored with SHA-256 in provenance; `clean.py` writes small aggregates

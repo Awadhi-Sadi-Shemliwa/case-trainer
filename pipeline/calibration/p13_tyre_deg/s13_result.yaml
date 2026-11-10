@@ -1,0 +1,179 @@
+# Generated from _answers.py. Edit there.
+step: s13_result
+answers:
+- id: a01
+  text: 'Claim: within the ages teams run, no cliff holds up out of sample. Evidence: held-out error for hards is
+    {expected.loro_rmse_line_hard} s with a line and {expected.loro_rmse_hinge_hard} s with a break; the break won
+    {expected.loro_wins_hard} of {expected.loro_races_hard} races; and the best in-sample break (age {expected.cliff_age_hard})
+    has extra slope {expected.cliff_extra_slope_hard}, a flattening. Reasoning: teams pit before the cliff, so old-tyre
+    laps come from drivers whose tyres held up. Limitation: no cliff in the data doesn''t prove none exists beyond
+    those ages.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'There''s no reliable cliff. Leave-one-race-out RMSE barely changes with a break (hards {expected.loro_rmse_line_hard}
+    vs {expected.loro_rmse_hinge_hard}), and the in-sample break bends the curve flatter, not steeper ({expected.cliff_extra_slope_hard}).
+    That''s what censoring produces: worn tyres get changed, so the tail is survivors. Limitation: a cliff beyond
+    the ages run is untested.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'Claim: the straight line is as good as a broken line on unseen races. Evidence: {expected.loro_rmse_line_hard}
+    vs {expected.loro_rmse_hinge_hard} s for hards, with the break winning in only {expected.loro_wins_hard} races
+    of {expected.loro_races_hard}. Reasoning: teams stop before tyres fall away, so the data contain selected long
+    stints. Limitation: absence of evidence isn''t evidence of absence.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'No cliff survives validation. The break gives almost the same held-out error as the line, and its extra
+    slope is negative ({expected.cliff_extra_slope_hard}), so the curve flattens. Selection explains it: those still
+    out on old tyres are the ones whose tyres were fine. We can''t rule out a cliff at older ages.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Claim: no cliff within observed ages. Evidence: held-out RMSE line {expected.loro_rmse_line_hard}, break
+    {expected.loro_rmse_hinge_hard}; break wins {expected.loro_wins_hard} of {expected.loro_races_hard}. Reasoning:
+    censoring by pit stops; the in-sample break flattens. Limitation: beyond the ages run, unknown.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: 'The data show steady wear, not a cliff: out of sample a break doesn''t beat the line, and the best break
+    even has a negative extra slope. That''s survivor selection from teams pitting early. A cliff past the observed
+    ages remains possible.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Held-out comparison says no: hards {expected.loro_rmse_line_hard} s line vs {expected.loro_rmse_hinge_hard}
+    s break. The in-sample break at age {expected.cliff_age_hard} flattens wear. Censoring explains the tail. We
+    haven''t ruled out a cliff beyond the data.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: 'No cliff that generalises: similar held-out error, break wins only some races, and the curve flattens after
+    the break because only good tyres stay out. Not finding a cliff isn''t proof there is none.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: 'No cliff holds out of sample: the break doesn''t reduce held-out error and the curve flattens; a cliff
+    beyond the observed ages is still possible.'
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No numbers.
+- id: a10
+  text: Held-out error is about the same with or without the break ({expected.loro_rmse_line_hard} vs {expected.loro_rmse_hinge_hard}),
+    so no cliff; teams pit before it.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: There's no reliable cliff because the break doesn't win on unseen races; censoring by pit stops explains
+    the flat tail.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: There is no cliff.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: The break model is not better.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: RMSE is similar for both models.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Teams pit early.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a16
+  text: The extra slope is {expected.cliff_extra_slope_hard}.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Number only.
+- id: a17
+  text: The cliff is at age {expected.cliff_age_hard}.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Leave-one-race-out was used.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: Tyres wear steadily.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: The cliff is at age {expected.cliff_age_hard} because that's the best fit.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: The break model wins, so there is a big cliff.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: There is no wear at all.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: RMSE measures how fast the tyres wear.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The negative extra slope means tyres get faster after the cliff.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: The cliff is proven by the in-sample fit.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: There is no cliff so tyres can run as long as you like.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: The best fitting break proves there is a cliff at that age.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: No cliff exists anywhere, so a stint can run forever on hards.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Over-reach.
+- id: a29
+  text: The test shows the soft tyre has a cliff at lap one.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a30
+  text: Held-out error doesn't matter; in-sample fit is what counts.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false

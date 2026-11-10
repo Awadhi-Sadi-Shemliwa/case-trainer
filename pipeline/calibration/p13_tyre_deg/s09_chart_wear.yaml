@@ -1,0 +1,181 @@
+# Generated from _answers.py. Edit there.
+step: s09_chart_wear
+answers:
+- id: a01
+  text: 'x: tyre age in laps; y: lap time lost against the freshest age shown, after removing driver, race and the
+    lap-number (fuel) effect. Dots are averages per age, dashed lines straight-line fits. Softs wear fastest ({expected.deg_soft}
+    s per lap of age); mediums ({expected.deg_medium}) and hards ({expected.deg_hard}) are about the same. Lines
+    stop where stints end: teams pit before tyres get old, so the oldest ages have few laps from drivers whose tyres
+    held up. It can''t show beyond those ages or circuit differences. So what: these rates feed the stint decision.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a02
+  text: 'Fuel-corrected loss vs tyre age for each compound. Soft {expected.deg_soft}, medium {expected.deg_medium},
+    hard {expected.deg_hard} seconds per lap of age: softs clearly fastest, mediums and hards overlapping. The ends
+    of the lines are thin because tyres are changed before they get very old, a censoring problem. It averages across
+    circuits and can''t separate fuel from track evolution. Use the slopes, not the tails, for the strategy.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a03
+  text: 'The chart shows how much slower each compound gets per lap of age once fuel is removed: softs steepest
+    at {expected.deg_soft} s, mediums and hards similar at about {expected.deg_hard}. Each line ends where few stints
+    reach, because teams pit first; the last points rest on survivors. It doesn''t show what happens beyond, nor
+    circuit variation. These slopes go into the pit-stop trade-off.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a04
+  text: 'Axes: tyre age vs loss relative to fresh tyres, fuel and driver effects removed. Softs fastest ({expected.deg_soft});
+    mediums and hards similar ({expected.deg_medium}, {expected.deg_hard}). Tails are thin and selected because
+    worn tyres were already changed. Not shown: ages beyond what teams ran, differences between circuits. Decision
+    use: wear rate per compound.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a05
+  text: 'Partial-residual wear curves by compound. Hards lose about {expected.deg_hard} s per lap of age, softs
+    {expected.deg_soft}. The lines stop at different ages because of pit stops, so a cliff can''t be read off the
+    thin ends. Limits: averages over circuits; lap number mixes fuel and track evolution. So what: use these slopes
+    against the pit loss.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a06
+  text: Tyre age on x, fuel-corrected lap-time loss on y. Softs wear fastest; hards lose {expected.deg_hard} s per
+    lap, about the same as mediums. Teams pit before tyres age much, so the end of each line is few, selected laps.
+    It can't tell us about ages nobody ran. The strategist uses the slope per compound.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a07
+  text: 'Loss vs fresh rubber after taking out fuel: soft {expected.deg_soft}, medium {expected.deg_medium}, hard
+    {expected.deg_hard} per lap. Thin tails come from censoring by pit stops. Doesn''t show circuits or beyond the
+    observed ages. These slopes set stint length.'
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a08
+  text: Each compound's lap time rises with tyre age once fuel is removed, hard about {expected.deg_hard} s per
+    lap. The data thin out at old ages because stints end early, so the tails are survivors. The chart can't speak
+    to unseen ages. Use the rates in the stop decision.
+  label: acceptable
+  kind: strong
+  owner_review: false
+- id: a09
+  text: Fuel-corrected loss by tyre age per compound; softs wear fastest, hards about {expected.deg_hard} s per
+    lap; lines end because teams pit.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: No limits or so-what.
+- id: a10
+  text: 'Wear curves after removing fuel: soft {expected.deg_soft}, hard {expected.deg_hard} per lap; ends are thin
+    because of pit stops; can''t see beyond them.'
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a11
+  text: The chart shows tyres getting slower with age once fuel is removed, softs fastest; the oldest ages have
+    few laps.
+  label: acceptable
+  kind: partial
+  owner_review: false
+- id: a12
+  text: It shows tyre wear.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a13
+  text: Softs wear faster than hards.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a14
+  text: There are three lines for three compounds.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a15
+  text: Lap time increases with tyre age.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a16
+  text: Hards lose {expected.deg_hard} seconds per lap.
+  label: not_acceptable
+  kind: partial
+  owner_review: true
+  note: Number only.
+- id: a17
+  text: The lines stop at different points.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a18
+  text: Fuel has been removed.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a19
+  text: It is a line chart.
+  label: not_acceptable
+  kind: partial
+  owner_review: false
+- id: a20
+  text: Hards wear fastest because they are the hardest.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a21
+  text: The y-axis is the raw lap time.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a22
+  text: The lines end because the tyres burst.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a23
+  text: Each line is one driver.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a24
+  text: The chart proves every compound has a cliff at the end of its line.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a25
+  text: Softs and hards wear at the same rate.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a26
+  text: Lap times get faster so tyres improve with age.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a27
+  text: The chart clearly shows a cliff at the end of each line.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: false
+- id: a28
+  text: Tyres improve with age, and the cliff at the end is where they finally wear out.
+  label: not_acceptable
+  kind: red_flag
+  owner_review: true
+  note: Two red flags.
+- id: a29
+  text: The x-axis is the lap number of the race.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
+- id: a30
+  text: The chart shows fuel consumption per lap.
+  label: not_acceptable
+  kind: wrong
+  owner_review: false
