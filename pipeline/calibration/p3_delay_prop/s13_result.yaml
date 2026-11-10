@@ -2,79 +2,85 @@
 step: s13_result
 answers:
 - id: a01
-  text: 'Claim: short turns pass delay on fully, even amplify it, and buffers only absorb delay once the turn leaves
-    slack. Evidence: the shortest turns pass on {expected.pass_b1} of a one-hour delay; {expected.band_b5}-minute
-    turns pass on {expected.pass_b5}, absorbing about {expected.absorbed_b5} minutes; the longest {expected.pass_b6};
-    stable out of time. Reasoning: slack above minimum turn absorbs delay, the rest passes minute for minute, so
-    it''s non-linear. Limitation: observational; turn times are chosen, aircraft swaps.'
+  text: 'Claim: on short turns nearly every extra inbound minute passes on, and pass-through only drops once the
+    turn leaves slack. Evidence: the raw {expected.pass_raw_b1} for the shortest turns includes baseline delay ({expected.base_out_b1}
+    minutes even after an on-time arrival); the excess is {expected.pass_b1}, one for one. It falls to {expected.pass_b5}
+    at {expected.band_b5} minutes and {expected.pass_b6} for the longest. Within airlines and on days without cancellations
+    the curve is the same. Reasoning: slack above the minimum turn absorbs delay. Limitation: observational; common
+    shocks and crews; the curve moved between periods.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a02
-  text: 'Pass-through falls with turn length: over one hundred percent at tight turns ({expected.pass_b1}), {expected.pass_b5}
-    at {expected.band_b5} minutes. A turn absorbs delay up to its slack, then passes the rest on almost one for
-    one, which is why linear slopes stay near one. The Jan-Sep to Oct-Dec shift was only {expected.max_slope_shift}.
-    It''s observational: long turns are scheduled at particular places and times.'
+  text: 'The raw ratio above one hundred percent is a baseline artefact, not amplification: subtracting the delay
+    these departures have anyway gives {expected.pass_b1}. Excess pass-through then falls with turn length to {expected.pass_b5}
+    for {expected.band_b5}-minute turns. The carrier-weighted curve ({expected.pass_cw_b1} to {expected.pass_cw_b5})
+    and clean days ({expected.pass_clean_b5}) agree, so mix and swaps don''t drive it. Mechanism: slack. Limitation:
+    schedulers choose turn lengths and the threshold shifted out of time.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a03
-  text: 'Claim: buffers work only beyond the slack threshold. Evidence: {expected.pass_b1} passed on at the shortest
-    turns, {expected.pass_b4} at {expected.band_b4}, {expected.pass_b5} at {expected.band_b5}. Reasoning: non-linear
-    slack mechanism; tight turns even amplify delay. Limitation: association, not experiment; aircraft swaps.'
+  text: 'Claim: buffers absorb delay only beyond the slack threshold. Evidence: excess pass-through {expected.pass_b1},
+    {expected.pass_b4}, {expected.pass_b5}, {expected.pass_b6} from shortest to longest; raw {expected.pass_raw_b1}
+    just reflects baseline delay. Robust within airlines and on clean days. Reasoning: minimum turn plus slack.
+    Limitation: observational, common shocks like ground stops hit both legs.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a04
-  text: 'Short turns amplify delay ({expected.pass_b1} passed on), while longer turns absorb it ({expected.absorbed_b5}
-    minutes absorbed at {expected.band_b5}). The effect is kinked rather than linear. Stable across months. Caution:
-    observational, scheduled turn length isn''t random.'
+  text: 'After removing baseline delay, tight turns pass on about one for one ({expected.pass_b1}), not more. Longer
+    turns absorb more: {expected.pass_b5} at {expected.band_b5} minutes. Comparing within airlines keeps the result,
+    so it''s not Southwest-versus-legacy. The curve shifted up to {expected.max_pass_shift} between periods. It''s
+    observational: chosen turn lengths, crews, common shocks.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a05
-  text: 'The curve shows outbound delay above the out-equals-in line for short turns and well below it for long
-    turns. A one-hour delay passes on at {expected.pass_b1} when turns are tight but {expected.pass_b5} with {expected.band_b5}-minute
-    turns. Slack explains it. Limitation: selection in who gets long turns.'
+  text: 'Claim: extra inbound delay passes on almost fully at short turns and much less at long ones. Evidence:
+    excess {expected.pass_b1} versus {expected.pass_b5} and {expected.pass_b6}; carrier-weighted {expected.pass_cw_b5};
+    clean days {expected.pass_clean_b5}. The raw over one hundred percent is the baseline, not amplification. Reasoning:
+    slack. Limitation: association, curve moved out of time.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a06
-  text: 'Claim: extra turn minutes absorb delay only once there is slack. Evidence: pass-through from {expected.pass_b1}
-    to {expected.pass_b5} to {expected.pass_b6} as turns lengthen; out-of-time stability. Reasoning: minimum ground
-    time plus slack. Limitation: observational and swaps break chains.'
+  text: 'Raw pass-through looks like amplification but the departures leave {expected.base_out_b1} minutes late
+    even after on-time arrivals; excess pass-through is one for one. Longer turns: {expected.pass_b5}. Same within
+    carriers and without swaps. Slack explains it. Limitation: observational, common shocks.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a07
-  text: 'Tight turns pass on more than the whole inbound delay; longer turns absorb part; the longest absorb most.
-    That''s the slack mechanism, non-linear. Numbers: {expected.pass_b1}, {expected.pass_b5}, {expected.pass_b6}.
-    Limitation: not a controlled experiment.'
+  text: 'Claim: slack is what absorbs delay. Evidence: excess pass-through falls from {expected.pass_b1} to {expected.pass_b6};
+    within-airline curve the same; clean days the same. Reasoning: minimum turn plus slack; the raw figure above
+    one hundred percent includes the baseline. Limitation: observational; threshold not stable across periods.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a08
-  text: 'Short turns amplify, long turns absorb: {expected.pass_b1} versus {expected.pass_b5}. Mechanism: slack
-    beyond the minimum turn. Validated out of time. Limitation: observational, swaps.'
+  text: 'Subtract the baseline and short turns pass on {expected.pass_b1}; turns of {expected.band_b5} minutes pass
+    on {expected.pass_b5}. Mix- and swap-checks agree. Mechanism: slack. Limitation: schedulers choose turns, common
+    shocks, crews.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a09
-  text: 'Pass-through falls from {expected.pass_b1} at short turns to {expected.pass_b5} at {expected.band_b5} minutes
-    because longer turns have slack. Limitation: observational.'
+  text: 'Excess pass-through falls from {expected.pass_b1} at short turns to {expected.pass_b5} at {expected.band_b5}
+    minutes because longer turns have slack; the raw figure includes baseline delay. Limitation: observational.'
   label: acceptable
   kind: partial
   owner_review: true
-  note: No amplification or stability.
+  note: No robustness checks.
 - id: a10
-  text: Short turns pass on all of a delay and more; long turns absorb it; it's non-linear; observational evidence
-    only.
+  text: Short turns pass on about all of the extra delay once baseline is removed; long turns absorb it; within-airline
+    curve agrees; observational.
   label: acceptable
   kind: partial
   owner_review: false
 - id: a11
-  text: 'Claim: longer turns absorb delay. Evidence: {expected.pass_b5} passed on at {expected.band_b5} versus {expected.pass_b1}
-    at short turns. Reasoning: slack. Limitation: swaps and selection.'
+  text: 'Claim: longer turns absorb delay. Evidence: excess {expected.pass_b5} at {expected.band_b5} versus {expected.pass_b1}.
+    Reasoning: slack. Limitation: common shocks and selection.'
   label: acceptable
   kind: partial
   owner_review: false
@@ -110,12 +116,12 @@ answers:
   kind: partial
   owner_review: false
 - id: a18
-  text: The slope is near one for short turns.
+  text: The raw figure includes baseline delay.
   label: not_acceptable
   kind: partial
   owner_review: false
 - id: a19
-  text: Long turns absorb {expected.absorbed_b5} minutes.
+  text: Within airlines the curve is similar.
   label: not_acceptable
   kind: partial
   owner_review: false
@@ -135,10 +141,13 @@ answers:
   kind: wrong
   owner_review: false
 - id: a23
-  text: Pass-through above one hundred percent is a data error.
-  label: not_acceptable
-  kind: wrong
-  owner_review: false
+  text: Pass-through above one hundred percent is not real amplification; it comes from baseline delay, and after
+    removing it short turns pass on {expected.pass_b1} while {expected.band_b5}-minute turns pass on {expected.pass_b5};
+    observational.
+  label: acceptable
+  kind: partial
+  owner_review: true
+  note: Reframed from the old 'data error' answer.
 - id: a24
   text: The curve shows weather delays by turn time.
   label: not_acceptable
@@ -150,12 +159,12 @@ answers:
   kind: wrong
   owner_review: false
 - id: a26
-  text: Lengthening every turn to the longest band is guaranteed to remove most delay.
+  text: 'Short turns amplify delays: they pass on {expected.pass_raw_b1} of an inbound delay.'
   label: not_acceptable
   kind: red_flag
   owner_review: false
 - id: a27
-  text: Delay always passes on in full regardless of turn time.
+  text: Lengthening every turn to the longest band is guaranteed to remove most delay.
   label: not_acceptable
   kind: red_flag
   owner_review: false

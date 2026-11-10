@@ -73,18 +73,19 @@ def test_captured_outputs_reproduce(rerun):
 
 
 def test_embargo_no_lookahead():
-    """At forecast month t the model may only train on rows s <= t - 12 (their target needs USREC to s+12)."""
+    """At forecast month t the model may only train on rows s <= t - 13 (their target needs USREC to s+12 <= t-1)."""
     p = A.load_panel()
     ts = p["T10Y3M"].first_valid_index()
     start = A.first_oos_month(p, ts)
     f = A.expanding_oos(p, "T10Y3M", start, ts)
     data = p.loc[ts:]
     for t in list(f.index[:3]) + list(f.index[-3:]):
-        allowed = data.loc[: t - pd.DateOffset(months=A.HORIZON)]
+        allowed = data.loc[: t - pd.DateOffset(months=A.EMBARGO)]
         allowed = allowed[allowed["model_sample"]].dropna(subset=["T10Y3M"])
         assert f.at[t, "n_train"] == len(allowed)
         # every training row's target window ends no later than the forecast month
-        assert (allowed.index + pd.DateOffset(months=A.HORIZON)).max() <= t
+        # every training row's target window ends BEFORE the forecast month (USREC(t) unknown during month t)
+        assert (allowed.index + pd.DateOffset(months=A.HORIZON)).max() <= t - pd.DateOffset(months=1)
 
 
 def test_model_sample_has_no_recession_months_or_unknown_targets():

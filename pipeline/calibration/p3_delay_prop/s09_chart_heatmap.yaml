@@ -49,9 +49,9 @@ answers:
   kind: strong
   owner_review: false
 - id: a07
-  text: 'The heatmap shows accumulation: each airport''s row darkens to brightens from morning to evening, about
-    {expected.la_evening_ratio} times higher at night. The worst cell is noise from few departures. Coded late-aircraft
-    minutes say where delay came from, not why. Use it to target evening buffers.'
+  text: 'The heatmap shows accumulation: each airport''s row gets brighter from morning to evening, about {expected.la_evening_ratio}
+    times higher at night. The worst cell is noise from few departures. Coded late-aircraft minutes say where delay
+    came from, not why. Use it to target evening buffers.'
   label: acceptable
   kind: strong
   owner_review: false

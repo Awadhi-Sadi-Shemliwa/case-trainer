@@ -2391,15 +2391,49 @@
   },
   "transforms": [
     {
+      "id": "rotation_with_tail",
+      "dataset": "bts_all",
+      "rows_before": 6879485,
+      "rows_after": 6879485,
+      "rows_dropped": 0,
+      "reason": "Flights without a tail number cannot be linked to the aircraft's next flight. Counts over all 12 months.",
+      "details": {}
+    },
+    {
+      "id": "rotation_has_next_leg",
+      "dataset": "bts_all",
+      "rows_before": 6879485,
+      "rows_after": 5148905,
+      "rows_dropped": 1730580,
+      "reason": "The aircraft's last flight of the day, or a next leg with a missing delay, has no outbound flight to pair with. Counts over all 12 months.",
+      "details": {}
+    },
+    {
+      "id": "rotation_same_airport",
+      "dataset": "bts_all",
+      "rows_before": 5148905,
+      "rows_after": 5083522,
+      "rows_dropped": 65383,
+      "reason": "The next leg must leave from the airport where the aircraft landed; otherwise the record is broken or the aircraft was repositioned without a reported flight. Counts over all 12 months.",
+      "details": {}
+    },
+    {
+      "id": "rotation_not_overnight",
+      "dataset": "bts_all",
+      "rows_before": 5083522,
+      "rows_after": 5079290,
+      "rows_dropped": 4232,
+      "reason": "Inbound legs whose scheduled arrival clock time is earlier than their departure clock time are treated as overnight and dropped (dates are ambiguous without time zones). This also drops some short westbound flights that cross a time zone: a known limitation. Counts over all 12 months.",
+      "details": {}
+    },
+    {
       "id": "rotation_turn_window",
       "dataset": "bts_all",
       "rows_before": 5079290,
       "rows_after": 4816196,
       "rows_dropped": 263094,
-      "reason": "Keep turns of 20-240 scheduled minutes. Shorter is a data error or a through-flight; longer is an aircraft parked for hours, not a turn. Counts over all 12 months.",
-      "details": {
-        "dropped": 263094
-      }
+      "reason": "Keep scheduled turns of 20 to 240 minutes. Shorter is below any realistic minimum turn (a data error); longer is an aircraft parked for hours, not a turn. Counts over all 12 months.",
+      "details": {}
     },
     {
       "id": "rotation_delay_range",
@@ -2407,10 +2441,8 @@
       "rows_before": 4816196,
       "rows_after": 1724795,
       "rows_dropped": 3091401,
-      "reason": "Model only late inbound arrivals of 0-180 minutes: early arrivals cannot propagate lateness and extreme delays (over three hours) are rare and often involve aircraft swaps.",
-      "details": {
-        "dropped_early_or_extreme": 3091401
-      }
+      "reason": "Keep inbound arrival delays from 0 up to 180 minutes (on time to three hours late, including 0-14 minutes, which BTS does not call late). Early arrivals are excluded; extreme delays are rare and often involve aircraft swaps. Counts over all 12 months.",
+      "details": {}
     },
     {
       "id": "cancelled_diverted_excluded",

@@ -28,17 +28,45 @@
     "produced_by": "__main__:in_sample"
   },
   "auc_oos_10y3m": {
-    "value": 0.868945868945869,
+    "value": 0.8680753402975625,
     "unit": "AUC",
     "description": "Out-of-sample AUC, 10y-3m probit",
-    "display": "0.869",
+    "display": "0.868",
     "produced_by": "__main__:oos"
   },
   "auc_oos_2s10s": {
-    "value": 0.7977999366888257,
+    "value": 0.7973251028806585,
     "unit": "AUC",
     "description": "Out-of-sample AUC, 2s10s probit",
-    "display": "0.798",
+    "display": "0.797",
+    "produced_by": "__main__:oos"
+  },
+  "auc_oos_all_months_10y3m": {
+    "value": 0.5855330184310457,
+    "unit": "AUC",
+    "description": "Rejected plan (all months) out-of-sample AUC, 10y-3m",
+    "display": "0.586",
+    "produced_by": "__main__:oos"
+  },
+  "auc_oos_allscored_10y3m": {
+    "value": 0.6445771973696397,
+    "unit": "AUC",
+    "description": "Sensitivity: AUC scoring all months incl. recession months, 10y-3m",
+    "display": "0.645",
+    "produced_by": "__main__:oos"
+  },
+  "auc_oos_allscored_2s10s": {
+    "value": 0.5768732055200518,
+    "unit": "AUC",
+    "description": "Sensitivity: AUC scoring all months incl. recession months, 2s10s",
+    "display": "0.577",
+    "produced_by": "__main__:oos"
+  },
+  "auc_oos_embargo24_10y3m": {
+    "value": 0.860705003248863,
+    "unit": "AUC",
+    "description": "Sensitivity: 10y-3m AUC with a 24-month embargo",
+    "display": "0.861",
     "produced_by": "__main__:oos"
   },
   "base_rate_next12": {
@@ -49,59 +77,87 @@
     "produced_by": "__main__:descriptives"
   },
   "brier_clim_10y3m": {
-    "value": 0.08849979465175796,
+    "value": 0.08847685371865258,
     "unit": "Brier",
     "description": "Brier score of always forecasting the historical base rate (climatology)",
     "display": "0.0885",
     "produced_by": "__main__:oos"
   },
   "brier_clim_2s10s": {
-    "value": 0.08849979465175796,
+    "value": 0.08847685371865258,
     "unit": "Brier",
     "description": "Brier score of always forecasting the historical base rate (climatology)",
     "display": "0.0885",
     "produced_by": "__main__:oos"
   },
   "brier_oos_10y3m": {
-    "value": 0.11035027119794052,
+    "value": 0.11154802967706114,
     "unit": "Brier",
     "description": "Out-of-sample Brier score, 10y-3m",
-    "display": "0.1104",
+    "display": "0.1115",
     "produced_by": "__main__:oos"
   },
   "brier_oos_2s10s": {
-    "value": 0.09890377732766846,
+    "value": 0.09961357962029076,
     "unit": "Brier",
     "description": "Out-of-sample Brier score, 2s10s",
-    "display": "0.0989",
+    "display": "0.0996",
     "produced_by": "__main__:oos"
   },
   "bss_oos_10y3m": {
-    "value": -0.24689861295343163,
+    "value": -0.2607594527691113,
     "unit": "skill score",
     "description": "Brier skill score vs climatology, 10y-3m (>0 = better than base rate)",
-    "display": "-0.247",
+    "display": "-0.261",
     "produced_by": "__main__:oos"
   },
   "bss_oos_2s10s": {
-    "value": -0.1175593990567958,
+    "value": -0.12587163120709333,
     "unit": "skill score",
     "description": "Brier skill score vs climatology, 2s10s (>0 = better than base rate)",
-    "display": "-0.118",
+    "display": "-0.126",
+    "produced_by": "__main__:oos"
+  },
+  "bss_oos_all_months_10y3m": {
+    "value": -0.09861108569088484,
+    "unit": "skill score",
+    "description": "Rejected plan (all months) out-of-sample Brier skill, 10y-3m",
+    "display": "-0.099",
+    "produced_by": "__main__:oos"
+  },
+  "bss_oos_embargo24_10y3m": {
+    "value": -0.35757135749438107,
+    "unit": "skill score",
+    "description": "Sensitivity: 10y-3m Brier skill with a 24-month embargo",
+    "display": "-0.358",
     "produced_by": "__main__:oos"
   },
   "bss_oos_pre_split_10y3m": {
-    "value": 0.3752111791939259,
+    "value": 0.3757022824323345,
     "unit": "skill score",
     "description": "Brier skill score for forecasts before 2022, 10y-3m (post-hoc diagnostic)",
-    "display": "0.375",
+    "display": "0.376",
     "produced_by": "__main__:oos"
   },
   "bss_oos_pre_split_2s10s": {
-    "value": 0.26815475045404813,
+    "value": 0.26812003856006195,
     "unit": "skill score",
     "description": "Brier skill score for forecasts before 2022, 2s10s (post-hoc diagnostic)",
     "display": "0.268",
+    "produced_by": "__main__:oos"
+  },
+  "bss_pre_split_excovid_10y3m": {
+    "value": 0.245761089889883,
+    "unit": "skill score",
+    "description": "Pre-split Brier skill excluding forecasts aimed at the pandemic recession, 10y-3m",
+    "display": "0.246",
+    "produced_by": "__main__:oos"
+  },
+  "bss_pre_split_excovid_2s10s": {
+    "value": 0.25844851590100215,
+    "unit": "skill score",
+    "description": "Pre-split Brier skill excluding forecasts aimed at the pandemic recession, 2s10s",
+    "display": "0.258",
     "produced_by": "__main__:oos"
   },
   "common_sample_start": {
@@ -110,6 +166,20 @@
     "description": "Start of the sample where both spreads exist (model comparison)",
     "display": "1982-12",
     "produced_by": "__main__:in_sample"
+  },
+  "embargo24_skipped_months": {
+    "value": 9,
+    "unit": "months",
+    "description": "Forecast months skipped under the 24-month embargo (too few warning months in training)",
+    "display": "9",
+    "produced_by": "__main__:oos"
+  },
+  "embargo_months": {
+    "value": 13,
+    "unit": "months",
+    "description": "Training rows end this many months before each forecast month",
+    "display": "13",
+    "produced_by": "__main__:oos"
   },
   "false_alarm_episodes_10y3m": {
     "value": 1,
@@ -138,6 +208,20 @@
     "description": "Forecast horizon of the target",
     "display": "12",
     "produced_by": "__main__:analyse"
+  },
+  "inv_start_latest_10y3m": {
+    "value": "2022-11",
+    "unit": "month",
+    "description": "Start of the latest 10y-3m inversion episode",
+    "display": "2022-11",
+    "produced_by": "__main__:oos"
+  },
+  "inv_start_latest_2s10s": {
+    "value": "2022-07",
+    "unit": "month",
+    "description": "Start of the latest 2s10s inversion episode",
+    "display": "2022-07",
+    "produced_by": "__main__:oos"
   },
   "inversion_episodes_10y3m": {
     "value": 6,
@@ -182,14 +266,14 @@
     "produced_by": "__main__:today"
   },
   "latest_prob_10y3m": {
-    "value": 0.09373570415919907,
+    "value": 0.09418722065631041,
     "unit": "probability",
     "description": "Model probability of a recession in the next 12 months, latest month, 10y-3m",
     "display": "9.4%",
     "produced_by": "__main__:today"
   },
   "latest_prob_2s10s": {
-    "value": 0.1240297024978837,
+    "value": 0.12437582707186595,
     "unit": "probability",
     "description": "Model probability of a recession in the next 12 months, latest month, 2s10s",
     "display": "12.4%",
@@ -231,10 +315,10 @@
     "produced_by": "__main__:in_sample"
   },
   "max_lead_months": {
-    "value": 24,
+    "value": 23,
     "unit": "months",
     "description": "Longest 2s10s inversion-to-recession lead",
-    "display": "24",
+    "display": "23",
     "produced_by": "__main__:leads"
   },
   "max_lead_months_10y3m": {
@@ -245,24 +329,24 @@
     "produced_by": "__main__:leads"
   },
   "mean_prob_post_split_10y3m": {
-    "value": 0.5782060712865799,
+    "value": 0.585526079845867,
     "unit": "probability",
     "description": "Average forecast probability from 2022 on, 10y-3m (no recession followed)",
-    "display": "58%",
+    "display": "59%",
     "produced_by": "__main__:oos"
   },
   "mean_prob_post_split_2s10s": {
-    "value": 0.4561748613768217,
+    "value": 0.4616731286248131,
     "unit": "probability",
     "description": "Average forecast probability from 2022 on, 2s10s (no recession followed)",
     "display": "46%",
     "produced_by": "__main__:oos"
   },
   "median_lead_months": {
-    "value": 19.0,
+    "value": 17.0,
     "unit": "months",
     "description": "Median months from first 2s10s inversion to recession start (signalled recessions)",
-    "display": "19",
+    "display": "17",
     "produced_by": "__main__:leads"
   },
   "median_lead_months_10y3m": {
@@ -273,10 +357,10 @@
     "produced_by": "__main__:leads"
   },
   "min_lead_months": {
-    "value": 14,
+    "value": 11,
     "unit": "months",
     "description": "Shortest 2s10s inversion-to-recession lead",
-    "display": "14",
+    "display": "11",
     "produced_by": "__main__:leads"
   },
   "min_lead_months_10y3m": {
@@ -377,24 +461,31 @@
     "display": "6",
     "produced_by": "__main__:descriptives"
   },
+  "n_train_recessions_at_start": {
+    "value": 1,
+    "unit": "recessions",
+    "description": "Recessions whose pre-recession months are in training at the first forecast (the threshold rests on this)",
+    "display": "1",
+    "produced_by": "__main__:oos"
+  },
   "oos_false_alarm_rate": {
-    "value": 0.2564102564102564,
+    "value": 0.20797720797720798,
     "unit": "share",
     "description": "Share of calm months (target = 0) where the 10y-3m signal was on anyway (OOS)",
-    "display": "26%",
+    "display": "21%",
     "produced_by": "__main__:decision"
   },
   "oos_hit_rate": {
-    "value": 0.9444444444444444,
+    "value": 0.8333333333333334,
     "unit": "share",
     "description": "Share of pre-recession months (target = 1) where the 10y-3m signal was on (OOS)",
-    "display": "94%",
+    "display": "83%",
     "produced_by": "__main__:decision"
   },
   "oos_recessions_caught": {
     "value": 3,
     "unit": "recessions",
-    "description": "OOS recessions with the 10y-3m signal on in the 18 months before they began",
+    "description": "OOS recessions with the 10y-3m signal on in the 18 months before they began (incl. the pandemic)",
     "display": "3",
     "produced_by": "__main__:decision"
   },
@@ -406,16 +497,16 @@
     "produced_by": "__main__:decision"
   },
   "oos_signal_precision": {
-    "value": 0.27419354838709675,
+    "value": 0.2912621359223301,
     "unit": "share",
     "description": "When the 10y-3m signal was on, share of months a recession did follow within 12 months (OOS)",
-    "display": "27%",
+    "display": "29%",
     "produced_by": "__main__:decision"
   },
   "oos_start": {
     "value": "1991-04",
     "unit": "month",
-    "description": "First out-of-sample forecast month (two complete recessions already in training)",
+    "description": "First pseudo-out-of-sample forecast month (after the 1990-91 trough; final-vintage NBER dates)",
     "display": "1991-04",
     "produced_by": "__main__:oos"
   },
@@ -433,6 +524,34 @@
     "display": "-0.736",
     "produced_by": "__main__:in_sample"
   },
+  "probit_p_hac24_10y3m": {
+    "value": 0.011346453334712504,
+    "unit": "p-value",
+    "description": "HAC p-value of the 10y-3m slope with 24 lags",
+    "display": "0.0113",
+    "produced_by": "__main__:in_sample"
+  },
+  "probit_p_hac24_2s10s": {
+    "value": 0.006236646851473489,
+    "unit": "p-value",
+    "description": "HAC p-value of the 2s10s slope with 24 lags",
+    "display": "0.0062",
+    "produced_by": "__main__:in_sample"
+  },
+  "probit_p_hac36_10y3m": {
+    "value": 0.018081407544983726,
+    "unit": "p-value",
+    "description": "HAC p-value of the 10y-3m slope with 36 lags",
+    "display": "0.0181",
+    "produced_by": "__main__:in_sample"
+  },
+  "probit_p_hac36_2s10s": {
+    "value": 0.008513727824947661,
+    "unit": "p-value",
+    "description": "HAC p-value of the 2s10s slope with 36 lags",
+    "display": "0.0085",
+    "produced_by": "__main__:in_sample"
+  },
   "probit_p_hac_10y3m": {
     "value": 0.0020800357270425443,
     "unit": "p-value",
@@ -445,6 +564,34 @@
     "unit": "p-value",
     "description": "HAC p-value of the 2s10s slope",
     "display": "0.0017",
+    "produced_by": "__main__:in_sample"
+  },
+  "probit_se_hac24_10y3m": {
+    "value": 0.262646313352202,
+    "unit": "per percentage point",
+    "description": "HAC standard error of the 10y-3m slope with 24 lags",
+    "display": "0.263",
+    "produced_by": "__main__:in_sample"
+  },
+  "probit_se_hac24_2s10s": {
+    "value": 0.3950009066814031,
+    "unit": "per percentage point",
+    "description": "HAC standard error of the 2s10s slope with 24 lags",
+    "display": "0.395",
+    "produced_by": "__main__:in_sample"
+  },
+  "probit_se_hac36_10y3m": {
+    "value": 0.28130050330313294,
+    "unit": "per percentage point",
+    "description": "HAC standard error of the 10y-3m slope with 36 lags",
+    "display": "0.281",
+    "produced_by": "__main__:in_sample"
+  },
+  "probit_se_hac36_2s10s": {
+    "value": 0.41062773732806,
+    "unit": "per percentage point",
+    "description": "HAC standard error of the 2s10s slope with 36 lags",
+    "display": "0.411",
     "produced_by": "__main__:in_sample"
   },
   "probit_se_hac_10y3m": {
@@ -587,10 +734,17 @@
     "display": "2.0",
     "produced_by": "__main__:in_sample"
   },
+  "signal_window_months": {
+    "value": 18,
+    "unit": "months",
+    "description": "How early a first signal may be and still count as a warning",
+    "display": "18",
+    "produced_by": "__main__:decision"
+  },
   "split_from": {
     "value": "2022-01",
     "unit": "month",
-    "description": "Start of the post-hoc diagnostic split: the latest inversion cycle, not followed by a recession so far",
+    "description": "Start of the post-hoc diagnostic split (calendar 2022; the inversions themselves began later that year)",
     "display": "2022-01",
     "produced_by": "__main__:oos"
   },
@@ -644,17 +798,31 @@
     "produced_by": "__main__:descriptives"
   },
   "threshold": {
-    "value": 0.15,
+    "value": 0.25,
     "unit": "probability",
     "description": "Signal threshold chosen on training data only (max Youden J)",
+    "display": "25%",
+    "produced_by": "__main__:decision"
+  },
+  "threshold_embargo12": {
+    "value": 0.15,
+    "unit": "probability",
+    "description": "Same rule with a 12-month embargo: shows how fragile a threshold fitted on one recession is",
     "display": "15%",
     "produced_by": "__main__:decision"
   },
   "trigger_spread_10y3m": {
-    "value": 0.48119553460268794,
+    "value": -0.06309744911265158,
     "unit": "percentage points",
-    "description": "10y-3m spread at which the full-sample probit probability equals the threshold",
-    "display": "0.48",
+    "description": "10y-3m spread equivalent of the threshold under TODAY's full-sample probit (it drifts as the model is refit)",
+    "display": "-0.06",
+    "produced_by": "__main__:decision"
+  },
+  "trigger_spread_at_start": {
+    "value": 0.5135753094901463,
+    "unit": "percentage points",
+    "description": "Spread equivalent of the threshold under the model fitted at the first forecast month",
+    "display": "0.51",
     "produced_by": "__main__:decision"
   }
 }

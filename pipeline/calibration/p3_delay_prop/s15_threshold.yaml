@@ -2,58 +2,62 @@
 step: s15_threshold
 answers:
 - id: a01
-  text: 'Metric: share of a one-hour-late arrival passed to the next departure. Target: below {expected.pass_target}.
-    Rule: at least {expected.buffer_min_turn}-minute turns, chosen on Jan-Sep, passing on {expected.buffer_pass_test}
-    over the year. Where: afternoon and evening turns at the worst airports, not network-wide, because minutes cost
-    utilisation. Effect: about {expected.buffer_saving_ref} minutes less delay after a one-hour-late arrival. Test
-    as a pilot against control banks.'
+  text: 'Metric: share of a one-hour-late arrival''s extra delay passed on, within airlines. Target below {expected.pass_target}.
+    Jan-Sep crosses at about {expected.buffer_turn_exact} minutes, so minimum turn {expected.buffer_min_turn}. Out
+    of time it doesn''t fully hold: Oct-Dec crosses at {expected.buffer_turn_octdec} and the rule passes on {expected.buffer_pass_octdec},
+    so test {expected.buffer_min_turn}-{expected.buffer_turn_octdec}. Where: evening turns at the worst airports
+    like {expected.evening_worst_airport}; each minute saves only about {expected.saving_per_added_minute} minutes.
+    Pilot against control banks.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a02
-  text: Keep pass-through under {expected.pass_target} by scheduling at least {expected.buffer_min_turn}-minute
-    turns on the evening banks of the airports where delay accumulates. Expect about {expected.buffer_saving_ref}
-    minutes saved per one-hour-late arrival. Pilot it with control banks because the evidence is observational.
+  text: Keep excess pass-through under {expected.pass_target}. The Jan-Sep curve says {expected.buffer_min_turn}-minute
+    minimum turns; Oct-Dec needs about {expected.buffer_turn_octdec}, so the range to pilot is {expected.buffer_min_turn}
+    to {expected.buffer_turn_octdec}. Apply only to late-day turns at the worst hubs because every minute costs
+    utilisation. Pilot with controls.
   label: acceptable
   kind: strong
   owner_review: false
 - id: a03
-  text: 'Rule: minimum turn {expected.buffer_min_turn} minutes on targeted afternoon/evening turns; metric pass-through,
-    target under {expected.pass_target}; expected saving {expected.buffer_saving_ref} minutes after a one-hour delay;
-    trial on a few banks versus similar controls before rollout.'
+  text: 'Rule: minimum turn of {expected.buffer_min_turn} minutes (curve crosses at {expected.buffer_turn_exact})
+    on targeted evening turns; target under {expected.pass_target} extra-delay pass-through. Check: on Oct-Dec the
+    same turn passes on {expected.buffer_pass_octdec}, so the threshold is uncertain; pilot {expected.buffer_min_turn}-{expected.buffer_turn_octdec}.
+    Cost: about {expected.saving_per_added_minute} minutes saved per minute added. Trial first.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a04
-  text: 'Metric and target: pass-through below {expected.pass_target}. Value: {expected.buffer_min_turn}-minute
-    minimum turn. Scope: evening turns at the worst airports, because buffers cost aircraft utilisation. Expected:
-    {expected.buffer_saving_ref} minutes less outbound delay per one-hour-late arrival. Test: pilot with controls.'
+  text: 'Metric and target: excess pass-through below {expected.pass_target}. Value: {expected.buffer_min_turn}
+    minutes from Jan-Sep, but Oct-Dec says {expected.buffer_turn_octdec}, so a range. Scope: evening turns at {expected.evening_worst_airport}
+    and similar. Each added minute buys about {expected.saving_per_added_minute}. Test: pilot banks versus controls.'
   label: acceptable
   kind: strong
   owner_review: false
 - id: a05
-  text: Schedule at least {expected.buffer_min_turn} minutes on turns where propagation accumulates (late-day banks
-    at the worst hubs). That brought pass-through to {expected.buffer_pass_test}. Saving about {expected.buffer_saving_ref}
-    minutes per late arrival. Pilot before rollout since this is observational.
+  text: Schedule at least {expected.buffer_min_turn} minutes on evening turns at the worst airports; the Oct-Dec
+    check needs {expected.buffer_turn_octdec}, so the threshold is uncertain; pilot first.
   label: acceptable
-  kind: strong
-  owner_review: false
+  kind: partial
+  owner_review: true
+  note: No metric or target stated.
 - id: a06
-  text: 'Target less than {expected.pass_target} pass-through. First band meeting it on Jan-Sep: {expected.buffer_min_turn}
-    minutes. Apply to targeted evening turns, not all. Expect {expected.buffer_saving_ref} minutes earlier departures
-    after a one-hour delay. Validate with a controlled pilot.'
+  text: Target pass-through of extra delay under {expected.pass_target}; first crossed at {expected.buffer_turn_exact}
+    minutes on Jan-Sep, rounded to {expected.buffer_min_turn}; failed to fully hold on Oct-Dec ({expected.buffer_pass_octdec});
+    apply to targeted evening banks given cost; pilot with comparison banks.
   label: acceptable
   kind: strong
   owner_review: false
 - id: a07
-  text: Minimum turn of {expected.buffer_min_turn} minutes at the worst late-day banks, targeting pass-through under
-    {expected.pass_target}, expected saving {expected.buffer_saving_ref} minutes; run a pilot with comparison banks.
+  text: Minimum turn {expected.buffer_min_turn}-{expected.buffer_turn_octdec} minutes on late-day banks at the worst
+    hubs, targeting extra-delay pass-through under {expected.pass_target}; the out-of-time check shows the threshold
+    moves; about {expected.saving_per_added_minute} minutes saved per minute added; pilot first.
   label: acceptable
   kind: strong
   owner_review: false
 - id: a08
-  text: 'Pass-through metric; target {expected.pass_target}; minimum turn {expected.buffer_min_turn}; scope: evening,
-    worst airports; effect {expected.buffer_saving_ref} minutes; test via pilot.'
+  text: Excess pass-through metric; target {expected.pass_target}; minimum turn {expected.buffer_min_turn} from
+    training months; Oct-Dec suggests {expected.buffer_turn_octdec}; scope evening, worst airports; pilot test.
   label: acceptable
   kind: strong
   owner_review: false
@@ -63,16 +67,16 @@ answers:
   label: acceptable
   kind: partial
   owner_review: true
-  note: No effect size or test.
+  note: Ignores the out-of-time result.
 - id: a10
-  text: Minimum turn {expected.buffer_min_turn} minutes on targeted evening turns; expect about {expected.buffer_saving_ref}
-    minutes saved; pilot first.
+  text: Minimum turn {expected.buffer_min_turn} minutes on targeted evening turns, but Oct-Dec needs {expected.buffer_turn_octdec};
+    pilot first.
   label: acceptable
   kind: partial
   owner_review: false
 - id: a11
-  text: Pass-through under {expected.pass_target} needs {expected.buffer_min_turn}-minute turns; apply where delay
-    builds; test with controls.
+  text: Pass-through under {expected.pass_target} needs about {expected.buffer_min_turn} to {expected.buffer_turn_octdec}-minute
+    turns; apply where delay builds; test with controls.
   label: acceptable
   kind: partial
   owner_review: false
@@ -103,7 +107,7 @@ answers:
   kind: partial
   owner_review: false
 - id: a17
-  text: Expect about {expected.buffer_saving_ref} minutes saved.
+  text: Each minute saves about {expected.saving_per_added_minute} minutes.
   label: not_acceptable
   kind: partial
   owner_review: false
@@ -113,7 +117,7 @@ answers:
   kind: partial
   owner_review: false
 - id: a19
-  text: Use the pass-through metric.
+  text: The rule didn't hold on Oct-Dec.
   label: not_acceptable
   kind: partial
   owner_review: false
@@ -128,7 +132,7 @@ answers:
   kind: wrong
   owner_review: false
 - id: a22
-  text: Target the brightest heatmap cell only.
+  text: Target the most extreme heatmap cell only.
   label: not_acceptable
   kind: wrong
   owner_review: false
@@ -158,7 +162,7 @@ answers:
   kind: red_flag
   owner_review: false
 - id: a28
-  text: Put all the buffer into the single brightest heatmap cell.
+  text: Put all the buffer into the single most extreme heatmap cell.
   label: not_acceptable
   kind: red_flag
   owner_review: true
@@ -169,7 +173,10 @@ answers:
   kind: red_flag
   owner_review: false
 - id: a30
-  text: Minimum turn of five minutes.
-  label: not_acceptable
-  kind: wrong
-  owner_review: false
+  text: 'Applying a longer turn to every flight in the network is not the answer, because it wastes utilisation.
+    Instead: minimum {expected.buffer_min_turn}-{expected.buffer_turn_octdec}-minute turns on evening banks at the
+    worst airports, target extra-delay pass-through under {expected.pass_target}, piloted against controls.'
+  label: acceptable
+  kind: strong
+  owner_review: true
+  note: Negates a red flag; grader must not penalise.

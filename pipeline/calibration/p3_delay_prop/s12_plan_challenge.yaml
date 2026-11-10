@@ -44,7 +44,7 @@ answers:
     on the same aircraft to find where minutes start working ({expected.buffer_min_turn}-minute turns pass on {expected.pass_b5}).
     Don't size buffers by one noisy heatmap cell. Test on Oct-Dec.
   label: acceptable
-  kind: strong
+  kind: partial
   owner_review: false
 - id: a07
   text: 'Wrong evidence: average delay of all flights by turn length is confounded. Right evidence: same-aircraft
@@ -171,7 +171,11 @@ answers:
   kind: red_flag
   owner_review: false
 - id: a30
-  text: Give the biggest buffer to the brightest cell.
-  label: not_acceptable
-  kind: wrong
-  owner_review: false
+  text: 'Adding thirty minutes to every turn is not the right fix: it costs utilisation and ignores where delay
+    builds. Average delay across all flights compares different airlines and times; measure extra delay passed on,
+    within airlines ({expected.pass_cw_b1} to {expected.pass_cw_b5}). The extreme heatmap cell has {expected.worst_cell_deps}
+    departures. Check the rule on Oct-Dec.'
+  label: acceptable
+  kind: strong
+  owner_review: true
+  note: Negates the red flag; grader must not penalise.

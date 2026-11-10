@@ -1,46 +1,4 @@
 {
-  "absorbed_b1": {
-    "value": -8.900369929149164,
-    "unit": "minutes",
-    "description": "Minutes of a one-hour-late arrival absorbed, turn [20, 45)",
-    "display": "-9",
-    "produced_by": "__main__:propagation"
-  },
-  "absorbed_b2": {
-    "value": -5.125761083955069,
-    "unit": "minutes",
-    "description": "Minutes of a one-hour-late arrival absorbed, turn [45, 60)",
-    "display": "-5",
-    "produced_by": "__main__:propagation"
-  },
-  "absorbed_b3": {
-    "value": 1.943642611683842,
-    "unit": "minutes",
-    "description": "Minutes of a one-hour-late arrival absorbed, turn [60, 75)",
-    "display": "2",
-    "produced_by": "__main__:propagation"
-  },
-  "absorbed_b4": {
-    "value": 18.865003198976325,
-    "unit": "minutes",
-    "description": "Minutes of a one-hour-late arrival absorbed, turn [75, 90)",
-    "display": "19",
-    "produced_by": "__main__:propagation"
-  },
-  "absorbed_b5": {
-    "value": 38.39407970894659,
-    "unit": "minutes",
-    "description": "Minutes of a one-hour-late arrival absorbed, turn [90, 120)",
-    "display": "38",
-    "produced_by": "__main__:propagation"
-  },
-  "absorbed_b6": {
-    "value": 55.13338735818476,
-    "unit": "minutes",
-    "description": "Minutes of a one-hour-late arrival absorbed, turn [120, 240)",
-    "display": "55",
-    "produced_by": "__main__:propagation"
-  },
   "analysis_year_label": {
     "value": "2025",
     "unit": "year",
@@ -90,32 +48,102 @@
     "display": "120-240",
     "produced_by": "__main__:propagation"
   },
-  "buffer_band": {
-    "value": "b5",
-    "unit": "band",
-    "description": "Turn band chosen by the buffer rule",
-    "display": "b5",
+  "base_out_b1": {
+    "value": 12.460180300567428,
+    "unit": "minutes",
+    "description": "Outbound delay when the inbound was on time (0-14 min late), turn [20, 45)",
+    "display": "12.5",
+    "produced_by": "__main__:propagation"
+  },
+  "base_out_b2": {
+    "value": 9.274988494429163,
+    "unit": "minutes",
+    "description": "Outbound delay when the inbound was on time (0-14 min late), turn [45, 60)",
+    "display": "9.3",
+    "produced_by": "__main__:propagation"
+  },
+  "base_out_b3": {
+    "value": 6.634724876280073,
+    "unit": "minutes",
+    "description": "Outbound delay when the inbound was on time (0-14 min late), turn [60, 75)",
+    "display": "6.6",
+    "produced_by": "__main__:propagation"
+  },
+  "base_out_b4": {
+    "value": 4.776066400800417,
+    "unit": "minutes",
+    "description": "Outbound delay when the inbound was on time (0-14 min late), turn [75, 90)",
+    "display": "4.8",
+    "produced_by": "__main__:propagation"
+  },
+  "base_out_b5": {
+    "value": 4.190082644628099,
+    "unit": "minutes",
+    "description": "Outbound delay when the inbound was on time (0-14 min late), turn [90, 120)",
+    "display": "4.2",
+    "produced_by": "__main__:propagation"
+  },
+  "base_out_b6": {
+    "value": 6.98222045412816,
+    "unit": "minutes",
+    "description": "Outbound delay when the inbound was on time (0-14 min late), turn [120, 240)",
+    "display": "7.0",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_added_minutes": {
+    "value": 58.38972233337612,
+    "unit": "minutes",
+    "description": "Scheduled minutes added per turn moving from the shortest band's average turn",
+    "display": "58",
     "produced_by": "__main__:propagation"
   },
   "buffer_min_turn": {
-    "value": 90,
+    "value": 95,
     "unit": "minutes",
-    "description": "Shortest scheduled turn that meets the target (lower edge of the chosen band)",
-    "display": "90",
+    "description": "Recommended minimum scheduled turn on targeted turns (rounded up to 5)",
+    "display": "95",
     "produced_by": "__main__:propagation"
   },
-  "buffer_pass_test": {
-    "value": 0.4231553787632211,
+  "buffer_pass_octdec": {
+    "value": 0.5884463005411764,
     "unit": "share",
-    "description": "Pass-through in the chosen band over the whole year (check)",
-    "display": "42%",
+    "description": "Carrier-weighted pass-through at that turn, Oct-Dec (out-of-time check)",
+    "display": "59%",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_pass_year": {
+    "value": 0.45902181714854895,
+    "unit": "share",
+    "description": "Carrier-weighted pass-through at that turn, whole year",
+    "display": "46%",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_rule_holds_octdec": {
+    "value": "no",
+    "unit": "flag",
+    "description": "Does the Jan-Sep rule still meet the target on Oct-Dec?",
+    "display": "no",
     "produced_by": "__main__:propagation"
   },
   "buffer_saving_ref": {
-    "value": 47.28002030367945,
+    "value": 34.496590383130034,
     "unit": "minutes",
-    "description": "Outbound delay avoided after a one-hour-late arrival: shortest band vs chosen band",
-    "display": "47",
+    "description": "Outbound delay avoided for a one-hour-late arrival (carrier-weighted curve)",
+    "display": "34",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_turn_exact": {
+    "value": 92.43319816771033,
+    "unit": "minutes",
+    "description": "Turn where the Jan-Sep carrier-weighted curve crosses the target",
+    "display": "92",
+    "produced_by": "__main__:propagation"
+  },
+  "buffer_turn_octdec": {
+    "value": 99.90090175372669,
+    "unit": "minutes",
+    "description": "Turn where the Oct-Dec carrier-weighted curve crosses the target",
+    "display": "100",
     "produced_by": "__main__:propagation"
   },
   "busiest_delay_month": {
@@ -159,6 +187,34 @@
     "description": "Share of flights diverted",
     "display": "0.28%",
     "produced_by": "__main__:overview"
+  },
+  "evening_second_airport": {
+    "value": "MCO",
+    "unit": "airport",
+    "description": "Second-worst busiest-ten airport in the evening",
+    "display": "MCO",
+    "produced_by": "__main__:hubs"
+  },
+  "evening_worst_airport": {
+    "value": "DEN",
+    "unit": "airport",
+    "description": "Busiest-ten airport with most late-aircraft minutes per departure, 17-21h",
+    "display": "DEN",
+    "produced_by": "__main__:hubs"
+  },
+  "evening_worst_value": {
+    "value": 14.319028746300106,
+    "unit": "minutes per departure",
+    "description": "Its evening late-aircraft minutes per departure",
+    "display": "14.3",
+    "produced_by": "__main__:hubs"
+  },
+  "hub_deps_hours_0_4": {
+    "value": 8084,
+    "unit": "departures",
+    "description": "Busiest-ten departures scheduled 00-04h (not shown on the heatmap)",
+    "display": "8084",
+    "produced_by": "__main__:hubs"
   },
   "hub_median_cell_deps": {
     "value": 11189,
@@ -216,6 +272,13 @@
     "display": "Jan",
     "produced_by": "__main__:causes"
   },
+  "max_pass_shift": {
+    "value": 0.16609864504602045,
+    "unit": "share",
+    "description": "Largest change in a band's carrier-weighted pass-through between Jan-Sep and Oct-Dec",
+    "display": "17%",
+    "produced_by": "__main__:propagation"
+  },
   "max_slope_shift": {
     "value": 0.013464915818129058,
     "unit": "minutes out per minute in",
@@ -265,6 +328,13 @@
     "display": "161",
     "produced_by": "__main__:propagation"
   },
+  "min_cell_deps": {
+    "value": 500,
+    "unit": "departures",
+    "description": "Heatmap cells with fewer departures are masked",
+    "display": "500",
+    "produced_by": "__main__:hubs"
+  },
   "n_bands": {
     "value": 6,
     "unit": "bands",
@@ -286,52 +356,59 @@
     "display": "7,001,619",
     "produced_by": "__main__:overview"
   },
+  "n_masked_cells": {
+    "value": 2,
+    "unit": "cells",
+    "description": "Heatmap cells masked for small samples",
+    "display": "2",
+    "produced_by": "__main__:hubs"
+  },
   "n_pairs": {
     "value": 1724795,
     "unit": "turns",
-    "description": "Aircraft turns analysed (late inbound arrival, normal turn)",
+    "description": "Aircraft turns analysed (inbound on time to three hours late, normal turn)",
     "display": "1,724,795",
     "produced_by": "__main__:propagation"
   },
   "n_pairs_b1": {
     "value": 397347,
     "unit": "turns",
-    "description": "Aircraft turns in band [20, 45) with a late inbound arrival",
+    "description": "Aircraft turns in band [20, 45) (inbound 0-180 min late)",
     "display": "397,347",
     "produced_by": "__main__:propagation"
   },
   "n_pairs_b2": {
     "value": 566348,
     "unit": "turns",
-    "description": "Aircraft turns in band [45, 60) with a late inbound arrival",
+    "description": "Aircraft turns in band [45, 60) (inbound 0-180 min late)",
     "display": "566,348",
     "produced_by": "__main__:propagation"
   },
   "n_pairs_b3": {
     "value": 408723,
     "unit": "turns",
-    "description": "Aircraft turns in band [60, 75) with a late inbound arrival",
+    "description": "Aircraft turns in band [60, 75) (inbound 0-180 min late)",
     "display": "408,723",
     "produced_by": "__main__:propagation"
   },
   "n_pairs_b4": {
     "value": 147195,
     "unit": "turns",
-    "description": "Aircraft turns in band [75, 90) with a late inbound arrival",
+    "description": "Aircraft turns in band [75, 90) (inbound 0-180 min late)",
     "display": "147,195",
     "produced_by": "__main__:propagation"
   },
   "n_pairs_b5": {
     "value": 107272,
     "unit": "turns",
-    "description": "Aircraft turns in band [90, 120) with a late inbound arrival",
+    "description": "Aircraft turns in band [90, 120) (inbound 0-180 min late)",
     "display": "107,272",
     "produced_by": "__main__:propagation"
   },
   "n_pairs_b6": {
     "value": 97910,
     "unit": "turns",
-    "description": "Aircraft turns in band [120, 240) with a late inbound arrival",
+    "description": "Aircraft turns in band [120, 240) (inbound 0-180 min late)",
     "display": "97,910",
     "produced_by": "__main__:propagation"
   },
@@ -343,51 +420,177 @@
     "produced_by": "__main__:hubs"
   },
   "pass_b1": {
-    "value": 1.1337509280930467,
+    "value": 1.0349143007319617,
     "unit": "share",
-    "description": "Pass-through of a one-hour-late arrival, turn [20, 45) min",
-    "display": "113%",
+    "description": "Excess pass-through of a one-hour-late arrival, turn [20, 45)",
+    "display": "103%",
     "produced_by": "__main__:propagation"
   },
   "pass_b2": {
-    "value": 1.0770737965983674,
+    "value": 1.0268097882503122,
     "unit": "share",
-    "description": "Pass-through of a one-hour-late arrival, turn [45, 60) min",
-    "display": "108%",
+    "description": "Excess pass-through of a one-hour-late arrival, turn [45, 60)",
+    "display": "103%",
     "produced_by": "__main__:propagation"
   },
   "pass_b3": {
-    "value": 0.9707819683756228,
+    "value": 0.9544116818069361,
     "unit": "share",
-    "description": "Pass-through of a one-hour-late arrival, turn [60, 75) min",
-    "display": "97%",
+    "description": "Excess pass-through of a one-hour-late arrival, turn [60, 75)",
+    "display": "95%",
     "produced_by": "__main__:propagation"
   },
   "pass_b4": {
-    "value": 0.716360768017238,
+    "value": 0.7066673146060383,
     "unit": "share",
-    "description": "Pass-through of a one-hour-late arrival, turn [75, 90) min",
-    "display": "72%",
+    "description": "Excess pass-through of a one-hour-late arrival, turn [75, 90)",
+    "display": "71%",
     "produced_by": "__main__:propagation"
   },
   "pass_b5": {
-    "value": 0.4231553787632211,
+    "value": 0.3952766849386396,
     "unit": "share",
-    "description": "Pass-through of a one-hour-late arrival, turn [90, 120) min",
-    "display": "42%",
+    "description": "Excess pass-through of a one-hour-late arrival, turn [90, 120)",
+    "display": "40%",
     "produced_by": "__main__:propagation"
   },
   "pass_b6": {
+    "value": 0.0795002915032925,
+    "unit": "share",
+    "description": "Excess pass-through of a one-hour-late arrival, turn [120, 240)",
+    "display": "8%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_clean_b1": {
+    "value": 1.025279738107516,
+    "unit": "share",
+    "description": "Excess pass-through on tail-days without cancellations or diversions, turn [20, 45)",
+    "display": "103%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_clean_b2": {
+    "value": 1.0189305552451884,
+    "unit": "share",
+    "description": "Excess pass-through on tail-days without cancellations or diversions, turn [45, 60)",
+    "display": "102%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_clean_b3": {
+    "value": 0.9509716637971501,
+    "unit": "share",
+    "description": "Excess pass-through on tail-days without cancellations or diversions, turn [60, 75)",
+    "display": "95%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_clean_b4": {
+    "value": 0.7086541358981492,
+    "unit": "share",
+    "description": "Excess pass-through on tail-days without cancellations or diversions, turn [75, 90)",
+    "display": "71%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_clean_b5": {
+    "value": 0.3960306658058269,
+    "unit": "share",
+    "description": "Excess pass-through on tail-days without cancellations or diversions, turn [90, 120)",
+    "display": "40%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_clean_b6": {
+    "value": 0.06208561843757768,
+    "unit": "share",
+    "description": "Excess pass-through on tail-days without cancellations or diversions, turn [120, 240)",
+    "display": "6%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_cw_b1": {
+    "value": 1.0339649902007162,
+    "unit": "share",
+    "description": "Carrier-weighted excess pass-through, turn [20, 45)",
+    "display": "103%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_cw_b2": {
+    "value": 1.0075807627607944,
+    "unit": "share",
+    "description": "Carrier-weighted excess pass-through, turn [45, 60)",
+    "display": "101%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_cw_b3": {
+    "value": 0.8942356859475357,
+    "unit": "share",
+    "description": "Carrier-weighted excess pass-through, turn [60, 75)",
+    "display": "89%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_cw_b4": {
+    "value": 0.6749866584237237,
+    "unit": "share",
+    "description": "Carrier-weighted excess pass-through, turn [75, 90)",
+    "display": "67%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_cw_b5": {
+    "value": 0.36768807861552477,
+    "unit": "share",
+    "description": "Carrier-weighted excess pass-through, turn [90, 120)",
+    "display": "37%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_cw_b6": {
+    "value": 0.06792065081349567,
+    "unit": "share",
+    "description": "Carrier-weighted excess pass-through, turn [120, 240)",
+    "display": "7%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_raw_b1": {
+    "value": 1.1337509280930467,
+    "unit": "share",
+    "description": "Raw pass-through (includes baseline), turn [20, 45)",
+    "display": "113%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_raw_b2": {
+    "value": 1.0770737965983677,
+    "unit": "share",
+    "description": "Raw pass-through (includes baseline), turn [45, 60)",
+    "display": "108%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_raw_b3": {
+    "value": 0.9707819683756229,
+    "unit": "share",
+    "description": "Raw pass-through (includes baseline), turn [60, 75)",
+    "display": "97%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_raw_b4": {
+    "value": 0.7163607680172381,
+    "unit": "share",
+    "description": "Raw pass-through (includes baseline), turn [75, 90)",
+    "display": "72%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_raw_b5": {
+    "value": 0.4231553787632211,
+    "unit": "share",
+    "description": "Raw pass-through (includes baseline), turn [90, 120)",
+    "display": "42%",
+    "produced_by": "__main__:propagation"
+  },
+  "pass_raw_b6": {
     "value": 0.17675715312515883,
     "unit": "share",
-    "description": "Pass-through of a one-hour-late arrival, turn [120, 240) min",
+    "description": "Raw pass-through (includes baseline), turn [120, 240)",
     "display": "18%",
     "produced_by": "__main__:propagation"
   },
   "pass_target": {
     "value": 0.5,
     "unit": "share",
-    "description": "Target: less than this share of a one-hour-late arrival passes on",
+    "description": "Target: less than this share of the extra delay passes on",
     "display": "50%",
     "produced_by": "__main__:propagation"
   },
@@ -397,6 +600,13 @@
     "description": "Cause minutes divided by arrival delay minutes of delayed flights (prorated, should be close to one)",
     "display": "1.000",
     "produced_by": "__main__:causes"
+  },
+  "saving_per_added_minute": {
+    "value": 0.5907990140143458,
+    "unit": "minutes per minute",
+    "description": "Delay avoided per scheduled minute added, for a one-hour-late arrival",
+    "display": "0.59",
+    "produced_by": "__main__:propagation"
   },
   "share_carrier": {
     "value": 0.3245320829010684,
@@ -419,6 +629,13 @@
     "display": "21.9%",
     "produced_by": "__main__:causes"
   },
+  "share_pairs_ref_bin": {
+    "value": 0.04275580576242394,
+    "unit": "share",
+    "description": "Share of analysed turns whose inbound was 60-74 minutes late",
+    "display": "4.3%",
+    "produced_by": "__main__:propagation"
+  },
   "share_security": {
     "value": 0.0013651003878379902,
     "unit": "share",
@@ -436,127 +653,155 @@
   "slope_b1": {
     "value": 1.0329747907194047,
     "unit": "minutes out per minute in",
-    "description": "Propagation slope, scheduled turn [20, 45) min",
+    "description": "OLS slope, turn [20, 45)",
     "display": "1.03",
     "produced_by": "__main__:propagation"
   },
   "slope_b1_test": {
     "value": 1.0264088009133658,
     "unit": "minutes out per minute in",
-    "description": "Slope [20, 45) re-estimated Oct-Dec",
+    "description": "OLS slope [20, 45), Oct-Dec",
     "display": "1.03",
     "produced_by": "__main__:propagation"
   },
   "slope_b1_train": {
     "value": 1.035702352425443,
     "unit": "minutes out per minute in",
-    "description": "Slope [20, 45) estimated Jan-Sep",
+    "description": "OLS slope [20, 45), Jan-Sep",
     "display": "1.04",
     "produced_by": "__main__:propagation"
   },
   "slope_b2": {
     "value": 1.0461367569830056,
     "unit": "minutes out per minute in",
-    "description": "Propagation slope, scheduled turn [45, 60) min",
+    "description": "OLS slope, turn [45, 60)",
     "display": "1.05",
     "produced_by": "__main__:propagation"
   },
   "slope_b2_test": {
     "value": 1.0445663100638818,
     "unit": "minutes out per minute in",
-    "description": "Slope [45, 60) re-estimated Oct-Dec",
+    "description": "OLS slope [45, 60), Oct-Dec",
     "display": "1.04",
     "produced_by": "__main__:propagation"
   },
   "slope_b2_train": {
     "value": 1.0466730867406506,
     "unit": "minutes out per minute in",
-    "description": "Slope [45, 60) estimated Jan-Sep",
+    "description": "OLS slope [45, 60), Jan-Sep",
     "display": "1.05",
     "produced_by": "__main__:propagation"
   },
   "slope_b3": {
     "value": 0.9837223493751525,
     "unit": "minutes out per minute in",
-    "description": "Propagation slope, scheduled turn [60, 75) min",
+    "description": "OLS slope, turn [60, 75)",
     "display": "0.98",
     "produced_by": "__main__:propagation"
   },
   "slope_b3_test": {
     "value": 0.9853721369359107,
     "unit": "minutes out per minute in",
-    "description": "Slope [60, 75) re-estimated Oct-Dec",
+    "description": "OLS slope [60, 75), Oct-Dec",
     "display": "0.99",
     "produced_by": "__main__:propagation"
   },
   "slope_b3_train": {
     "value": 0.9831127838893567,
     "unit": "minutes out per minute in",
-    "description": "Slope [60, 75) estimated Jan-Sep",
+    "description": "OLS slope [60, 75), Jan-Sep",
     "display": "0.98",
     "produced_by": "__main__:propagation"
   },
   "slope_b4": {
     "value": 0.8291405688481358,
     "unit": "minutes out per minute in",
-    "description": "Propagation slope, scheduled turn [75, 90) min",
+    "description": "OLS slope, turn [75, 90)",
     "display": "0.83",
     "produced_by": "__main__:propagation"
   },
   "slope_b4_test": {
     "value": 0.819461253329923,
     "unit": "minutes out per minute in",
-    "description": "Slope [75, 90) re-estimated Oct-Dec",
+    "description": "OLS slope [75, 90), Oct-Dec",
     "display": "0.82",
     "produced_by": "__main__:propagation"
   },
   "slope_b4_train": {
     "value": 0.8320569403280523,
     "unit": "minutes out per minute in",
-    "description": "Slope [75, 90) estimated Jan-Sep",
+    "description": "OLS slope [75, 90), Jan-Sep",
     "display": "0.83",
     "produced_by": "__main__:propagation"
   },
   "slope_b5": {
     "value": 0.6338523210184414,
     "unit": "minutes out per minute in",
-    "description": "Propagation slope, scheduled turn [90, 120) min",
+    "description": "OLS slope, turn [90, 120)",
     "display": "0.63",
     "produced_by": "__main__:propagation"
   },
   "slope_b5_test": {
     "value": 0.6437546732183484,
     "unit": "minutes out per minute in",
-    "description": "Slope [90, 120) re-estimated Oct-Dec",
+    "description": "OLS slope [90, 120), Oct-Dec",
     "display": "0.64",
     "produced_by": "__main__:propagation"
   },
   "slope_b5_train": {
     "value": 0.6304839335807255,
     "unit": "minutes out per minute in",
-    "description": "Slope [90, 120) estimated Jan-Sep",
+    "description": "OLS slope [90, 120), Jan-Sep",
     "display": "0.63",
     "produced_by": "__main__:propagation"
   },
   "slope_b6": {
     "value": 0.22337813916873847,
     "unit": "minutes out per minute in",
-    "description": "Propagation slope, scheduled turn [120, 240) min",
+    "description": "OLS slope, turn [120, 240)",
     "display": "0.22",
     "produced_by": "__main__:propagation"
   },
   "slope_b6_test": {
     "value": 0.23342795893211363,
     "unit": "minutes out per minute in",
-    "description": "Slope [120, 240) re-estimated Oct-Dec",
+    "description": "OLS slope [120, 240), Oct-Dec",
     "display": "0.23",
     "produced_by": "__main__:propagation"
   },
   "slope_b6_train": {
     "value": 0.21996304311398457,
     "unit": "minutes out per minute in",
-    "description": "Slope [120, 240) estimated Jan-Sep",
+    "description": "OLS slope [120, 240), Jan-Sep",
     "display": "0.22",
+    "produced_by": "__main__:propagation"
+  },
+  "top_carrier_long": {
+    "value": "DL",
+    "unit": "carrier code",
+    "description": "Carrier with most pairs in turn band [120, 240)",
+    "display": "DL",
+    "produced_by": "__main__:propagation"
+  },
+  "top_carrier_long_share": {
+    "value": 0.18348483300990706,
+    "unit": "share",
+    "description": "Its share of pairs in band [120, 240)",
+    "display": "18%",
+    "produced_by": "__main__:propagation"
+  },
+  "top_carrier_short": {
+    "value": "WN",
+    "unit": "carrier code",
+    "description": "Carrier with most pairs in turn band [20, 45)",
+    "display": "WN",
+    "produced_by": "__main__:propagation"
+  },
+  "top_carrier_short_share": {
+    "value": 0.4171089752785349,
+    "unit": "share",
+    "description": "Its share of pairs in band [20, 45)",
+    "display": "42%",
     "produced_by": "__main__:propagation"
   },
   "top_hub": {
@@ -569,21 +814,21 @@
   "worst_cell_airport": {
     "value": "ORD",
     "unit": "airport",
-    "description": "Busiest-ten airport x hour cell with most late-aircraft minutes per departure",
+    "description": "Unmasked busiest-ten airport x hour cell with the highest rate",
     "display": "ORD",
     "produced_by": "__main__:hubs"
   },
   "worst_cell_deps": {
     "value": 76,
     "unit": "departures",
-    "description": "Scheduled departures behind that worst cell in 2025",
+    "description": "Scheduled departures behind that cell in 2025",
     "display": "76",
     "produced_by": "__main__:hubs"
   },
   "worst_cell_hour": {
     "value": 23,
     "unit": "hour",
-    "description": "Scheduled departure hour of that worst cell",
+    "description": "Scheduled departure hour of that cell",
     "display": "23",
     "produced_by": "__main__:hubs"
   },

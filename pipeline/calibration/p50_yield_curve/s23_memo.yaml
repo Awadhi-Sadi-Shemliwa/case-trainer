@@ -4,236 +4,205 @@ answers:
   kind: strong
   label: acceptable
   owner_review: false
-  text: >-
-    Recommendation: use the 10y-3m spread as an early-warning input and begin staged equity de-risking when
-    the model probability exceeds {expected.threshold} (10y-3m below about {expected.trigger_spread_10y3m}
-    points). Today it is {expected.latest_prob_10y3m}, so no action. Evidence: out-of-sample AUC
-    {expected.auc_oos_10y3m} versus {expected.auc_oos_2s10s} for 2s10s; the signal fired a median
-    {expected.oos_signal_median_lead} months before each of the {expected.n_oos_recessions} test recessions.
-    Risk: only {expected.oos_signal_precision} of signal months were followed by a recession, and the recent
-    false alarm made probabilities overconfident. Limitations: few recessions, association not causation,
-    USREC revised after the fact. Next step: add a term-premium-adjusted spread and credit spreads and re-test.
+  text: 'Recommendation: use the 10y-3m spread as an early-warning input and begin staged equity de-risking when
+    the model probability exceeds {expected.threshold} (10y-3m below about {expected.trigger_spread_10y3m} points).
+    Today it is {expected.latest_prob_10y3m}, so no action. Evidence: out-of-sample AUC {expected.auc_oos_10y3m}
+    versus {expected.auc_oos_2s10s} for 2s10s; the signal fired a median {expected.oos_signal_median_lead} months
+    before each of the {expected.n_oos_recessions} test recessions. Risk: only {expected.oos_signal_precision} of
+    signal months were followed by a recession, and the recent false alarm made probabilities overconfident. Limitations:
+    few recessions, association not causation, USREC revised after the fact. Next step: add a term-premium-adjusted
+    spread and credit spreads and re-test.'
 - id: a02
   kind: strong
   label: acceptable
-  owner_review: false
-  text: >-
-    To the PM. Recommend: monitor 10y-3m; if the recession probability crosses {expected.threshold}, reduce
-    equity weight in steps. Current probability {expected.latest_prob_10y3m}: hold. Evidence: AUC
-    {expected.auc_oos_10y3m} out of sample, lead of about {expected.oos_signal_median_lead} months, all
-    {expected.n_oos_recessions} recent recessions caught. Risks: frequent false alarms, Brier skill negative.
-    Limits: small sample, not causal, possible term premium regime change. Next: combine with credit spreads
-    and re-test out of sample.
+  owner_review: true
+  text: 'To the PM. Recommend: monitor 10y-3m; if the recession probability crosses {expected.threshold}, reduce
+    equity weight in steps. Current probability {expected.latest_prob_10y3m}: hold. Evidence: AUC {expected.auc_oos_10y3m}
+    out of sample, lead of about {expected.oos_signal_median_lead} months, all {expected.n_oos_recessions} recent
+    recessions caught. Risks: frequent false alarms, Brier skill negative. Limits: small sample, not causal, possible
+    term premium regime change. Next: combine with credit spreads and re-test out of sample. (One of those recessions
+    was the pandemic shock, so the hit count is flattering.)'
+  note: Caught-all claim kept only with the pandemic caveat.
 - id: a03
   kind: strong
   label: acceptable
   owner_review: false
-  text: >-
-    Recommendation: adopt a de-risking trigger at {expected.threshold} probability from the 10y-3m model; no
-    action today ({expected.latest_prob_10y3m}). Evidence: 10y-3m beats 2s10s out of sample (AUC
-    {expected.auc_oos_10y3m} vs {expected.auc_oos_2s10s}); the signal led recessions by a median
-    {expected.oos_signal_median_lead} months. Remaining risk: precision only {expected.oos_signal_precision};
-    overconfident recently. Limitations: few events, revised NBER dates, association only. Next step:
-    term-premium adjustment, then re-test.
+  text: 'Recommendation: adopt a de-risking trigger at {expected.threshold} probability from the 10y-3m model; no
+    action today ({expected.latest_prob_10y3m}). Evidence: 10y-3m beats 2s10s out of sample (AUC {expected.auc_oos_10y3m}
+    vs {expected.auc_oos_2s10s}); the signal led recessions by a median {expected.oos_signal_median_lead} months.
+    Remaining risk: precision only {expected.oos_signal_precision}; overconfident recently. Limitations: few events,
+    revised NBER dates, association only. Next step: term-premium adjustment, then re-test.'
 - id: a04
   kind: strong
   label: acceptable
-  owner_review: false
-  text: >-
-    Use 10y-3m, not 2s10s. Trigger staged de-risking above {expected.threshold}; at
-    {expected.latest_prob_10y3m} today, stay invested. The signal caught all {expected.n_oos_recessions}
-    out-of-sample recessions with a median lead of {expected.oos_signal_median_lead} months and AUC
-    {expected.auc_oos_10y3m}. But the recent long false alarm means probabilities run hot and precision is
-    {expected.oos_signal_precision}. It is association with few recessions. Next: add a second indicator and
-    re-validate.
+  owner_review: true
+  text: 'Use 10y-3m, not 2s10s. Trigger staged de-risking above {expected.threshold}; at {expected.latest_prob_10y3m}
+    today, stay invested. The signal caught all {expected.n_oos_recessions} out-of-sample recessions with a median
+    lead of {expected.oos_signal_median_lead} months and AUC {expected.auc_oos_10y3m}. But the recent long false
+    alarm means probabilities run hot and precision is {expected.oos_signal_precision}. It is association with few
+    recessions. Next: add a second indicator and re-validate. (One of those recessions was the pandemic shock, so
+    the hit count is flattering.)'
+  note: Caught-all claim kept only with the pandemic caveat.
 - id: a05
   kind: strong
   label: acceptable
   owner_review: true
   note: Evidence uses only one number besides threshold.
-  text: >-
-    Recommendation: staged equity reduction when the 10y-3m recession probability exceeds {expected.threshold};
-    currently {expected.latest_prob_10y3m}, no action. Evidence: AUC {expected.auc_oos_10y3m} out of sample.
-    Risk: many false alarms. Limitations: few recessions, not causal. Next: re-test with credit spreads.
+  text: 'Recommendation: staged equity reduction when the 10y-3m recession probability exceeds {expected.threshold};
+    currently {expected.latest_prob_10y3m}, no action. Evidence: AUC {expected.auc_oos_10y3m} out of sample. Risk:
+    many false alarms. Limitations: few recessions, not causal. Next: re-test with credit spreads.'
 - id: a06
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    The yield curve predicts recessions, so we should reduce equities when it inverts.
+  text: The yield curve predicts recessions, so we should reduce equities when it inverts.
 - id: a07
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    Recommendation: trigger at {expected.threshold}. Evidence: AUC {expected.auc_oos_10y3m}.
+  text: 'Recommendation: trigger at {expected.threshold}. Evidence: AUC {expected.auc_oos_10y3m}.'
 - id: a08
   kind: partial
   label: not_acceptable
   owner_review: true
   note: Recommendation, evidence and risk but no limitations or next step.
-  text: >-
-    Start staged de-risking when the 10y-3m probability exceeds {expected.threshold}; today
-    {expected.latest_prob_10y3m}, no action. AUC {expected.auc_oos_10y3m} and median lead
-    {expected.oos_signal_median_lead} months. Risk: precision only {expected.oos_signal_precision}.
+  text: 'Start staged de-risking when the 10y-3m probability exceeds {expected.threshold}; today {expected.latest_prob_10y3m},
+    no action. AUC {expected.auc_oos_10y3m} and median lead {expected.oos_signal_median_lead} months. Risk: precision
+    only {expected.oos_signal_precision}.'
 - id: a09
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    There are many limitations: few recessions, revised data, and no causality. We need more research.
+  text: 'There are many limitations: few recessions, revised data, and no causality. We need more research.'
 - id: a10
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    Watch the spread carefully and be cautious.
+  text: Watch the spread carefully and be cautious.
 - id: a11
   kind: partial
   label: acceptable
   owner_review: true
   note: Very compact memo; all five parts present.
-  text: >-
-    De-risk in stages above {expected.threshold} (10y-3m); now {expected.latest_prob_10y3m}, hold. AUC
-    {expected.auc_oos_10y3m}, lead {expected.oos_signal_median_lead} months. Risk: precision
-    {expected.oos_signal_precision}. Limits: few recessions, not causal. Next: add credit spreads, re-test.
+  text: 'De-risk in stages above {expected.threshold} (10y-3m); now {expected.latest_prob_10y3m}, hold. AUC {expected.auc_oos_10y3m},
+    lead {expected.oos_signal_median_lead} months. Risk: precision {expected.oos_signal_precision}. Limits: few
+    recessions, not causal. Next: add credit spreads, re-test.'
 - id: a12
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    The model has an AUC of {expected.auc_oos_10y3m}, which is good, so we recommend using it.
+  text: The model has an AUC of {expected.auc_oos_10y3m}, which is good, so we recommend using it.
 - id: a13
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    Recommendation: sell all equities now because a recession is coming.
+  text: 'Recommendation: sell all equities now because a recession is coming.'
 - id: a14
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    The yield curve no longer works, so ignore it completely.
+  text: The yield curve no longer works, so ignore it completely.
 - id: a15
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    Use 2s10s because the PM asked about it, with a trigger at zero.
+  text: Use 2s10s because the PM asked about it, with a trigger at zero.
 - id: a16
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    Buy more equities because the probability is low.
+  text: Buy more equities because the probability is low.
 - id: a17
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    The analysis is inconclusive.
+  text: The analysis is inconclusive.
 - id: a18
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    We should wait for NBER to announce a recession before acting.
+  text: We should wait for NBER to announce a recession before acting.
 - id: a19
   kind: red_flag
   label: not_acceptable
   owner_review: false
-  text: >-
-    Inversion causes recessions, so we must sell when the curve inverts. The model has AUC
-    {expected.auc_oos_10y3m}.
+  text: Inversion causes recessions, so we must sell when the curve inverts. The model has AUC {expected.auc_oos_10y3m}.
 - id: a20
   kind: red_flag
   label: not_acceptable
   owner_review: false
-  text: >-
-    A recession is certain within a year whenever the trigger is hit; the model is always right.
+  text: A recession is certain within a year whenever the trigger is hit; the model is always right.
 - id: a21
   kind: red_flag
   label: not_acceptable
   owner_review: true
   note: Good structure but promises certainty.
-  text: >-
-    Recommendation: staged de-risking above {expected.threshold}; today {expected.latest_prob_10y3m}. Evidence:
-    AUC {expected.auc_oos_10y3m}, lead {expected.oos_signal_median_lead} months. The model is always right
-    about recessions, so there is little risk. Next: monitor monthly.
+  text: 'Recommendation: staged de-risking above {expected.threshold}; today {expected.latest_prob_10y3m}. Evidence:
+    AUC {expected.auc_oos_10y3m}, lead {expected.oos_signal_median_lead} months. The model is always right about
+    recessions, so there is little risk. Next: monitor monthly.'
 - id: a22
   kind: red_flag
   label: not_acceptable
   owner_review: false
-  text: >-
-    Reduce risk if the curve looks worrying.
+  text: Reduce risk if the curve looks worrying.
 - id: a23
   kind: strong
   label: acceptable
-  owner_review: false
-  text: >-
-    Recommendation: treat 10y-3m as the recession early-warning input; when its model probability rises above
+  owner_review: true
+  text: 'Recommendation: treat 10y-3m as the recession early-warning input; when its model probability rises above
     {expected.threshold} (spread below about {expected.trigger_spread_10y3m}), cut equity risk in stages. Today:
     {expected.latest_prob_10y3m}, no change. Evidence: AUC {expected.auc_oos_10y3m} vs {expected.auc_oos_2s10s};
-    caught all {expected.n_oos_recessions} test recessions about {expected.oos_signal_median_lead} months
-    early. Risk left: precision {expected.oos_signal_precision}; Brier skill {expected.bss_oos_10y3m} after
-    the recent false alarm. Limitations: few recessions; association; revised NBER dating; term premium shift.
-    Next step: term-premium-adjusted spread plus credit spreads, re-tested out of sample.
+    caught all {expected.n_oos_recessions} test recessions about {expected.oos_signal_median_lead} months early.
+    Risk left: precision {expected.oos_signal_precision}; Brier skill {expected.bss_oos_10y3m} after the recent
+    false alarm. Limitations: few recessions; association; revised NBER dating; term premium shift. Next step: term-premium-adjusted
+    spread plus credit spreads, re-tested out of sample. (One of those recessions was the pandemic shock, so the
+    hit count is flattering.)'
+  note: Caught-all claim kept only with the pandemic caveat.
 - id: a24
   kind: strong
   label: acceptable
   owner_review: false
-  text: >-
-    Act on 10y-3m at {expected.threshold}, staged, no action at today's {expected.latest_prob_10y3m}. Out of
-    sample it ranked months with AUC {expected.auc_oos_10y3m} and led recessions by
-    {expected.oos_signal_median_lead} months. Expect false alarms (precision {expected.oos_signal_precision});
-    the recent one made it overconfident. Small sample and no causal claim. Next: add a second indicator
-    and re-validate before giving it more weight.
+  text: 'Act on 10y-3m at {expected.threshold}, staged, no action at today''s {expected.latest_prob_10y3m}. Out
+    of sample it ranked months with AUC {expected.auc_oos_10y3m} and led recessions by {expected.oos_signal_median_lead}
+    months. Expect false alarms (precision {expected.oos_signal_precision}); the recent one made it overconfident.
+    Small sample and no causal claim. Next: add a second indicator and re-validate before giving it more weight.'
 - id: a25
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    Use 10y-3m. It is better than 2s10s.
+  text: Use 10y-3m. It is better than 2s10s.
 - id: a26
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    The memo should recommend a new model because this one has negative Brier skill.
+  text: The memo should recommend a new model because this one has negative Brier skill.
 - id: a27
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    Recommendation: no action now since the probability is {expected.latest_prob_10y3m}. Next step: monitor.
+  text: 'Recommendation: no action now since the probability is {expected.latest_prob_10y3m}. Next step: monitor.'
 - id: a28
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    Recession probability is fifty percent so reduce equities by half.
+  text: Recession probability is fifty percent so reduce equities by half.
 - id: a29
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    Risk: false alarms. Limitations: few recessions. Next: more data.
+  text: 'Risk: false alarms. Limitations: few recessions. Next: more data.'
 - id: a30
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    The chart shows the curve inverted so a recession is coming soon.
+  text: The chart shows the curve inverted so a recession is coming soon.
 - id: a31
   kind: partial
   label: not_acceptable
   owner_review: false
-  text: >-
-    De-risk when the probability exceeds {expected.threshold}.
+  text: De-risk when the probability exceeds {expected.threshold}.
 - id: a32
   kind: wrong
   label: not_acceptable
   owner_review: false
-  text: >-
-    We cannot recommend anything without knowing the client.
+  text: We cannot recommend anything without knowing the client.

@@ -56,36 +56,60 @@ def hhmm_to_min(x: pd.Series) -> pd.Series:
     # <<< snippet
 
 
+STAGES = ["operated", "with_tail", "has_next_leg", "same_airport", "not_overnight", "turn_window", "delay_range"]
+STAGE_REASONS = {
+    "with_tail": "Flights without a tail number cannot be linked to the aircraft's next flight.",
+    "has_next_leg": ("The aircraft's last flight of the day, or a next leg with a missing delay, has no outbound flight "
+                     "to pair with."),
+    "same_airport": ("The next leg must leave from the airport where the aircraft landed; otherwise the record is broken "
+                     "or the aircraft was repositioned without a reported flight."),
+    "not_overnight": ("Inbound legs whose scheduled arrival clock time is earlier than their departure clock time are "
+                      "treated as overnight and dropped (dates are ambiguous without time zones). This also drops some "
+                      "short westbound flights that cross a time zone: a known limitation."),
+    "turn_window": ("Keep scheduled turns of 20 to 240 minutes. Shorter is below any realistic minimum turn (a data "
+                    "error); longer is an aircraft parked for hours, not a turn."),
+    "delay_range": ("Keep inbound arrival delays from 0 up to 180 minutes (on time to three hours late, including "
+                    "0-14 minutes, which BTS does not call late). Early arrivals are excluded; extreme delays are rare "
+                    "and often involve aircraft swaps."),
+}
+
+
 def rotations(df: pd.DataFrame, counts: dict) -> pd.DataFrame:
-    flown = df[(df.Cancelled == 0) & (df.Diverted == 0) & df.Tail_Number.notna()].copy()
+    # tail-days with any cancellation or diversion: aircraft swaps and re-pairing are likely (sensitivity flag)
+    disrupted = df[(df.Cancelled == 1) | (df.Diverted == 1)].groupby(["Tail_Number", "FlightDate"]).size()
+    flown = df[(df.Cancelled == 0) & (df.Diverted == 0)].copy()
+    counts["operated"] += len(flown)
+    flown = flown[flown.Tail_Number.notna()]
+    counts["with_tail"] += len(flown)
     flown["dep_min"] = hhmm_to_min(flown.CRSDepTime)
     flown["arr_min"] = hhmm_to_min(flown.CRSArrTime)
     # >>> snippet: build_rotations
     flown = flown.sort_values(["Tail_Number", "FlightDate", "dep_min"])
     nxt = flown.groupby(["Tail_Number", "FlightDate"]).shift(-1)
     pairs = pd.DataFrame({
-        "month": flown.month, "airport": flown.Dest, "next_origin": nxt.Origin,
+        "month": flown.month, "carrier": flown.Reporting_Airline, "airport": flown.Dest, "next_origin": nxt.Origin,
         "in_arr_delay": flown.ArrDelay, "out_dep_delay": nxt.DepDelay,
         "turn": nxt.dep_min - flown.arr_min, "overnight": flown.arr_min < flown.dep_min,
+        "clean_day": ~pd.MultiIndex.from_frame(flown[["Tail_Number", "FlightDate"]]).isin(disrupted.index),
     }).dropna(subset=["next_origin", "in_arr_delay", "out_dep_delay"])
-    pairs = pairs[(pairs.airport == pairs.next_origin) & ~pairs.overnight]
+    counts["has_next_leg"] += len(pairs)
+    pairs = pairs[pairs.airport == pairs.next_origin]
+    counts["same_airport"] += len(pairs)
+    pairs = pairs[~pairs.overnight]
     # <<< snippet
-    n0 = len(pairs)
-    keep = pairs.turn.between(TURN_BANDS[0], TURN_BANDS[-1], inclusive="left")
-    pairs = pairs[keep]
-    counts["turn_before"] += n0
-    counts["turn_after"] += len(pairs)
-    n1 = len(pairs)
+    counts["not_overnight"] += len(pairs)
+    pairs = pairs[pairs.turn.between(TURN_BANDS[0], TURN_BANDS[-1], inclusive="left")]
+    counts["turn_window"] += len(pairs)
     pairs = pairs[pairs.in_arr_delay.between(DELAY_BINS[0], DELAY_BINS[-1], inclusive="left")]
-    counts["delay_after"] += len(pairs)
+    counts["delay_range"] += len(pairs)
     pairs["band"] = pd.cut(pairs.turn, TURN_BANDS, right=False).astype(str)
     pairs["bin"] = pd.cut(pairs.in_arr_delay, DELAY_BINS, right=False).astype(str)
     x, y = pairs.in_arr_delay, pairs.out_dep_delay
     pairs = pairs.assign(x=x, y=y, xx=x * x, xy=x * y, yy=y * y)
     # sufficient statistics: exact OLS slopes can be rebuilt from n, sums and cross-products
-    agg = pairs.groupby(["month", "band", "bin"]).agg(n=("x", "size"), sx=("x", "sum"), sy=("y", "sum"),
-                                                     sxx=("xx", "sum"), sxy=("xy", "sum"), syy=("yy", "sum"),
-                                                     turn_sum=("turn", "sum")).reset_index()
+    agg = pairs.groupby(["month", "carrier", "clean_day", "band", "bin"]).agg(
+        n=("x", "size"), sx=("x", "sum"), sy=("y", "sum"), sxx=("xx", "sum"), sxy=("xy", "sum"),
+        syy=("yy", "sum"), turn_sum=("turn", "sum")).reset_index()
     return agg, len(pairs)
 
 
@@ -94,7 +118,7 @@ def clean() -> None:
     prov = Provenance(CASE_DIR)
     months, hubs, rots = [], [], []
     n_rows = n_flown = 0
-    counts = {"turn_before": 0, "turn_after": 0, "delay_after": 0}
+    counts = {k: 0 for k in STAGES}
     for m in range(1, 13):
         df = load_month(m)
         n_rows += len(df)
@@ -116,16 +140,11 @@ def clean() -> None:
     fm.to_csv(AGG / "flights_month.csv", index=False)
     hh = pd.concat(hubs).groupby(["Origin", "hour"], as_index=False)[["departures", "late_aircraft_min", "delayed15"]].sum()
     hh.to_csv(AGG / "hub_hour.csv", index=False)
-    rr = pd.concat(rots).groupby(["month", "band", "bin"], as_index=False).sum()
+    rr = pd.concat(rots).groupby(["month", "carrier", "clean_day", "band", "bin"], as_index=False).sum()
     rr.to_csv(AGG / "rotations.csv", index=False)
-    prov.log_transform("bts_all", "rotation_turn_window", counts["turn_before"], counts["turn_after"],
-                       reason=(f"Keep turns of {TURN_BANDS[0]}-{TURN_BANDS[-1]} scheduled minutes. Shorter is a data error or a "
-                               "through-flight; longer is an aircraft parked for hours, not a turn. Counts over all 12 months."),
-                       details={"dropped": counts["turn_before"] - counts["turn_after"]})
-    prov.log_transform("bts_all", "rotation_delay_range", counts["turn_after"], counts["delay_after"],
-                       reason=(f"Model only late inbound arrivals of {DELAY_BINS[0]}-{DELAY_BINS[-1]} minutes: early arrivals cannot "
-                               "propagate lateness and extreme delays (over three hours) are rare and often involve aircraft swaps."),
-                       details={"dropped_early_or_extreme": counts["turn_after"] - counts["delay_after"]})
+    for prev, stage in zip(STAGES, STAGES[1:]):
+        prov.log_transform("bts_all", f"rotation_{stage}", counts[prev], counts[stage],
+                           reason=STAGE_REASONS[stage] + " Counts over all 12 months.")
     prov.log_transform("bts_all", "cancelled_diverted_excluded", n_rows, n_flown,
                        reason=("Cancelled and diverted flights have no arrival delay or cause minutes, so they are excluded from "
                                "delay statistics and counted separately (this removes some of the worst disruption)."),

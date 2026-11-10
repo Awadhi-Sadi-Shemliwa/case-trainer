@@ -39,6 +39,10 @@ LEAD_WINDOW = 24    # months before a recession start in which an inversion coun
 MERGE_GAP = 3       # normal months allowed inside one inversion episode
 HAC_LAGS = HORIZON
 SPLIT_FROM, SPLIT_BEFORE = "2022-01", "2021-12"   # diagnostic split only (see oos())
+EMBARGO = HORIZON + 1   # forecasting DURING month t: row s needs USREC up to s+12, which must be <= t-1
+SIGNAL_WINDOW = 18      # decision(): a first signal earlier than this is too early to act on for de-risking
+COVID_FROM, COVID_TO = "2019-03", "2020-02"
+MIN_POSITIVES = 6       # a training set needs at least this many pre-recession months to fit a probit       # forecasts whose target window is the pandemic recession
 THRESHOLD_GRID =np.round(np.arange(0.05, 0.951, 0.05), 2)
 SPREADS = {"T10Y2Y": "2s10s", "T10Y3M": "10y-3m"}
 SOURCE_NOTE = "Data: FRED T10Y2Y, T10Y3M, USREC (Federal Reserve Bank of St. Louis); NBER recession dates."
@@ -122,9 +126,14 @@ def lead_table(p: pd.DataFrame, col: str) -> pd.DataFrame:
     spread = p[col]
     first = spread.first_valid_index()
     rows = []
+    prev_end = None
     # >>> snippet: lead_table
     for start, end in recession_episodes(p):
-        window = spread[start - pd.DateOffset(months=LEAD_WINDOW): start - pd.DateOffset(months=1)]
+        lo = start - pd.DateOffset(months=LEAD_WINDOW)
+        if prev_end is not None and lo <= prev_end:          # an inversion before the PREVIOUS recession
+            lo = prev_end + pd.DateOffset(months=1)          # cannot also be credited to this one
+        prev_end = end
+        window = spread[lo: start - pd.DateOffset(months=1)]
         if start - pd.DateOffset(months=LEAD_WINDOW) < first:
             rows.append({"recession_start": start, "first_inverted": None, "lead_months": None,
                          "status": "no data before"})
@@ -225,6 +234,13 @@ def in_sample(p: pd.DataFrame, rs: ResultStore) -> dict:
                    f"Probit slope on the {SPREADS[col]} spread", decimals=3)
             rs.put(f"probit_se_hac_{tag}", float(r.bse["spread"]), "per percentage point",
                    f"HAC (Newey-West, {HAC_LAGS} lags) standard error of the {SPREADS[col]} slope", decimals=3)
+            for lags in (24, 36):   # sensitivity: overlap plus gaps from dropped recession months
+                rl = sm.Probit(y, sm.add_constant(common[col].rename("spread"))).fit(
+                    disp=0, cov_type="HAC", cov_kwds={"maxlags": lags})
+                rs.put(f"probit_se_hac{lags}_{tag}", float(rl.bse["spread"]), "per percentage point",
+                       f"HAC standard error of the {SPREADS[col]} slope with {lags} lags", decimals=3)
+                rs.put(f"probit_p_hac{lags}_{tag}", float(rl.pvalues["spread"]), "p-value",
+                       f"HAC p-value of the {SPREADS[col]} slope with {lags} lags", decimals=4)
             rs.put(f"probit_se_naive_{tag}", float(naive.bse["spread"]), "per percentage point",
                    f"Naive (non-robust) standard error of the {SPREADS[col]} slope", decimals=3)
             rs.put(f"se_ratio_{tag}", float(r.bse["spread"] / naive.bse["spread"]), "ratio",
@@ -262,14 +278,18 @@ def first_oos_month(p: pd.DataFrame, train_start: pd.Timestamp) -> pd.Timestamp:
     return complete[1] + pd.DateOffset(months=1)
 
 
-def expanding_oos(p: pd.DataFrame, col: str, start: pd.Timestamp, train_start: pd.Timestamp) -> pd.DataFrame:
+def expanding_oos(p: pd.DataFrame, col: str, start: pd.Timestamp, train_start: pd.Timestamp,
+                  embargo: int = EMBARGO, all_months: bool = False) -> pd.DataFrame:
     data = p.loc[train_start:]
     rows = []
     # >>> snippet: expanding_oos
     for t in data.loc[start:].index:
-        cutoff = t - pd.DateOffset(months=HORIZON)        # embargo: row s needs USREC up to s+12
+        cutoff = t - pd.DateOffset(months=embargo)        # embargo: row s needs USREC up to s+12, known by t-1
         train = data.loc[:cutoff]
-        train = train[train["model_sample"]].dropna(subset=[col])
+        keep = train["rec_next12"].notna() if all_months else train["model_sample"]
+        train = train[keep].dropna(subset=[col])
+        if train["rec_next12"].sum() < MIN_POSITIVES:     # too few warning months to fit a probit: skip, don't fake
+            continue
         res = sm.Probit(train["rec_next12"].astype(int), sm.add_constant(train[col])).fit(disp=0)
         prob = float(res.predict([1.0, data.at[t, col]])[0])
         rows.append({"month": t, "prob": prob, "actual": data.at[t, "rec_next12"],
@@ -283,12 +303,23 @@ def oos(p: pd.DataFrame, rs: ResultStore) -> dict[str, pd.DataFrame]:
     train_start = p["T10Y3M"].first_valid_index()
     start = first_oos_month(p, train_start)
     rs.put("oos_start", start.strftime("%Y-%m"), "month",
-           "First out-of-sample forecast month (two complete recessions already in training)")
+           "First pseudo-out-of-sample forecast month (after the 1990-91 trough; final-vintage NBER dates)")
     rs.put("split_from", SPLIT_FROM, "month",
-           "Start of the post-hoc diagnostic split: the latest inversion cycle, not followed by a recession so far")
+           "Start of the post-hoc diagnostic split (calendar 2022; the inversions themselves began later that year)")
+    for col, tag in (("T10Y2Y", "2s10s"), ("T10Y3M", "10y3m")):
+        eps = inversion_episodes(p[col])
+        rs.put(f"inv_start_latest_{tag}", eps[-1][0].strftime("%Y-%m"), "month",
+               f"Start of the latest {SPREADS[col]} inversion episode")
+    # how many recessions does the model have positive (pre-recession, expansion) months for at the first forecast?
+    tr = p.loc[train_start: start - pd.DateOffset(months=EMBARGO)]
+    tr = tr[tr["model_sample"] & (tr["rec_next12"] == 1)]
+    n_events = len({s for s, _ in recession_episodes(p) if ((tr.index > s - pd.DateOffset(months=HORIZON + 1)) & (tr.index < s)).any()})
+    rs.put("n_train_recessions_at_start", n_events, "recessions",
+           "Recessions whose pre-recession months are in training at the first forecast (the threshold rests on this)")
+    rs.put("embargo_months", EMBARGO, "months", "Training rows end this many months before each forecast month")
     out = {}
     with capture_output(CASE_DIR, "oos_metrics"):
-        print(f"forecast months from {start:%Y-%m}; training rows end 12 months before each forecast")
+        print(f"forecast months from {start:%Y-%m}; training rows end {EMBARGO} months before each forecast")
         for col, tag in (("T10Y2Y", "2s10s"), ("T10Y3M", "10y3m")):
             f = expanding_oos(p, col, start, train_start)
             ev = f[f["scored"]]
@@ -322,7 +353,33 @@ def oos(p: pd.DataFrame, rs: ResultStore) -> dict[str, pd.DataFrame]:
                    "Brier score of always forecasting the historical base rate (climatology)", decimals=4)
             rs.put(f"bss_oos_{tag}", float(bss), "skill score",
                    f"Brier skill score vs climatology, {SPREADS[col]} (>0 = better than base rate)", decimals=3)
+            # sensitivity 1: score EVERY month with a known target (in real time you don't know USREC(t))
+            allk = f.dropna(subset=["actual"])
+            rs.put(f"auc_oos_allscored_{tag}", float(roc_auc_score(allk["actual"].astype(int), allk["prob"])), "AUC",
+                   f"Sensitivity: AUC scoring all months incl. recession months, {SPREADS[col]}", decimals=3)
+            # sensitivity 2: drop the pandemic-recession target window from the pre-split skill
+            ex = pre[~((pre.index >= COVID_FROM) & (pre.index <= COVID_TO))]
+            rs.put(f"bss_pre_split_excovid_{tag}", float(1 - brier_score_loss(ex["actual"].astype(int), ex["prob"])
+                   / brier_score_loss(ex["actual"].astype(int), ex["climatology"])), "skill score",
+                   f"Pre-split Brier skill excluding forecasts aimed at the pandemic recession, {SPREADS[col]}", decimals=3)
             out[tag] = f
+        # sensitivity 3: a 24-month embargo (NBER can take well over a year to date a turning point)
+        f24 = expanding_oos(p, "T10Y3M", start, train_start, embargo=24)
+        e24 = f24[f24["scored"]]
+        rs.put("embargo24_skipped_months", len(p.loc[start:]) - len(f24), "months",
+               "Forecast months skipped under the 24-month embargo (too few warning months in training)")
+        rs.put("auc_oos_embargo24_10y3m", float(roc_auc_score(e24["actual"].astype(int), e24["prob"])), "AUC",
+               "Sensitivity: 10y-3m AUC with a 24-month embargo", decimals=3)
+        rs.put("bss_oos_embargo24_10y3m", float(1 - brier_score_loss(e24["actual"].astype(int), e24["prob"])
+               / brier_score_loss(e24["actual"].astype(int), e24["climatology"])), "skill score",
+               "Sensitivity: 10y-3m Brier skill with a 24-month embargo", decimals=3)
+        # the REJECTED first plan out of sample: train and score on all months (incl. recession months)
+        fa = expanding_oos(p, "T10Y3M", start, train_start, all_months=True).dropna(subset=["actual"])
+        rs.put("auc_oos_all_months_10y3m", float(roc_auc_score(fa["actual"].astype(int), fa["prob"])), "AUC",
+               "Rejected plan (all months) out-of-sample AUC, 10y-3m", decimals=3)
+        rs.put("bss_oos_all_months_10y3m", float(1 - brier_score_loss(fa["actual"].astype(int), fa["prob"])
+               / brier_score_loss(fa["actual"].astype(int), fa["climatology"])), "skill score",
+               "Rejected plan (all months) out-of-sample Brier skill, 10y-3m", decimals=3)
         ev = out["10y3m"][out["10y3m"]["scored"]]
         print(f"evaluated months {len(ev)}, of which followed by recession {int(ev.actual.sum())}")
     rs.put("n_oos_months", len(ev), "months", "Out-of-sample expansion months with a known target (scored)")
@@ -333,11 +390,11 @@ def oos(p: pd.DataFrame, rs: ResultStore) -> dict[str, pd.DataFrame]:
 
 
 # --------------------------------------------------------------------------- 5. decision threshold
-def choose_threshold(p: pd.DataFrame, oos_start: pd.Timestamp) -> float:
+def choose_threshold(p: pd.DataFrame, oos_start: pd.Timestamp, embargo: int = EMBARGO) -> float:
     """Pick the threshold using ONLY data known at the first forecast month (no peeking at the test).
     Rule: maximise Youden's J = hit rate - false-alarm rate on the training-period fit."""
     train_start = p["T10Y3M"].first_valid_index()
-    train = p.loc[train_start: oos_start - pd.DateOffset(months=HORIZON)]
+    train = p.loc[train_start: oos_start - pd.DateOffset(months=embargo)]
     train = train[train["model_sample"]].dropna(subset=["T10Y3M"])
     y = train["rec_next12"].astype(int)
     prob = fit_probit(y, train["T10Y3M"], hac=False).predict()
@@ -358,6 +415,8 @@ def decision(p: pd.DataFrame, f: pd.DataFrame, fits: dict, rs: ResultStore) -> f
     th = choose_threshold(p, oos_start)
     rs.put("threshold", th, "probability", "Signal threshold chosen on training data only (max Youden J)",
            decimals=0, pct=True)
+    rs.put("threshold_embargo12", choose_threshold(p, oos_start, embargo=HORIZON), "probability",
+           "Same rule with a 12-month embargo: shows how fragile a threshold fitted on one recession is", decimals=0, pct=True)
     ev = f[f["scored"]]
     signal = ev["prob"] >= th
     y = ev["actual"].astype(int)
@@ -373,7 +432,7 @@ def decision(p: pd.DataFrame, f: pd.DataFrame, fits: dict, rs: ResultStore) -> f
     for s, _ in recession_episodes(p):
         if s <= oos_start:
             continue
-        pre = f.loc[s - pd.DateOffset(months=18): s - pd.DateOffset(months=1), "prob"]
+        pre = f.loc[s - pd.DateOffset(months=SIGNAL_WINDOW): s - pd.DateOffset(months=1), "prob"]
         on = pre[pre >= th]
         rows.append({"recession_start": s.strftime("%Y-%m"),
                      "first_signal": on.index.min().strftime("%Y-%m") if len(on) else "-",
@@ -384,7 +443,8 @@ def decision(p: pd.DataFrame, f: pd.DataFrame, fits: dict, rs: ResultStore) -> f
         print(table.fillna("-").to_string(index=False))
     caught = table.dropna(subset=["lead_months"])
     rs.put("oos_recessions_caught", len(caught), "recessions",
-           "OOS recessions with the 10y-3m signal on in the 18 months before they began")
+           f"OOS recessions with the 10y-3m signal on in the {SIGNAL_WINDOW} months before they began (incl. the pandemic)")
+    rs.put("signal_window_months", SIGNAL_WINDOW, "months", "How early a first signal may be and still count as a warning")
     if len(caught):
         rs.put("oos_signal_median_lead", float(caught["lead_months"].median()), "months",
                "Median months from first 10y-3m signal to recession start (OOS)", decimals=0)
@@ -392,7 +452,13 @@ def decision(p: pd.DataFrame, f: pd.DataFrame, fits: dict, rs: ResultStore) -> f
     r = fits["10y3m"]
     trigger = (norm.ppf(th) - r.params["const"]) / r.params["spread"]
     rs.put("trigger_spread_10y3m", float(trigger), "percentage points",
-           "10y-3m spread at which the full-sample probit probability equals the threshold", decimals=2)
+           "10y-3m spread equivalent of the threshold under TODAY's full-sample probit (it drifts as the model is refit)", decimals=2)
+    train_start = p["T10Y3M"].first_valid_index()
+    tr = p.loc[train_start: oos_start - pd.DateOffset(months=EMBARGO)]
+    tr = tr[tr["model_sample"]].dropna(subset=["T10Y3M"])
+    r0 = fit_probit(tr["rec_next12"].astype(int), tr["T10Y3M"], hac=False)
+    rs.put("trigger_spread_at_start", float((norm.ppf(th) - r0.params["const"]) / r0.params["spread"]), "percentage points",
+           "Spread equivalent of the threshold under the model fitted at the first forecast month", decimals=2)
     return th
 
 
@@ -460,7 +526,7 @@ def charts(p: pd.DataFrame, fits: dict, forecasts: dict[str, pd.DataFrame], th: 
     export_chart(Chart(
         id="p50_oos_probability", type="line",
         title="Out-of-sample recession probability (next 12 months)",
-        subtitle="Each month uses only data available then (12-month embargo)",
+        subtitle="Pseudo-out-of-sample: refit monthly, 13-month embargo, final-vintage NBER dates",
         x_axis=Axis(title="Forecast month", kind="date"),
         y_axis=Axis(title="Probability", unit="0-1", min=0, max=1),
         series=[make_series("10y-3m probit", f3.index, f3["prob"]),

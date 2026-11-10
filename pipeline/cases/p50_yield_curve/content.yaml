@@ -355,7 +355,8 @@ steps:
     Our FIRST plan kept every month. It failed: in-sample pseudo R-squared was only
     {expected.pseudo_r2_all_months_10y3m} (AUC {expected.auc_insample_all_months_10y3m}). Dropping the
     {expected.n_recession_months_excluded} months already in recession raised them to
-    {expected.pseudo_r2_10y3m} and {expected.auc_insample_10y3m}. Justify this change. Is it cheating?
+    {expected.pseudo_r2_10y3m} and {expected.auc_insample_10y3m} (note: different samples, so not a like-for-like
+    comparison). Justify this change. Is it cheating?
   scaffold: justify_clean
   analysis_pointer: Look at what the spread does DURING the shaded recessions on the first chart.
   redo_step: Re-read the make_target snippet and ask what the target equals for a month inside a recession.
@@ -365,10 +366,11 @@ steps:
     because the Fed is cutting short rates. Those months teach the model "steep curve means recession", the
     opposite of the pre-recession pattern. The PM's decision is made during expansions; once a
     recession is underway the warning is too late to act on. So the modelling sample should match the
-    decision. It isn't cheating, because the rule is fixed by the decision and doesn't depend on the test
-    results, and the out-of-sample test uses the same rule. The cost: the model says nothing about when a
-    recession ends, and in real time you don't know instantly that a recession has started, because NBER
-    dates it later.
+    decision. Honesty about the history matters: the change was PROMPTED by the poor first result, which is a
+    researcher degree of freedom. So it has to be defended on the mechanism and the decision population, not on
+    the better score. Both versions are reported, and the out-of-sample test applies the same rule. The cost:
+    the model says nothing about when a recession ends. In real time you don't know instantly that a recession
+    has started, because NBER dates it later, so scoring only expansion months uses hindsight.
   rubric:
     points:
       - id: mechanism
@@ -403,23 +405,23 @@ steps:
         hint: Quote the before-and-after numbers from the prompt.
         why: A justification needs evidence, not just reasoning.
       - id: not_cheating
-        label: Why it is not data snooping
+        label: Honest about the snooping risk
         weight: 25
         paraphrases:
-          - the rule comes from the decision and not from the test results
-          - the same rule is applied in the out-of-sample test
-          - we did not choose the sample by looking at which months improve the score
-        keywords: [[rule, principle, decision, before], [test, out-of-sample, same, snoop, cherry]]
-        hint: Would you apply the same rule if it had made the score worse?
-        why: Improving a score by deleting rows is a red flag unless the rule comes from the decision itself.
+          - the change was prompted by the poor result so it must be justified by the mechanism not the score
+          - report both versions and apply the same rule in the out-of-sample test
+          - a choice made after seeing results is a researcher degree of freedom that must be disclosed
+        keywords: [[prompted, after seeing, degree of freedom, disclose, report both, snoop], [mechanism, decision, same rule, both]]
+        hint: When was the rule chosen, and what makes it defensible anyway?
+        why: Improving a score by deleting rows is a red flag unless you disclose it and defend it by mechanism.
     red_flags:
       - id: score_only
         critical: true
         penalty: 30
         paraphrases:
-          - we removed them because it made the model score higher
-          - dropping rows that hurt accuracy is fine
-        feedback: Never justify dropping rows only by the score going up. That is data snooping. Give the mechanism and the decision logic.
+          - dropping rows that hurt accuracy is fine as long as the score improves
+          - the better score alone justifies removing the recession months
+        feedback: Never justify dropping rows only by the score going up. Disclose that the score prompted the change, then defend it by mechanism and decision population.
       - id: outliers
         critical: false
         penalty: 15
@@ -433,6 +435,12 @@ steps:
         paraphrases:
           - we always know immediately whether we are in a recession
         feedback: NBER dates recessions after the fact, so in real time you may not know.
+      - id: false_history
+        critical: false
+        penalty: 15
+        paraphrases:
+          - the rule was fixed before we looked at any results
+        feedback: It wasn't. The first plan's poor result prompted the change. Say so, then defend it.
 
 # ============================================================== 5 EXPLORE
 - id: s12_chart_spread
@@ -450,9 +458,10 @@ steps:
     almost every recession the spread falls below zero, and during recessions it shoots back up as the Fed cuts rates. Strength:
     {expected.recessions_signalled_2s10s} of {expected.recessions_evaluable_2s10s} recessions were preceded by a 2s10s
     inversion, with a median lead of {expected.median_lead_months} months (range {expected.min_lead_months}
-    to {expected.max_lead_months}). Anomalies: 2s10s gave {expected.false_alarm_episodes_2s10s} false-alarm
-    episodes, including the long inversion from {expected.split_from} onwards with no recession so far, and it missed
-    the pandemic recession, which was an external shock. What it can't show: that inversion causes recessions.
+    to {expected.max_lead_months}), from only a handful of events. Anomalies: 2s10s gave
+    {expected.false_alarm_episodes_2s10s} false-alarm episodes, including the long inversion that began in
+    {expected.inv_start_latest_2s10s} with no recession dated so far, and it missed the pandemic recession, an
+    external shock. What it can't show: that inversion causes recessions.
     Both may be driven by tight monetary policy, and with a handful of events chance is a real
     risk. So what: inversion is a warning with a long, variable lead, not a sell-today trigger.
   rubric:
@@ -682,7 +691,8 @@ steps:
     independent pieces of evidence. Newey-West (HAC) standard errors correct this. Here they are
     {expected.se_ratio_10y3m} times larger than the naive ones for the 10y-3m slope. The slope is still
     clearly negative (HAC p-value {expected.probit_p_hac_10y3m}), but the true uncertainty is much wider than
-    the naive output suggests. Real output: {captured.probit_summary}
+    the naive output suggests. With more lags the standard error grows further ({expected.probit_se_hac36_10y3m},
+    p {expected.probit_p_hac36_10y3m}), and the sample holds only a few recessions. Real output: {captured.probit_summary}
 
 - id: s16_read_oos
   phase: model
@@ -691,8 +701,8 @@ steps:
   snippet: {file: analyse.py, name: expanding_oos}
   prompt: >-
     For each forecast month t the model is refit using only rows whose target was already known at t.
-    Find the line that enforces this, and say why the cutoff is {expected.horizon_months} months back
-    rather than one.
+    Find the line that enforces this, and say why the cutoff is {expected.embargo_months} months back
+    rather than one. Then say why even this is only PSEUDO out-of-sample (hint: when does NBER announce a recession?).
 
 - id: s17_fill_embargo
   phase: model
@@ -701,8 +711,8 @@ steps:
   snippet: {file: analyse.py, name: expanding_oos}
   prompt: Fill in the cutoff so that no training row's target reaches past the forecast month.
   blanks:
-    - token: "t - pd.DateOffset(months=HORIZON)"
-      accept: ["t-pd.DateOffset(months=HORIZON)"]
+    - token: "t - pd.DateOffset(months=embargo)"
+      accept: ["t-pd.DateOffset(months=embargo)"]
 
 - id: s18_plan_challenge
   phase: model
@@ -803,7 +813,7 @@ steps:
   title: Interpret the out-of-sample results
   chart: p50_oos_probability
   prompt: >-
-    Out-of-sample from {expected.oos_start}: 10y-3m AUC {expected.auc_oos_10y3m}, 2s10s AUC
+    Pseudo-out-of-sample from {expected.oos_start}: 10y-3m AUC {expected.auc_oos_10y3m}, 2s10s AUC
     {expected.auc_oos_2s10s}; Brier skill vs base rate {expected.bss_oos_10y3m} (10y-3m). Before
     {expected.split_from} the skill was {expected.bss_oos_pre_split_10y3m}. Explain what these results mean
     for the PM, using Claim, Evidence, Reasoning and one limitation.
@@ -811,17 +821,18 @@ steps:
   analysis_pointer: Look at the probability line from the split month onwards on the chart. What happened afterwards?
   redo_step: Compare AUC (ranking) with the Brier skill score (calibration) and look at the split diagnostic.
   model_answer: >-
-    Claim: the curve, especially 10y-3m, ranks risky months well out-of-sample, but its probabilities
-    can't be taken at face value. Evidence: out-of-sample AUC is {expected.auc_oos_10y3m} for 10y-3m against
-    {expected.auc_oos_2s10s} for 2s10s, so the literature's choice of 10y-3m holds up. Yet the Brier skill
-    score is {expected.bss_oos_10y3m}, worse than always forecasting the base rate. Splitting the period
-    shows why: before {expected.split_from} the skill was {expected.bss_oos_pre_split_10y3m}, but from then
-    on the model averaged {expected.mean_prob_post_split_10y3m} recession probability over
-    {expected.n_post_split_months_10y3m} months, and no recession followed. Reasoning: the signal timing
-    worked for all {expected.n_oos_recessions} recessions in the test period, but one long false alarm
-    destroyed its calibration. That fits the Fed's warning that a lower term premium can make the raw
-    slope overstate recession risk. Limitation: only {expected.n_oos_recessions} recessions are in the test,
-    the split is a post-hoc diagnostic rather than a model choice, and USREC is revised after the fact.
+    Claim: the curve ranks risky months reasonably well in a pseudo-out-of-sample test, but its probabilities
+    can't be taken at face value. Evidence: AUC is {expected.auc_oos_10y3m} for 10y-3m against
+    {expected.auc_oos_2s10s} for 2s10s, though with three test recessions that gap is uncertain, and 2s10s has the
+    less bad Brier skill ({expected.bss_oos_2s10s} against {expected.bss_oos_10y3m}). Both are worse than
+    always forecasting the base rate. Before {expected.split_from} the 10y-3m skill was
+    {expected.bss_oos_pre_split_10y3m}, or {expected.bss_pre_split_excovid_10y3m} without the pandemic months.
+    From then on the model averaged {expected.mean_prob_post_split_10y3m} recession probability and no recession has
+    been dated so far. Reasoning: the signal came before each test recession, one of them the pandemic shock that
+    no yield curve could foresee, but the long recent inversion broke its calibration. A Federal Reserve Board staff
+    note (Johansson and Meldrum) argues that a lower term premium can make the raw slope overstate risk.
+    Limitations: three test recessions; final-vintage NBER dates (scoring all months gives an AUC of only
+    {expected.auc_oos_allscored_10y3m}); the split is post-hoc.
   rubric:
     points:
       - id: claim
@@ -839,19 +850,19 @@ steps:
         weight: 20
         paraphrases:
           - out-of-sample AUC is {expected.auc_oos_10y3m} for 10y-3m versus {expected.auc_oos_2s10s} for 2s10s
-          - 10y-3m ranks months better than 2s10s
-          - the literature benchmark 10y-3m beats 2s10s out of sample
+          - 10y-3m ranks months better but with three recessions the gap is uncertain
+          - 2s10s has the less bad Brier skill so neither spread clearly wins
         keywords: [[AUC], [10y-3m, 3-month, 2s10s, better, higher, beats]]
         numeric: {key: auc_oos_10y3m, tolerance: 0.03}
-        hint: Compare the two AUCs.
-        why: The PM asked about 2s10s, and the evidence says to watch 10y-3m.
+        hint: Compare the two AUCs and the two Brier skills.
+        why: The PM asked about 2s10s; the evidence leans to 10y-3m for ranking but is thin.
       - id: brier
         label: Calibration evidence
         weight: 25
         paraphrases:
           - the Brier skill score is negative so the probabilities are worse than the base rate
           - before the split the skill was positive at {expected.bss_oos_pre_split_10y3m}
-          - from the split month the model gave high probabilities and no recession followed
+          - from the split month the model gave high probabilities and no recession has been dated so far
         keywords: [[Brier, skill, calibration], [negative, worse, base rate, positive, before]]
         numeric: {key: bss_oos_pre_split_10y3m, tolerance: 0.05}
         hint: What sign is the Brier skill score, and what was it before the split?
@@ -860,9 +871,9 @@ steps:
         label: Why it happened
         weight: 25
         paraphrases:
-          - one long false alarm destroyed calibration while timing worked for earlier recessions
+          - the long recent inversion broke calibration while timing worked for earlier recessions
           - a lower term premium can make the slope overstate recession risk
-          - the relationship may have changed, a regime shift
+          - one test recession was the pandemic shock so counting it as a hit flatters the signal
         keywords: [[false alarm, term premium, regime, changed, overstate, structural]]
         hint: Look at the recent period on the chart and think about what else moves long rates.
         why: Explaining a failure is what separates analysis from reporting.
@@ -872,7 +883,7 @@ steps:
         paraphrases:
           - only {expected.n_oos_recessions} recessions in the test period so estimates are noisy
           - the split is post-hoc and not used to choose the model
-          - USREC is revised after the fact so real-time performance could differ
+          - final-vintage NBER dates make this pseudo out of sample so real-time performance would be worse
         keywords: [[few, only, small sample, post-hoc, revised, real time, noisy]]
         hint: How many recessions does the test actually contain?
         why: Every result needs its error bars in words.
@@ -896,12 +907,12 @@ steps:
         paraphrases:
           - we should only use data before the split because the model works better there
         feedback: Choosing the period by its score is cherry-picking. The split explains the failure; it doesn't fix it.
-      - id: wrong_spread
+      - id: pandemic_hit
         critical: false
         penalty: 10
         paraphrases:
-          - 2s10s is clearly the better predictor
-        feedback: Out-of-sample, 10y-3m has the higher AUC.
+          - the yield curve predicted the pandemic recession
+        feedback: The pandemic was an outside shock. Counting it as a hit flatters the signal.
 
 - id: s19b_roc_card
   phase: model
@@ -933,14 +944,17 @@ steps:
   phase: decide
   type: concept_card
   title: How the trigger was chosen
-  prompt: The trigger was chosen BEFORE the test period, using only data known at the time.
+  prompt: The trigger was chosen BEFORE the test period, but on very little evidence.
   body: >-
     Using only training data up to the first forecast month, we chose the probability threshold that maximises
-    hit rate minus false-alarm rate (Youden's J). Result: {expected.threshold}. In spread terms the full-sample
-    probit reaches that probability when 10y-3m falls to {expected.trigger_spread_10y3m} percentage points.
-    Out-of-sample it was on in {expected.oos_hit_rate} of pre-recession months and in
-    {expected.oos_false_alarm_rate} of calm months. When it was on, a recession followed only
-    {expected.oos_signal_precision} of the time. Real output: {captured.threshold_episodes}
+    hit rate minus false-alarm rate (Youden's J, which treats both errors as equally costly). Result:
+    {expected.threshold}. Caution: at that point the training data held pre-recession months from only
+    {expected.n_train_recessions_at_start} recession, and with a one-month-shorter embargo the same rule picks
+    {expected.threshold_embargo12}. The threshold is fragile. Its spread equivalent also drifts as the model is
+    refit: {expected.trigger_spread_at_start} percentage points under the model fitted then,
+    {expected.trigger_spread_10y3m} under today's. Out-of-sample the signal was on in {expected.oos_hit_rate} of
+    pre-recession months and in {expected.oos_false_alarm_rate} of calm months, and a recession followed only
+    {expected.oos_signal_precision} of the time it was on. Real output: {captured.threshold_episodes}
 
 - id: s22_threshold
   phase: decide
@@ -955,13 +969,15 @@ steps:
   redo_step: Re-read the threshold card and the today_signal captured output.
   model_answer: >-
     Trigger metric: the out-of-sample probit probability of a recession within {expected.horizon_months}
-    months, driven by the 10y-3m spread. Value: {expected.threshold}, which corresponds to the 10y-3m spread
-    falling to about {expected.trigger_spread_10y3m} percentage points. Action: when it crosses, start
+    months, driven by the 10y-3m spread. Value: {expected.threshold}. Its spread equivalent drifts as the model is
+    refit ({expected.trigger_spread_10y3m} points under today's model), and the threshold rests on one training
+    recession ({expected.threshold_embargo12} under a slightly different embargo), so treat it as a zone, not a
+    precise line. Action: when it crosses, start
     reducing equity risk in steps rather than all at once, because the signal fired a median
     {expected.oos_signal_median_lead} months before recessions. Expected error: it caught
-    {expected.oos_hit_rate} of pre-recession months, but it was also on in {expected.oos_false_alarm_rate} of
-    calm months, and a recession followed only {expected.oos_signal_precision} of the time it was on. So
-    expect false alarms. Today the spread is {expected.latest_spread_10y3m} points with a probability of
+    {expected.oos_hit_rate} of pre-recession months (three test recessions, one the pandemic shock), but it was
+    also on in {expected.oos_false_alarm_rate} of calm months, and a recession followed only
+    {expected.oos_signal_precision} of the time it was on. So expect false alarms. Today the spread is {expected.latest_spread_10y3m} points with a probability of
     {expected.latest_prob_10y3m}, so the signal is {expected.latest_signal_10y3m}: no de-risking is
     triggered by this model.
   rubric:
@@ -981,11 +997,11 @@ steps:
         weight: 25
         paraphrases:
           - act when the probability exceeds {expected.threshold}
-          - act when 10y-3m falls below about {expected.trigger_spread_10y3m} points
-          - the threshold is {expected.threshold} chosen on training data
-        keywords: [[threshold, trigger, exceeds, below, above, falls]]
-        numeric: {key: trigger_spread_10y3m, tolerance: 0.15}
-        hint: Give the probability AND the spread level it corresponds to.
+          - the threshold is fragile because it rests on one training recession so treat it as a zone
+          - the spread equivalent drifts as the model is refit
+        keywords: [[threshold, trigger, exceeds, above, zone], [probability, fragile, drift, one recession]]
+        numeric: {key: threshold, tolerance: 0.03, accept_percent: true}
+        hint: Give the probability, and say how much you trust it.
         why: A rule of the form "act once we reach this value" needs the value itself.
       - id: action
         label: Action
@@ -1052,14 +1068,15 @@ steps:
   redo_step: Use the memo template and pull the numbers from the threshold card and the results step.
   model_answer: >-
     Recommendation: use the 10y-3m spread, not 2s10s, as a recession early-warning input. Begin staged
-    equity de-risking when the model probability exceeds {expected.threshold} (10y-3m below about
-    {expected.trigger_spread_10y3m} points). Today it is {expected.latest_prob_10y3m}, so no action. Evidence:
-    out-of-sample AUC {expected.auc_oos_10y3m} against {expected.auc_oos_2s10s} for 2s10s; the signal fired a
+    equity de-risking when the model probability exceeds about {expected.threshold}, treated as a zone because it
+    rests on little training evidence. Today it is {expected.latest_prob_10y3m}, so no action. Evidence:
+    pseudo-out-of-sample AUC {expected.auc_oos_10y3m} against {expected.auc_oos_2s10s} for 2s10s; the signal came a
     median {expected.oos_signal_median_lead} months before each of the {expected.n_oos_recessions} test-period
-    recessions. Risk left over: when the signal was on, a recession followed only
+    recessions (one was the pandemic shock). Risk left over: when the signal was on, a recession followed only
     {expected.oos_signal_precision} of the time, and the recent inversion produced a long false alarm that made the
-    probabilities overconfident (Brier skill {expected.bss_oos_10y3m}). Limitations: few recessions,
-    association not causation, USREC dated after the fact, and a possible regime change in term premiums.
+    probabilities overconfident (Brier skill {expected.bss_oos_10y3m}). Limitations: three test recessions,
+    association not causation, final-vintage NBER dates (so real-time results would be worse), a fragile
+    threshold, and a possible change in term premiums.
     Next step: add a term-premium-adjusted spread and a second indicator (for example credit spreads), then re-test
     out-of-sample before increasing the weight on this signal.
   rubric:
@@ -1068,8 +1085,8 @@ steps:
         label: Recommendation with a number
         weight: 25
         paraphrases:
-          - start staged de-risking when the probability exceeds {expected.threshold}
-          - use 10y-3m as the warning indicator with a trigger near {expected.trigger_spread_10y3m} points
+          - start staged de-risking when the probability exceeds about {expected.threshold}
+          - use 10y-3m as the warning indicator with the threshold treated as a zone
           - today no action because the probability is {expected.latest_prob_10y3m}
         keywords: [[recommend, use, start, de-risk, reduce, no action], [threshold, trigger, probability, spread]]
         numeric: {key: threshold, tolerance: 0.03, accept_percent: true}
@@ -1081,7 +1098,7 @@ steps:
         paraphrases:
           - out-of-sample AUC {expected.auc_oos_10y3m} versus {expected.auc_oos_2s10s}
           - the signal fired a median {expected.oos_signal_median_lead} months before recessions
-          - it caught all {expected.n_oos_recessions} test-period recessions
+          - it came before each of the {expected.n_oos_recessions} test recessions, one of them the pandemic
         keywords: [[AUC, lead, months, recessions, caught]]
         numeric: {key: auc_oos_10y3m, tolerance: 0.03}
         hint: Two or three numbers that support the recommendation.
@@ -1102,8 +1119,8 @@ steps:
         paraphrases:
           - few recessions in the sample
           - association not causation
-          - USREC is dated after the fact
-          - term premium regime change
+          - final vintage NBER dates make it pseudo out of sample
+          - the threshold is fragile and term premiums may have changed
         keywords: [[few, causation, association, revised, after the fact, term premium, regime]]
         hint: Name at least two.
         why: Limitations tell the reader how far to trust the result.
@@ -1145,11 +1162,11 @@ steps:
   title: What this case taught
   prompt: Discrimination is not calibration, and the first plan is rarely the final plan.
   body: >-
-    Our first plan kept recession months and fitted badly. Understanding WHY (the curve steepens inside
-    recessions) fixed it, and the fix follows from the decision, not from the score. A model can rank risk
+    Our first plan kept recession months and fitted badly. The poor result prompted the change, and we say so;
+    it is defended by the mechanism (the curve steepens inside recessions) and the decision population. A model can rank risk
     well (AUC {expected.auc_oos_10y3m}) and still give overconfident probabilities (Brier skill
-    {expected.bss_oos_10y3m}). Always test out-of-sample with an embargo when targets overlap, and turn
-    probabilities into a trigger with a stated error rate.
+    {expected.bss_oos_10y3m}). Out-of-sample on final-vintage dates is still only pseudo out-of-sample, and a threshold
+    fitted on one recession is fragile. Test with an embargo, state the error rates, and treat triggers as zones.
 
 debrief:
   concepts_learned:
@@ -1158,6 +1175,8 @@ debrief:
     - The modelling sample should match the decision population
     - AUC measures ranking; the Brier score against the base rate measures calibration
     - A threshold must be chosen on training data and reported with hit and false-alarm rates
+    - Final-vintage data makes a test pseudo out-of-sample; say so
+    - Disclose when a result prompted a modelling change
   common_mistakes:
     - Saying inversion causes recessions
     - Using a random train/test split on time series
@@ -1167,8 +1186,8 @@ debrief:
   interview_summary: >-
     I tested whether yield-curve inversion predicts US recessions using FRED data from
     {expected.sample_start}. My first model fitted poorly because months already in recession, when
-    the curve re-steepens, confused it. Matching the sample to the decision fixed that. In an
-    expanding-window test with an embargo, the 10y-3m spread reached AUC {expected.auc_oos_10y3m} and warned a median
-    {expected.oos_signal_median_lead} months before each recession. But a long recent false alarm made its probabilities
-    overconfident, so I recommended a staged de-risking trigger at {expected.threshold} with explicit
-    false-alarm rates, rather than treating inversion as a sell signal.
+    the curve re-steepens, confused it, so I matched the sample to the decision and disclosed the change. In a
+    pseudo-out-of-sample expanding-window test with an embargo, the 10y-3m spread reached AUC {expected.auc_oos_10y3m},
+    with only three test recessions (one the pandemic). The long recent inversion, with no recession dated so far, made
+    its probabilities overconfident, so I recommended a staged de-risking zone around {expected.threshold} with
+    explicit false-alarm rates, rather than treating inversion as a sell signal.

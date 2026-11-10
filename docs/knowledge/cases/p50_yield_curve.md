@@ -63,6 +63,27 @@ Then `uv run pytest` and `uv run python build_content.py`.
 | Trigger in spread units | full-sample probit inverse → `trigger_spread_10y3m` | Makes the rule something the PM can watch |
 | Split diagnostic | 2022-01 | Explains the lost skill; NOT used for any model choice |
 
+## Quality-gate review (fresh reviewer, 2026-11-10): what changed
+- **Pseudo, not real, out-of-sample.** Final-vintage NBER dates are used, and NBER announces turning points months later.
+  Wording changed everywhere. Sensitivities: score all months (`auc_oos_allscored_10y3m`, much lower) and a 24-month
+  embargo (`auc_oos_embargo24_10y3m`, `bss_oos_embargo24_10y3m`; months with too few positives are skipped:
+  `embargo24_skipped_months`).
+- **Embargo is strict**: train on rows s ≤ t−13 (`EMBARGO`), because forecasting during month t means USREC(t) is unknown.
+  This moved the threshold from 15% to 25%. Both are stored (`threshold`, `threshold_embargo12`): the threshold rests
+  on **one** training recession (`n_train_recessions_at_start`) and is fragile. It is taught as a zone.
+- **Trigger spread drifts**: `trigger_spread_10y3m` uses today's full-sample model; `trigger_spread_at_start` uses the
+  model at the first forecast.
+- **Lead table double-count fixed**: the search window can't reach back past the previous recession (1981 is no
+  longer credited with the 1978–80 inversion).
+- **Honest plan history (s11)**: the poor first result PROMPTED the switch to expansion months (a researcher degree
+  of freedom). It is disclosed and defended by mechanism. The rejected plan's OOS numbers are stored
+  (`auc_oos_all_months_10y3m`, `bss_oos_all_months_10y3m`).
+- **Pandemic**: counted among the 3 OOS recessions, but flagged as an outside shock; ex-COVID pre-split skill
+  `bss_pre_split_excovid_10y3m`.
+- **2022 split**: calendar split, not an inversion start (`inv_start_latest_*`); "no recession dated so far".
+- **HAC lag sensitivity**: 24 and 36 lags (`probit_se_hac24_*`, `probit_se_hac36_*`).
+- "NY Fed uses exactly t+12" is **UNVERIFIED** (no source opened). Johansson & Meldrum is a Board *staff* FEDS Note.
+
 ## Headline result keys (what to show a recruiter)
 - Lead: `median_lead_months` (range `min_lead_months`–`max_lead_months`), `recessions_signalled_2s10s` of
   `recessions_evaluable_2s10s`, `false_alarm_episodes_2s10s`.

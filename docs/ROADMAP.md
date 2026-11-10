@@ -11,7 +11,7 @@ Prompts come from docs/spec.pdf §10. Status: TODO / IN PROGRESS / DONE / BLOCKE
 | 5 | Interactive charts (Syncfusion; PNG fallback) | DONE | Pinch/pan, unit tooltips, legend toggle, reset, landscape full screen verified on S21+. Pinch-zoom misses ~12% of 60 Hz build frames (median of 9 measured runs), raster 0 missed. No licence key needed in 35.x; fl_chart not added (DECISIONS) |
 | 6 | Examiner: grading engine, 3 attempts, 85% | TODO | flutter_onnxruntime + MiniLM; verify 16 KB pages |
 | 7 | Calibrate and test the grader | TODO | Owner labels calibration answers |
-| 8 | Remaining Tier A cases in batches | IN PROGRESS | Batch 1: **P34 DONE** (quality-gated, fixed), **P3 DONE** (quality gate pending), **P13 BLOCKED**: FastF1 3.9 timing data needs an active F1TV subscription (owner decision: provide F1TV login, or approve a Tier-B reframe on Jolpica lap times + pit stops without tyre compounds). Next: P1, then spec §8 order |
+| 8 | Remaining Tier A cases in batches | IN PROGRESS | Batch 1: **P34 DONE** (quality-gated, fixed), **P3 DONE** (quality-gated, fixed); P50 also re-gated and fixed, **P13 BLOCKED**: FastF1 3.9 timing data needs an active F1TV subscription (owner decision: provide F1TV login, or approve a Tier-B reframe on Jolpica lap times + pit stops without tyre compounds). Next: P1, then spec §8 order |
 | 9 | Learn tab, spaced review, progress, portfolio export | TODO | |
 | 10 | Optional AI feedback + release build | TODO | flutter_gemma discontinued -> flutter_edge_ai |
 

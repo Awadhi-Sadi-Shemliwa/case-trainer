@@ -23,7 +23,7 @@ answers:
     hubs. Evidence: share of late aircraft, evening ratio, and pass-through drop. Risk: fewer flights per aircraft.
     Limits: observational, labels. Next step: trial and measure.'
   label: acceptable
-  kind: strong
+  kind: partial
   owner_review: false
 - id: a04
   text: 'Action: pilot {expected.buffer_min_turn}-minute turns on tight evening turns. Why: {expected.share_lateaircraft}
@@ -51,8 +51,8 @@ answers:
   text: 'Recommendation with number: at least {expected.buffer_min_turn} minutes on targeted turns. Evidence: three
     numbers above. Risk: cost, initial delays remain. Limitations: labels, swaps, cancellations. Next: pilot with
     controls.'
-  label: acceptable
-  kind: strong
+  label: not_acceptable
+  kind: partial
   owner_review: false
 - id: a08
   text: Targeted, piloted {expected.buffer_min_turn}-minute minimum turns; late aircraft {expected.share_lateaircraft};
@@ -177,3 +177,12 @@ answers:
   label: not_acceptable
   kind: wrong
   owner_review: false
+- id: a31
+  text: 'Adding thirty minutes to every turn in the network is not what I recommend, because of cost. Pilot {expected.buffer_min_turn}-{expected.buffer_turn_octdec}-minute
+    minimum turns on evening banks at {expected.evening_worst_airport} and similar. Evidence: late aircraft {expected.share_lateaircraft};
+    evening {expected.la_evening_ratio}x morning; within airlines {expected.pass_cw_b1} vs {expected.pass_cw_b5}.
+    Risk: cost; threshold moved. Limits: labels, observational. Next: controlled pilot.'
+  label: acceptable
+  kind: strong
+  owner_review: true
+  note: Negates a red flag.
