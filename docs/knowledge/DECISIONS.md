@@ -89,6 +89,18 @@ FastF1 3.9.2 signs in to a Formula 1 account and needs "An active F1TV subscript
 `pipeline/f1_fetch/` (FastF1 needs pandas<3; main pipeline is pandas 3). Owner options: F1TV login, or a Tier-B
 reframe on Jolpica lap times + pit stops (no tyre compounds).
 
+### 2026-11-10 · P13 unblocked: use OpenF1 instead of FastF1
+Re-tested FastF1 3.9.2 on 2026-11-10: without credentials every timing feed fails ("Failed to load timing data!"),
+and its sign-in code says "An active F1TV subscription is required." A free F1 account is not enough.
+OpenF1 (https://openf1.org, API https://api.openf1.org/v1/) works with no login. Probed for the 2023 Bahrain race
+(session_key 7953): `laps` (lap_duration, is_pit_out_lap, sectors), `stints` (compound, tyre_age_at_start,
+lap_start/lap_end) and `race_control` (Safety Car / VSC messages with lap numbers) all return data.
+Terms (openf1.org, read 2026-11-10): "Licensed under CC BY-NC-SA 4.0"; intended for "educational purposes, personal
+learning projects, research". Free tier: historical sessions since 2023, 3 req/s and 30 req/min.
+Handling: raw JSON stays git-ignored (same as before); committed aggregates and charts carry a CC BY-NC-SA 4.0 notice
+and credit OpenF1 (ShareAlike applies to derived data we publish). FastF1 env `pipeline/f1_fetch/` is no longer
+needed for P13 once the OpenF1 download is written; keep it until then.
+
 ### 2026-11-09 · Large raw data: commit aggregates, not raw (P3)
 BTS 2025 is ~350 MB. Raw zips are git-ignored with SHA-256 in provenance; `clean.py` writes small aggregates
 (sufficient statistics for exact OLS) that are committed. Tests reproduce results from aggregates always, and

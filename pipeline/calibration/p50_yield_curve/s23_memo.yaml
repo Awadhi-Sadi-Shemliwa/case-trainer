@@ -8,10 +8,11 @@ answers:
     the model probability exceeds {expected.threshold} (10y-3m below about {expected.trigger_spread_10y3m} points).
     Today it is {expected.latest_prob_10y3m}, so no action. Evidence: out-of-sample AUC {expected.auc_oos_10y3m}
     versus {expected.auc_oos_2s10s} for 2s10s; the signal fired a median {expected.oos_signal_median_lead} months
-    before each of the {expected.n_oos_recessions} test recessions. Risk: only {expected.oos_signal_precision} of
-    signal months were followed by a recession, and the recent false alarm made probabilities overconfident. Limitations:
-    few recessions, association not causation, USREC revised after the fact. Next step: add a term-premium-adjusted
-    spread and credit spreads and re-test.'
+    before each of the {expected.n_oos_recessions} test recessions (one was the pandemic shock, so that count
+    flatters it). Risk: only {expected.oos_signal_precision} of signal months were followed by a recession, and the
+    recent false alarm made probabilities overconfident. Limitations: few recessions, association not causation,
+    USREC revised after the fact. Next step: add a term-premium-adjusted spread and credit spreads and re-test.'
+  note: Caught-all claim kept only with the pandemic caveat (added in the 2026-11-10 cross-check).
 - id: a02
   kind: strong
   label: acceptable

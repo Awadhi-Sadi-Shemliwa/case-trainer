@@ -83,7 +83,6 @@ def test_embargo_no_lookahead():
         allowed = data.loc[: t - pd.DateOffset(months=A.EMBARGO)]
         allowed = allowed[allowed["model_sample"]].dropna(subset=["T10Y3M"])
         assert f.at[t, "n_train"] == len(allowed)
-        # every training row's target window ends no later than the forecast month
         # every training row's target window ends BEFORE the forecast month (USREC(t) unknown during month t)
         assert (allowed.index + pd.DateOffset(months=A.HORIZON)).max() <= t - pd.DateOffset(months=1)
 

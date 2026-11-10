@@ -55,7 +55,9 @@ Syncfusion exports those names. Our chart model uses `SpecSeries` / `SpecAxis`.
 Git normalised line endings in raw CSVs. Fixed by `pipeline/cases/*/raw/** binary` in `.gitattributes`.
 
 ### FastF1: "Failed to load timing data!" / DataNotLoadedError
-FastF1 3.9 requires an active F1TV subscription for live-timing data. See DECISIONS (P13 blocked).
+FastF1 3.9 requires an active F1TV subscription for live-timing data (re-confirmed 2026-11-10). Use OpenF1 instead
+(no login): see DECISIONS "P13 unblocked". Also: FastF1's cache directory must exist before `Cache.configure`,
+otherwise it raises NotADirectoryError; `enable_cache` is deprecated in 3.9.
 
 ### uv: fastf1 vs pandas 3 conflict
 FastF1 pins pandas<3. Use the isolated `pipeline/f1_fetch` env for downloads only.

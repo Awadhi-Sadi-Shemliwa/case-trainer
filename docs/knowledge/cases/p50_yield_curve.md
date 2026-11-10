@@ -69,7 +69,7 @@ Then `uv run pytest` and `uv run python build_content.py`.
   embargo (`auc_oos_embargo24_10y3m`, `bss_oos_embargo24_10y3m`; months with too few positives are skipped:
   `embargo24_skipped_months`).
 - **Embargo is strict**: train on rows s ≤ t−13 (`EMBARGO`), because forecasting during month t means USREC(t) is unknown.
-  This moved the threshold from 15% to 25%. Both are stored (`threshold`, `threshold_embargo12`): the threshold rests
+  This moved the threshold from `threshold_embargo12` to `threshold`. Both are stored (`threshold`, `threshold_embargo12`): the threshold rests
   on **one** training recession (`n_train_recessions_at_start`) and is fragile. It is taught as a zone.
 - **Trigger spread drifts**: `trigger_spread_10y3m` uses today's full-sample model; `trigger_spread_at_start` uses the
   model at the first forecast.
@@ -78,7 +78,7 @@ Then `uv run pytest` and `uv run python build_content.py`.
 - **Honest plan history (s11)**: the poor first result PROMPTED the switch to expansion months (a researcher degree
   of freedom). It is disclosed and defended by mechanism. The rejected plan's OOS numbers are stored
   (`auc_oos_all_months_10y3m`, `bss_oos_all_months_10y3m`).
-- **Pandemic**: counted among the 3 OOS recessions, but flagged as an outside shock; ex-COVID pre-split skill
+- **Pandemic**: counted among the `n_oos_recessions` OOS recessions, but flagged as an outside shock; ex-COVID pre-split skill
   `bss_pre_split_excovid_10y3m`.
 - **2022 split**: calendar split, not an inversion start (`inv_start_latest_*`); "no recession dated so far".
 - **HAC lag sensitivity**: 24 and 36 lags (`probit_se_hac24_*`, `probit_se_hac36_*`).

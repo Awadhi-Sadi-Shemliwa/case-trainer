@@ -574,8 +574,8 @@ steps:
     Each dot is one expansion month: the x-axis is that month's 2s10s spread in percentage points; the y-axis
     is one if a recession began within the next {expected.horizon_months} months and zero otherwise. The dashed
     curves are the probit fit and the observed share per spread bin. Pattern: the lower the spread, the
-    higher the chance of a recession ahead. Above roughly one point almost no month is followed by a
-    recession; near or below zero the share rises sharply. Strength: the probit slope is
+    higher the chance of a recession ahead. Above one point, {expected.fwd_share_above1_2s10s} of
+    {expected.fwd_n_above1_2s10s} months were followed by a recession, against {expected.fwd_share_le0_2s10s} of months at or below zero. Strength: the probit slope is
     {expected.probit_slope_2s10s} and pseudo R-squared {expected.pseudo_r2_2s10s}. That is a clear relationship,
     but most months near zero are still NOT followed by a recession, and the base rate is only
     {expected.base_rate_next12}. Anomaly: the most inverted bin has a low observed share, because those
@@ -823,7 +823,7 @@ steps:
   model_answer: >-
     Claim: the curve ranks risky months reasonably well in a pseudo-out-of-sample test, but its probabilities
     can't be taken at face value. Evidence: AUC is {expected.auc_oos_10y3m} for 10y-3m against
-    {expected.auc_oos_2s10s} for 2s10s, though with three test recessions that gap is uncertain, and 2s10s has the
+    {expected.auc_oos_2s10s} for 2s10s, though with {expected.n_oos_recessions} test recessions that gap is uncertain, and 2s10s has the
     less bad Brier skill ({expected.bss_oos_2s10s} against {expected.bss_oos_10y3m}). Both are worse than
     always forecasting the base rate. Before {expected.split_from} the 10y-3m skill was
     {expected.bss_oos_pre_split_10y3m}, or {expected.bss_pre_split_excovid_10y3m} without the pandemic months.
@@ -831,7 +831,7 @@ steps:
     been dated so far. Reasoning: the signal came before each test recession, one of them the pandemic shock that
     no yield curve could foresee, but the long recent inversion broke its calibration. A Federal Reserve Board staff
     note (Johansson and Meldrum) argues that a lower term premium can make the raw slope overstate risk.
-    Limitations: three test recessions; final-vintage NBER dates (scoring all months gives an AUC of only
+    Limitations: {expected.n_oos_recessions} test recessions; final-vintage NBER dates (scoring all months gives an AUC of only
     {expected.auc_oos_allscored_10y3m}); the split is post-hoc.
   rubric:
     points:
@@ -850,7 +850,7 @@ steps:
         weight: 20
         paraphrases:
           - out-of-sample AUC is {expected.auc_oos_10y3m} for 10y-3m versus {expected.auc_oos_2s10s} for 2s10s
-          - 10y-3m ranks months better but with three recessions the gap is uncertain
+          - 10y-3m ranks months better but with {expected.n_oos_recessions} recessions the gap is uncertain
           - 2s10s has the less bad Brier skill so neither spread clearly wins
         keywords: [[AUC], [10y-3m, 3-month, 2s10s, better, higher, beats]]
         numeric: {key: auc_oos_10y3m, tolerance: 0.03}
@@ -975,7 +975,7 @@ steps:
     precise line. Action: when it crosses, start
     reducing equity risk in steps rather than all at once, because the signal fired a median
     {expected.oos_signal_median_lead} months before recessions. Expected error: it caught
-    {expected.oos_hit_rate} of pre-recession months (three test recessions, one the pandemic shock), but it was
+    {expected.oos_hit_rate} of pre-recession months ({expected.n_oos_recessions} test recessions, one the pandemic shock), but it was
     also on in {expected.oos_false_alarm_rate} of calm months, and a recession followed only
     {expected.oos_signal_precision} of the time it was on. So expect false alarms. Today the spread is {expected.latest_spread_10y3m} points with a probability of
     {expected.latest_prob_10y3m}, so the signal is {expected.latest_signal_10y3m}: no de-risking is
@@ -997,7 +997,7 @@ steps:
         weight: 25
         paraphrases:
           - act when the probability exceeds {expected.threshold}
-          - the threshold is fragile because it rests on one training recession so treat it as a zone
+          - the threshold is fragile because it rests on {expected.n_train_recessions_at_start} training recession so treat it as a zone
           - the spread equivalent drifts as the model is refit
         keywords: [[threshold, trigger, exceeds, above, zone], [probability, fragile, drift, one recession]]
         numeric: {key: threshold, tolerance: 0.03, accept_percent: true}
@@ -1074,7 +1074,7 @@ steps:
     median {expected.oos_signal_median_lead} months before each of the {expected.n_oos_recessions} test-period
     recessions (one was the pandemic shock). Risk left over: when the signal was on, a recession followed only
     {expected.oos_signal_precision} of the time, and the recent inversion produced a long false alarm that made the
-    probabilities overconfident (Brier skill {expected.bss_oos_10y3m}). Limitations: three test recessions,
+    probabilities overconfident (Brier skill {expected.bss_oos_10y3m}). Limitations: {expected.n_oos_recessions} test recessions,
     association not causation, final-vintage NBER dates (so real-time results would be worse), a fragile
     threshold, and a possible change in term premiums.
     Next step: add a term-premium-adjusted spread and a second indicator (for example credit spreads), then re-test
@@ -1188,6 +1188,6 @@ debrief:
     {expected.sample_start}. My first model fitted poorly because months already in recession, when
     the curve re-steepens, confused it, so I matched the sample to the decision and disclosed the change. In a
     pseudo-out-of-sample expanding-window test with an embargo, the 10y-3m spread reached AUC {expected.auc_oos_10y3m},
-    with only three test recessions (one the pandemic). The long recent inversion, with no recession dated so far, made
+    with only {expected.n_oos_recessions} test recessions (one the pandemic). The long recent inversion, with no recession dated so far, made
     its probabilities overconfident, so I recommended a staged de-risking zone around {expected.threshold} with
     explicit false-alarm rates, rather than treating inversion as a sell signal.

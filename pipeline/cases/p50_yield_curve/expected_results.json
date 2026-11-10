@@ -195,6 +195,34 @@
     "display": "2",
     "produced_by": "__main__:leads"
   },
+  "fwd_n_above1_2s10s": {
+    "value": 212,
+    "unit": "months",
+    "description": "Expansion months with 2s10s above 1 point",
+    "display": "212",
+    "produced_by": "__main__:forward_shares"
+  },
+  "fwd_n_le0_2s10s": {
+    "value": 60,
+    "unit": "months",
+    "description": "Expansion months with 2s10s at or below zero",
+    "display": "60",
+    "produced_by": "__main__:forward_shares"
+  },
+  "fwd_share_above1_2s10s": {
+    "value": 0.0,
+    "unit": "share",
+    "description": "2s10s above 1 point: share of expansion months followed by a recession within 12 months",
+    "display": "0.0%",
+    "produced_by": "__main__:forward_shares"
+  },
+  "fwd_share_le0_2s10s": {
+    "value": 0.26666666666666666,
+    "unit": "share",
+    "description": "2s10s at or below zero: share of expansion months followed by a recession within 12 months",
+    "display": "26.7%",
+    "produced_by": "__main__:forward_shares"
+  },
   "hac_lags": {
     "value": 12,
     "unit": "months",

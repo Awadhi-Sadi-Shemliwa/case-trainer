@@ -554,12 +554,26 @@ def charts(p: pd.DataFrame, fits: dict, forecasts: dict[str, pd.DataFrame], th: 
     ), out)
 
 
+def forward_shares(p: pd.DataFrame, rs: ResultStore) -> None:
+    """Observed recession-ahead share by spread zone, on the scatter chart's sample (s13 prose rests on these)."""
+    known = p.dropna(subset=["rec_next12"])
+    common = known[known["model_sample"]].dropna(subset=["T10Y3M"])
+    zones = {"above1": common["T10Y2Y"] > 1, "le0": common["T10Y2Y"] <= 0}
+    for name, mask in zones.items():
+        rs.put(f"fwd_share_{name}_2s10s", float(common.loc[mask, "rec_next12"].mean()), "share",
+               f"2s10s {'above 1 point' if name == 'above1' else 'at or below zero'}: share of expansion months "
+               "followed by a recession within 12 months", pct=True)
+        rs.put(f"fwd_n_{name}_2s10s", int(mask.sum()), "months",
+               f"Expansion months with 2s10s {'above 1 point' if name == 'above1' else 'at or below zero'}")
+
+
 def analyse() -> ResultStore:
     p = load_panel()
     rs = ResultStore(CASE_DIR)
     rs.put("horizon_months", HORIZON, "months", "Forecast horizon of the target")
     descriptives(p, rs)
     leads(p, rs)
+    forward_shares(p, rs)
     fits = in_sample(p, rs)
     forecasts = oos(p, rs)
     th = decision(p, forecasts["10y3m"], fits, rs)

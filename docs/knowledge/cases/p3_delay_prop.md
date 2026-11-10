@@ -1,6 +1,6 @@
 # P3 — How much flight delay is passed on, and where? (case notes)
 
-Status: built end to end on 2026-11-09 (Prompt 8, batch 1). Awaiting owner review (22 calibration answers flagged).
+Status: built end to end on 2026-11-09 (Prompt 8, batch 1). Awaiting owner review (27 calibration answers flagged).
 Result numbers live in `expected_results.json` (not typed here).
 
 ## Data
