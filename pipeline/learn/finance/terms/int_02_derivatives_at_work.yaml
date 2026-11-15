@@ -1,0 +1,146 @@
+# Intermediate lesson 2 · Derivatives at work. Words 111-120.
+- id: payoff
+  term: Payoff
+  aliases: [payoffs, payoff diagram]
+  short: What a derivative is worth at its end for each possible price of the underlying, often drawn as a chart.
+  plain: >-
+    Drawing it is the quickest way to understand a contract: a bought call is flat at zero and then rises in a
+    straight line; a forward is one straight line through the agreed price. Profit is this amount minus what
+    you paid.
+  fools_you: >-
+    Value at the end is not value today: a call that would pay nothing right now can still be worth something
+    with time left.
+  related: [call_option, put_option, forward_contract, intrinsic_value]
+
+- id: intrinsic_value
+  term: Intrinsic value
+  short: What an option would be worth if it had to be used right now, given today's price of the underlying.
+  plain: >-
+    It can never be below zero, because nobody uses an option that loses money. Everything an option costs
+    above it is time value.
+  formula:
+    tex: '\mathrm{IV}_{\mathrm{call}} = \max(S - K,\ 0)'
+    plain: For a call, intrinsic value = the larger of (price today − strike) and zero
+    symbols:
+      - {symbol: S, means: price of the underlying today}
+      - {symbol: K, means: strike price}
+  example:
+    values: {S: 108, K: 100}
+    compute: {iv: 'max(S - K, 0)'}
+    formats: {S: '£{:,.0f}', K: '£{:,.0f}', iv: '£{:,.0f}'}
+    text: A call with a strike of {K}, when the share trades at {S}, has intrinsic value of {iv}.
+  fools_you: >-
+    In company valuation the same words mean something else: an estimate of what a business is truly worth.
+  related: [time_value_option, option_premium, moneyness]
+
+- id: time_value_option
+  term: Time value (of an option)
+  aliases: [time value of an option]
+  short: The part of an option's price above its intrinsic value, paid for the chance that things improve before expiry.
+  plain: >-
+    More time and more volatility mean more chances of a favourable move, so this part is larger. It melts
+    away as expiry nears, fastest at the very end.
+  formula:
+    tex: '\mathrm{TV} = \mathrm{premium} - \mathrm{intrinsic\ value}'
+    plain: Time value = option price − intrinsic value
+    symbols:
+      - {symbol: premium, means: price of the option}
+      - {symbol: intrinsic value, means: what it would pay right now}
+  example:
+    values: {prem: 11, iv: 8}
+    compute: {tv: prem - iv}
+    formats: {prem: '£{:,.0f}', iv: '£{:,.0f}', tv: '£{:,.0f}'}
+    text: An option costing {prem} with intrinsic value of {iv} carries {tv} of time value.
+  fools_you: >-
+    It is not the time value of money from the interest lesson, although both are about waiting.
+  related: [intrinsic_value, option_premium, expiry, theta]
+
+- id: moneyness
+  term: In, at and out of the money
+  aliases: [in the money, out of the money, at the money, in-the-money, out-of-the-money]
+  short: Whether using an option right now would pay something, roughly break even, or pay nothing.
+  plain: >-
+    A call is inside when the share is above the strike, a put when it is below. Options outside are cheap
+    because they only pay if the price moves a lot.
+  fools_you: >-
+    Inside does not mean profitable: you may have paid more for the option than it now pays.
+  related: [strike_price, intrinsic_value, call_option, put_option]
+
+- id: swap
+  term: Swap
+  aliases: [swaps]
+  short: An agreement to exchange one stream of payments for another over a period, such as fixed interest for floating interest.
+  plain: >-
+    These contracts let companies and banks change the kind of risk they carry without touching the
+    underlying loans. One of the largest markets is in interest-rate versions; others exchange currencies or
+    the risk of default.
+  fools_you: >-
+    It usually costs nothing on day one, yet it can become very valuable, or very costly, as rates move.
+  related: [interest_rate_swap, credit_default_swap, notional, derivative]
+
+- id: interest_rate_swap
+  term: Interest-rate swap
+  aliases: [interest rate swap, interest-rate swaps, interest rate swaps]
+  short: A contract where one side pays a fixed interest rate and the other pays a floating rate, both on the same notional amount.
+  plain: >-
+    A company with a floating-rate loan that fears rising rates can agree to pay fixed and receive floating,
+    turning its loan into a fixed-rate one in effect. Banks and pension funds use them to manage how their
+    assets and debts react to rates.
+  example:
+    values: {N: 10000000, fix: 0.04, flt: 0.047}
+    compute: {net: (flt - fix) * N}
+    formats: {N: '£{:,.0f}', fix: '{:.1%}', flt: '{:.1%}', net: '£{:,.0f}'}
+    text: On a notional of {N}, the side paying a fixed {fix} and receiving a floating {flt} gains {net} for the year.
+  fools_you: >-
+    Locking in a fixed rate protects you if rates rise and costs you if they fall: it removes surprise, not
+    cost.
+  related: [swap, notional, sonia_sofr, interest_rate]
+
+- id: notional
+  term: Notional amount
+  aliases: [notional, notional value, notional principal]
+  short: The reference amount used to calculate a derivative's payments, which usually never changes hands itself.
+  plain: >-
+    A swap on a hundred million pounds exchanges interest calculated on that amount, but the hundred million is
+    never paid. That is why headline derivative totals sound enormous while the money actually at risk is much
+    smaller.
+  fools_you: >-
+    Size on paper is not risk in either direction: a small contract with high leverage can still lose a lot.
+  related: [swap, interest_rate_swap, derivative]
+
+- id: credit_default_swap
+  term: Credit default swap (CDS)
+  aliases: [CDS, credit default swaps]
+  short: A contract where one side pays a regular fee and the other pays out if a named borrower defaults, like insurance on a bond.
+  plain: >-
+    Buyers use it to protect bonds they own or to bet against a borrower's health. Its price, quoted as a
+    yearly fee, is a live reading of how risky the market thinks the borrower is.
+  fools_you: >-
+    The protection is only as good as its seller, who may be in trouble in exactly the crisis you insured
+    against.
+  related: [swap, default, credit_spread, counterparty_risk]
+
+- id: counterparty_risk
+  term: Counterparty risk
+  aliases: [counterparty credit risk, counterparty, counterparties]
+  short: The danger that the other side of a contract fails to pay what it owes you.
+  plain: >-
+    Private derivatives and loans carry it; exchange-traded futures mostly avoid it, because a clearing house
+    stands between the parties and collects collateral. This is a big reason so much trading now goes through
+    clearing houses.
+  fools_you: >-
+    A perfect hedge on paper is worthless if the institution on the other side collapses.
+  related: [clearing_settlement, collateral, over_the_counter, credit_default_swap]
+
+- id: margin_call
+  term: Margin call
+  aliases: [margin calls, initial margin, variation margin, margin account]
+  short: A demand for more cash or collateral when a leveraged position loses money.
+  plain: >-
+    With futures and borrowed-money trading you post a deposit. If losses eat into it below a set level, you
+    must top it up quickly, or the position is closed for you, often at the worst moment.
+  fools_you: >-
+    It can force you out of a trade that would have recovered, which is how leverage turns a temporary dip
+    into a permanent loss.
+  related: [leverage, futures_contract, collateral]
+  sources: [cftc_futures_basics]

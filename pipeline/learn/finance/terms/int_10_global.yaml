@@ -1,0 +1,127 @@
+# Intermediate lesson 10 · Currencies, commodities and the cycle. Words 191-200.
+- id: exchange_rate
+  term: Exchange rate
+  aliases: [exchange rates, FX, FX rate, currency rate]
+  short: The price of one currency in terms of another, such as how many dollars one pound buys.
+  plain: >-
+    These prices move with interest-rate differences, trade flows, growth and investors' appetite for risk.
+    Anyone holding foreign assets is exposed to them on top of the assets' own returns.
+  example:
+    values: {usd: 1000, r: 1.27}
+    compute: {gbp: usd / r}
+    formats: {usd: '{:,.0f}', r: '{:.2f}', gbp: '£{:,.2f}'}
+    text: At {r} dollars to the pound, a bill for {usd} dollars costs {gbp}.
+  fools_you: >-
+    A foreign investment can rise in its own currency and still lose money for you if that currency falls.
+  related: [appreciation_depreciation, purchasing_power_parity, carry_trade]
+
+- id: appreciation_depreciation
+  term: Currency appreciation and depreciation
+  aliases: [currency appreciation, currency depreciation, appreciation]
+  short: A currency becoming worth more, or less, compared with other currencies.
+  plain: >-
+    A weaker pound makes imports dearer and UK exports cheaper abroad, and lifts the sterling value of foreign
+    assets. Central banks watch it because it feeds into inflation.
+  fools_you: >-
+    A strong currency is not simply good news: it hurts exporters and shrinks the home-currency value of
+    overseas earnings.
+  related: [exchange_rate, inflation, purchasing_power_parity]
+
+- id: purchasing_power_parity
+  term: Purchasing power parity (PPP)
+  aliases: [PPP]
+  short: The idea that over the long run exchange rates move so that the same basket of goods costs the same everywhere.
+  plain: >-
+    Actual rates can stay far from this level for years, but very large gaps tend to narrow eventually.
+    Economists also use it to compare living standards across countries.
+  example:
+    values: {pUK: 4.0, pUS: 5.6}
+    compute: {ppp: pUS / pUK}
+    formats: {pUK: '£{:,.2f}', pUS: '{:,.2f}', ppp: '{:.2f}'}
+    text: If the same meal costs {pUK} in London and {pUS} dollars in New York, the parity rate is {ppp} dollars to the pound.
+  fools_you: >-
+    Many things cannot be traded across borders, like haircuts and rent, so it is a slow, rough anchor, not a
+    forecast.
+  related: [exchange_rate, appreciation_depreciation, real_vs_nominal]
+
+- id: carry_trade
+  term: Carry trade
+  aliases: [carry trades]
+  short: Borrowing in a low-interest currency to invest in a high-interest one, earning the gap between the two rates.
+  plain: >-
+    It pays steadily in calm times. But high-interest currencies can fall sharply in a panic, wiping out years
+    of earnings in days.
+  fools_you: >-
+    The steady gains are pay for crash risk, like picking up coins in front of a steamroller.
+  related: [exchange_rate, tail_risk, leverage]
+
+- id: commodity
+  term: Commodity
+  aliases: [commodities, raw materials]
+  short: A basic, interchangeable raw material such as oil, copper, wheat or gold, traded in bulk.
+  plain: >-
+    One barrel of a given crude grade is much like another, so prices are set globally. Most trading happens
+    through futures, and prices swing with the economic cycle, weather and politics. A planned case has an
+    airline hedging its jet fuel.
+  fools_you: >-
+    Holding futures on a raw material is not the same as holding the material: rolling contracts can cost or
+    earn money on its own.
+  related: [futures_contract, spot_price, contango_backwardation, hedging]
+  sources: [cftc_futures_basics]
+
+- id: spot_price
+  term: Spot price
+  aliases: [spot prices, spot rate]
+  short: The price for buying or selling something for immediate delivery, as opposed to a future date.
+  plain: >-
+    Futures prices for later dates can sit above or below it, depending on storage costs, interest rates and
+    expected supply.
+  fools_you: >-
+    A headline oil price is often the nearest futures contract, not the price of physical oil today.
+  related: [commodity, futures_contract, contango_backwardation]
+  sources: [cftc_futures_basics]
+
+- id: contango_backwardation
+  term: Contango and backwardation
+  aliases: [contango, backwardation]
+  short: Whether futures prices for later dates sit above today's price (a rising curve) or below it (a falling curve).
+  plain: >-
+    A rising curve is normal when storage costs money; a falling one signals tight supply now. Investors who
+    keep rolling futures lose in a rising curve and gain in a falling one, whatever spot prices do.
+  fools_you: >-
+    A commodity fund can lose money even while the spot price rises, if the curve slopes steeply upward.
+  related: [futures_contract, spot_price, commodity]
+  sources: [cftc_futures_basics]
+
+- id: stagflation
+  term: Stagflation
+  short: Weak growth and rising unemployment combined with high inflation, a painful mix for central banks.
+  plain: >-
+    A slowdown normally cools prices. In this mix, raising rates to fight inflation deepens the slump, while
+    cutting them feeds inflation. Supply shocks such as a jump in energy prices can cause it.
+  fools_you: >-
+    Not every spell of high inflation and slow growth lasts; headlines use the word loosely.
+  related: [inflation, recession, monetary_policy]
+  sources: [boe_inflation_explainer]
+
+- id: soft_landing
+  term: Soft landing
+  aliases: [soft landings, hard landing]
+  short: A slowdown in which inflation is brought down by higher rates without tipping the economy into recession.
+  plain: >-
+    It is what central banks aim for when they raise rates. A hard landing is the opposite: rates rise and the
+    economy falls into recession. The P50 case is about how much warning you get before a hard one.
+  fools_you: >-
+    Success is often declared too early; downturns can arrive well after the last rate rise.
+  related: [recession, rate_hike_cut, inversion, monetary_policy]
+
+- id: pmi
+  term: PMI (purchasing managers' index)
+  aliases: [PMI, PMIs, purchasing managers' index]
+  short: A monthly survey of company buyers on orders, output and hiring, where readings above fifty signal growth.
+  plain: >-
+    Because it arrives quickly and asks about new orders, it is watched as an early sign of turning points,
+    alongside the yield curve.
+  fools_you: >-
+    It counts how many firms say things are improving, not by how much, so it can exaggerate small changes.
+  related: [leading_indicator, business_cycle, economic_growth]

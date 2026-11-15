@@ -1,0 +1,151 @@
+# Lesson 4 · Central banks and government. Words 31-40.
+- id: central_bank
+  term: Central bank
+  aliases: [central banks]
+  short: The public institution that manages a country's money, sets its main interest rate and supports banks in a crisis.
+  plain: >-
+    Ordinary banks hold accounts at the central bank, much as you hold one at a high-street bank. By changing
+    the rate it pays and charges on that money, the central bank nudges every other interest rate in the
+    economy. Most aim to keep inflation low and stable, and in a panic they lend to banks that have run short
+    of cash.
+  fools_you: >-
+    Central banks do not set mortgage or savings rates directly. They move their own rate and the rest
+    follows, often only partly and with a delay.
+  related: [federal_reserve, bank_of_england, monetary_policy, policy_rate]
+  sources: [fed_monetary_policy, boe_interest_rates_explainer]
+
+- id: federal_reserve
+  term: Federal Reserve (the Fed)
+  aliases: [Fed, the Fed, Federal Reserve, US central bank]
+  short: The United States' central bank, which sets US interest rates and supervises its banking system.
+  plain: >-
+    Its rate decisions ripple around the world, because so much borrowing, trade and investment is priced in
+    dollars. Its stated goals are maximum employment and stable prices, which is why its comments on jobs and
+    inflation move markets. In the P50 case, one tempting wrong answer is that the PM decides whether rates
+    should be cut: we use rates as a signal, we do not set them.
+  fools_you: >-
+    It does not control long-term rates directly; markets set those. That is how the yield curve can invert
+    even while the central bank is raising its own rate.
+  related: [central_bank, policy_rate, monetary_policy, treasury]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [fed_monetary_policy]
+
+- id: bank_of_england
+  term: Bank of England
+  aliases: [BoE]
+  short: The United Kingdom's central bank, which sets Bank Rate to keep inflation close to its target.
+  plain: >-
+    Its Monetary Policy Committee meets several times a year and votes on Bank Rate, which shapes what UK banks
+    charge and pay. It also issues banknotes, watches over the safety of banks and runs SONIA, the benchmark
+    rate for sterling borrowing that you will meet later.
+  fools_you: >-
+    Bank Rate is not your mortgage rate. Lenders add their own margin, and fixed-rate deals depend more on
+    where markets expect rates to go.
+  related: [central_bank, policy_rate, quantitative_easing, sonia_sofr]
+  sources: [boe_interest_rates_explainer, boe_sonia]
+
+- id: monetary_policy
+  term: Monetary policy
+  short: What a central bank does with interest rates and the money supply to steer inflation and the economy.
+  plain: >-
+    Lower rates make borrowing cheap and saving less attractive, so spending rises and, eventually, prices
+    too; higher rates do the opposite. Because these effects take many months to work through, central banks
+    act on forecasts rather than only on today's data. "Loose" policy means low rates; "tight" means high ones.
+  fools_you: >-
+    It is different from fiscal policy. The central bank sets rates; the government decides taxes and
+    spending.
+  related: [central_bank, policy_rate, rate_hike_cut, quantitative_easing, fiscal_policy]
+  sources: [fed_monetary_policy, boe_interest_rates_explainer]
+
+- id: policy_rate
+  term: Policy rate
+  aliases: [Bank Rate, federal funds rate, fed funds rate, official interest rate]
+  short: The interest rate a central bank sets for its dealings with banks, which anchors the other rates in an economy.
+  plain: >-
+    In the UK it is Bank Rate; in the US, the Federal Reserve targets the federal funds rate, at which banks
+    lend to each other overnight. When the news says "rates went up", this is the rate that moved. Mortgage,
+    loan and savings rates follow it, partly and with a lag.
+  fools_you: >-
+    Markets often move before the decision itself, because traders price in what they expect. A widely
+    expected rise can leave long-term rates unchanged on the day.
+  related: [central_bank, rate_hike_cut, monetary_policy, short_long_rates]
+  sources: [fed_monetary_policy, boe_interest_rates_explainer]
+
+- id: rate_hike_cut
+  term: Rate hike and rate cut
+  aliases: [rate hike, rate hikes, rate cut, rate cuts, cut interest rates, raise interest rates]
+  short: A central bank decision to raise (tighten) or lower (loosen) its policy rate.
+  plain: >-
+    Raising rates fights inflation by cooling spending; lowering them supports activity when the economy
+    weakens. In the P50 case you will see that long-term yields fall when markets expect lower rates ahead,
+    which is one reason the yield curve can invert before a downturn.
+  fools_you: >-
+    A cut is not always good news for shares: it can tell you the central bank sees trouble coming.
+  related: [policy_rate, monetary_policy, inversion, rate_expectations]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [boe_interest_rates_explainer]
+
+- id: quantitative_easing
+  term: Quantitative easing (QE)
+  aliases: [QE, quantitative tightening, QT]
+  short: A central bank creating new money to buy large amounts of bonds, pushing longer-term interest rates down.
+  plain: >-
+    When the policy rate is already near zero and cannot usefully go lower, a central bank can still ease by
+    buying government bonds with newly created reserves. Extra demand lifts bond prices and lowers their
+    yields, which feeds through to mortgages and company borrowing. Shrinking those holdings again is called
+    quantitative tightening.
+  fools_you: >-
+    It is not the government printing money to spend. The central bank buys existing bonds from investors,
+    and the new money sits in the banking system as reserves.
+  related: [monetary_policy, bond, yield, central_bank]
+  sources: [boe_quantitative_easing]
+
+- id: fiscal_policy
+  term: Fiscal policy
+  short: How a government uses taxes, spending and borrowing to influence the economy.
+  plain: >-
+    Cutting taxes or spending more on roads and hospitals puts money into the economy now; raising taxes or
+    spending less takes it out. Governments usually borrow more in downturns, partly automatically, because
+    tax receipts fall and benefit payments rise, and partly by choice.
+  fools_you: >-
+    Fiscal and monetary policy can pull in opposite directions, for example a government spending freely
+    while its central bank raises rates to fight inflation.
+  related: [monetary_policy, government_debt_deficit, gdp]
+
+- id: government_debt_deficit
+  term: Government debt and deficit
+  aliases: [budget deficit, national debt, public debt, government debt]
+  short: The deficit is one year's gap between government spending and tax income; the debt is all past gaps added up.
+  plain: >-
+    A government that spends more than it collects must borrow, mostly by selling bonds. Each year's
+    borrowing adds to the stock of what it owes. That stock is usually compared with the size of the economy,
+    because a larger economy can carry more.
+  formula:
+    tex: '\mathrm{debt\ ratio} = \frac{\mathrm{government\ debt}}{\mathrm{GDP}}'
+    plain: Debt ratio = government debt ÷ GDP
+    symbols:
+      - {symbol: government debt, means: everything the government owes}
+      - {symbol: GDP, means: the economy's yearly output}
+  example:
+    values: {D: 2700, Y: 2900}
+    compute: {ratio: D / Y}
+    formats: {D: '£{:,.0f}bn', Y: '£{:,.0f}bn', ratio: '{:.0%}'}
+    text: A government owing {D} in an economy producing {Y} a year has debt equal to {ratio} of GDP.
+  fools_you: >-
+    A shrinking deficit does not mean the debt is falling. The debt still grows, only more slowly, until the
+    budget is in surplus.
+  related: [fiscal_policy, bond, treasury, gdp]
+
+- id: liquidity
+  term: Liquidity
+  aliases: [liquid, illiquid]
+  short: How quickly and cheaply something can be turned into cash without pushing its price down much.
+  plain: >-
+    Cash is perfectly liquid; shares in a large company are very liquid; a house is not, because selling takes
+    months and costs fees. Firms and banks also talk about "having liquidity", meaning enough cash to pay
+    what falls due. It tends to vanish exactly when everyone wants it, in a panic, which is when central banks
+    step in.
+  fools_you: >-
+    Valuable is not the same as liquid. A firm can own valuable buildings and still fail because it cannot pay
+    this week's bills.
+  related: [cash_flow, central_bank, bid_ask, cash_money_market]

@@ -1,0 +1,152 @@
+# Quant lesson 3 · Volatility models. Words 221-230.
+- id: volatility_clustering
+  term: Volatility clustering
+  short: The pattern that calm spells and turbulent spells each come in runs, so big moves tend to follow big moves.
+  plain: >-
+    Daily returns hardly predict each other's direction, but their sizes do. That is why volatility models use
+    recent turbulence to forecast tomorrow's.
+  fools_you: >-
+    A calm stretch is not evidence that risk has gone; it is simply a calm cluster.
+  related: [garch, autocorrelation, volatility]
+  sources: [book_dixon_ml_finance]
+
+- id: heteroscedasticity
+  term: Heteroscedasticity
+  aliases: [heteroskedasticity, heteroscedastic]
+  short: When the spread of a model's errors changes over time or with the data instead of staying constant.
+  plain: >-
+    Ordinary regression assumes errors with a constant spread. Financial data break this rule constantly, so
+    analysts use robust standard errors or model the changing variance directly.
+  fools_you: >-
+    Its main harm is to your error bars, not your estimates: the coefficients can be fine while the stated
+    certainty is wrong.
+  related: [hac_standard_errors, garch, volatility_clustering]
+  sources: [book_dixon_ml_finance]
+
+- id: garch
+  term: GARCH model
+  aliases: [GARCH, 'GARCH(1,1)', ARCH]
+  short: A model of how volatility changes, where today's variance depends on recent squared shocks and on yesterday's variance.
+  plain: >-
+    It captures volatility clustering with a few parameters and is a workhorse of risk forecasting. When the two
+    weights add up to nearly one, shocks to volatility fade slowly.
+  formula:
+    tex: '\sigma_{t}^{2} = \omega + \alpha\,\varepsilon_{t-1}^{2} + \beta\,\sigma_{t-1}^{2}'
+    plain: Variance today = constant + α × yesterday's squared shock + β × yesterday's variance
+    symbols:
+      - {symbol: ω, means: small constant}
+      - {symbol: α, means: reaction to the latest shock}
+      - {symbol: β, means: persistence of past variance}
+  example:
+    values: {w: 0.000002, a: 0.08, b: 0.9, e: 0.03, s2: 0.0001}
+    compute: {s2n: w + a * e ** 2 + b * s2, vol: 'sqrt(w + a * e ** 2 + b * s2)'}
+    formats: {w: '{:.6f}', a: '{:.2f}', b: '{:.2f}', e: '{:.0%}', s2: '{:.6f}', s2n: '{:.6f}', vol: '{:.2%}'}
+    text: After a shock of {e}, with yesterday's variance at {s2}, tomorrow's variance is {s2n}, a daily volatility of {vol}.
+  fools_you: >-
+    It reacts to shocks after they happen; it cannot see a crisis coming.
+  related: [volatility_clustering, ewma_volatility, heteroscedasticity]
+  sources: [book_dixon_ml_finance]
+
+- id: ewma_volatility
+  term: EWMA volatility
+  aliases: [EWMA, exponentially weighted moving average]
+  short: A volatility estimate that weights recent squared returns more heavily than older ones, with weights fading away geometrically.
+  plain: >-
+    It is a simple cousin of GARCH with a single parameter, used widely in risk systems because it reacts fast
+    and is easy to compute.
+  formula:
+    tex: '\sigma_{t}^{2} = \lambda\,\sigma_{t-1}^{2} + (1 - \lambda)\,r_{t-1}^{2}'
+    plain: Variance today = λ × yesterday's variance + (1 − λ) × yesterday's squared return
+    symbols:
+      - {symbol: λ, means: decay factor close to one}
+      - {symbol: r, means: yesterday's return}
+  example:
+    values: {lam: 0.94, s2: 0.0001, r: 0.025}
+    compute: {s2n: lam * s2 + (1 - lam) * r ** 2, vol: 'sqrt(lam * s2 + (1 - lam) * r ** 2)'}
+    formats: {lam: '{:.2f}', s2: '{:.6f}', r: '{:.1%}', s2n: '{:.6f}', vol: '{:.2%}'}
+    text: With a decay factor of {lam}, yesterday's variance of {s2} and a return of {r}, today's daily volatility is {vol}.
+  fools_you: >-
+    With no long-run anchor, it can sink too low after a calm spell and be caught out by the next storm.
+  related: [garch, realised_volatility, volatility_targeting]
+
+- id: realised_volatility
+  term: Realised volatility
+  aliases: [realized volatility, historical volatility]
+  short: Volatility measured from actual past returns over a window, such as the last month of daily returns.
+  plain: >-
+    It looks backwards. Set it against implied volatility, which looks forwards from option prices; the gap
+    between the two is watched closely by traders.
+  fools_you: >-
+    Different windows give different answers: a short one is noisy, a long one slow to react.
+  related: [implied_volatility, standard_deviation, ewma_volatility]
+
+- id: implied_volatility
+  term: Implied volatility
+  aliases: [implied vol, implied volatilities]
+  short: The volatility which, put into an option-pricing model, reproduces an option's market price.
+  plain: >-
+    It is the market's forward-looking view of how much prices will swing, backed out from what people pay for
+    options. It usually rises when markets fall and fear rises.
+  fools_you: >-
+    It contains a premium for fear and tends to be higher than the volatility that actually follows.
+  related: [black_scholes, vix, option_premium, realised_volatility]
+  sources: [book_hull_derivatives]
+
+- id: vix
+  term: VIX
+  aliases: [VIX index, fear index, fear gauge]
+  short: An index of the implied volatility of S&P 500 options over the next month, widely watched as a measure of fear.
+  plain: >-
+    High readings mean investors are paying up for protection. It tends to spike in sell-offs and drift lower in
+    calm, rising markets.
+  fools_you: >-
+    It does not forecast direction; markets can rise when it is high and fall when it is low.
+  related: [implied_volatility, stock_index, tail_risk]
+
+- id: stochastic_volatility
+  term: Stochastic volatility
+  aliases: [stochastic volatility model, stochastic volatility models]
+  short: Models in which volatility is itself a random process with its own shocks, rather than fixed or a function of past returns.
+  plain: >-
+    They help explain why option prices across strikes cannot be matched by a single volatility (the "smile").
+    The ML in Finance book estimates them with filtering methods, because volatility cannot be observed
+    directly.
+  fools_you: >-
+    More realistic models have more parameters to estimate, and estimation error can swamp the gain in realism.
+  related: [implied_volatility, kalman_filter, garch]
+  sources: [book_dixon_ml_finance]
+
+- id: hac_standard_errors
+  term: HAC (Newey-West) standard errors
+  aliases: [HAC, Newey-West, HAC standard errors, robust standard errors]
+  short: Standard errors corrected for autocorrelation and changing variance in a model's errors, so the stated uncertainty is honest.
+  plain: >-
+    When targets overlap, as in the P50 case where each month's target covers the following year, neighbouring
+    errors are correlated and ordinary standard errors are far too small. This correction fixes that, usually
+    making a result look less certain.
+  fools_you: >-
+    It fixes the uncertainty, not the estimate: a biased model stays biased, only with honest error bars.
+  related: [autocorrelation, heteroscedasticity, probit_logit]
+  in_cases: [{case: p50_yield_curve, step: s15_hac_card}]
+
+- id: volatility_targeting
+  term: Volatility targeting
+  aliases: [vol targeting, volatility target]
+  short: Scaling a position up when volatility is low and down when it is high, to keep a portfolio's risk near a chosen level.
+  plain: >-
+    Because volatility clusters, recent volatility predicts near-term volatility, so this keeps risk steadier
+    than fixed weights.
+  formula:
+    tex: 'w = \frac{\sigma_{\mathrm{target}}}{\hat{\sigma}}'
+    plain: Weight = target volatility ÷ forecast volatility
+    symbols:
+      - {symbol: σ target, means: chosen risk level}
+      - {symbol: σ hat, means: forecast volatility}
+  example:
+    values: {st: 0.10, sf: 0.16}
+    compute: {w: st / sf}
+    formats: {st: '{:.0%}', sf: '{:.0%}', w: '{:.1%}'}
+    text: Targeting {st} volatility when the forecast is {sf} means holding {w} of the full position.
+  fools_you: >-
+    It sells after volatility has already jumped, which can mean selling near the bottom of a crash.
+  related: [ewma_volatility, position_sizing, risk_parity]

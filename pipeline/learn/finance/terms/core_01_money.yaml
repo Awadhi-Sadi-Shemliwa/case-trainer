@@ -1,0 +1,219 @@
+# Lesson 1 · Money and ownership. Words 1-10. No digits in prose: example numbers are computed.
+- id: asset
+  term: Asset
+  aliases: [assets]
+  short: Anything you own that has value now or should bring you money later.
+  plain: >-
+    Think of everything you could sell or that pays you: money in the bank, a laptop, a flat, a slice of a
+    company. For a business, assets also include machines, goods waiting to be sold and money customers still
+    owe it. Assets are the "what you have" side of the picture; the next word, liability, is the "what you
+    owe" side.
+  fools_you: >-
+    Owning something is not the same as it being worth a lot: a car is an asset, yet it loses value every
+    year. And if you borrowed to buy it, only part of it is really yours.
+  related: [liability, equity, net_worth]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [sec_financial_statements]
+
+- id: liability
+  term: Liability
+  aliases: [liabilities]
+  short: Money or a duty you owe to someone else and will have to pay or settle later.
+  plain: >-
+    A mortgage, a student loan, a credit-card bill, an invoice not yet paid: each is a promise to hand over
+    money in the future. Companies have them too, such as bank loans, bills from suppliers and wages owed.
+    Borrowing is not bad in itself; borrowing to buy something useful can be sensible. The question is
+    whether what you own outweighs what you owe.
+  fools_you: >-
+    A liability is not the same as a cost. This month's rent is a cost; the rent you have promised for the
+    rest of the lease is a liability.
+  related: [asset, equity, loan]
+  sources: [sec_financial_statements]
+
+- id: equity
+  term: Equity
+  aliases: [equities, shareholders' equity, owner's equity]
+  short: What would be left for the owners if everything owned were sold and every debt paid off.
+  plain: >-
+    Picture a flat worth more than its mortgage: the part that is truly yours is your equity in it. A company
+    works the same way: its equity is the owners' share once lenders are paid. Because shares give you a
+    slice of that ownership, markets also say "equities" when they mean shares. So in the P50 case, "cut
+    equity risk" simply means "hold fewer shares".
+  formula:
+    tex: '\mathrm{Equity} = \mathrm{Assets} - \mathrm{Liabilities}'
+    plain: Equity = Assets − Liabilities
+    symbols:
+      - {symbol: Assets, means: everything owned}
+      - {symbol: Liabilities, means: everything owed}
+  example:
+    values: {A: 300000, L: 240000}
+    compute: {E: A - L, share: E / A}
+    formats: {A: '£{:,.0f}', L: '£{:,.0f}', E: '£{:,.0f}', share: '{:.0%}'}
+    text: A flat is worth {A} and the mortgage on it is {L}. Your equity is {E}, which is {share} of the flat.
+  fools_you: >-
+    Equity is not cash: a company can show plenty of it on paper and still be unable to pay wages next
+    month. And when values fall, owners lose first, because lenders must be repaid before owners get
+    anything.
+  related: [asset, liability, net_worth, share, shareholder]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [finra_stocks]
+
+- id: net_worth
+  term: Net worth
+  short: The total value of everything a person or household owns, minus everything they owe.
+  plain: >-
+    Net worth is equity for a whole person rather than for one thing. Add up savings, investments, a home and
+    other belongings, then take away the mortgage, loans and card balances. It can be negative, for example
+    for a student with a loan and little saved, which is normal early in life.
+  formula:
+    tex: '\mathrm{Net\ worth} = \mathrm{total\ assets} - \mathrm{total\ liabilities}'
+    plain: Net worth = total assets − total liabilities
+    symbols:
+      - {symbol: total assets, means: "savings, investments, home and belongings"}
+      - {symbol: total liabilities, means: every loan and unpaid bill}
+  example:
+    values: {S: 4000, I: 2500, L: 9000}
+    compute: {gap: L - S - I}
+    formats: {S: '£{:,.0f}', I: '£{:,.0f}', L: '£{:,.0f}', gap: '£{:,.0f}'}
+    text: With {S} in savings, {I} of investments and a {L} student loan, net worth is minus {gap}.
+  fools_you: >-
+    A big house does not mean a big net worth if most of it was borrowed. Net worth also says nothing about
+    how fast you could turn things into cash if you needed it.
+  related: [asset, liability, equity]
+
+- id: revenue
+  term: Revenue
+  aliases: [sales, turnover]
+  short: All the money a business takes in from selling its goods or services, before anything is taken off.
+  plain: >-
+    If a café sells coffee all day, the money in the till at closing time is that day's revenue. Rent, beans
+    and wages have not been paid out of it yet. That is why revenue is called the top line: it sits at the
+    top of the income statement, and every cost is subtracted from it further down.
+  formula:
+    tex: '\mathrm{Revenue} = \mathrm{price} \times \mathrm{quantity\ sold}'
+    plain: Revenue = price × quantity sold
+    symbols:
+      - {symbol: price, means: what one item sells for}
+      - {symbol: quantity sold, means: how many items were sold}
+  example:
+    values: {p: 3.2, q: 450}
+    compute: {R: p * q}
+    formats: {p: '£{:,.2f}', q: '{:,.0f}', R: '£{:,.0f}'}
+    text: A café sells {q} coffees at {p} each, so its revenue for the day is {R}.
+  fools_you: >-
+    Big revenue does not mean a business makes money. A firm can sell a lot and still lose money on every
+    sale.
+  related: [cost, profit, income_statement]
+
+- id: cost
+  term: Cost
+  aliases: [costs, expense, expenses]
+  short: Money a business must spend to make and sell what it offers, such as materials, wages and rent.
+  plain: >-
+    Some costs move with sales, like coffee beans and cups: these are variable costs. Others stay the same
+    however busy you are, like rent and insurance: these are fixed costs. Knowing which is which tells you
+    how profit will change when sales rise or fall.
+  formula:
+    tex: '\mathrm{Total\ cost} = F + v \times q'
+    plain: Total cost = fixed costs + variable cost per item × items made
+    symbols:
+      - {symbol: F, means: fixed costs for the period}
+      - {symbol: v, means: variable cost of one item}
+      - {symbol: q, means: number of items}
+  example:
+    values: {F: 600, v: 1.1, q: 450}
+    compute: {C: F + v * q}
+    formats: {F: '£{:,.0f}', v: '£{:,.2f}', q: '{:,.0f}', C: '£{:,.0f}'}
+    text: Rent and staff cost the café {F} a day, and each coffee uses {v} of beans, milk and cup. Selling {q} coffees costs {C} in total.
+  fools_you: >-
+    Money already spent that you cannot get back (a sunk cost) should not decide what you do next, yet people
+    keep going because "we have already spent so much".
+  related: [revenue, profit]
+
+- id: profit
+  term: Profit
+  aliases: [net income, net profit, earnings]
+  short: What is left of revenue once all the costs of the period have been paid.
+  plain: >-
+    Profit answers the question "did this make money?". Take revenue, subtract costs, and what remains is
+    profit; if costs are bigger, it is a loss. Accounts show several layers, from gross profit (after the
+    direct cost of what was sold) down to net profit (after everything, including interest and tax). For
+    companies, profit is often called earnings.
+  formula:
+    tex: '\mathrm{Profit} = \mathrm{Revenue} - \mathrm{Costs}'
+    plain: Profit = Revenue − Costs
+    symbols:
+      - {symbol: Revenue, means: money taken in from sales}
+      - {symbol: Costs, means: everything spent to make those sales}
+  example:
+    values: {R: 1440, C: 1095}
+    compute: {P: R - C, m: P / R}
+    formats: {R: '£{:,.0f}', C: '£{:,.0f}', P: '£{:,.0f}', m: '{:.0%}'}
+    text: The café's revenue of {R} minus costs of {C} leaves a profit of {P}, which is {m} of every pound taken.
+  fools_you: >-
+    Profit is not cash in the bank. A sale made on credit counts as profit today even if the customer pays in
+    three months, or never.
+  related: [revenue, cost, cash_flow, profit_margin]
+
+- id: cash_flow
+  term: Cash flow
+  aliases: [cash flows]
+  short: Money actually moving into and out of a business or household over a period of time.
+  plain: >-
+    Profit is the accountant's view; cash flow is the bank balance's view. A shop that sells on credit can
+    look profitable while its account runs dry, because customers have not paid yet. Positive cash flow means
+    more came in than went out. Investors watch it closely because wages, bills and dividends are paid in
+    cash, not in profit.
+  formula:
+    tex: '\mathrm{Net\ cash\ flow} = \mathrm{cash\ in} - \mathrm{cash\ out}'
+    plain: Net cash flow = cash in − cash out
+    symbols:
+      - {symbol: cash in, means: money received in the period}
+      - {symbol: cash out, means: money paid out in the period}
+  example:
+    values: {cin: 9200, cout: 10100}
+    compute: {gap: cout - cin}
+    formats: {cin: '£{:,.0f}', cout: '£{:,.0f}', gap: '£{:,.0f}'}
+    text: This month {cin} came in from customers and {cout} went out on stock and wages, so net cash flow was minus {gap}, even though the books may show a profit.
+  fools_you: >-
+    A profitable business can still go bust if cash runs out before customers pay. Fast growth makes this
+    worse, because stock has to be bought before it is sold.
+  related: [profit, liquidity, cash_flow_statement]
+
+- id: capital
+  term: Capital
+  short: Money or long-lasting resources put into a business so it can operate and grow.
+  plain: >-
+    When founders put in savings, investors buy new shares or a bank lends money, the business gets capital:
+    money to buy equipment and pay staff before sales arrive. Economists also call the machines and buildings
+    themselves capital. You will hear "raise capital" (get new money), "equity capital" (from owners) and
+    "debt capital" (from lenders).
+  fools_you: >-
+    Capital is not profit. Raising it brings money in, but it was not earned: it comes with owners who want a
+    share of future profits or lenders who want to be repaid.
+  related: [equity, liability, loan]
+
+- id: return
+  term: Return
+  aliases: [returns, rate of return]
+  short: The gain or loss on money you put in, usually shown as a percentage of the starting amount.
+  plain: >-
+    If you buy something and later sell it for more, your return is the gain divided by what you paid. Income
+    received along the way, such as interest or dividends, counts too. Returns put very different investments
+    on one scale: a small gain on a small stake can beat a large gain on a large one.
+  formula:
+    tex: 'R = \frac{P_{\mathrm{end}} - P_{\mathrm{start}} + D}{P_{\mathrm{start}}}'
+    plain: Return = (end value − start value + income received) ÷ start value
+    symbols:
+      - {symbol: P start, means: value when you bought}
+      - {symbol: P end, means: value at the end}
+      - {symbol: D, means: income received along the way (dividends or interest)}
+  example:
+    values: {P0: 2000, P1: 2150, D: 40}
+    compute: {R: (P1 - P0 + D) / P0}
+    formats: {P0: '£{:,.0f}', P1: '£{:,.0f}', D: '£{:,.0f}', R: '{:.1%}'}
+    text: You invest {P0}. A year later it is worth {P1} and has paid {D} in dividends, so your return is {R}.
+  fools_you: >-
+    A percentage hides how long it took: the same gain over five years is far worse than over one. And losses
+    need bigger gains to recover: after falling by half, you must double just to get back to where you began.
+  related: [capital, risk]

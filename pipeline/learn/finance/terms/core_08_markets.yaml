@@ -1,0 +1,143 @@
+# Lesson 8 · Markets. Words 71-80.
+- id: bull_market
+  term: Bull market
+  aliases: [bull markets, bullish]
+  short: A long stretch of rising prices, often described as a rise of a fifth or more from a recent low.
+  plain: >-
+    These stretches usually come with economic growth, rising profits and confidence, and can last for years
+    with dips along the way. Being "bullish" means expecting prices to go up.
+  fools_you: >-
+    Rising prices can feed on themselves when people buy because prices rose, which is how bubbles form.
+  related: [bear_market, rally, business_cycle]
+
+- id: bear_market
+  term: Bear market
+  aliases: [bear markets, bearish]
+  short: A long stretch of falling prices, often described as a fall of a fifth or more from a recent high.
+  plain: >-
+    These slumps often, but not always, come with recessions. Being "bearish" means expecting falls. The P50
+    portfolio manager wants to cut share holdings before a downturn-driven slump, without selling too early.
+  fools_you: >-
+    Sharp rallies happen inside long slumps and can trick investors into thinking the worst is over.
+  related: [bull_market, drawdown, recession, correction]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+
+- id: rally
+  term: Rally
+  aliases: [rallies, late-cycle rally]
+  short: A period of quickly rising prices, after a fall or late in a long run of gains.
+  plain: >-
+    It can be a short bounce or the start of a recovery. In the P50 case, "giving up the late-cycle" gains is
+    the cost of selling too early: shares often keep rising for a while after the yield curve inverts.
+  fools_you: >-
+    A strong burst of buying does not prove the danger has passed. Some of the sharpest rises happen inside
+    falling markets.
+  related: [bull_market, bear_market, drawdown]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+
+- id: correction
+  term: Correction
+  aliases: [corrections, market correction]
+  short: A fall of roughly a tenth or more from a recent peak, smaller than a bear market.
+  plain: >-
+    These falls are common and often short, because markets rarely rise in a straight line. They can be
+    healthy, cooling prices that ran ahead of profits.
+  fools_you: >-
+    You only know a fall was "just" this afterwards. At the time it looks exactly like the start of a bear
+    market.
+  related: [bear_market, drawdown, volatility]
+
+- id: drawdown
+  term: Drawdown
+  aliases: [drawdowns, peak-to-trough fall]
+  short: The fall in value from a peak to the lowest point before a new peak, shown as a percentage of the peak.
+  plain: >-
+    It measures the pain of holding something through its worst stretch. Investors often care more about it
+    than about average returns, because a deep fall can force selling at the bottom. "Taking the recession
+    drawdown" in the P50 brief means sitting through that fall.
+  formula:
+    tex: '\mathrm{DD} = \frac{\mathrm{peak} - \mathrm{trough}}{\mathrm{peak}}'
+    plain: Drawdown = (peak − trough) ÷ peak
+    symbols:
+      - {symbol: peak, means: highest value before the fall}
+      - {symbol: trough, means: lowest value before a new peak}
+  example:
+    values: {pk: 1250, tr: 900}
+    compute: {dd: (pk - tr) / pk}
+    formats: {pk: '£{:,.0f}', tr: '£{:,.0f}', dd: '{:.0%}'}
+    text: A portfolio that peaks at {pk} and then sinks to {tr} has a drawdown of {dd}.
+  fools_you: >-
+    Recovering takes a bigger percentage gain than the fall: a drop of a quarter needs a rise of a third just
+    to get back.
+  related: [bear_market, volatility, maximum_drawdown, risk]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+
+- id: volatility
+  term: Volatility
+  aliases: [volatile]
+  short: How much and how quickly prices move up and down, usually measured by the spread of returns.
+  plain: >-
+    A share that moves gently is calm; one that leaps about is jumpy. This is the most common stand-in for
+    risk in finance, measured precisely with the standard deviation of returns, which you will meet later.
+  fools_you: >-
+    It counts big rises as much as big falls, and calm spells can end suddenly. Low readings are not the same
+    as safety.
+  related: [risk, standard_deviation, drawdown, implied_volatility]
+
+- id: bid_ask
+  term: Bid and ask
+  aliases: [bid-ask spread, bid-offer spread, bid price, ask price, offer price]
+  short: The highest price a buyer will pay right now and the lowest price a seller will accept; the gap between them is a spread.
+  plain: >-
+    If you buy and immediately sell, you lose that gap, so it is a hidden cost of trading. Busy, liquid markets
+    have narrow gaps; thin markets have wide ones, which widen further in a panic.
+  formula:
+    tex: 's_{\%} = \frac{\mathrm{ask} - \mathrm{bid}}{\mathrm{mid}}, \quad \mathrm{mid} = \frac{\mathrm{ask} + \mathrm{bid}}{2}'
+    plain: Spread % = (ask − bid) ÷ mid-price, where mid-price = (ask + bid) ÷ 2
+    symbols:
+      - {symbol: bid, means: best price a buyer offers}
+      - {symbol: ask, means: best price a seller asks}
+  example:
+    values: {b: 99.9, a: 100.1, two: 2}
+    compute: {mid: (a + b) / two, s: (a - b) / ((a + b) / two)}
+    formats: {b: '£{:,.2f}', a: '£{:,.2f}', mid: '£{:,.2f}', s: '{:.2%}', two: '{:.0f}'}
+    text: With a bid of {b} and an ask of {a}, the gap is {s} of the mid-price of {mid}.
+  fools_you: >-
+    The price on a chart is usually the last trade or the mid-price. You actually buy at the ask and sell at
+    the bid.
+  related: [liquidity, spread, market_maker, transaction_costs]
+
+- id: trading_volume
+  term: Trading volume
+  aliases: [volume traded, trading volumes]
+  short: How many shares or contracts change hands over a period such as a day.
+  plain: >-
+    Heavy trading means many people are taking part, so prices reflect lots of opinions and it is easy to buy
+    or sell. A big price move on heavy trading is usually taken more seriously than one on light trading.
+  fools_you: >-
+    It tells you about activity, not direction: every share bought is also a share sold.
+  related: [liquidity, bid_ask, stock_exchange]
+
+- id: asset_class
+  term: Asset class
+  aliases: [asset classes]
+  short: A broad group of investments that behave in similar ways, such as shares, bonds, cash, property or commodities.
+  plain: >-
+    Investments within a group tend to rise and fall together; different groups often do not. That is why
+    investors first decide how much to put in each group, before choosing individual investments.
+  fools_you: >-
+    Groups that usually move separately can all fall together in a crisis, when everyone rushes for cash.
+  related: [asset_allocation, diversification, commodity]
+
+- id: cash_money_market
+  term: Cash and the money market
+  aliases: [money market, money markets, cash equivalents, money market fund, money market funds]
+  short: Very short-term, very safe lending, such as bank deposits and Treasury bills, that investors treat as almost the same as cash.
+  plain: >-
+    When the P50 manager "cuts equity risk", the money usually goes here or into short bonds. It keeps its
+    value and earns roughly the short-term interest rate, but over long calm stretches it usually earns less
+    than shares.
+  fools_you: >-
+    It is safe from price falls but not from inflation: in real terms it can lose value year after year.
+  related: [liquidity, treasury, risk_free_rate, asset_class]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]

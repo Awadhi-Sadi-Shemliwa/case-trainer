@@ -1,0 +1,140 @@
+# Intermediate lesson 9 · Funds and investing styles. Words 181-190.
+- id: active_investing
+  term: Active investing
+  aliases: [active management, active fund, active funds, stock picking]
+  short: Trying to beat a benchmark by choosing which investments to hold and when, rather than simply copying an index.
+  plain: >-
+    Active managers research companies, time markets or follow strategies, and charge more for it. Some
+    succeed; the hard part is knowing in advance which ones will.
+  fools_you: >-
+    Past outperformance is weak evidence of skill: with thousands of funds, many beat the market by luck alone.
+  related: [passive_investing, benchmark, alpha, expense_ratio]
+
+- id: passive_investing
+  term: Passive investing
+  aliases: [passive management, indexing]
+  short: Owning a whole market cheaply through index funds instead of trying to pick winners.
+  plain: >-
+    It accepts the market's return minus very small fees. Over long periods that has been hard for most
+    stock-pickers to beat once their higher fees are paid.
+  fools_you: >-
+    It is not riskless: you own the whole market, bubbles and crashes included.
+  related: [index_fund, active_investing, expense_ratio]
+
+- id: expense_ratio
+  term: Expense ratio
+  aliases: [ongoing charge, ongoing charges figure, total expense ratio, fund fee, fund fees]
+  short: The yearly fee a fund charges, as a percentage of the money invested.
+  plain: >-
+    It is taken quietly from the fund's value, so you never see a bill. Because it compounds, small differences
+    add up to large sums over decades.
+  example:
+    values: {V: 10000, g: 0.06, f1: 0.001, f2: 0.0075, n: 30}
+    compute: {a: V * (1 + g - f1) ** n, b: V * (1 + g - f2) ** n, gap: V * (1 + g - f1) ** n - V * (1 + g - f2) ** n}
+    formats: {V: '£{:,.0f}', g: '{:.0%}', f1: '{:.2%}', f2: '{:.2%}', n: '{:.0f}', a: '£{:,.0f}', b: '£{:,.0f}', gap: '£{:,.0f}'}
+    text: Over {n} years at {g} a year, {V} grows to {a} with a fee of {f1} but only {b} with a fee of {f2}, a gap of {gap}.
+  fools_you: >-
+    A low fee does not guarantee a good fund, but a high fee is a certain drag on what you keep.
+  related: [fund_etf, compound_interest, passive_investing]
+
+- id: hedge_fund
+  term: Hedge fund
+  aliases: [hedge funds]
+  short: A lightly regulated investment fund for wealthy and institutional investors that uses many strategies, often with borrowing and short selling.
+  plain: >-
+    Despite the name, many do not hedge much. They usually charge a management fee plus a share of profits, and
+    aim for returns that do not depend on the market going up.
+  fools_you: >-
+    High fees and hidden borrowing can eat or wreck returns; some famous ones have collapsed.
+  related: [short_selling, leverage, alpha]
+
+- id: private_equity
+  term: Private equity
+  aliases: [buyout, buyouts, leveraged buyout, private equity fund]
+  short: Investing in companies that are not listed on a stock exchange, often buying them outright, improving them and selling years later.
+  plain: >-
+    Buyout funds typically borrow heavily to buy a company, aim to raise its profits, then sell. Investors lock
+    their money up for many years.
+  fools_you: >-
+    Smooth reported returns can be an illusion: unlisted assets are valued rarely, which hides how much they
+    really swing.
+  related: [venture_capital, leverage, valuation]
+
+- id: venture_capital
+  term: Venture capital
+  aliases: [VC, venture capitalist, venture capitalists]
+  short: Funding young, fast-growing private companies in return for a share of ownership.
+  plain: >-
+    Most start-ups fail, so these investors rely on a few huge successes to pay for many losses. Money arrives
+    in rounds, each at a higher valuation if the company is doing well.
+  fools_you: >-
+    A high valuation in a funding round is not cash in anyone's pocket; it can fall sharply in the next round.
+  related: [private_equity, dilution, equity]
+
+- id: rebalancing
+  term: Rebalancing
+  aliases: [rebalance, rebalanced]
+  short: Bringing a portfolio back to its target mix by selling what has grown and buying what has shrunk.
+  plain: >-
+    It keeps risk where you chose it and quietly enforces "buy low, sell high". Investors do it on a calendar,
+    or whenever weights drift past a band.
+  example:
+    values: {s0: 0.6, rs: 0.25, rb: 0.0}
+    compute: {s1: s0 * (1 + rs) / (s0 * (1 + rs) + (1 - s0) * (1 + rb))}
+    formats: {s0: '{:.0%}', rs: '{:.0%}', rb: '{:.0%}', s1: '{:.1%}'}
+    text: A {s0} holding in shares that rises {rs} while bonds return {rb} drifts to {s1} of the portfolio; rebalancing sells the extra.
+  fools_you: >-
+    Buying more of a falling asset feels wrong at the time, and it has costs: trading fees and possibly tax.
+  related: [asset_allocation, portfolio, portfolio_turnover]
+
+- id: pound_cost_averaging
+  term: Pound-cost averaging
+  aliases: [dollar-cost averaging, regular investing]
+  short: Investing a fixed amount at regular intervals, so you buy more units when prices are low and fewer when they are high.
+  plain: >-
+    It removes the stress of timing the market and suits saving from a monthly salary.
+  example:
+    values: {amt: 100, p1: 10, p2: 5, two: 2}
+    compute: {u: amt / p1 + amt / p2, avg: two * amt / (amt / p1 + amt / p2), mean_price: (p1 + p2) / two}
+    formats: {amt: '£{:,.0f}', p1: '£{:,.2f}', p2: '£{:,.2f}', two: '{:.0f}', u: '{:,.0f}', avg: '£{:,.2f}', mean_price: '£{:,.2f}'}
+    text: Investing {amt} at a price of {p1} and again at {p2} buys {u} units at an average cost of {avg}, below the average price of {mean_price}.
+  fools_you: >-
+    If you already have a lump sum, spreading it out usually earns less on average, because markets tend to
+    rise over time; the benefit is mostly peace of mind.
+  related: [rebalancing, volatility]
+
+- id: cagr
+  term: Compound annual growth rate (CAGR)
+  aliases: [CAGR]
+  short: The steady yearly rate that would take a value from its start to its end over a period, smoothing out the ups and downs.
+  plain: >-
+    Averaging yearly returns can mislead when they vary a lot; this rate tells you what actually happened to the
+    money.
+  formula:
+    tex: '\mathrm{CAGR} = \left(\frac{V_{\mathrm{end}}}{V_{\mathrm{start}}}\right)^{1/n} - 1'
+    plain: CAGR = (end value ÷ start value)^(1 ÷ years) − 1
+    symbols:
+      - {symbol: V start and V end, means: values at the start and end}
+      - {symbol: n, means: number of years}
+  example:
+    values: {v0: 1000, v1: 1800, n: 6}
+    compute: {g: (v1 / v0) ** (1 / n) - 1}
+    formats: {v0: '£{:,.0f}', v1: '£{:,.0f}', n: '{:.0f}', g: '{:.1%}'}
+    text: Growing from {v0} to {v1} over {n} years is a compound annual growth rate of {g}.
+  fools_you: >-
+    It hides the path: two investments with the same rate can have had very different, and very
+    different-feeling, drawdowns.
+  related: [compound_interest, annualised_return, geometric_mean_return]
+
+- id: pension
+  term: Pension
+  aliases: [pensions, pension fund, pension funds, defined benefit, defined contribution]
+  short: Savings built up during working life to provide an income in retirement, often helped by tax relief and employer contributions.
+  plain: >-
+    Defined-benefit schemes promise a set income and the employer carries the investment risk; defined-
+    contribution schemes build a pot whose size depends on contributions and returns. Pension funds are among
+    the biggest investors in bonds and shares.
+  fools_you: >-
+    The size of a pot says little about the income it will buy; that depends on rates and on how long you
+    live.
+  related: [compound_interest, gilt, asset_manager_pm]

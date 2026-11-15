@@ -1,0 +1,149 @@
+# Intermediate lesson 6 · Banking and borrowing. Words 151-160.
+- id: commercial_bank
+  term: Commercial bank
+  aliases: [commercial banks, high-street bank, high-street banks]
+  short: A business that takes deposits from savers and lends to households and firms, earning the gap between the two rates.
+  plain: >-
+    Banks keep only a small part of deposits as cash and lend the rest. That works as long as depositors do
+    not all want their money back at once, which is why deposit protection schemes and central banks exist.
+  fools_you: >-
+    A bank can be profitable and still fail if depositors lose confidence and withdraw all at once.
+  related: [deposit, central_bank, bank_capital, interbank_lending]
+  sources: [boe_interest_rates_explainer]
+
+- id: deposit
+  term: Deposit
+  aliases: [deposits, savings account, current account]
+  short: Money placed with a bank, which the bank owes back to the customer.
+  plain: >-
+    To you it is savings; to the bank it is a liability and a cheap source of funding. In most countries,
+    government schemes protect deposits up to a limit if a bank fails.
+  fools_you: >-
+    Money in a bank is not in a vault with your name on it; it has been lent out, which is fine until
+    confidence breaks.
+  related: [commercial_bank, liability, interest]
+
+- id: mortgage
+  term: Mortgage
+  aliases: [mortgages, home loan, home loans]
+  short: A loan to buy property that is secured on that property and repaid over many years.
+  plain: >-
+    If payments stop, the lender can take and sell the home. Rates are fixed for a period or float with a
+    benchmark. Each monthly payment covers interest plus a slice of the loan, a pattern called amortisation.
+  formula:
+    tex: 'A = \frac{P\,r}{1 - (1 + r)^{-n}}'
+    plain: Monthly payment = loan × monthly rate ÷ (1 − (1 + monthly rate)^−months)
+    symbols:
+      - {symbol: P, means: amount borrowed}
+      - {symbol: r, means: interest rate per month}
+      - {symbol: n, means: number of monthly payments}
+  example:
+    values: {P: 200000, ra: 0.054, yrs: 25, m: 12}
+    compute: {r: ra / m, n: yrs * m, A: P * r / (1 - (1 + r) ** (-n))}
+    formats: {P: '£{:,.0f}', ra: '{:.1%}', yrs: '{:.0f}', m: '{:.0f}', r: '{:.2%}', n: '{:.0f}', A: '£{:,.2f}'}
+    text: A {P} mortgage at {ra} a year over {yrs} years costs {A} a month.
+  fools_you: >-
+    A low monthly payment over a very long term can cost far more interest in total.
+  related: [loan, amortisation, collateral, loan_to_value, prepayment]
+
+- id: amortisation
+  term: Amortisation
+  aliases: [amortization, amortising, repayment schedule]
+  short: Paying off a loan through regular instalments that each cover interest and part of the amount borrowed.
+  plain: >-
+    Early payments are mostly interest, because the balance is still large; later ones are mostly principal.
+    A table showing each payment's split is an amortisation table.
+  example:
+    values: {P: 200000, ra: 0.054, yrs: 25, m: 12}
+    compute: {r: ra / m, n: yrs * m, A: P * r / (1 - (1 + r) ** (-n)), int1: P * r, prin1: P * r / (1 - (1 + r) ** (-n)) - P * r}
+    formats: {P: '£{:,.0f}', ra: '{:.1%}', yrs: '{:.0f}', m: '{:.0f}', r: '{:.2%}', n: '{:.0f}', A: '£{:,.2f}', int1: '£{:,.2f}', prin1: '£{:,.2f}'}
+    text: On a {P} loan at {ra}, the first monthly payment of {A} is {int1} of interest and only {prin1} off the loan.
+  fools_you: >-
+    Overpaying early saves far more interest than overpaying late, because it shrinks the balance that
+    interest is charged on for longer.
+  related: [mortgage, principal, loan, interest]
+
+- id: collateral
+  term: Collateral
+  aliases: [secured loan, secured lending]
+  short: An asset a borrower pledges to a lender, which the lender can take if the loan is not repaid.
+  plain: >-
+    Houses back mortgages, bonds back repo loans and cash backs derivative trades. Pledged assets make lending
+    safer, so secured loans are cheaper than unsecured ones.
+  fools_you: >-
+    Pledged assets can fall in value exactly when they are needed, as house and bond prices do in a crisis.
+  related: [mortgage, repo, loan_to_value, margin_call]
+
+- id: loan_to_value
+  term: Loan-to-value (LTV)
+  aliases: [LTV, loan to value]
+  short: The size of a loan as a percentage of the value of the property or asset securing it.
+  plain: >-
+    A lower figure means the borrower has more equity at stake and the lender more cushion if prices fall, so
+    rates are cheaper. Very high figures were common in lending before the global financial crisis.
+  formula:
+    tex: '\mathrm{LTV} = \frac{\mathrm{loan}}{\mathrm{property\ value}}'
+    plain: LTV = loan ÷ property value
+    symbols:
+      - {symbol: loan, means: amount borrowed}
+      - {symbol: property value, means: value of the home or asset}
+  example:
+    values: {L: 270000, V: 300000}
+    compute: {ltv: L / V}
+    formats: {L: '£{:,.0f}', V: '£{:,.0f}', ltv: '{:.0%}'}
+    text: Borrowing {L} on a home worth {V} is a loan-to-value of {ltv}.
+  fools_you: >-
+    It moves with prices: a fall in house prices can push a borrower into negative equity without them
+    borrowing a penny more.
+  related: [mortgage, collateral, equity]
+
+- id: interbank_lending
+  term: Interbank lending
+  aliases: [interbank market, interbank rate, interbank rates]
+  short: Banks lending money to each other, often overnight, to cover daily shortfalls and surpluses.
+  plain: >-
+    Every day some banks have spare cash and others need it. The rates they charge each other are watched as a
+    stress gauge: in a panic banks stop trusting one another and those rates jump.
+  fools_you: >-
+    A calm market can freeze suddenly; funding that seems permanent can vanish in days.
+  related: [sonia_sofr, policy_rate, liquidity, commercial_bank]
+  sources: [boe_sonia]
+
+- id: sonia_sofr
+  term: SONIA and SOFR
+  aliases: [SONIA, SOFR]
+  short: The main overnight benchmark interest rates for sterling and for US dollars, used to price loans, bonds and swaps.
+  plain: >-
+    They replaced an older benchmark that was based on banks' own estimates. Both are calculated from real
+    overnight transactions, which makes them harder to game. The Bank of England, which runs the sterling
+    one, calls it the risk-free rate for sterling markets.
+  fools_you: >-
+    Overnight rates look backwards: a loan priced on them only knows the interest due at the end of each
+    period.
+  related: [risk_free_rate, interbank_lending, interest_rate_swap, bank_of_england]
+  sources: [boe_sonia]
+
+- id: repo
+  term: Repo (repurchase agreement)
+  aliases: [repos, repurchase agreement, repurchase agreements, reverse repo]
+  short: A short-term loan in which one side sells bonds and agrees to buy them back later at a slightly higher price.
+  plain: >-
+    It is secured borrowing dressed up as a sale and a buy-back: the bonds are collateral and the price
+    difference is the interest. Banks, funds and central banks use it constantly to borrow cash or lend
+    securities.
+  fools_you: >-
+    The funding is cheap but very short; if lenders refuse to roll it over, a borrower can be forced to sell
+    assets fast.
+  related: [collateral, interbank_lending, liquidity, central_bank]
+
+- id: bank_capital
+  term: Bank capital
+  aliases: [capital requirements, capital ratio, capital buffers]
+  short: The owners' money in a bank, which absorbs losses before depositors and lenders are hit.
+  plain: >-
+    Regulators require banks to hold a minimum amount relative to the riskiness of their loans. More of it
+    makes a bank safer but its returns lower, a tension at the heart of banking rules.
+  fools_you: >-
+    A bank can meet its capital rules and still run out of cash; capital and liquidity are different
+    protections.
+  related: [commercial_bank, equity, leverage, liquidity]

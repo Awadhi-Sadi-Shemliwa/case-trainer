@@ -1,0 +1,149 @@
+# Quant lesson 10 · Judging signals and hidden states. Words 291-300. The P50 evaluation vocabulary.
+- id: base_rate
+  term: Base rate
+  aliases: [base rates, prior probability, prevalence]
+  short: How often an outcome happens in the data overall, before any predictor is used.
+  plain: >-
+    In the P50 case only a small share of expansion months are followed by a recession, so a model that always
+    says "no" scores high accuracy while being useless. Every forecast must be judged against this figure.
+  example:
+    values: {pos: 60, n: 500}
+    compute: {br: pos / n, acc: (n - pos) / n}
+    formats: {pos: '{:,.0f}', n: '{:,.0f}', br: '{:.0%}', acc: '{:.0%}'}
+    text: If {pos} of {n} months are followed by a recession, the base rate is {br}, and always predicting "no" is already {acc} accurate.
+  fools_you: >-
+    Ignoring it is the most common forecasting mistake: a test that is usually right can still be wrong about
+    most of its alarms.
+  related: [hit_false_alarm, brier_score, calibration]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}]
+
+- id: hit_false_alarm
+  term: Hit rate and false-alarm rate
+  aliases: [hit rate, false-alarm rate, false alarm rate, true positive rate, false positive rate]
+  short: The share of real events a signal catches, and the share of quiet periods in which it wrongly raises an alarm.
+  plain: >-
+    Raising a trigger cuts false alarms and misses more events; lowering it does the reverse. The P50 PM must
+    choose a point on that trade-off.
+  example:
+    values: {tp: 8, fn: 2, fp: 30, tn: 360}
+    compute: {events: tp + fn, calm: fp + tn, hr: tp / (tp + fn), far: fp / (fp + tn)}
+    formats: {tp: '{:.0f}', fn: '{:.0f}', fp: '{:.0f}', tn: '{:.0f}', events: '{:.0f}', calm: '{:.0f}', hr: '{:.0%}', far: '{:.1%}'}
+    text: Catching {tp} of {events} recessions is a hit rate of {hr}; alarming in {fp} of {calm} calm months is a false-alarm rate of {far}.
+  fools_you: >-
+    A low false-alarm rate can still mean most alarms are false, when events are rare.
+  related: [roc_auc, decision_threshold, base_rate]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s22_threshold}]
+
+- id: roc_auc
+  term: ROC curve and AUC
+  aliases: [AUC, ROC, ROC curve, area under the curve]
+  short: A plot of hit rate against false-alarm rate across every possible threshold, and the area under it, which measures how well a model ranks cases.
+  plain: >-
+    An area of one half is no better than a coin toss; one is perfect ranking. It depends neither on a single
+    threshold nor on the base rate, which makes it handy for comparing models. In the P50 case it compares the
+    two spreads.
+  fools_you: >-
+    Good ranking is not good probabilities: a model can rank perfectly and still say "five percent" when the
+    truth is fifty.
+  related: [hit_false_alarm, calibration, brier_score]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s19_result}, {case: p50_yield_curve, step: s19b_roc_card}]
+  sources: [estrella_mishkin_1996]
+
+- id: brier_score
+  term: Brier score
+  aliases: [Brier, Brier skill score]
+  short: The average squared difference between forecast probabilities and what actually happened, where lower is better.
+  plain: >-
+    It rewards being confident and right and punishes confident mistakes. Comparing it with the score of always
+    forecasting the base rate gives a skill score, as the P50 case does.
+  formula:
+    tex: 'BS = \frac{1}{N}\sum_{i=1}^{N} (p_{i} - o_{i})^{2}'
+    plain: Brier score = average of (forecast probability − outcome)², with outcome 1 or 0
+    symbols:
+      - {symbol: p i, means: forecast probability}
+      - {symbol: o i, means: what happened (1 or 0)}
+  example:
+    values: {p1: 0.8, o1: 1, p2: 0.3, o2: 0, p3: 0.6, o3: 0, n: 3}
+    compute: {bs: ((p1 - o1) ** 2 + (p2 - o2) ** 2 + (p3 - o3) ** 2) / n}
+    formats: {p1: '{:.0%}', o1: '{:.0f}', p2: '{:.0%}', o2: '{:.0f}', p3: '{:.0%}', o3: '{:.0f}', n: '{:.0f}', bs: '{:.3f}'}
+    text: Forecasts of {p1}, {p2} and {p3} for outcomes of {o1}, {o2} and {o3} score {bs}.
+  fools_you: >-
+    With rare events a lazy base-rate forecast already scores well, so always compare against that benchmark.
+  related: [calibration, base_rate, roc_auc]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s19_result}]
+
+- id: calibration
+  term: Calibration
+  aliases: [calibrated, well-calibrated]
+  short: Whether forecast probabilities match how often things actually happen, so that events given seventy percent happen about seventy percent of the time.
+  plain: >-
+    It is separate from ranking skill. The P50 debrief stresses that a model can order months well and still give
+    badly matched probabilities, which matters if the PM acts on the number itself.
+  fools_you: >-
+    Perfectly matched forecasts can still be useless if they never move away from the base rate.
+  related: [brier_score, roc_auc, base_rate, probit_logit]
+  in_cases: [{case: p50_yield_curve, step: s24_debrief_card}]
+
+- id: decision_threshold
+  term: Decision threshold
+  aliases: [trigger level, probability threshold, cut-off probability, Youden's J]
+  short: The probability or signal level at which you act, turning a forecast into a decision.
+  plain: >-
+    Choosing it means weighing the cost of missed events against the cost of false alarms. The P50 case picks it
+    by maximising hit rate minus false-alarm rate on training data only, then reports the error rates at that
+    level.
+  fools_you: >-
+    A level tuned on the test period looks great and is worthless; it must be fixed before you look.
+  related: [hit_false_alarm, roc_auc, out_of_sample]
+  in_cases: [{case: p50_yield_curve, step: s21_threshold_card}, {case: p50_yield_curve, step: s22_threshold}]
+
+- id: regime_switching
+  term: Regime switching
+  aliases: [regime change, regime changes, regime-switching, structural break, structural breaks]
+  short: Allowing a market or economy to move between distinct states, such as calm and crisis, each with its own behaviour.
+  plain: >-
+    Relationships that hold in one state can fail in another. The P50 results differ before and after a split
+    date, a reminder that the yield curve's signal may have changed.
+  fools_you: >-
+    States are easy to see in hindsight and hard to identify as they happen.
+  related: [hidden_markov_model, stationarity, expanding_window]
+  in_cases: [{case: p50_yield_curve, step: s19_result}]
+  sources: [book_dixon_ml_finance]
+
+- id: hidden_markov_model
+  term: Hidden Markov model (HMM)
+  aliases: [HMM, hidden Markov model]
+  short: A model in which an unseen state, such as a bull or bear market, switches with fixed probabilities and shapes what we can observe.
+  plain: >-
+    We see returns, not the state; the model infers the most likely state at each date and the chances of
+    switching. The ML in Finance book covers these alongside particle filters.
+  fools_you: >-
+    The fitted states are statistical labels; naming them confidently, as "crisis" for example, can overstate what
+    the model knows.
+  related: [regime_switching, kalman_filter]
+  sources: [book_dixon_ml_finance]
+
+- id: yield_curve_pca
+  term: Yield-curve factors (PCA)
+  aliases: [level slope curvature, principal component analysis, PCA]
+  short: Summarising daily moves across all maturities with a few principal components, usually read as the curve's level, slope and curvature.
+  plain: >-
+    Most of the variation in yield curves comes from parallel shifts (level), then steepening or flattening
+    (slope), then bending (curvature). The spreads in the P50 case are simple measures of the slope.
+  fools_you: >-
+    Components are statistical, not economic; their shapes and labels can change between samples.
+  related: [yield_curve, curve_spreads, factor_model]
+  sources: [book_dixon_ml_finance]
+
+- id: reinforcement_learning
+  term: Reinforcement learning
+  aliases: [RL, Q-learning]
+  short: A branch of machine learning in which an agent learns which actions to take by trial and error, guided by rewards.
+  plain: >-
+    In finance it is applied to trade execution, portfolio choice and pricing when trading has costs. The last
+    part of the ML in Finance book is devoted to it.
+  fools_you: >-
+    Markets react to your actions and change over time; an agent trained on past data may find its world no
+    longer exists.
+  related: [backtest, position_sizing, transaction_costs]
+  sources: [book_dixon_ml_finance]

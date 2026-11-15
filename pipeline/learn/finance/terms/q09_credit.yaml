@@ -1,0 +1,141 @@
+# Quant lesson 9 · Credit, mortgages and pairs. Words 281-290.
+- id: credit_scoring
+  term: Credit scoring
+  aliases: [credit score, credit scores, scorecard]
+  short: Using data about a borrower to estimate how likely they are to repay, and turning that into a score.
+  plain: >-
+    Lenders use scores to approve loans and set rates. Classic models are logistic regressions; newer ones use
+    machine learning, under rules on fairness and explanation. A planned case builds one.
+  fools_you: >-
+    A model trained only on approved borrowers never sees how rejected ones would have behaved, which biases
+    it.
+  related: [probability_of_default, probit_logit, expected_loss]
+  sources: [book_dixon_ml_finance]
+
+- id: probability_of_default
+  term: Probability of default (PD)
+  aliases: [PD, default probability]
+  short: The chance that a borrower fails to pay within a given period, usually one year.
+  plain: >-
+    It is the first ingredient of expected credit loss and the main output of a credit-scoring model.
+  fools_you: >-
+    Figures estimated in good times can be far too low for a recession.
+  related: [credit_scoring, expected_loss, default]
+
+- id: loss_given_default
+  term: Loss given default (LGD)
+  aliases: [LGD, recovery rate]
+  short: The share of the money owed that a lender loses if a borrower defaults, after recovering what it can.
+  plain: >-
+    Secured loans lose less because the collateral can be sold; unsecured ones lose more. It equals one minus
+    the recovery rate.
+  fools_you: >-
+    Recoveries fall when defaults are widespread, because everyone is selling collateral at once.
+  related: [expected_loss, collateral, default]
+
+- id: exposure_at_default
+  term: Exposure at default (EAD)
+  aliases: [EAD]
+  short: How much a borrower will owe at the moment of default, including amounts drawn on credit lines.
+  plain: >-
+    For a loan it is close to the outstanding balance; for a credit card or overdraft, borrowers often draw more
+    as trouble builds.
+  fools_you: >-
+    Using today's balance understates it for credit lines that will be drawn down before default.
+  related: [expected_loss, probability_of_default]
+
+- id: expected_loss
+  term: Expected loss
+  aliases: [expected credit loss, ECL]
+  short: The average credit loss to plan for, the chance of default times the loss if it happens times the amount owed then.
+  plain: >-
+    Banks price loans to cover it and hold capital for losses above it.
+  formula:
+    tex: 'EL = PD \times LGD \times EAD'
+    plain: Expected loss = probability of default × loss given default × exposure at default
+    symbols:
+      - {symbol: PD, means: probability of default}
+      - {symbol: LGD, means: share lost if it happens}
+      - {symbol: EAD, means: amount owed at default}
+  example:
+    values: {pd: 0.02, lgd: 0.45, ead: 50000}
+    compute: {el: pd * lgd * ead}
+    formats: {pd: '{:.0%}', lgd: '{:.0%}', ead: '£{:,.0f}', el: '£{:,.0f}'}
+    text: A {pd} chance of default, a {lgd} loss if it happens and {ead} owed mean an expected loss of {el}.
+  fools_you: >-
+    It is an average; the real danger is the unexpected loss of a bad year, when many borrowers default
+    together.
+  related: [probability_of_default, loss_given_default, exposure_at_default, bank_capital]
+
+- id: probit_logit
+  term: Probit and logit models
+  aliases: [probit, logit, logistic regression, probit model, logit model]
+  short: Regression models for yes-or-no outcomes that turn a weighted sum of predictors into a probability between zero and one.
+  plain: >-
+    A straight line could predict probabilities below zero or above one; these models bend it into an S-curve.
+    One uses the normal distribution, the other the logistic one, and results are usually very similar. The P50
+    case models the chance of a recession this way.
+  formula:
+    tex: 'P(y = 1) = \frac{1}{1 + e^{-(\beta_{0} + \beta_{1} x)}}'
+    plain: Probability = 1 ÷ (1 + e^−(intercept + slope × x)) for the logit version
+    symbols:
+      - {symbol: β0, means: intercept}
+      - {symbol: β1, means: slope on the predictor}
+      - {symbol: x, means: "the predictor, such as a yield spread"}
+  example:
+    values: {b0: -2.0, b1: -0.8, x: 0.5}
+    compute: {p: 1 / (1 + exp(-(b0 + b1 * x)))}
+    formats: {b0: '{:.1f}', b1: '{:.1f}', x: '{:.1f}', p: '{:.1%}'}
+    text: With an intercept of {b0}, a slope of {b1} and a spread of {x}, the logit model gives a probability of {p}.
+  fools_you: >-
+    Coefficients are not changes in probability: a predictor's effect depends on where you are on the S-curve.
+  related: [credit_scoring, base_rate, calibration, hac_standard_errors]
+  in_cases: [{case: p50_yield_curve, step: s14_method}]
+
+- id: prepayment
+  term: Prepayment
+  aliases: [prepayments, prepayment risk, early repayment]
+  short: Repaying a loan, especially a mortgage, earlier than scheduled.
+  plain: >-
+    Homeowners refinance when rates fall, so lenders get their money back exactly when they can only reinvest at
+    lower rates. Modelling it is central to valuing mortgages, and a planned case studies it.
+  fools_you: >-
+    It is not simply good news for lenders: it cuts short the high-rate loans they wanted to keep.
+  related: [mortgage, mortgage_backed_security, convexity]
+  sources: [book_dixon_ml_finance]
+
+- id: mortgage_backed_security
+  term: Mortgage-backed security (MBS)
+  aliases: [MBS, mortgage-backed securities, securitisation, securitization]
+  short: A bond whose payments come from a pool of mortgages bundled together.
+  plain: >-
+    Banks sell mortgages into pools, freeing money to lend again, and investors receive the homeowners'
+    payments. The pools carry prepayment and default risk.
+  fools_you: >-
+    Bundling does not remove risk: badly understood pools of mortgages were at the heart of the global financial
+    crisis.
+  related: [prepayment, mortgage, credit_rating, convexity]
+
+- id: cointegration
+  term: Cointegration
+  aliases: [cointegrated]
+  short: When two wandering series move together so that a combination of them is stationary, tied by a long-run relationship.
+  plain: >-
+    Each price may drift like a random walk, but the gap between them keeps returning to a mean. This is the
+    statistical basis of pairs trading.
+  fools_you: >-
+    Correlation is not this: two correlated series can drift apart forever, and tied ones can look weakly
+    correlated day to day.
+  related: [pairs_trading, stationarity, correlation, mean_reversion]
+  sources: [book_dixon_ml_finance]
+
+- id: pairs_trading
+  term: Pairs trading
+  aliases: [pairs trade, statistical arbitrage, stat arb]
+  short: Trading two related assets against each other, buying the one that looks cheap relative to the other and selling the dear one.
+  plain: >-
+    Classic pairs include two companies in the same industry. The trade profits when the gap returns to normal,
+    whatever the market does. A planned case tests it.
+  fools_you: >-
+    Relationships break: if one company's business changes, the gap may never close.
+  related: [cointegration, mean_reversion, short_selling]

@@ -82,5 +82,267 @@
     "quote": "each cause is prorated based on delayed minutes it is responsible for",
     "status": "VERIFIED",
     "note": "Also: 'A flight is considered delayed when it arrived 15 or more minutes than the schedule'; 'Delayed minutes are calculated for delayed flights only.' Category DEFINITIONS (e.g. whether non-extreme weather is coded NAS) could not be opened (bts.gov 403; eCFR anti-bot redirect) and are NOT taught."
+  },
+  {
+    "key": "boe_inflation_explainer",
+    "title": "What is inflation?",
+    "authors": [
+      "Bank of England"
+    ],
+    "year": "n.d.",
+    "url": "https://www.bankofengland.co.uk/explainers/what-is-inflation",
+    "verified_on": "2026-11-15",
+    "quote": "Inflation is when prices rise",
+    "status": "VERIFIED",
+    "note": "Knowledge Bank explainer; no publication date shown. Finance course: economy lesson."
+  },
+  {
+    "key": "boe_interest_rates_explainer",
+    "title": "What are interest rates?",
+    "authors": [
+      "Bank of England"
+    ],
+    "year": "2026",
+    "url": "https://www.bankofengland.co.uk/explainers/what-are-interest-rates",
+    "verified_on": "2026-11-15",
+    "quote": "Interest is the cost of borrowing money or the reward for saving",
+    "status": "VERIFIED",
+    "note": "Page last updated 5 November 2026. Finance course: interest and central-bank lessons."
+  },
+  {
+    "key": "boe_quantitative_easing",
+    "title": "Quantitative easing",
+    "authors": [
+      "Bank of England"
+    ],
+    "year": "2025",
+    "url": "https://www.bankofengland.co.uk/monetary-policy/quantitative-easing",
+    "verified_on": "2026-11-15",
+    "quote": "Quantitative easing is a tool central banks can use to meet an inflation target.",
+    "status": "VERIFIED",
+    "note": "Page last updated 5 December 2025. The explainer URL /explainers/what-is-quantitative-easing returned 404."
+  },
+  {
+    "key": "nber_business_cycle_dating",
+    "title": "Business Cycle Dating",
+    "authors": [
+      "National Bureau of Economic Research"
+    ],
+    "year": "n.d.",
+    "url": "https://www.nber.org/research/business-cycle-dating",
+    "verified_on": "2026-11-15",
+    "quote": "a significant decline in economic activity that is spread across the economy",
+    "status": "VERIFIED",
+    "note": "NBER's recession definition; the P50 USREC series follows NBER dates."
+  },
+  {
+    "key": "bea_gdp",
+    "title": "Gross Domestic Product",
+    "authors": [
+      "U.S. Bureau of Economic Analysis"
+    ],
+    "year": "n.d.",
+    "url": "https://www.bea.gov/resources/learning-center/what-to-know-gdp",
+    "verified_on": "2026-11-15",
+    "quote": "the value of the final goods and services produced in the United States",
+    "status": "VERIFIED",
+    "note": "Finance course: economy lesson."
+  },
+  {
+    "key": "finra_stocks",
+    "title": "Stocks",
+    "authors": [
+      "FINRA"
+    ],
+    "year": "n.d.",
+    "url": "https://www.finra.org/investors/investing/investment-products/stocks",
+    "verified_on": "2026-11-15",
+    "quote": "Stocks are also referred to as equities",
+    "status": "VERIFIED",
+    "note": "Investor.gov (SEC) returned 403 to automated access, so FINRA's investor pages are used instead."
+  },
+  {
+    "key": "finra_bonds",
+    "title": "Bonds",
+    "authors": [
+      "FINRA"
+    ],
+    "year": "n.d.",
+    "url": "https://www.finra.org/investors/investing/investment-products/bonds",
+    "verified_on": "2026-11-15",
+    "quote": "issued by a corporation, government, federal agency or other organization to raise capital",
+    "status": "VERIFIED",
+    "note": "Finance course: bonds lesson."
+  },
+  {
+    "key": "treasurydirect_bonds",
+    "title": "Treasury Bonds",
+    "authors": [
+      "U.S. Department of the Treasury, TreasuryDirect"
+    ],
+    "year": "n.d.",
+    "url": "https://www.treasurydirect.gov/marketable-securities/treasury-bonds/",
+    "verified_on": "2026-11-15",
+    "quote": "Bonds pay a fixed rate of interest every six months until they mature.",
+    "status": "VERIFIED",
+    "note": "Finance course: bonds lesson (coupon, maturity, Treasury)."
+  },
+  {
+    "key": "fed_monetary_policy",
+    "title": "Monetary Policy",
+    "authors": [
+      "Board of Governors of the Federal Reserve System"
+    ],
+    "year": "n.d.",
+    "url": "https://www.federalreserve.gov/monetarypolicy.htm",
+    "verified_on": "2026-11-15",
+    "quote": "promote maximum employment, stable prices, and moderate long-term interest rates",
+    "status": "VERIFIED",
+    "note": "Finance course: central-bank lesson."
+  },
+  {
+    "key": "finra_asset_allocation",
+    "title": "Asset Allocation and Diversification",
+    "authors": [
+      "FINRA"
+    ],
+    "year": "n.d.",
+    "url": "https://www.finra.org/investors/investing/investing-basics/asset-allocation-diversification",
+    "verified_on": "2026-11-15",
+    "quote": "Asset allocation alone is not enough to effectively manage risk.",
+    "status": "VERIFIED",
+    "note": "Finance course: risk and portfolios lesson."
+  },
+  {
+    "key": "sec_financial_statements",
+    "title": "Beginners' Guide to Financial Statements",
+    "authors": [
+      "U.S. Securities and Exchange Commission"
+    ],
+    "year": "n.d.",
+    "url": "https://www.sec.gov/about/reports-publications/beginners-guide-financial-statements",
+    "verified_on": "2026-11-15",
+    "quote": "They show you the money.",
+    "status": "VERIFIED",
+    "note": "Finance course: accounts lessons (balance sheet, income and cash-flow statements)."
+  },
+  {
+    "key": "finra_options",
+    "title": "Options",
+    "authors": [
+      "FINRA"
+    ],
+    "year": "n.d.",
+    "url": "https://www.finra.org/investors/investing/investment-products/options",
+    "verified_on": "2026-11-15",
+    "quote": "An option is a financial instrument known as a derivative",
+    "status": "VERIFIED",
+    "note": "Finance course: derivatives lessons."
+  },
+  {
+    "key": "cftc_futures_basics",
+    "title": "Basics of Futures Trading",
+    "authors": [
+      "U.S. Commodity Futures Trading Commission"
+    ],
+    "year": "n.d.",
+    "url": "https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/FuturesMarketBasics/index.htm",
+    "verified_on": "2026-11-15",
+    "quote": "an agreement to buy or sell a particular commodity at a future date",
+    "status": "VERIFIED",
+    "note": "Finance course: derivatives lessons."
+  },
+  {
+    "key": "boe_sonia",
+    "title": "SONIA interest rate benchmark",
+    "authors": [
+      "Bank of England"
+    ],
+    "year": "2026",
+    "url": "https://www.bankofengland.co.uk/markets/sonia-benchmark",
+    "verified_on": "2026-11-15",
+    "quote": "The Bank of England runs SONIA – the risk-free rate for sterling markets.",
+    "status": "VERIFIED",
+    "note": "Page last updated 27 May 2026. Finance course: banking and rates lesson."
+  },
+  {
+    "key": "nist_stationarity",
+    "title": "Stationarity (e-Handbook of Statistical Methods, 6.4.4.2)",
+    "authors": [
+      "NIST/SEMATECH"
+    ],
+    "year": "n.d.",
+    "url": "https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc442.htm",
+    "verified_on": "2026-11-15",
+    "quote": "the mean, variance and autocorrelation structure do not change over time",
+    "status": "VERIFIED",
+    "note": "Finance course: quant tier, time-series lessons."
+  },
+  {
+    "key": "book_napkin_finance",
+    "title": "Napkin Finance: Build Your Wealth in 30 Seconds or Less",
+    "authors": [
+      "Tina Hay"
+    ],
+    "year": "2019",
+    "url": "https://napkinfinance.com/book/",
+    "verified_on": "2026-11-15",
+    "quote": "A handy crash course in personal finance",
+    "status": "VERIFIED",
+    "note": "Beginner, visual. Read next after the core tier. Dey Street (William Morrow, HarperCollins), ISBN 9780062915030."
+  },
+  {
+    "key": "book_economist_markets",
+    "title": "The Economist Guide to Financial Markets (7th edition)",
+    "authors": [
+      "Marc Levinson"
+    ],
+    "year": "2018",
+    "url": "https://marclevinson.net/the-economist-guide-to-financial-markets/",
+    "verified_on": "2026-11-15",
+    "quote": "designed to help non-specialist readers understand why financial markets exist and how they work",
+    "status": "VERIFIED",
+    "note": "Profile Books / Economist Books, ISBN 9781788160346. Read next after the core tier."
+  },
+  {
+    "key": "book_random_walk",
+    "title": "A Random Walk Down Wall Street (50th anniversary edition)",
+    "authors": [
+      "Burton G. Malkiel"
+    ],
+    "year": "2023",
+    "url": "https://wwnorton.co.uk/books/9781324051138-a-random-walk-down-wall-street-b861db9e-37ad-4aa9-ae33-cbfab86f2f37",
+    "verified_on": "2026-11-15",
+    "quote": "remains the best investment guide money can buy",
+    "status": "VERIFIED",
+    "note": "W. W. Norton, ISBN 9781324051138. Quote is the publisher's own description. Read next after the intermediate tier."
+  },
+  {
+    "key": "book_hull_derivatives",
+    "title": "Options, Futures, and Other Derivatives (11th edition)",
+    "authors": [
+      "John C. Hull"
+    ],
+    "year": "2021",
+    "url": "https://www.pearson.com/en-us/subject-catalog/p/marketing-management/P200000005938",
+    "verified_on": "2026-11-15",
+    "quote": "Known as “the bible” to business and economics professionals",
+    "status": "VERIFIED",
+    "note": "Pearson, copyright 2022. Quote is the publisher's own description. Read next after the intermediate tier."
+  },
+  {
+    "key": "book_dixon_ml_finance",
+    "title": "Machine Learning in Finance: From Theory to Practice",
+    "authors": [
+      "Matthew F. Dixon",
+      "Igor Halperin",
+      "Paul Bilokon"
+    ],
+    "year": "2020",
+    "url": "https://link.springer.com/book/10.1007/978-3-030-41068-1",
+    "verified_on": "2026-11-15",
+    "quote": "machine learning has grown into an important skillset for the finance industry",
+    "status": "VERIFIED",
+    "note": "Springer, ISBN 978-3-030-41067-4. Its chapter topics shaped the quant tier; definitions are written fresh, nothing is copied. The owner's PDF copy is never committed."
   }
 ]

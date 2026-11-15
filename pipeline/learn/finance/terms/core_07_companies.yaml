@@ -1,0 +1,174 @@
+# Lesson 7 · Companies and shares. Words 61-70.
+- id: company
+  term: Company
+  aliases: [companies, corporation, limited company]
+  short: A business set up as a legal person of its own, able to own things, sign contracts, borrow and be sued in its own name.
+  plain: >-
+    Setting one up separates the business from its owners. If a limited company fails, its owners usually
+    lose what they put in, but not their homes: this is limited liability. Public companies offer shares to
+    anyone through a stock exchange; private ones do not.
+  fools_you: >-
+    A company's debts are not its shareholders' debts. That protection is exactly why lenders charge risky
+    companies more.
+  related: [share, shareholder, stock_exchange]
+  sources: [finra_stocks]
+
+- id: share
+  term: Share
+  aliases: [shares, stock, stocks]
+  short: One of the equal slices a company's ownership is divided into, giving its holder a claim on profits and usually a vote.
+  plain: >-
+    Hold one of a million slices and you own a millionth of the business. You gain if it grows and its price
+    rises or it pays dividends; you lose if it struggles. These slices are also called stocks or equities, the
+    word at the heart of the P50 decision.
+  fools_you: >-
+    A low price per slice does not mean a cheap company. A firm with many slices at a low price can be worth
+    far more than one with few slices at a high price.
+  related: [equity, shareholder, dividend, market_cap]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [finra_stocks]
+
+- id: stock_exchange
+  term: Stock exchange
+  aliases: [stock market, stock markets, stock exchanges]
+  short: An organised marketplace where shares and other securities are bought and sold under set rules.
+  plain: >-
+    Exchanges such as the London Stock Exchange or the New York Stock Exchange match buyers with sellers,
+    publish prices and set rules for the companies listed on them. Almost all trading is now electronic.
+  fools_you: >-
+    Shares bought on an exchange usually come from other investors, not from the company. The company only
+    receives money when it issues new shares.
+  related: [share, ipo, bid_ask, trading_volume]
+  sources: [finra_stocks]
+
+- id: shareholder
+  term: Shareholder
+  aliases: [shareholders, stockholder, stockholders]
+  short: A person or institution that owns at least one share of a company.
+  plain: >-
+    They are the owners. They vote on big decisions and on who sits on the board, receive dividends, and come
+    last in the queue if the company fails, after staff, suppliers and lenders.
+  fools_you: >-
+    Owning shares does not let you run the company. Managers do, and their interests can differ from yours.
+  related: [share, equity, dividend, company]
+  sources: [finra_stocks]
+
+- id: dividend
+  term: Dividend
+  aliases: [dividends, dividend yield]
+  short: A cash payment a company makes to its shareholders out of profits, usually a fixed amount per share.
+  plain: >-
+    Mature companies with steady profits often pay part of them out; fast-growing ones usually keep it all to
+    reinvest. The board decides each payment, and it can be cut when times are hard.
+  formula:
+    tex: '\mathrm{dividend\ yield} = \frac{D}{P}'
+    plain: Dividend yield = dividends per share per year ÷ share price
+    symbols:
+      - {symbol: D, means: dividends paid per share in a year}
+      - {symbol: P, means: share price}
+  example:
+    values: {D: 1.2, P: 40}
+    compute: {dy: D / P}
+    formats: {D: '£{:,.2f}', P: '£{:,.2f}', dy: '{:.1%}'}
+    text: A share priced at {P} that pays {D} a year has a dividend yield of {dy}.
+  fools_you: >-
+    A very high yield can be a warning rather than a bargain: the price may have fallen because investors
+    expect the payment to be cut.
+  related: [share, shareholder, profit, return]
+  sources: [finra_stocks]
+
+- id: market_cap
+  term: Market capitalisation
+  aliases: [market cap, market capitalization, market value]
+  short: The total value the stock market puts on a company, its share price multiplied by the number of shares.
+  plain: >-
+    It compares company sizes properly, rather than by share price. Companies are grouped as large, mid or
+    small "caps", and most big indices weight their members by this figure.
+  formula:
+    tex: '\mathrm{Market\ cap} = P \times N'
+    plain: Market capitalisation = share price × number of shares
+    symbols:
+      - {symbol: P, means: share price}
+      - {symbol: N, means: number of shares in issue}
+  example:
+    values: {P: 25, N: 400}
+    compute: {mc: P * N}
+    formats: {P: '£{:,.2f}', N: '{:,.0f} million', mc: '£{:,.0f} million'}
+    text: A company with {N} shares priced at {P} each is worth {mc} on the stock market.
+  fools_you: >-
+    It ignores the company's debt. Enterprise value adds the debt back, which matters when comparing firms that
+    borrow very different amounts.
+  related: [share, stock_index, enterprise_value]
+
+- id: ipo
+  term: IPO (initial public offering)
+  aliases: [IPO, IPOs, initial public offering, flotation]
+  short: The first time a private company sells shares to the public, so that they can then be traded on a stock exchange.
+  plain: >-
+    Founders and early investors can sell part of their stake, and the company raises new money to grow. Banks
+    help set the price and find buyers. From the first day of trading, the shares change hands between
+    investors like any others.
+  fools_you: >-
+    A big jump on the first day feels like success, but it can mean the company sold its shares too cheaply and
+    left money on the table.
+  related: [share, stock_exchange, company]
+  sources: [finra_stocks]
+
+- id: eps
+  term: Earnings per share (EPS)
+  aliases: [EPS, earnings per share]
+  short: A company's profit for a period divided by the number of its shares.
+  plain: >-
+    It puts profit on a per-share basis, so you can set it against the share price. Companies report it every
+    quarter or half-year, and the market reacts to whether it beats or misses forecasts.
+  formula:
+    tex: '\mathrm{EPS} = \frac{\mathrm{net\ profit}}{\mathrm{number\ of\ shares}}'
+    plain: EPS = net profit ÷ number of shares
+    symbols:
+      - {symbol: net profit, means: profit after all costs and tax}
+      - {symbol: number of shares, means: shares in issue}
+  example:
+    values: {NP: 600, N: 400}
+    compute: {eps: NP / N}
+    formats: {NP: '£{:,.0f} million', N: '{:,.0f} million', eps: '£{:,.2f}'}
+    text: Net profit of {NP} spread over {N} shares gives earnings per share of {eps}.
+  fools_you: >-
+    It can rise without the business improving, for example when a company buys back its own shares so the
+    same profit is spread over fewer of them.
+  related: [profit, pe_ratio, share]
+
+- id: pe_ratio
+  term: Price-to-earnings ratio (P/E)
+  aliases: [P/E, PE ratio, price/earnings ratio, earnings multiple]
+  short: A company's share price divided by its yearly earnings per share, roughly how many years of current profit you pay for.
+  plain: >-
+    A high ratio means investors pay a lot for each pound of profit, usually because they expect fast growth; a
+    low one can mean a bargain or a business in trouble. It is most useful for comparing similar companies, or
+    a company with its own past.
+  formula:
+    tex: 'P/E = \frac{P}{\mathrm{EPS}}'
+    plain: P/E = share price ÷ earnings per share
+    symbols:
+      - {symbol: P, means: share price}
+      - {symbol: EPS, means: earnings per share over a year}
+  example:
+    values: {P: 25, eps: 1.5}
+    compute: {pe: P / eps}
+    formats: {P: '£{:,.2f}', eps: '£{:,.2f}', pe: '{:.1f}'}
+    text: At a share price of {P} and earnings per share of {eps}, the ratio is {pe}.
+  fools_you: >-
+    A low ratio is not automatically cheap: if profits are about to fall, today's earnings flatter the company.
+  related: [eps, valuation, share]
+
+- id: stock_index
+  term: Stock index
+  aliases: [stock indices, stock indexes, S&P 500, FTSE 100, market index, share index]
+  short: A single number that tracks the combined value of a chosen group of shares, such as a country's largest companies.
+  plain: >-
+    The FTSE 100 follows the largest companies listed in London; the S&P 500 follows five hundred large US
+    companies. Most are weighted by market capitalisation, so the biggest firms move them most. Fund managers
+    are judged against them, and index funds simply copy them.
+  fools_you: >-
+    The index rising does not mean most shares rose: a handful of giant companies can carry it while most
+    members fall.
+  related: [market_cap, benchmark, index_fund]

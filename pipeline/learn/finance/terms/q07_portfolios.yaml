@@ -1,0 +1,145 @@
+# Quant lesson 7 · Building portfolios. Words 261-270.
+- id: mean_variance_optimisation
+  term: Mean-variance optimisation
+  aliases: [mean-variance optimization, Markowitz optimisation, Markowitz]
+  short: Choosing portfolio weights to get the highest expected return for a given variance, or the lowest variance for a given return.
+  plain: >-
+    It is the foundation of modern portfolio theory. Its inputs are expected returns, volatilities and
+    correlations, and its output is a set of weights.
+  formula:
+    tex: '\max_{w}\ w^{\top}\mu - \frac{\gamma}{2}\,w^{\top}\Sigma\,w'
+    plain: Choose weights w to maximise expected return − (risk aversion ÷ 2) × variance
+    symbols:
+      - {symbol: μ, means: expected returns}
+      - {symbol: Σ, means: covariance matrix}
+      - {symbol: γ, means: risk aversion}
+  fools_you: >-
+    It maximises errors too: small mistakes in expected returns produce extreme, unstable weights.
+  related: [efficient_frontier, covariance_shrinkage, tangency_portfolio]
+  sources: [book_dixon_ml_finance]
+
+- id: efficient_frontier
+  term: Efficient frontier
+  short: The set of portfolios offering the best possible expected return for each level of risk.
+  plain: >-
+    Plot every possible portfolio by risk and return; the upper-left edge is the frontier. Portfolios below it
+    are beaten: you could get more return for the same risk.
+  fools_you: >-
+    The frontier you estimate is not the true one; it is drawn from noisy inputs and moves when they change.
+  related: [mean_variance_optimisation, tangency_portfolio, minimum_variance_portfolio]
+
+- id: tangency_portfolio
+  term: Tangency portfolio
+  aliases: [maximum Sharpe ratio portfolio, market portfolio]
+  short: The portfolio on the efficient frontier with the highest Sharpe ratio, the best mix of risky assets to combine with cash.
+  plain: >-
+    Mixing it with cash, or borrowing to hold more of it, lets any investor choose a risk level while keeping
+    the best return per unit of risk. In CAPM it is the whole market.
+  fools_you: >-
+    Its estimated weights are fragile, for the same reasons as mean-variance optimisation.
+  related: [efficient_frontier, sharpe_ratio, capm]
+
+- id: minimum_variance_portfolio
+  term: Minimum-variance portfolio
+  aliases: [minimum variance portfolio, global minimum variance]
+  short: The mix of risky assets with the lowest possible volatility, regardless of expected return.
+  plain: >-
+    Because it ignores expected returns, which are hard to estimate, it is often more robust in practice than
+    full mean-variance optimisation.
+  formula:
+    tex: 'w_{1} = \frac{\sigma_{2}^{2} - \rho\,\sigma_{1}\sigma_{2}}{\sigma_{1}^{2} + \sigma_{2}^{2} - 2\rho\,\sigma_{1}\sigma_{2}}'
+    plain: Weight in asset 1 (two assets) = (σ2² − ρσ1σ2) ÷ (σ1² + σ2² − 2ρσ1σ2)
+    symbols:
+      - {symbol: σ1 and σ2, means: volatilities}
+      - {symbol: ρ, means: correlation}
+  example:
+    values: {s1: 0.2, s2: 0.1, rho: 0.2}
+    compute: {w1: (s2 ** 2 - rho * s1 * s2) / (s1 ** 2 + s2 ** 2 - 2 * rho * s1 * s2)}
+    formats: {s1: '{:.0%}', s2: '{:.0%}', rho: '{:.1f}', w1: '{:.1%}'}
+    text: Mixing an asset with volatility {s1} and one with {s2}, correlated at {rho}, gives the lowest risk with {w1} in the first.
+  fools_you: >-
+    Low volatility is not low loss: such portfolios can still crash together in a crisis.
+  related: [efficient_frontier, covariance_shrinkage, risk_parity]
+
+- id: risk_parity
+  term: Risk parity
+  short: Weighting assets so that each contributes the same amount of risk to the portfolio, rather than the same amount of money.
+  plain: >-
+    A traditional mix of mostly shares gets most of its risk from shares. This approach holds more bonds, often
+    with borrowing to lift returns.
+  example:
+    values: {s1: 0.15, s2: 0.05}
+    compute: {w1: (1 / s1) / (1 / s1 + 1 / s2), w2: (1 / s2) / (1 / s1 + 1 / s2)}
+    formats: {s1: '{:.0%}', s2: '{:.0%}', w1: '{:.0%}', w2: '{:.0%}'}
+    text: With volatilities of {s1} for shares and {s2} for bonds, and no correlation, equal risk means {w1} in shares and {w2} in bonds.
+  fools_you: >-
+    It relies on bonds and shares not falling together; when both drop, as when rates jump, it suffers.
+  related: [volatility_targeting, minimum_variance_portfolio, leverage]
+
+- id: kelly_criterion
+  term: Kelly criterion
+  aliases: [Kelly bet, Kelly sizing]
+  short: A rule for sizing a bet to maximise the long-run growth of wealth, based on the edge and the odds.
+  plain: >-
+    Bet more than it says and you grow more slowly and risk ruin; less is safer. Professionals often use half of
+    it because their edge is uncertain.
+  formula:
+    tex: 'f^{*} = p - \frac{1 - p}{b}'
+    plain: Fraction to bet = win probability − lose probability ÷ odds
+    symbols:
+      - {symbol: p, means: probability of winning}
+      - {symbol: b, means: net odds received on a win}
+  example:
+    values: {p: 0.55, b: 1}
+    compute: {f: p - (1 - p) / b}
+    formats: {p: '{:.0%}', b: '{:.0f}', f: '{:.0%}'}
+    text: With a {p} chance of winning a bet paying {b} to one, the rule says stake {f} of your wealth each time.
+  fools_you: >-
+    It needs your true edge; overestimate it and the "optimal" bet becomes reckless.
+  related: [position_sizing, leverage, expected_return]
+
+- id: covariance_shrinkage
+  term: Covariance shrinkage
+  aliases: [shrinkage estimator, Ledoit-Wolf]
+  short: Pulling a noisy estimated covariance matrix towards a simpler target to make portfolio weights more stable.
+  plain: >-
+    With many assets and limited history, estimated correlations are mostly noise. Blending them with a
+    structured guess trades a little bias for much less error.
+  fools_you: >-
+    Too much blending hides real relationships; the amount should be chosen sensibly, ideally out of sample.
+  related: [mean_variance_optimisation, covariance, overfitting]
+  sources: [book_dixon_ml_finance]
+
+- id: maximum_drawdown
+  term: Maximum drawdown
+  aliases: [max drawdown, MDD]
+  short: The largest peak-to-trough fall in value over a whole history, a measure of worst-case pain.
+  plain: >-
+    It complements volatility because it captures losses that build up over many days. Investors often ask
+    about it before committing money.
+  fools_you: >-
+    The worst so far is not the worst possible; a longer history usually reveals a deeper one.
+  related: [drawdown, tail_risk, volatility]
+
+- id: position_sizing
+  term: Position sizing
+  short: Deciding how much to put into each trade or holding, given its expected edge and its risk.
+  plain: >-
+    Sizing often matters more than picking: a good idea in the wrong size can still ruin you. Common rules scale
+    holdings by volatility or cap any single one.
+  fools_you: >-
+    Raising size after wins and cutting it after losses feels natural and often does the opposite of what the
+    edge supports.
+  related: [kelly_criterion, volatility_targeting, risk_parity]
+
+- id: robo_advisor
+  term: Robo-advisor
+  aliases: [robo-advisors, robo adviser, robo advisers]
+  short: An online service that builds and manages a portfolio automatically from a questionnaire about your goals and attitude to risk.
+  plain: >-
+    They usually hold low-cost index funds and rebalance automatically. The ML in Finance book opens with them
+    as an example of financial technology.
+  fools_you: >-
+    Automation removes some behavioural mistakes but not market risk: the portfolio still falls in a crash.
+  related: [index_fund, rebalancing, asset_allocation]
+  sources: [book_dixon_ml_finance]

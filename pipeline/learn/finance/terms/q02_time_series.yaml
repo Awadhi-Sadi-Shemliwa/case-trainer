@@ -1,0 +1,151 @@
+# Quant lesson 2 · Time series. Words 211-220.
+- id: time_series
+  term: Time series
+  aliases: [time-series, time series data]
+  short: Observations of the same quantity recorded in time order, such as daily prices or monthly recession flags.
+  plain: >-
+    Order matters: today's value often depends on yesterday's, and the past cannot be shuffled into training and
+    test sets at random. The P50 case is built on series of yield spreads and recession dates.
+  fools_you: >-
+    Random train-test splits leak the future into training; data in time order needs splits in time order.
+  related: [stationarity, autocorrelation, walk_forward_validation]
+  in_cases: [{case: p50_yield_curve, step: s05_predict_data}]
+  sources: [nist_stationarity, book_dixon_ml_finance]
+
+- id: random_walk
+  term: Random walk
+  aliases: [random walks]
+  short: A series in which each step is the previous value plus an unpredictable shock, so past moves give no clue about the next.
+  plain: >-
+    Many asset prices look roughly like this, which is the heart of the efficient-market idea. It wanders with
+    no pull back to any level, so its spread grows over time.
+  formula:
+    tex: 'P_{t} = P_{t-1} + \varepsilon_{t}'
+    plain: Value today = value yesterday + a random shock
+    symbols:
+      - {symbol: ε t, means: an unpredictable shock with mean zero}
+  fools_you: >-
+    Pure noise produces convincing trends and patterns; your eye will find structure where there is none.
+  related: [efficient_market_hypothesis, stationarity, white_noise]
+  sources: [book_dixon_ml_finance]
+
+- id: stationarity
+  term: Stationarity
+  aliases: [stationary, non-stationary, nonstationary]
+  short: A property of a time series whose average, spread and pattern of correlation with its own past stay the same over time.
+  plain: >-
+    Most statistical models assume it. Prices usually lack it but returns roughly have it, which is why we model
+    returns. Taking differences (today minus yesterday) is the usual cure.
+  fools_you: >-
+    A series can look stable in a short sample and still drift; a regime change, such as a new central-bank
+    policy, quietly breaks it.
+  related: [time_series, random_walk, cointegration, regime_switching]
+  sources: [nist_stationarity]
+
+- id: autocorrelation
+  term: Autocorrelation
+  aliases: [serial correlation, autocorrelated, ACF]
+  short: The correlation of a series with its own past values at a given lag.
+  plain: >-
+    Positive values mean highs follow highs; negative ones mean reversals. Returns usually show little of it,
+    but their size (volatility) shows a lot. Overlapping targets, as in the P50 case, create it by design.
+  formula:
+    tex: '\rho_{k} = \mathrm{Corr}(X_{t},\ X_{t-k})'
+    plain: Lag-k autocorrelation = correlation between the series and itself k periods earlier
+    symbols:
+      - {symbol: k, means: the lag in periods}
+  fools_you: >-
+    Ignoring it makes standard errors too small, so results look more certain than they are.
+  related: [hac_standard_errors, white_noise, volatility_clustering]
+  in_cases: [{case: p50_yield_curve, step: s15_hac_card}]
+  sources: [nist_stationarity]
+
+- id: white_noise
+  term: White noise
+  short: A series of independent random shocks with a constant mean and variance and no correlation with its own past.
+  plain: >-
+    It is the benchmark for "nothing left to predict": if a model's errors look like this, it has captured the
+    structure; if not, there is pattern left.
+  fools_you: >-
+    Uncorrelated is not the same as independent: returns can be uncorrelated while their sizes are clearly
+    linked.
+  related: [random_walk, autocorrelation, volatility_clustering]
+  sources: [nist_stationarity]
+
+- id: mean_reversion
+  term: Mean reversion
+  aliases: [mean-reverting, mean reverting]
+  short: The tendency of a series to drift back towards a long-run average after moving away from it.
+  plain: >-
+    Interest rates, volatility and the gap between two related prices often behave this way. Strategies
+    betting on it buy what has fallen and sell what has risen.
+  fools_you: >-
+    The average itself can move; betting on a return to an old level after a regime change can be ruinous.
+  related: [autoregressive_model, pairs_trading, momentum]
+
+- id: momentum
+  term: Momentum
+  aliases: [time-series momentum, trend following]
+  short: The tendency of assets that have risen recently to keep rising for a while, and of fallers to keep falling.
+  plain: >-
+    It is one of the most studied patterns in finance, found across many markets. Trend-following funds
+    exploit it; at other horizons it fights against mean reversion.
+  fools_you: >-
+    It crashes: sudden reversals can wipe out years of gains, often just after a market bottom.
+  related: [mean_reversion, factor_model, alpha_decay]
+
+- id: autoregressive_model
+  term: Autoregressive model (AR)
+  aliases: [AR model, autoregression, AR(1)]
+  short: A model predicting a series' next value from a weighted sum of its own recent values plus a shock.
+  plain: >-
+    When the weight on yesterday is between minus one and one, the series is stationary and pulled back towards
+    its long-run mean; at exactly one it becomes a random walk.
+  formula:
+    tex: 'X_{t} = c + \phi\,X_{t-1} + \varepsilon_{t}'
+    plain: Today = constant + weight × yesterday + shock
+    symbols:
+      - {symbol: φ, means: weight on yesterday's value}
+      - {symbol: c, means: a constant}
+      - {symbol: ε t, means: shock}
+  example:
+    values: {c: 0.5, phi: 0.8, x: 4}
+    compute: {xhat: c + phi * x, mu: c / (1 - phi)}
+    formats: {c: '{:.1f}', phi: '{:.1f}', x: '{:.1f}', xhat: '{:.1f}', mu: '{:.1f}'}
+    text: With a constant of {c} and a weight of {phi} on today's value of {x}, the forecast is {xhat}, pulled towards the long-run mean of {mu}.
+  fools_you: >-
+    A good fit in the past does not mean the weights will hold; financial relationships drift.
+  related: [moving_average_model, mean_reversion, stationarity]
+  sources: [book_dixon_ml_finance]
+
+- id: moving_average_model
+  term: Moving-average model (MA)
+  aliases: [MA model, MA(1)]
+  short: A model in which today's value depends on today's shock plus a weighted part of recent shocks.
+  plain: >-
+    It describes series where a surprise echoes for a short, fixed time. Combined with autoregression it forms
+    ARMA models, the classic time-series toolkit.
+  formula:
+    tex: 'X_{t} = \mu + \varepsilon_{t} + \theta\,\varepsilon_{t-1}'
+    plain: Today = mean + today's shock + weight × yesterday's shock
+    symbols:
+      - {symbol: μ, means: the mean}
+      - {symbol: θ, means: weight on yesterday's shock}
+  fools_you: >-
+    It is not the moving average of prices drawn on trading charts, which is a smoothing tool, not a model.
+  related: [autoregressive_model, white_noise]
+  sources: [book_dixon_ml_finance]
+
+- id: kalman_filter
+  term: Kalman filter
+  aliases: [state-space model, state space model]
+  short: A method that tracks a hidden quantity over time by blending a model's prediction with each new noisy measurement.
+  plain: >-
+    Think of estimating a ship's position from a rough navigation plan and noisy positioning fixes. In finance it
+    estimates things that cannot be seen directly, such as a slowly changing hedge ratio or the true level of
+    volatility.
+  fools_you: >-
+    It is only as good as its assumptions about how noisy the model and the measurements are; set them wrong
+    and it chases noise.
+  related: [hidden_markov_model, stochastic_volatility, pairs_trading]
+  sources: [book_dixon_ml_finance]

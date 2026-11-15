@@ -31,6 +31,7 @@ import yaml
 from pydantic import ValidationError
 
 from common.content_schema import GRADED_TYPES, PLACEHOLDER_RE, Case
+from common.glossary import validate_course, write_course
 from common.io import extract_snippets, load_captured
 from common.provenance import Provenance
 from common.results import ResultStore
@@ -41,7 +42,9 @@ CASES_DIR = PIPELINE / "cases"
 CAL_DIR = PIPELINE / "calibration"
 SOURCES_FILE = REPO / "sources.json"
 OUT_DIR = REPO / "app" / "assets" / "content"
-BUNDLE_SCHEMA_VERSION = 1
+LEARN_DIR = PIPELINE / "learn" / "finance"
+# v2 (2026-11-15): finance course tables (course, tiers, lessons, terms) + formulas/*.png; context_snippets.
+BUNDLE_SCHEMA_VERSION = 2
 MIN_CALIBRATION = 30
 
 NEGATABLE_KEYWORDS = {"cause", "causes", "caused", "causation", "prove", "proves", "proof", "certain", "guarantee"}
@@ -265,10 +268,12 @@ CREATE TABLE captured(case_id TEXT, name TEXT, output TEXT, PRIMARY KEY(case_id,
 """
 
 
-def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_dir: Path) -> Path:
+def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_dir: Path, course=None) -> Path:
+    """course = (Course, ordered terms) from validate_course, or None (framework fixtures)."""
     if out_dir.exists():
         shutil.rmtree(out_dir)
     (out_dir / "charts").mkdir(parents=True)
+    (out_dir / "formulas").mkdir(parents=True)
     db_path = out_dir / "content.sqlite"
     con = sqlite3.connect(db_path)
     con.executescript(DDL)
@@ -305,6 +310,8 @@ def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_d
             con.execute("INSERT INTO transforms VALUES(?,?,?)", (case.id, t["id"], json.dumps(t)))
         for n, o in load_captured(cdir).items():
             con.execute("INSERT INTO captured VALUES(?,?,?)", (case.id, n, o))
+    if course is not None:
+        write_course(con, course[0], course[1], out_dir)
     con.commit()
     con.close()
     return db_path
@@ -315,7 +322,9 @@ def discover_cases(cases_dir: Path) -> list[Path]:
 
 
 def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: Path = SOURCES_FILE,
-          out_dir: Path = OUT_DIR, check_only: bool = False, order: list[str] | None = None) -> int:
+          out_dir: Path = OUT_DIR, check_only: bool = False, order: list[str] | None = None,
+          learn_dir: Path | None = None, partial_course: bool = False) -> int:
+    """learn_dir: the finance course to validate and bundle (None = cases only, as in framework tests)."""
     sources, errors = load_sources(sources_file)
     for e in errors:
         print(f"FAIL sources: {e}")
@@ -330,6 +339,18 @@ def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: P
         else:
             print(f"OK   {cdir.name}: {len(case.steps)} steps")
             ok_cases.append((cdir, case))
+    course = None
+    if learn_dir is not None:
+        case_steps = {case.id: {s.id for s in case.steps} for _, case in ok_cases}
+        c, ordered, cerrs = validate_course(learn_dir, sources, case_steps, complete=not partial_course)
+        if cerrs:
+            errors += cerrs
+            print(f"FAIL course {learn_dir.name}: {len(cerrs)} problem(s)")
+            for e in cerrs:
+                print(f"   - {e}")
+        else:
+            print(f"OK   course {learn_dir.name}: {len(ordered)} words")
+            course = (c, ordered)
     if errors:
         print(f"\nBUILD FAILED: {len(errors)} problem(s)")
         return 1
@@ -337,7 +358,7 @@ def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: P
         rank = {cid: i for i, cid in enumerate(order)}
         ok_cases.sort(key=lambda t: rank.get(t[1].id, 999))
     if not check_only:
-        db = write_bundle(ok_cases, sources, out_dir)
+        db = write_bundle(ok_cases, sources, out_dir, course)
         print(f"\nwrote {db} ({len(ok_cases)} case(s))")
     return 0
 
@@ -350,5 +371,6 @@ BUILD_ORDER = ["p50_yield_curve", "p34_home_adv", "p3_delay_propagation", "p13_t
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="validate only")
+    ap.add_argument("--partial-course", action="store_true", help="allow an unfinished course (work in progress)")
     a = ap.parse_args()
-    sys.exit(build(check_only=a.check, order=BUILD_ORDER))
+    sys.exit(build(check_only=a.check, order=BUILD_ORDER, learn_dir=LEARN_DIR, partial_course=a.partial_course))
