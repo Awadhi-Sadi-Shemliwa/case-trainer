@@ -4,6 +4,7 @@ import '../../engine/checker.dart';
 import '../../engine/placeholders.dart';
 import '../widgets/prose.dart';
 import '../widgets/code_view.dart';
+import 'draft_saver.dart';
 import 'step_common.dart';
 
 /// mcq, multi_select, kpi_builder and code_predict.
@@ -18,6 +19,7 @@ class ChoiceStep extends StatefulWidget {
 class _ChoiceStepState extends State<ChoiceStep> {
   final _started = DateTime.now();
   final Set<String> _selected = {};
+  late final DraftSaver _draft;
   CheckResult? _result;
   late int _attempts;
   late bool _solved;
@@ -31,6 +33,21 @@ class _ChoiceStepState extends State<ChoiceStep> {
     super.initState();
     _attempts = s.progress.attemptCount(s.caseId, s.step.id);
     _solved = s.progress.solved(s.caseId, s.step.id);
+    _draft = DraftSaver(() => s.progress.saveDraft(s.caseId, s.step.id, _selected.toList()..sort()));
+    final kept = s.progress.draft(s.caseId, s.step.id);
+    if (_revealed) {
+      s.progress.clearDraft(s.caseId, s.step.id);
+    } else if (kept is List) {
+      final ids = {for (final o in s.step.options) o.id};
+      final picks = [for (final k in kept) if (ids.contains(k)) k as String];
+      _selected.addAll(_multi ? picks : picks.take(1));
+    }
+  }
+
+  @override
+  void dispose() {
+    _draft.dispose();
+    super.dispose();
   }
 
   void _submit() {
@@ -45,6 +62,10 @@ class _ChoiceStepState extends State<ChoiceStep> {
       _attempts++;
       _solved = _solved || r.correct;
     });
+    if (_revealed) {
+      _draft.discard();
+      s.progress.clearDraft(s.caseId, s.step.id);
+    }
   }
 
   void _toggle(String id) {
@@ -58,6 +79,7 @@ class _ChoiceStepState extends State<ChoiceStep> {
       }
       _result = null;
     });
+    _draft.changed();
   }
 
   @override

@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../engine/checker.dart';
-import '../widgets/prose.dart';
 import '../../charts/chart_view.dart';
+import '../../engine/checker.dart';
+import '../../util/hash.dart';
+import '../widgets/prose.dart';
+import 'draft_saver.dart';
 import 'step_common.dart';
-
-/// Stable 32-bit FNV-1a hash, so the shuffled order is the same on every run and device.
-int _fnv(String s) {
-  var h = 0x811c9dc5;
-  for (final c in s.codeUnits) {
-    h ^= c;
-    h = (h * 0x01000193) & 0xffffffff;
-  }
-  return h;
-}
 
 /// order_steps: drag the items into the right order.
 class OrderStep extends StatefulWidget {
@@ -28,6 +20,7 @@ class OrderStep extends StatefulWidget {
 class _OrderStepState extends State<OrderStep> {
   final _started = DateTime.now();
   late List<String> _items;
+  late final DraftSaver _draft;
   CheckResult? _result;
   late int _attempts;
   late bool _solved;
@@ -38,11 +31,26 @@ class _OrderStepState extends State<OrderStep> {
   void initState() {
     super.initState();
     final target = s.step.items;
-    _items = [...target]..sort((a, b) => _fnv('${s.step.id}|$a').compareTo(_fnv('${s.step.id}|$b')));
+    _items = [...target]..sort((a, b) => fnv32('${s.step.id}|$a').compareTo(fnv32('${s.step.id}|$b')));
     if (_listEq(_items, target)) _items = [..._items.reversed];
     _attempts = s.progress.attemptCount(s.caseId, s.step.id);
     _solved = s.progress.solved(s.caseId, s.step.id);
-    if (_solved) _items = [...target];
+    _draft = DraftSaver(() => s.progress.saveDraft(s.caseId, s.step.id, _items));
+    final kept = s.progress.draft(s.caseId, s.step.id);
+    if (_done) {
+      s.progress.clearDraft(s.caseId, s.step.id);
+    } else if (kept is List && kept.length == target.length && kept.toSet().containsAll(target)) {
+      _items = [for (final k in kept) k as String];
+    }
+    if (_solved || _attempts >= revealAfterAttempts) _items = [...target];
+  }
+
+  bool get _done => _solved || _attempts >= revealAfterAttempts;
+
+  @override
+  void dispose() {
+    _draft.dispose();
+    super.dispose();
   }
 
   bool _listEq(List<String> a, List<String> b) => a.length == b.length && [for (var i = 0; i < a.length; i++) a[i] == b[i]].every((x) => x);
@@ -56,6 +64,10 @@ class _OrderStepState extends State<OrderStep> {
       _solved = _solved || r.correct;
       if (!_solved && _attempts >= revealAfterAttempts) _items = [...s.step.items];
     });
+    if (_done) {
+      _draft.discard();
+      s.progress.clearDraft(s.caseId, s.step.id);
+    }
   }
 
   @override
@@ -71,10 +83,13 @@ class _OrderStepState extends State<OrderStep> {
         buildDefaultDragHandles: false,
         onReorderItem: done
             ? (_, _) {}
-            : (oldI, newI) => setState(() {
+            : (oldI, newI) {
+                setState(() {
                   _items.insert(newI, _items.removeAt(oldI));
                   _result = null;
-                }),
+                });
+                _draft.changed();
+              },
         children: [
           for (var i = 0; i < _items.length; i++)
             Padding(
@@ -118,21 +133,40 @@ class NumericStep extends StatefulWidget {
 class _NumericStepState extends State<NumericStep> {
   final _started = DateTime.now();
   final _ctl = TextEditingController();
+  late final DraftSaver _draft;
+  late String _seen;
+  bool _restored = false;
   CheckResult? _result;
   late int _attempts;
   late bool _solved;
 
   StepScope get s => widget.scope;
+  bool get _done => _solved || _attempts >= revealAfterAttempts;
 
   @override
   void initState() {
     super.initState();
     _attempts = s.progress.attemptCount(s.caseId, s.step.id);
     _solved = s.progress.solved(s.caseId, s.step.id);
+    final kept = s.progress.draft(s.caseId, s.step.id);
+    if (_done) {
+      s.progress.clearDraft(s.caseId, s.step.id);
+    } else if (kept is String) {
+      _ctl.text = kept;
+      _restored = kept.isNotEmpty;
+    }
+    _seen = _ctl.text;
+    _draft = DraftSaver(() => s.progress.saveDraft(s.caseId, s.step.id, _ctl.text));
+    _ctl.addListener(() {
+      if (_ctl.text == _seen) return;
+      _seen = _ctl.text;
+      _draft.changed();
+    });
   }
 
   @override
   void dispose() {
+    _draft.dispose();
     _ctl.dispose();
     super.dispose();
   }
@@ -150,11 +184,15 @@ class _NumericStepState extends State<NumericStep> {
       _attempts++;
       _solved = _solved || r.correct;
     });
+    if (_done) {
+      _draft.discard();
+      s.progress.clearDraft(s.caseId, s.step.id);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final done = _solved || _attempts >= revealAfterAttempts;
+    final done = _done;
     final key = s.step.answerKey!;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
@@ -166,6 +204,7 @@ class _NumericStepState extends State<NumericStep> {
         decoration: InputDecoration(border: const OutlineInputBorder(), labelText: 'Your answer', suffixText: s.step.unit),
         onSubmitted: (_) => _submit(),
       ),
+      if (!done) DraftStatus(_draft, restored: _restored),
       if (_result != null && !done)
         FeedbackCard(kind: FeedbackKind.wrong, title: 'Not quite', message: _result!.message, resolver: s.resolver),
       if (done)

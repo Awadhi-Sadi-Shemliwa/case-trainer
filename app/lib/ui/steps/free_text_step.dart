@@ -6,6 +6,7 @@ import '../../grading/grader.dart';
 import '../widgets/code_view.dart';
 import '../widgets/prose.dart';
 import '../../charts/chart_view.dart';
+import 'draft_saver.dart';
 import 'step_common.dart';
 
 /// Examiner steps: free_text, chart_explain, result_explain, memo, and the challenge-mode types
@@ -21,6 +22,9 @@ class FreeTextStep extends StatefulWidget {
 class _FreeTextStepState extends State<FreeTextStep> {
   final _started = DateTime.now();
   late final TextEditingController _ctl;
+  late final DraftSaver _draft;
+  late String _seen;
+  bool _restored = false;
   GradeResult? _grade;
   bool _submitted = false;
   bool _showModel = false;
@@ -31,13 +35,28 @@ class _FreeTextStepState extends State<FreeTextStep> {
   void initState() {
     super.initState();
     final last = s.progress.lastAttempt(s.caseId, s.step.id);
-    _ctl = TextEditingController(text: last == null ? '' : jsonDecode(last['answer_json'] as String) as String);
+    final lastText = last == null ? '' : jsonDecode(last['answer_json'] as String) as String;
+    // Unsent text wins over the last submitted answer: it is newer.
+    final kept = s.progress.draft(s.caseId, s.step.id);
+    _restored = kept is String && kept != lastText;
+    _seen = kept is String ? kept : lastText;
+    _ctl = TextEditingController(text: _seen);
     _submitted = last != null;
-    _ctl.addListener(() => setState(() {}));
+    _draft = DraftSaver(() => s.progress.saveDraft(s.caseId, s.step.id, _ctl.text));
+    _ctl.addListener(_onChanged);
+  }
+
+  void _onChanged() {
+    if (_ctl.text != _seen) {
+      _seen = _ctl.text;
+      _draft.changed();
+    }
+    setState(() {});
   }
 
   @override
   void dispose() {
+    _draft.dispose(); // writes the latest text, so it runs before the controller goes
     _ctl.dispose();
     super.dispose();
   }
@@ -48,7 +67,10 @@ class _FreeTextStepState extends State<FreeTextStep> {
     if (_ctl.text.trim().isEmpty) return;
     final g = s.grader.grade(s.step, _ctl.text);
     s.record(answer: _ctl.text, startedAt: _started, correct: null, score: g.score);
+    _draft.discard();
+    s.progress.clearDraft(s.caseId, s.step.id);
     setState(() {
+      _restored = false;
       _grade = g;
       _submitted = true;
     });
@@ -80,12 +102,12 @@ class _FreeTextStepState extends State<FreeTextStep> {
         maxLines: null,
         keyboardType: TextInputType.multiline,
         textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
           hintText: 'Explain in your own words…',
-          helperText: _words > 0 ? '$_words words' : null,
         ),
       ),
+      DraftStatus(_draft, restored: _restored, leading: _words > 0 ? '$_words words' : null),
       SubmitButton(label: _submitted ? 'Submit again' : 'Submit answer', onPressed: _ctl.text.trim().isEmpty ? null : _submit),
       if (_grade != null)
         FeedbackCard(kind: FeedbackKind.info, title: _grade!.message, resolver: s.resolver),

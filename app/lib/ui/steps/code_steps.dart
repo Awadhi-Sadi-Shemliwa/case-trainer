@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../engine/checker.dart';
 import '../widgets/code_view.dart';
+import 'draft_saver.dart';
 import 'step_common.dart';
 
 String _snippet(StepScope s) {
@@ -38,22 +39,40 @@ class CodeFillStep extends StatefulWidget {
 class _CodeFillStepState extends State<CodeFillStep> {
   final _started = DateTime.now();
   late final List<TextEditingController> _ctls;
+  late final DraftSaver _draft;
+  bool _restored = false;
   CheckResult? _result;
   late int _attempts;
   late bool _solved;
 
   StepScope get s => widget.scope;
+  bool get _done => _solved || _attempts >= revealAfterAttempts;
 
   @override
   void initState() {
     super.initState();
-    _ctls = [for (final _ in s.step.blanks) TextEditingController()];
     _attempts = s.progress.attemptCount(s.caseId, s.step.id);
     _solved = s.progress.solved(s.caseId, s.step.id);
+    final kept = s.progress.draft(s.caseId, s.step.id);
+    final n = s.step.blanks.length;
+    final restore = !_done && kept is List && kept.length == n;
+    if (_done) s.progress.clearDraft(s.caseId, s.step.id);
+    _ctls = [for (var i = 0; i < n; i++) TextEditingController(text: restore ? '${kept[i]}' : '')];
+    _restored = restore && _ctls.any((c) => c.text.isNotEmpty);
+    _draft = DraftSaver(() => s.progress.saveDraft(s.caseId, s.step.id, [for (final c in _ctls) c.text]));
+    final seen = [for (final c in _ctls) c.text];
+    for (var i = 0; i < n; i++) {
+      _ctls[i].addListener(() {
+        if (_ctls[i].text == seen[i]) return;
+        seen[i] = _ctls[i].text;
+        _draft.changed();
+      });
+    }
   }
 
   @override
   void dispose() {
+    _draft.dispose();
     for (final c in _ctls) {
       c.dispose();
     }
@@ -77,12 +96,16 @@ class _CodeFillStepState extends State<CodeFillStep> {
       _attempts++;
       _solved = _solved || r.correct;
     });
+    if (_done) {
+      _draft.discard();
+      s.progress.clearDraft(s.caseId, s.step.id);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final code = _snippet(s);
-    final done = _solved || _attempts >= revealAfterAttempts;
+    final done = _done;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
       CodeView(done ? code : _withBlanks(code), label: done ? 'Real code' : _label(s)),
@@ -95,6 +118,7 @@ class _CodeFillStepState extends State<CodeFillStep> {
             style: const TextStyle(fontFamily: 'monospace'),
             decoration: InputDecoration(border: const OutlineInputBorder(), labelText: blankLabel(i)),
           ),
+      if (!done) DraftStatus(_draft, restored: _restored),
       if (_result != null && !done)
         FeedbackCard(kind: FeedbackKind.wrong, title: 'Not quite', message: _result!.message, resolver: s.resolver),
       if (done)
@@ -120,22 +144,38 @@ class CodeFixStep extends StatefulWidget {
 class _CodeFixStepState extends State<CodeFixStep> {
   final _started = DateTime.now();
   late final TextEditingController _ctl;
+  late final DraftSaver _draft;
+  late String _seen;
+  bool _restored = false;
   CheckResult? _result;
   late int _attempts;
   late bool _solved;
 
   StepScope get s => widget.scope;
+  bool get _done => _solved || _attempts >= revealAfterAttempts;
 
   @override
   void initState() {
     super.initState();
-    _ctl = TextEditingController(text: s.step.buggyCode!.trimRight());
     _attempts = s.progress.attemptCount(s.caseId, s.step.id);
     _solved = s.progress.solved(s.caseId, s.step.id);
+    final buggy = s.step.buggyCode!.trimRight();
+    final kept = s.progress.draft(s.caseId, s.step.id);
+    if (_done) s.progress.clearDraft(s.caseId, s.step.id);
+    _restored = !_done && kept is String && kept != buggy;
+    _seen = _restored ? kept as String : buggy;
+    _ctl = TextEditingController(text: _seen);
+    _draft = DraftSaver(() => s.progress.saveDraft(s.caseId, s.step.id, _ctl.text));
+    _ctl.addListener(() {
+      if (_ctl.text == _seen) return;
+      _seen = _ctl.text;
+      _draft.changed();
+    });
   }
 
   @override
   void dispose() {
+    _draft.dispose();
     _ctl.dispose();
     super.dispose();
   }
@@ -148,11 +188,15 @@ class _CodeFixStepState extends State<CodeFixStep> {
       _attempts++;
       _solved = _solved || r.correct;
     });
+    if (_done) {
+      _draft.discard();
+      s.progress.clearDraft(s.caseId, s.step.id);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final done = _solved || _attempts >= revealAfterAttempts;
+    final done = _done;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
       if (!done) ...[
@@ -168,6 +212,7 @@ class _CodeFixStepState extends State<CodeFixStep> {
           style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
           decoration: const InputDecoration(border: OutlineInputBorder()),
         ),
+        DraftStatus(_draft, restored: _restored),
       ],
       if (_result != null && !done)
         FeedbackCard(kind: FeedbackKind.wrong, title: 'Not fixed yet', message: _result!.message, resolver: s.resolver),
@@ -182,7 +227,14 @@ class _CodeFixStepState extends State<CodeFixStep> {
       ],
       if (!done) SubmitButton(label: 'Check fix', onPressed: _submit),
       if (!done && _attempts > 0)
-        TextButton(onPressed: () => setState(() => _attempts = revealAfterAttempts), child: const Text('Show the fix')),
+        TextButton(
+          onPressed: () {
+            setState(() => _attempts = revealAfterAttempts);
+            _draft.discard();
+            s.progress.clearDraft(s.caseId, s.step.id);
+          },
+          child: const Text('Show the fix'),
+        ),
     ]);
   }
 }
