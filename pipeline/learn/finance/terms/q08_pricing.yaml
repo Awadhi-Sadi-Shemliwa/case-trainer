@@ -127,10 +127,10 @@
   plain: >-
     Option buyers pay it and sellers collect it. It speeds up as expiry approaches.
   example:
-    values: {th: -0.05, days: 10}
+    values: {th: 0.05, days: 10}
     compute: {loss: th * days}
     formats: {th: '£{:,.2f}', days: '{:.0f}', loss: '£{:,.2f}'}
-    text: With a theta of {th} a day, an option changes by about {loss} over {days} days if nothing else moves.
+    text: With a theta of minus {th} a day, an option loses about {loss} of value over {days} days if nothing else moves.
   fools_you: >-
     Collecting it looks like steady income until a big move arrives.
   related: [time_value_option, gamma, expiry]

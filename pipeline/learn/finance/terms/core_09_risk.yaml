@@ -156,9 +156,9 @@
       - {symbol: r D, means: interest rate on the loan}
   example:
     values: {E: 10000, D: 20000, rA: 0.10, rD: 0.05, rB: -0.10}
-    compute: {up: ((E + D) * rA - D * rD) / E, down: ((E + D) * rB - D * rD) / E}
-    formats: {E: '£{:,.0f}', D: '£{:,.0f}', rA: '{:.0%}', rD: '{:.0%}', rB: '{:.0%}', up: '{:.0%}', down: '{:.0%}'}
-    text: Put {E} of your own money and {D} borrowed at {rD} into something. If it returns {rA}, you make {up} on your own money; if it returns {rB}, you lose {down}.
+    compute: {up: ((E + D) * rA - D * rD) / E, loss: -((E + D) * rB - D * rD) / E, drop: -rB}
+    formats: {E: '£{:,.0f}', D: '£{:,.0f}', rA: '{:.0%}', rD: '{:.0%}', rB: '{:.0%}', up: '{:.0%}', loss: '{:.0%}', drop: '{:.0%}'}
+    text: Put {E} of your own money and {D} borrowed at {rD} into something. If it gains {rA}, you make {up} on your own money; if it falls {drop}, you lose {loss} of your own money.
   fools_you: >-
     It turns a bad year into a wipe-out: with enough borrowing, a modest fall in prices destroys all of your
     own money.

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- "Analyst's notebook" palette (app/lib/ui/theme/tokens.dart). -->
+    <color name="ink">#1B2A4A</color>
+    <color name="highlighter">#F6D84A</color>
+    <color name="paper">#F2F4F1</color>
+    <color name="ic_launcher_background">#1B2A4A</color>
+    <color name="splash_background">#F2F4F1</color>
+</resources>

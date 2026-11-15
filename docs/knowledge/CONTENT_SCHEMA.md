@@ -18,7 +18,7 @@ Calibration: `pipeline/calibration/<case_id>/<step_id>.yaml` → `answers: [{id,
 Correct numbers in answer `text` use `{expected.key}` (the build checks the key exists); deliberately wrong numbers are typed.
 
 ## content.yaml
-Top level: `id, number, domain (aviation|f1|football|finance), title, tier (A|A*), decision_maker,
+Top level: `id, number, domain (aviation|f1|football|finance), title, tier (A|A*), decision_maker, signature_chart?,
 decision, money_at_stake, concepts[], sources[] (keys in sources.json, VERIFIED), datasets[] (keys in
 provenance.json), allowed_literals[] (e.g. "10-year", "2s10s" — digit-containing words that are
 names, not results), steps[], debrief{concepts_learned[], common_mistakes[], interview_summary}`.
@@ -38,6 +38,7 @@ Challenge-mode phase: predict the data *before* seeing it.
 | mcq / multi_select / kpi_builder | options[{id,text,correct,explanation}] | exact |
 | order_steps | items (correct order) | exact |
 | code_read | snippet{file,name} | info |
+| *(any type)* | context_snippets[{file,name}] (optional) | shown as "The code behind this step"; never the answer of a later code_fill/code_fix |
 | code_predict | snippet, output_name, options | exact (vs captured output) |
 | code_fill | snippet, blanks[{token, accept[]}] | exact; token must exist in real code |
 | code_fix | snippet, buggy_code, bug_explanation | exact |
@@ -68,3 +69,14 @@ Tables: `meta(key,value)`, `cases(id,number,domain,title,tier,ord,json)`,
 `steps(case_id,idx,id,phase,type,json)` (placeholders unresolved), `results(case_id,key,value_json,unit,description,display)`,
 `sources`, `datasets(case_id,key,json)`, `transforms(case_id,id,json)`, `snippets(case_id,file,name,code)`,
 `captured(case_id,name,output)`. Charts copied to `app/assets/content/charts/`.
+Bundle schema v2 (2026-11-15) adds `course(id,title,json)`, `tiers(id,course,ord,title,json)`,
+`lessons(id,tier,ord,title,json)`, `terms(id,tier,lesson,rank,term,json)` and `app/assets/content/formulas/<term>.png`.
+
+## Finance course (`pipeline/learn/finance/`, schema in `pipeline/common/glossary.py`)
+`course.yaml`: `id, title, allowed_literals[], tiers[{id, title, blurb, read_next[source keys], lessons[{id, title,
+blurb, sources[]}]}]`. `terms/<lesson_id>.yaml`: ten words, each `{id, term, aliases[], short (≤ 30 words, must not
+contain its own name or aliases), plain, formula{tex (matplotlib mathtext), plain, symbols[{symbol, means}]}?,
+example{values{}, compute{} (ordered expressions), formats{} ("£{:,.0f}", "{:.1%}"), text with {name}
+placeholders}?, fools_you, related[], in_cases[{case, step}], sources[]}`. Rank = file order. Prose fields contain no
+digits (course `allowed_literals` excepted); example numbers are computed and reach the app wrapped as `[[…]]`.
+Unknown fields fail validation, so YAML slips cannot silently drop text.

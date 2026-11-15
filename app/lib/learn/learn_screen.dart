@@ -313,7 +313,7 @@ class _GlossaryScreenState extends ConsumerState<GlossaryScreen> {
     final t = Theme.of(context).textTheme;
     final q = _q.trim().toLowerCase();
     final hits = q.isEmpty
-        ? course.terms
+        ? [...course.terms]
         : [
             for (final w in course.terms)
               if (w.names.any((n) => n.toLowerCase().contains(q)) || w.short.toLowerCase().contains(q)) w

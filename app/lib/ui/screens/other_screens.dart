@@ -43,10 +43,16 @@ class ProgressScreen extends ConsumerWidget {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [
                     Row(spacing: 8, children: [
                       Icon(sectorIcon(cs.domain), size: 18, color: c.inkSoft),
-                      Text('P${cs.number}, ${domainLabels[cs.domain]}', style: t.labelMedium?.copyWith(color: c.inkSoft)),
-                      const Spacer(),
-                      Text(st == null ? 'Not started' : (st.completed ? 'Completed' : 'In progress'),
-                          style: t.labelMedium?.copyWith(fontWeight: FontWeight.w700)),
+                      Expanded(
+                        child: Text('P${cs.number}, ${domainLabels[cs.domain]}',
+                            overflow: TextOverflow.ellipsis, style: t.labelMedium?.copyWith(color: c.inkSoft)),
+                      ),
+                      Flexible(
+                        child: Text(st == null ? 'Not started' : (st.completed ? 'Completed' : 'In progress'),
+                            textAlign: TextAlign.end,
+                            overflow: TextOverflow.ellipsis,
+                            style: t.labelMedium?.copyWith(fontWeight: FontWeight.w700)),
+                      ),
                     ]),
                     Text(cs.title, style: t.titleLarge),
                     StepTicks(total: steps.length, reached: reached, color: c.sector(cs.domain)),

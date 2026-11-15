@@ -144,9 +144,13 @@ class _CaseCard extends ConsumerWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 10, children: [
               Row(spacing: 8, children: [
                 Text('P${info.number}', style: t.titleLarge?.copyWith(fontFeatures: const [FontFeature.tabularFigures()])),
-                _Tag('Tier ${info.tier}'),
+                Flexible(child: _Tag('Tier ${info.tier}')),
                 const Spacer(),
-                Text(label, style: t.labelLarge?.copyWith(fontWeight: FontWeight.w700)),
+                Flexible(
+                  flex: 3,
+                  child: Text(label,
+                      textAlign: TextAlign.end, overflow: TextOverflow.ellipsis, style: t.labelLarge?.copyWith(fontWeight: FontWeight.w700)),
+                ),
                 Icon(Icons.chevron_right_rounded, color: c.ink),
               ]),
               Text(info.title, style: t.titleLarge),
@@ -173,7 +177,7 @@ class _Tag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(color: c.paperSunken, borderRadius: BorderRadius.circular(6)),
-      child: Text(text, style: Theme.of(context).textTheme.labelMedium),
+      child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.labelMedium),
     );
   }
 }

@@ -128,3 +128,61 @@ underpowered robustness check, pre-trend, negatable red-flag keywords); all fixe
 - Stint lengths with Kaplan-Meier (stints to the flag are censored).
 - Repo published 2026-11-10 at https://github.com/Awadhi-Sadi-Shemliwa/case-trainer (public). The Gemini PDF was
   removed from all history before the first push (owner's choice) and is kept locally, git-ignored.
+
+### 2026-11-15 · Owner requests pulled ahead of Prompts 6–9
+Owner asked for four things: show the code beside steps that talk about it, teach finance from zero, never lose
+typed text, and a much better UI with a cover page. They come before Prompts 6–8 work; the Learn-tab glossary is the
+part of Prompt 9 that was pulled forward. Branch `owner-learn-ui`.
+
+### 2026-11-15 · Drafts: unsubmitted input lives in progress.sqlite (schema v2)
+Typed text used to exist only in widget state, so Back lost it. `drafts(case_id, step_id, value_json)` is written
+300 ms after each edit and on step dispose / app pause (`ui/steps/draft_saver.dart`), for every input type (text,
+numbers, code blanks, edited code, selection, order). The v1→v2 migration only adds tables (drafts, term_progress,
+lesson_progress) inside one transaction; a test upgrades a real v1 file and reads the old attempts back.
+Rejected: `restorationId` (OS state restoration does not cover the app's own Back button), an in-memory cache (dies
+with the app).
+
+### 2026-11-15 · `context_snippets`: code shown for reference on any step
+Separate from `snippet` (the code under test in code_* steps). The build refuses a context snippet that is the
+answer of a code_fill/code_fix step at the same or a later index. Wiring rule: attach code where the prompt says
+what the pipeline did, never where the learner must invent the method (not P50 s14_method, no plan_challenge).
+15 marked-but-unused snippets were wired; new markers `traffic_gap` (P13) and `turn_bands` / `turn_window` (P3).
+
+### 2026-11-15 · Finance Foundations: 300 words, original text, computed examples
+Three tiers × ten lessons × ten words in rank order (core: words needed for financial news and P50; intermediate;
+quant: the topics of Dixon, Halperin & Bilokon, *Machine Learning in Finance*, whose PDF the owner has locally and
+which is never committed). Definitions are written fresh (the repo is public). The number rule is kept in spirit:
+prose has no digits; worked-example numbers are computed by a whitelisted AST evaluator from made-up inputs and
+asserted by pytest; formulas are matplotlib mathtext rendered to PNG and tinted in the app (flutter_math_fork's last
+release was May 2025, so no new Flutter dependency). Every source shown is VERIFIED. Investor.gov returned 403 to
+automated access, so FINRA investor pages replace it; the BoE QE explainer URL returned 404, its policy page is used.
+
+### 2026-11-15 · Course rules
+Quick check = ten deterministic questions (FNV-seeded distractors and option order; a retry reshuffles). 8/10 passes
+a lesson; correctly answered words become known. A tier opens when every lesson of the tier before is passed (owner:
+"once those are known we move to the others"); search always shows all 300 words. Review ladder 1, 3, 7, 21 days
+(the examiner's ladder); a miss reschedules to one day but does not un-know a word.
+
+### 2026-11-15 · Finance words linked inside finance cases only
+`TermLinker` underlines glossary words in P50 step text (not in answer options, code or value chips): longest name
+first; a name with a capital after its first letter, or a short capitalised name, must match its exact case ("the
+Fed", "GDP", "PM"), so "fed" in ordinary prose is left alone; every occurrence of a longer name blocks shorter words
+inside it ("asset" inside "asset manager"). Other sectors would get false hits ("spread", "margin").
+
+### 2026-11-15 · Design: "the analyst's working notebook" (owner's choice)
+Cool graph paper and navy ink; pipeline and example numbers on a highlighter stroke; sentence-case labels (no
+ALL-CAPS eyebrows, no dot-joined meta strings). Type: Archivo (condensed cut for headings, like timing towers and
+departure boards) and JetBrains Mono for code with ligatures off (learners must see `==`). Both OFL, bundled.
+Sector colours were checked with the data-viz palette validator against each surface, all pairs (they meet on the
+cover): light passes (teal and gold need direct labels, which every use has); dark passes outright. The first
+proposal failed (F1 red against finance gold, ΔE 2.9 for deuteranopia) and was re-stepped.
+
+### 2026-11-15 · The cover draws real data
+Each case names a `signature_chart` (validated by the build); the cover draws its first data series per sector
+through the strict ChartSpec parser, scaled to its lane. "Continue" resumes the most recently opened unfinished case
+(`case_state.updated_at`, now stamped on every visit). Settings can turn the cover off.
+
+### 2026-11-15 · Phone not updated in this session
+Plan step 0 (install a debuggable build over the release app to back up `progress.sqlite` and read the owner's
+answers) was refused by the session's safety check, so nothing was installed and the answers were not read. The
+owner runs the upgrade; see ENVIRONMENT.md, "Upgrade the phone without losing answers".

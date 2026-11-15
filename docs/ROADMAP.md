@@ -21,3 +21,11 @@ P50 (Finance) · P34 (Football) · P3 (Aviation) · P13 (F1) · P1 (Aviation).
 ## Additions agreed with owner (beyond spec)
 "Challenge mode" step types in every case: `data_expectation`, `cleaning_justification`,
 `plan_challenge`, `decision_threshold`. See docs/knowledge/CONTENT_SCHEMA.md.
+
+Owner requests of 2026-11-15 (branch `owner-learn-ui`, DONE in code and tests; not yet installed on the phone):
+- Code beside every step that talks about it (`context_snippets`, all four cases, leak-guarded).
+- Finance Foundations: 300 ranked words in three tiers with lessons, quick checks, review and search; finance words
+  linked inside P50. This is the glossary part of Prompt 9, pulled forward; spaced review of case steps and the
+  portfolio export remain Prompt 9.
+- Drafts: unsubmitted input survives Back, leaving a case and restarts.
+- Redesign ("analyst's notebook") with a real-data cover, new app icon and splash.

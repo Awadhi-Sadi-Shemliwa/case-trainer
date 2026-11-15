@@ -63,9 +63,9 @@
       - {symbol: Δy, means: change in yield}
   example:
     values: {D: 7.5, dy: 0.005}
-    compute: {chg: -D * dy}
-    formats: {D: '{:.1f}', dy: '{:.2%}', chg: '{:.2%}'}
-    text: A bond with a modified duration of {D} moves by about {chg} in price if yields rise by {dy}.
+    compute: {fall: D * dy}
+    formats: {D: '{:.1f}', dy: '{:.2%}', fall: '{:.2%}'}
+    text: A bond with a modified duration of {D} falls by about {fall} in price if yields rise by {dy}.
   fools_you: >-
     It is a straight-line estimate that works for small moves; for big jumps in rates, convexity matters too.
   related: [convexity, price_yield, maturity, zero_coupon_bond]

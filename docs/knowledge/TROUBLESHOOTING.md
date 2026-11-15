@@ -2,6 +2,22 @@
 
 Format: **symptom** → cause → fix. Add every error you hit.
 
+### Course YAML: a comma inside `{flow: mapping}` or `[flow, list]` silently splits it (2026-11-15)
+`{symbol: x, means: the predictor, such as a spread}` parses `such as a spread` as an extra key, and
+`compute: {pay: max(S - K, 0)}` splits inside the call. The glossary models forbid unknown fields, so these now fail
+loudly; quote any value or expression that contains a comma or brackets, or that starts with `{`.
+
+### Screenshots in widget tests show squares instead of text (2026-11-15)
+flutter_test renders the Ahem test font unless fonts are loaded. `app/test_screens/screenshots_test.dart` loads the
+bundled TTFs and the Material Icons font with `FontLoader` before rendering.
+
+### Cover curves blank in the second widget test of a run (2026-11-15)
+Futures created in one test's fake-async zone never complete in the next. `CurvePoints` caches finished results and
+returns a `SynchronousFuture` on reuse; render one screenshot with `--plain-name` if in doubt.
+
+### JetBrains Mono draws `==` as one long bar (2026-11-15)
+It turns on programming ligatures by default. Code text uses `codeFeatures` (calt and liga off).
+
 ### `adb` not recognised
 adb isn't on PATH. See ENVIRONMENT.md → "adb is not on PATH".
 

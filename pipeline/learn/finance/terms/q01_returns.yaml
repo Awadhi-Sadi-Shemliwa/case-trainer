@@ -140,9 +140,9 @@
       - {symbol: n, means: number of periods}
   example:
     values: {a: 0.5, b: -0.5, two: 2}
-    compute: {arith: (a + b) / two, geo: ((1 + a) * (1 + b)) ** (1 / two) - 1}
-    formats: {a: '{:.0%}', b: '{:.0%}', two: '{:.0f}', arith: '{:.0%}', geo: '{:.1%}'}
-    text: Returns of {a} then {b} average {arith}, yet the money actually shrank by {geo} a year.
+    compute: {arith: (a + b) / two, shrink: 1 - ((1 + a) * (1 + b)) ** (1 / two)}
+    formats: {a: '{:.0%}', b: '{:.0%}', two: '{:.0f}', arith: '{:.0%}', shrink: '{:.1%}'}
+    text: Returns of {a} then {b} average {arith}, yet the money actually shrank by {shrink} a year.
   fools_you: >-
     A strategy can have a positive average return and still lose money over time if it is volatile enough.
   related: [cumulative_return, cagr, volatility]
