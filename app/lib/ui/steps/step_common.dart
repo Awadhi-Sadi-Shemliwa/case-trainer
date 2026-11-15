@@ -5,6 +5,7 @@ import '../../data/models.dart';
 import '../../data/progress_db.dart';
 import '../../engine/placeholders.dart';
 import '../../grading/grader.dart';
+import '../widgets/code_context.dart';
 import '../widgets/prose.dart';
 
 /// Everything a step widget needs, handed down by the case player.
@@ -52,6 +53,7 @@ class StepHeader extends StatelessWidget {
       Text(s.title, style: t.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
       if (s.body != null) Prose(s.body!, resolver: scope.resolver),
       Prose(s.prompt, resolver: scope.resolver, style: t.bodyLarge?.copyWith(fontWeight: FontWeight.w600)),
+      if (s.contextSnippets.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: CodeContext(scope)),
     ]);
   }
 }

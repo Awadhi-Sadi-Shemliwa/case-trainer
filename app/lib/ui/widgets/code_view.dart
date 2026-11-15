@@ -27,8 +27,7 @@ class CodeView extends StatelessWidget {
         if (label != null)
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-            child: Text(label!.toUpperCase(),
-                style: theme.textTheme.labelSmall?.copyWith(letterSpacing: 1.0, color: theme.colorScheme.onSurfaceVariant)),
+            child: Text(label!, style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
           ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../../grading/grader.dart';
+import '../widgets/code_context.dart';
 import '../widgets/code_view.dart';
 import '../widgets/prose.dart';
 import '../../charts/chart_view.dart';
@@ -108,6 +109,16 @@ class _FreeTextStepState extends State<FreeTextStep> {
         ),
       ),
       DraftStatus(_draft, restored: _restored, leading: _words > 0 ? '$_words words' : null),
+      if (step.contextSnippets.isNotEmpty)
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            key: const ValueKey('show_code'),
+            onPressed: () => CodeContext.showSheet(context, s),
+            icon: const Icon(Icons.code_rounded),
+            label: const Text('Show the code'),
+          ),
+        ),
       SubmitButton(label: _submitted ? 'Submit again' : 'Submit answer', onPressed: _ctl.text.trim().isEmpty ? null : _submit),
       if (_grade != null)
         FeedbackCard(kind: FeedbackKind.info, title: _grade!.message, resolver: s.resolver),

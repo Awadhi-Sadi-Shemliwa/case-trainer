@@ -10,7 +10,7 @@ String _snippet(StepScope s) {
   return s.content.snippet(s.caseId, sn.file, sn.name) ?? (throw StateError('snippet ${sn.file}:${sn.name} missing from bundle'));
 }
 
-String _label(StepScope s) => '${s.step.snippet!.file} · ${s.step.snippet!.name}';
+String _label(StepScope s) => '${s.step.snippet!.name} in ${s.step.snippet!.file}';
 
 /// code_read: the real pipeline code, read before the next question.
 class CodeReadStep extends StatelessWidget {

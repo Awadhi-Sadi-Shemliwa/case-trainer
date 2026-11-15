@@ -112,6 +112,10 @@ class Step(BaseModel):
     items: list[str] | None = None      # order_steps: correct order
     # code
     snippet: Snippet | None = None
+    # Real code shown for reference on ANY step type ("the code behind this step"), e.g. a cleaning
+    # justification shows the lines that did the cleaning. build_content.py refuses one that would reveal the
+    # answer of a code_fill / code_fix step at the same or a later position.
+    context_snippets: list[Snippet] = Field(default_factory=list)
     output_name: str | None = None      # captured_outputs.json key for code_predict
     blanks: list[Blank] | None = None   # code_fill
     buggy_code: str | None = None       # code_fix: the snippet with ONE injected bug

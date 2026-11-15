@@ -105,6 +105,12 @@ class StepData {
     return s == null ? null : (file: s['file'] as String, name: s['name'] as String);
   }
 
+  /// Real pipeline code shown beside this step for reference (any step type).
+  List<({String file, String name})> get contextSnippets => [
+        for (final s in (json['context_snippets'] as List? ?? const []))
+          (file: (s as Map<String, dynamic>)['file'] as String, name: s['name'] as String)
+      ];
+
   Map<String, dynamic>? get rubric => json['rubric'] as Map<String, dynamic>?;
   bool get isGraded => gradedTypes.contains(type);
   bool get isInfo => type == 'code_read' || type == 'concept_card';

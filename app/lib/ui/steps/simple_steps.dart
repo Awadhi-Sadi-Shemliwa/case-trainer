@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../charts/chart_view.dart';
 import '../../engine/checker.dart';
 import '../../util/hash.dart';
+import '../widgets/code_context.dart';
 import '../widgets/prose.dart';
 import 'draft_saver.dart';
 import 'step_common.dart';
@@ -238,6 +239,7 @@ class _ConceptCardStepState extends State<ConceptCardStep> {
       Prose(s.step.prompt, resolver: s.resolver, style: t.titleMedium),
       if (s.step.chart != null) InteractiveChart(s.step.chart!),
       if (s.step.body != null) Prose(s.step.body!, resolver: s.resolver),
+      if (s.step.contextSnippets.isNotEmpty) CodeContext(s),
     ]);
   }
 }

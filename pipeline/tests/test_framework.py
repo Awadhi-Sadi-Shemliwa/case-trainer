@@ -212,6 +212,45 @@ def test_build_fails(fixture_case, mutation):
     assert run_build(fixture_case, check_only=True) == 1
 
 
+def test_build_bundles_context_snippets(fixture_case):
+    """Code shown beside any step ("the code behind this step") reaches the bundle once the fill step is done."""
+    fx = fixture_case
+    _mutate(fx, lambda c: c["steps"][2].__setitem__("context_snippets", [{"file": "analyse.py", "name": "mean_calc"}]))
+    assert run_build(fx) == 0
+    con = sqlite3.connect(fx["out"] / "content.sqlite")
+    step = json.loads(con.execute("select json from steps where id='s3_chart'").fetchone()[0])
+    assert step["context_snippets"] == [{"file": "analyse.py", "name": "mean_calc"}]
+    assert con.execute("select count(*) from snippets where name='mean_calc'").fetchone()[0] == 1
+
+
+@pytest.mark.parametrize("mutation", [
+    # before the code_fill step that asks for this very code: would hand out the answer
+    lambda c: c["steps"][0].__setitem__("context_snippets", [{"file": "analyse.py", "name": "mean_calc"}]),
+    # on the code_fill step itself
+    lambda c: c["steps"][1].__setitem__("context_snippets", [{"file": "analyse.py", "name": "mean_calc"}]),
+    # a snippet that does not exist
+    lambda c: c["steps"][2].__setitem__("context_snippets", [{"file": "analyse.py", "name": "no_such_code"}]),
+    # listed twice
+    lambda c: c["steps"][2].__setitem__("context_snippets", [{"file": "analyse.py", "name": "mean_calc"}] * 2),
+])
+def test_build_fails_on_bad_context_snippet(fixture_case, mutation):
+    _mutate(fixture_case, mutation)
+    assert run_build(fixture_case, check_only=True) == 1
+
+
+def test_real_cases_show_code_on_cleaning_justifications():
+    """Owner request 2026-11-15: every step that asks you to justify what the pipeline did shows that code."""
+    import yaml
+
+    from build_content import CASES_DIR, discover_cases
+
+    for cdir in discover_cases(CASES_DIR):
+        case = yaml.safe_load((cdir / "content.yaml").read_text(encoding="utf-8"))
+        for st in case["steps"]:
+            if st["type"] == "cleaning_justification":
+                assert st.get("context_snippets"), f"{case['id']}/{st['id']} shows no code"
+
+
 def test_build_fails_without_calibration(fixture_case):
     (fixture_case["cal"] / "fx_case" / "s3_chart.yaml").unlink()
     assert run_build(fixture_case, check_only=True) == 1

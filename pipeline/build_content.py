@@ -10,6 +10,7 @@ FAILS (exit 1) if, for any case (spec §4 + project rules):
   * a dataset / transform referenced is missing from provenance.json, or a raw file's SHA-256 changed
   * a chart file (json + png) is missing
   * a code snippet / captured output / blank token is missing
+  * a context snippet would reveal the answer of a code_fill / code_fix step that comes at or after it
   * a graded step has no calibration set (>= 30 labelled answers, both labels present)
   * authored text contains a hand-typed number (digits outside placeholders and allowed_literals)
 """
@@ -184,8 +185,27 @@ def validate_case(case_dir: Path, sources: dict[str, dict], cal_root: Path = CAL
             errs.append(f"snippet {sn.file}:{sn.name} not found")
         return code
 
-    for st in case.steps:
+    # Context code must never show the answer of a fill-the-blank / fix-the-bug step that is still ahead.
+    answer_code: dict[tuple[str, str], int] = {}
+    for i, st in enumerate(case.steps):
+        if st.type in ("code_fill", "code_fix") and st.snippet:
+            key = (st.snippet.file, st.snippet.name)
+            answer_code[key] = max(answer_code.get(key, -1), i)
+
+    for idx, st in enumerate(case.steps):
         where = f"step {st.id}"
+        if st.context_snippets and st.type in ("code_fill", "code_fix"):
+            errs.append(f"{where}: {st.type} steps cannot show context code (it would reveal the answer)")
+        seen_ctx: set[tuple[str, str]] = set()
+        for sn in st.context_snippets:
+            key = (sn.file, sn.name)
+            if key in seen_ctx:
+                errs.append(f"{where}: context snippet {sn.file}:{sn.name} listed twice")
+            seen_ctx.add(key)
+            snippet_code(sn)
+            if answer_code.get(key, -1) >= idx:
+                errs.append(f"{where}: context snippet {sn.file}:{sn.name} is the answer of a later "
+                            f"code_fill/code_fix step")
         if st.chart:
             for ext in ("json", "png"):
                 if not (case_dir / "charts" / f"{st.chart}.{ext}").exists():
@@ -268,9 +288,8 @@ def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_d
         for i, st in enumerate(case.steps):
             con.execute("INSERT INTO steps VALUES(?,?,?,?,?,?)",
                         (case.id, i, st.id, st.phase, st.type, json.dumps(st.model_dump(exclude_none=True))))
-            if st.snippet:
-                code = extract_snippets(cdir / st.snippet.file)[st.snippet.name]
-                snippets[(st.snippet.file, st.snippet.name)] = code
+            for sn in ([st.snippet] if st.snippet else []) + list(st.context_snippets):
+                snippets[(sn.file, sn.name)] = extract_snippets(cdir / sn.file)[sn.name]
             if st.chart:
                 for ext in ("json", "png"):
                     shutil.copy2(cdir / "charts" / f"{st.chart}.{ext}", out_dir / "charts" / f"{st.chart}.{ext}")

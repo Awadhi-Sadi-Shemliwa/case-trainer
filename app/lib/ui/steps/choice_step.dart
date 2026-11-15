@@ -90,7 +90,7 @@ class _ChoiceStepState extends State<ChoiceStep> {
     final code = snippet == null ? null : s.content.snippet(s.caseId, snippet.file, snippet.name);
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
-      if (code != null) CodeView(code, label: '${snippet!.file} · ${snippet.name}'),
+      if (code != null) CodeView(code, label: '${snippet!.name} in ${snippet.file}'),
       if (_multi) Text('Select all that apply.', style: TextStyle(color: cs.onSurfaceVariant)),
       for (final o in step.options)
         _OptionTile(

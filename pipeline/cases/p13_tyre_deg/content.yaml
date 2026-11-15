@@ -194,6 +194,7 @@ steps:
 - id: s07_justify_traffic
   phase: data
   type: cleaning_justification
+  context_snippets: [{file: clean.py, name: traffic_gap}, {file: clean.py, name: drop_rules}]
   title: Justify dropping traffic laps
   transform: drop_traffic
   prompt: >-
@@ -613,6 +614,7 @@ steps:
 - id: s15_threshold
   phase: decide
   type: decision_threshold
+  context_snippets: [{file: analyse.py, name: split_length}]
   title: Set the stint-length rule
   prompt: >-
     State the rule for the strategist: the trade-off, the formula, the stint length per compound, the plausible range,

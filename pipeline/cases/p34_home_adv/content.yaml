@@ -206,6 +206,7 @@ steps:
 - id: s07_justify_period
   phase: data
   type: cleaning_justification
+  context_snippets: [{file: clean.py, name: assign_period}]
   title: Justify how ghost games were defined
   transform: assign_period
   prompt: >-
@@ -310,6 +311,7 @@ steps:
 - id: s09_chart_gd
   phase: explore
   type: chart_explain
+  context_snippets: [{file: analyse.py, name: half_seasons}]
   title: Read the home goal difference by half-season
   chart: p34_home_gd_timeline
   prompt: Explain what this chart shows and what it does NOT show.
@@ -548,6 +550,7 @@ steps:
 - id: s13_result
   phase: model
   type: result_explain
+  context_snippets: [{file: analyse.py, name: league_tests}, {file: analyse.py, name: card_model}]
   title: Interpret the results
   chart: p34_home_win_by_period
   prompt: >-
