@@ -4,6 +4,7 @@ import '../../engine/checker.dart';
 import '../../engine/placeholders.dart';
 import '../widgets/prose.dart';
 import '../widgets/code_view.dart';
+import '../theme/tokens.dart';
 import 'draft_saver.dart';
 import 'step_common.dart';
 
@@ -84,14 +85,14 @@ class _ChoiceStepState extends State<ChoiceStep> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final c = context.colors;
     final step = s.step;
     final snippet = step.snippet;
     final code = snippet == null ? null : s.content.snippet(s.caseId, snippet.file, snippet.name);
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
       if (code != null) CodeView(code, label: '${snippet!.name} in ${snippet.file}'),
-      if (_multi) Text('Select all that apply.', style: TextStyle(color: cs.onSurfaceVariant)),
+      if (_multi) Text('Select all that apply.', style: TextStyle(color: c.inkSoft)),
       for (final o in step.options)
         _OptionTile(
           text: o.text,
@@ -143,15 +144,13 @@ class _OptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final border = reveal == null
-        ? (selected ? cs.primary : cs.outlineVariant)
-        : (reveal! ? cs.primary : cs.outlineVariant);
+    final c = context.colors;
+    final border = reveal == null ? (selected ? c.ink : c.grid) : (reveal! ? c.good : c.grid);
     final icon = multi
         ? (selected ? Icons.check_box : Icons.check_box_outline_blank)
         : (selected ? Icons.radio_button_checked : Icons.radio_button_unchecked);
     return Material(
-      color: selected ? cs.primaryContainer.withValues(alpha: 0.45) : cs.surfaceContainerLow,
+      color: reveal == true ? c.goodContainer : (selected ? c.stickyNote : c.paperRaised),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: border, width: selected || reveal == true ? 2 : 1)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -163,13 +162,13 @@ class _OptionTile extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 6, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, spacing: 12, children: [
                 Icon(reveal == null ? icon : (reveal! ? Icons.check_circle : Icons.cancel_outlined),
-                    color: reveal == null ? cs.primary : (reveal! ? cs.primary : cs.outline)),
+                    color: reveal == null ? c.ink : (reveal! ? c.good : c.inkMuted)),
                 Expanded(child: Prose(text, resolver: resolver, style: Theme.of(context).textTheme.bodyLarge)),
               ]),
               if (explanation != null && explanation!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(left: 36),
-                  child: Prose(explanation!, resolver: resolver, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
+                  child: Prose(explanation!, resolver: resolver, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: c.inkSoft)),
                 ),
             ]),
           ),

@@ -15,6 +15,7 @@ sources: []
 datasets: [openf1_laps_7953, openf1_stints_7953, openf1_race_control_7953, openf1_intervals_7953]
 allowed_literals: ["2023-24", "2023", "2024", "2025", "2026", "Formula 1", "OpenF1"]
 
+signature_chart: p13_wear_curves   # drawn on the cover and the case card (first data series)
 steps:
 # ============================================================== BRIEF
 - id: s01_brief

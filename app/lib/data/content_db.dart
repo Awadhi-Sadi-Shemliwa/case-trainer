@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import '../learn/course.dart';
 import 'models.dart';
 
 const contentAsset = 'assets/content/content.sqlite';
@@ -92,4 +93,43 @@ class ContentDb {
         for (final r in _db.select('SELECT * FROM sources ORDER BY key'))
           SourceRef({for (final c in r.keys) c: r[c]})
       ];
+
+  Course? _course;
+
+  /// The finance course (bundle schema v2). Loaded once; an older bundle without the tables gives an empty course.
+  Course course() => _course ??= _loadCourse();
+
+  Course _loadCourse() {
+    final hasTables = _db.select("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'terms'").isNotEmpty;
+    if (!hasTables) return Course.empty();
+    final head = _db.select('SELECT id, title FROM course LIMIT 1');
+    final tiers = [
+      for (final r in _db.select('SELECT ord, json FROM tiers ORDER BY ord'))
+        GlossaryTier(jsonDecode(r['json'] as String) as Map<String, dynamic>, r['ord'] as int)
+    ];
+    final tierOrd = {for (final t in tiers) t.id: t.ord};
+    final lessons = [
+      for (final r in _db.select('SELECT tier, ord, json FROM lessons'))
+        GlossaryLesson(jsonDecode(r['json'] as String) as Map<String, dynamic>, tier: r['tier'] as String, ord: r['ord'] as int)
+    ]..sort((a, b) => (tierOrd[a.tier]! * 1000 + a.ord).compareTo(tierOrd[b.tier]! * 1000 + b.ord));
+    final terms = [
+      for (final r in _db.select('SELECT tier, lesson, rank, json FROM terms ORDER BY rank'))
+        GlossaryTerm(jsonDecode(r['json'] as String) as Map<String, dynamic>,
+            tier: r['tier'] as String, lesson: r['lesson'] as String, rank: r['rank'] as int)
+    ];
+    return Course(
+      id: head.isEmpty ? 'finance' : head.first['id'] as String,
+      title: head.isEmpty ? 'Finance Foundations' : head.first['title'] as String,
+      tiers: tiers,
+      lessons: lessons,
+      terms: terms,
+    );
+  }
+
+  /// A step's title, for "where you meet this word" links (null when unknown).
+  String? stepTitle(String caseId, String stepId) {
+    final rows = _db.select('SELECT json FROM steps WHERE case_id = ? AND id = ?', [caseId, stepId]);
+    if (rows.isEmpty) return null;
+    return (jsonDecode(rows.first['json'] as String) as Map<String, dynamic>)['title'] as String?;
+  }
 }

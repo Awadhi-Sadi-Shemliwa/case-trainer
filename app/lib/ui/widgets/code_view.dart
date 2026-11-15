@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// Monospace, horizontally scrolling code block with a small Python highlighter.
-/// (No package: flutter_highlight is unmaintained, see docs/knowledge/ENVIRONMENT.md.)
+import '../theme/tokens.dart';
+import '../theme/typography.dart';
+
+/// Real code or real output on an ink-navy panel (both themes), horizontally scrolling, with a small Python
+/// highlighter. (No package: flutter_highlight is unmaintained, see docs/knowledge/ENVIRONMENT.md.)
 class CodeView extends StatelessWidget {
   const CodeView(this.code, {super.key, this.label, this.highlight = true});
 
@@ -9,30 +12,27 @@ class CodeView extends StatelessWidget {
   final String? label;
   final bool highlight;
 
+  /// Excluded by the no-hard-coded-numbers test: everything inside is real code or real output.
   static const codeKey = ValueKey('code_view');
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    final base = TextStyle(fontFamily: 'monospace', fontSize: 13, height: 1.45, color: theme.colorScheme.onSurface);
+    final c = context.colors;
+    final base = TextStyle(fontFamily: fontCode, fontSize: 13, height: 1.5, color: c.codeFg, fontFeatures: codeFeatures);
     return Container(
       key: codeKey,
-      decoration: BoxDecoration(
-        color: dark ? const Color(0xFF0F1A20) : const Color(0xFFF2F5F7),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
-      ),
+      decoration: BoxDecoration(color: c.codeBg, borderRadius: BorderRadius.circular(12)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (label != null)
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-            child: Text(label!, style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
+            child: Text(label!,
+                style: TextStyle(fontFamily: fontCode, fontSize: 12, fontWeight: FontWeight.w600, color: c.codeFg.withValues(alpha: 0.7))),
           ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.all(12),
-          child: SelectableText.rich(TextSpan(style: base, children: highlight ? pythonSpans(code, dark) : [TextSpan(text: code)])),
+          padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
+          child: SelectableText.rich(TextSpan(style: base, children: highlight ? pythonSpans(code, true) : [TextSpan(text: code)])),
         ),
       ]),
     );
@@ -47,10 +47,10 @@ final _token = RegExp(r'''(#[^\n]*)|([rbf]?"(?:[^"\\\n]|\\.)*"|[rbf]?'(?:[^'\\\n
 
 /// Splits Python source into coloured spans (comments, strings, numbers, keywords, calls).
 List<TextSpan> pythonSpans(String code, bool dark) {
-  final cComment = dark ? const Color(0xFF7F9AA6) : const Color(0xFF6B7F88);
-  final cString = dark ? const Color(0xFF9BD67F) : const Color(0xFF2F7D32);
-  final cNumber = dark ? const Color(0xFFF2A65A) : const Color(0xFFB45309);
-  final cKeyword = dark ? const Color(0xFF7FB8FF) : const Color(0xFF1D4ED8);
+  final cComment = dark ? const Color(0xFF8B9BB4) : const Color(0xFF6B7F88);
+  final cString = dark ? const Color(0xFFA6DA95) : const Color(0xFF2F7D32);
+  final cNumber = dark ? const Color(0xFFF6D84A) : const Color(0xFFB45309);
+  final cKeyword = dark ? const Color(0xFF8FB8FF) : const Color(0xFF1D4ED8);
   final cCall = dark ? const Color(0xFFD7B6FF) : const Color(0xFF7C3AED);
   final out = <TextSpan>[];
   var pos = 0;

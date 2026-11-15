@@ -54,7 +54,7 @@ SOURCE_FIELDS = {"key", "title", "authors", "year", "url", "verified_on", "quote
 NON_PROSE_KEYS = {
     "id", "file", "name", "chart", "dataset", "transform", "output_name", "answer_key", "key",
     "sources", "datasets", "allowed_literals", "scaffold", "type", "phase", "domain", "tier",
-    "token", "accept", "buggy_code", "redo_step", "evidence", "tolerance_kind",
+    "token", "accept", "buggy_code", "redo_step", "evidence", "tolerance_kind", "signature_chart",
 }
 
 
@@ -188,6 +188,11 @@ def validate_case(case_dir: Path, sources: dict[str, dict], cal_root: Path = CAL
             errs.append(f"snippet {sn.file}:{sn.name} not found")
         return code
 
+    if case.signature_chart:
+        for ext in ("json", "png"):
+            if not (case_dir / "charts" / f"{case.signature_chart}.{ext}").exists():
+                errs.append(f"signature_chart charts/{case.signature_chart}.{ext} missing")
+
     # Context code must never show the answer of a fill-the-blank / fix-the-bug step that is still ahead.
     answer_code: dict[tuple[str, str], int] = {}
     for i, st in enumerate(case.steps):
@@ -289,6 +294,10 @@ def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_d
         cj = case.model_dump(exclude={"steps"})
         con.execute("INSERT INTO cases VALUES(?,?,?,?,?,?,?)",
                     (case.id, case.number, case.domain, case.title, case.tier, ord_, json.dumps(cj)))
+        if case.signature_chart:
+            for ext in ("json", "png"):
+                shutil.copy2(cdir / "charts" / f"{case.signature_chart}.{ext}",
+                             out_dir / "charts" / f"{case.signature_chart}.{ext}")
         snippets: dict[tuple[str, str], str] = {}
         for i, st in enumerate(case.steps):
             con.execute("INSERT INTO steps VALUES(?,?,?,?,?,?)",

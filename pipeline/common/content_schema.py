@@ -198,6 +198,8 @@ class Case(BaseModel):
     sources: list[str]
     datasets: list[str]
     allowed_literals: list[str] = Field(default_factory=list)   # e.g. "10-year", "2s10s"
+    # Chart whose first data series the app draws on the cover and the case card (real data, never typed).
+    signature_chart: str | None = None
     steps: list[Step]
     debrief: Debrief
 

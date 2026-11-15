@@ -15,6 +15,7 @@ sources: [leitner_2022_review, leitner_richlan_2021]
 datasets: [fd_E0_1718, fd_E0_1920, fd_D1_1920, fd_SP1_1920, fd_I1_1920, fd_E0_2122]
 allowed_literals: [COVID-19, "2017/18", "2019/20", "2020/21", "2021/22", "2020"]
 
+signature_chart: p34_home_gd_timeline   # drawn on the cover and the case card (first data series)
 steps:
 # ============================================================== BRIEF
 - id: s01_brief

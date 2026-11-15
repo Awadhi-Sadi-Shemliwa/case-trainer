@@ -6,6 +6,7 @@ import '../../engine/checker.dart';
 import '../../util/hash.dart';
 import '../widgets/code_context.dart';
 import '../widgets/prose.dart';
+import '../theme/tokens.dart';
 import 'draft_saver.dart';
 import 'step_common.dart';
 
@@ -73,11 +74,11 @@ class _OrderStepState extends State<OrderStep> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final c = context.colors;
     final done = _solved || _attempts >= revealAfterAttempts;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
-      Text(done ? 'The correct order:' : 'Hold and drag the handle to reorder.', style: TextStyle(color: cs.onSurfaceVariant)),
+      Text(done ? 'The correct order:' : 'Hold and drag the handle to reorder.', style: TextStyle(color: c.inkSoft)),
       ReorderableListView(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -97,13 +98,13 @@ class _OrderStepState extends State<OrderStep> {
               key: ValueKey(_items[i]),
               padding: const EdgeInsets.only(bottom: 8),
               child: Material(
-                color: cs.surfaceContainerLow,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: cs.outlineVariant)),
+                color: done ? c.goodContainer : c.paperRaised,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: done ? c.good : c.grid)),
                 child: ListTile(
                   minTileHeight: 56,
                   title: Text(_items[i]),
                   trailing: done
-                      ? Icon(Icons.check, color: cs.primary)
+                      ? Icon(Icons.check, color: c.good)
                       : ReorderableDragStartListener(index: i, child: const Padding(padding: EdgeInsets.all(8), child: Icon(Icons.drag_handle))),
                 ),
               ),
@@ -235,10 +236,10 @@ class _ConceptCardStepState extends State<ConceptCardStep> {
     final s = widget.scope;
     final t = Theme.of(context).textTheme;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
-      Text(s.step.title, style: t.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
-      Prose(s.step.prompt, resolver: s.resolver, style: t.titleMedium),
+      Text(s.step.title, style: t.headlineSmall),
+      Prose(s.step.prompt, resolver: s.resolver, style: t.titleMedium, linker: s.linker, onTerm: s.onTerm),
       if (s.step.chart != null) InteractiveChart(s.step.chart!),
-      if (s.step.body != null) Prose(s.step.body!, resolver: s.resolver),
+      if (s.step.body != null) Prose(s.step.body!, resolver: s.resolver, linker: s.linker, onTerm: s.onTerm),
       if (s.step.contextSnippets.isNotEmpty) CodeContext(s),
     ]);
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../engine/checker.dart';
+import '../theme/typography.dart';
 import '../widgets/code_view.dart';
 import 'draft_saver.dart';
 import 'step_common.dart';
@@ -115,7 +116,7 @@ class _CodeFillStepState extends State<CodeFillStep> {
             controller: _ctls[i],
             autocorrect: false,
             enableSuggestions: false,
-            style: const TextStyle(fontFamily: 'monospace'),
+            style: const TextStyle(fontFamily: fontCode, fontFeatures: codeFeatures),
             decoration: InputDecoration(border: const OutlineInputBorder(), labelText: blankLabel(i)),
           ),
       if (!done) DraftStatus(_draft, restored: _restored),
@@ -209,7 +210,7 @@ class _CodeFixStepState extends State<CodeFixStep> {
           autocorrect: false,
           enableSuggestions: false,
           keyboardType: TextInputType.multiline,
-          style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+          style: const TextStyle(fontFamily: fontCode, fontSize: 13, height: 1.5, fontFeatures: codeFeatures),
           decoration: const InputDecoration(border: OutlineInputBorder()),
         ),
         DraftStatus(_draft, restored: _restored),

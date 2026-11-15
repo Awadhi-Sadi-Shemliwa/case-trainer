@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'data/content_db.dart';
 import 'data/progress_db.dart';
 import 'grading/grader.dart';
+import 'learn/course.dart';
+import 'learn/term_linker.dart';
 
 /// Opened in main() before runApp and injected with overrides (tests inject their own).
 final contentDbProvider = Provider<ContentDb>((ref) => throw UnimplementedError('override contentDbProvider'));
@@ -33,3 +35,28 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
 }
 
 final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
+
+/// The finance course from the bundle (fixed for the app's lifetime).
+final courseProvider = Provider<Course>((ref) => ref.watch(contentDbProvider).course());
+
+/// Finds glossary words in case text (used in finance cases).
+final termLinkerProvider = Provider<TermLinker>((ref) => TermLinker(ref.watch(courseProvider)));
+
+/// Learning state; recomputed whenever progress is written.
+final courseProgressProvider = Provider<CourseProgress>((ref) {
+  ref.watch(progressTickProvider);
+  return CourseProgress(ref.watch(courseProvider), ref.watch(progressDbProvider));
+});
+
+/// Whether the cover opens on launch (Settings toggle; default on).
+class ShowCoverNotifier extends Notifier<bool> {
+  @override
+  bool build() => ref.read(progressDbProvider).setting('show_cover') != 'false';
+
+  void set(bool value) {
+    ref.read(progressDbProvider).setSetting('show_cover', value ? 'true' : 'false');
+    state = value;
+  }
+}
+
+final showCoverProvider = NotifierProvider<ShowCoverNotifier, bool>(ShowCoverNotifier.new);

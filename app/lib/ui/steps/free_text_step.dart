@@ -7,6 +7,8 @@ import '../widgets/code_context.dart';
 import '../widgets/code_view.dart';
 import '../widgets/prose.dart';
 import '../../charts/chart_view.dart';
+import '../theme/tokens.dart';
+import '../widgets/highlight.dart';
 import 'draft_saver.dart';
 import 'step_common.dart';
 
@@ -80,32 +82,31 @@ class _FreeTextStepState extends State<FreeTextStep> {
   @override
   Widget build(BuildContext context) {
     final step = s.step;
-    final cs = Theme.of(context).colorScheme;
+    final c = context.colors;
+    final t = Theme.of(context).textTheme;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
       if (step.chart != null) InteractiveChart(step.chart!),
       if (step.flawedPlan != null)
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: cs.tertiaryContainer,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 6, children: [
-            Text('THE PLAN TO CHALLENGE', style: Theme.of(context).textTheme.labelSmall?.copyWith(letterSpacing: 1.0, color: cs.onTertiaryContainer)),
-            Prose(step.flawedPlan!, resolver: s.resolver, style: TextStyle(fontStyle: FontStyle.italic, color: cs.onTertiaryContainer)),
-          ]),
+        // The plan to attack, as a sticky note on the page.
+        RuledNote(
+          title: 'The plan to challenge',
+          icon: Icons.sticky_note_2_outlined,
+          rule: c.highlighter,
+          background: c.stickyNote,
+          child: Prose(step.flawedPlan!,
+              resolver: s.resolver, style: t.bodyLarge?.copyWith(fontStyle: FontStyle.italic), linker: s.linker, onTerm: s.onTerm),
         ),
       ScaffoldGuide(step.scaffold),
-      TextField(
-        controller: _ctl,
-        minLines: 8,
-        maxLines: null,
-        keyboardType: TextInputType.multiline,
-        textCapitalization: TextCapitalization.sentences,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: 'Explain in your own words…',
+      RuledAnswerBox(
+        child: TextField(
+          controller: _ctl,
+          minLines: 8,
+          maxLines: null,
+          keyboardType: TextInputType.multiline,
+          textCapitalization: TextCapitalization.sentences,
+          style: t.bodyLarge?.copyWith(height: RuledAnswerBox.lineHeight),
+          decoration: const InputDecoration(hintText: 'Explain in your own words…', fillColor: Colors.transparent),
         ),
       ),
       DraftStatus(_draft, restored: _restored, leading: _words > 0 ? '$_words words' : null),
@@ -134,15 +135,15 @@ class _FreeTextStepState extends State<FreeTextStep> {
           label: Text(_showModel ? 'Hide model answer' : 'Compare with the model answer'),
         ),
         if (_showModel)
-          Card.outlined(
+          Card(
             margin: EdgeInsets.zero,
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [
-                Text('MODEL ANSWER', style: Theme.of(context).textTheme.labelSmall?.copyWith(letterSpacing: 1.0)),
+                SectionTitle('Model answer', icon: Icons.task_alt_rounded),
                 Prose(step.modelAnswer!, resolver: s.resolver),
                 const Divider(),
-                Text('WHAT THE EXAMINER WILL LOOK FOR', style: Theme.of(context).textTheme.labelSmall?.copyWith(letterSpacing: 1.0)),
+                SectionTitle('What the examiner will look for', icon: Icons.checklist_rounded),
                 for (final p in (step.rubric?['points'] as List? ?? const []))
                   Row(crossAxisAlignment: CrossAxisAlignment.start, spacing: 8, children: [
                     const Text('•'),
@@ -189,15 +190,17 @@ class _DatasetReveal extends StatelessWidget {
     final markerText = markers.isEmpty
         ? 'none'
         : markers.entries.map((e) => '${e.key.toString().isEmpty ? "(blank cell)" : '"${e.key}"'} × ${e.value}').join(', ');
-    return Card.outlined(
+    return Card(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [
-          Text('THE REAL FILE: ${d['key']}', style: Theme.of(context).textTheme.labelSmall?.copyWith(letterSpacing: 1.0)),
+          SectionTitle('The real file: ${d['key']}', icon: Icons.table_chart_outlined),
           Text('${d['title'] ?? ''}', style: const TextStyle(fontWeight: FontWeight.w600)),
-          Text('Units: ${d['units'] ?? '?'} · Frequency: ${d['frequency'] ?? '?'}'),
-          Text('Rows: ${schema['rows']} · Columns: ${cols.map((c) => '$c (${dtypes[c]})').join(', ')}'),
+          Text('Units: ${d['units'] ?? '?'}'),
+          Text('Frequency: ${d['frequency'] ?? '?'}'),
+          Text('Rows: ${schema['rows']}'),
+          Text('Columns: ${cols.map((c) => '$c (${dtypes[c]})').join(', ')}'),
           Text('Non-numeric markers: $markerText'),
           if (d['dating_note'] != null) Text('Note: ${d['dating_note']}'),
           CodeView(headText, label: 'First rows', highlight: false),
@@ -213,12 +216,12 @@ class _TransformReveal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card.outlined(
+    return Card(
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [
-          Text('WHAT THE PIPELINE LOGGED: ${t['id']}', style: Theme.of(context).textTheme.labelSmall?.copyWith(letterSpacing: 1.0)),
+          SectionTitle('What the pipeline logged: ${t['id']}', icon: Icons.receipt_long_outlined),
           Text('Rows ${t['rows_before']} → ${t['rows_after']} (dropped ${t['rows_dropped']})',
               style: const TextStyle(fontWeight: FontWeight.w600)),
           Text('${t['reason']}'),
@@ -228,4 +231,43 @@ class _TransformReveal extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A writing pad: faint ruled lines behind the answer, like a notebook page.
+class RuledAnswerBox extends StatelessWidget {
+  const RuledAnswerBox({super.key, required this.child});
+  final Widget child;
+
+  /// Line height of the answer text, so the rules sit under each line.
+  static const lineHeight = 1.6;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final fontSize = Theme.of(context).textTheme.bodyLarge?.fontSize ?? 16;
+    return Container(
+      decoration: BoxDecoration(color: c.paperRaised, borderRadius: BorderRadius.circular(12)),
+      child: CustomPaint(painter: _Rules(c.rule, fontSize * lineHeight), child: child),
+    );
+  }
+}
+
+class _Rules extends CustomPainter {
+  _Rules(this.color, this.gap);
+  final Color color;
+  final double gap;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()
+      ..color = color
+      ..strokeWidth = 1;
+    // contentPadding top (14) + one line, then every line after.
+    for (var y = 14 + gap; y < size.height - 6; y += gap) {
+      canvas.drawLine(Offset(14, y), Offset(size.width - 14, y), p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Rules old) => old.color != color || old.gap != gap;
 }

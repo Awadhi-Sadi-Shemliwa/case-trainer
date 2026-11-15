@@ -16,6 +16,7 @@ sources: [bts_delay_cause_stats]
 datasets: [bts_ontime_2025_01, bts_ontime_2025_07, bts_ontime_2025_12]
 allowed_literals: ["2025", hhmm]
 
+signature_chart: p3_propagation_by_turn   # drawn on the cover and the case card (first data series)
 steps:
 # ============================================================== BRIEF
 - id: s01_brief

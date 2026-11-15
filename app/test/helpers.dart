@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Pumps the whole app on a phone-sized view (S21+: 1080 × 2400 at 2.6) with the given databases.
-Future<void> pumpApp(WidgetTester tester, ContentDb content, ProgressDb progress) async {
+Future<void> pumpApp(WidgetTester tester, ContentDb content, ProgressDb progress, {bool showCover = false}) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 2.6;
   addTearDown(tester.view.reset);
@@ -19,7 +19,7 @@ Future<void> pumpApp(WidgetTester tester, ContentDb content, ProgressDb progress
       contentDbProvider.overrideWithValue(content),
       progressDbProvider.overrideWithValue(progress),
     ],
-    child: const CaseTrainerApp(),
+    child: CaseTrainerApp(showCover: showCover),
   ));
   await tester.pumpAndSettle();
 }
@@ -37,7 +37,8 @@ Future<void> tapVisible(WidgetTester tester, Finder f) async {
 
 /// Opens a case from the home list (cases further down are only built once scrolled into view).
 Future<void> openCase(WidgetTester tester, ContentDb content, [String caseId = p50]) async {
-  final title = find.text(content.caseById(caseId).title);
+  // The case card (the title can also appear on the "pick up where you left off" panel).
+  final title = find.descendant(of: find.byType(Card), matching: find.text(content.caseById(caseId).title));
   await tester.scrollUntilVisible(title, 300, scrollable: find.byType(Scrollable).first);
   await tester.pumpAndSettle();
   await tester.tap(title);

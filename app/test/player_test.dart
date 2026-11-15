@@ -20,7 +20,7 @@ void main() {
       expect(note, findsWidgets);
     }
     await tester.scrollUntilVisible(find.text(content.caseById(p50).title), 300, scrollable: find.byType(Scrollable).first);
-    expect(find.text('FINANCE'), findsOneWidget);
+    expect(find.text('Finance'), findsOneWidget);
     expect(find.text(content.caseById(p50).title), findsOneWidget);
   });
 
@@ -31,7 +31,7 @@ void main() {
 
     await openCase(tester, content);
     expect(find.text('Step 1 of $total'), findsOneWidget);
-    expect(find.text('BRIEF'), findsOneWidget);
+    expect(find.text('Brief'), findsOneWidget);
 
     // answer the first MCQ correctly
     final first = content.steps(p50).first;
@@ -49,7 +49,8 @@ void main() {
     // leave the case and come back
     await tester.pageBack();
     await tester.pumpAndSettle();
-    expect(find.text('Continue'), findsOneWidget);
+    await tester.scrollUntilVisible(find.byKey(const ValueKey('resume_case')), -300, scrollable: find.byType(Scrollable).first);
+    expect(find.byKey(const ValueKey('resume_case')), findsOneWidget, reason: 'home offers to pick up where you left off');
     await openCase(tester, content);
     expect(find.text('Step 3 of $total'), findsOneWidget);
     expect(progress.caseState(p50)!.stepIdx, 2);
