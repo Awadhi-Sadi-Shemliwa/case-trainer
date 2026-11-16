@@ -38,7 +38,7 @@ rephrase feedback, never grade. Details: GRADING.md.
 | UI | `ui/screens/*`, `ui/steps/*`, `ui/widgets/*` | One widget family per step type (`step_view.dart` dispatches). Checked steps reveal the answer after 3 failed attempts. Chart steps use `InteractiveChart` (Charts layer below); the PNG is only the fallback |
 | Drafts (2026-11-15) | `ui/steps/draft_saver.dart` | Every step keeps unsubmitted input in `progress.drafts` (saved 300 ms after an edit, on dispose and on app pause) |
 | Code beside steps | `ui/widgets/code_context.dart` | `context_snippets` render under the prompt of any step, plus a "Show the code" sheet next to written answers |
-| Learn (2026-11-15) | `learn/*` | `course.dart` (tiers, lessons, 300 words; `CourseProgress` unlock rules), `quiz.dart` (deterministic questions), `quiz_runner.dart`, `lesson_screen.dart` (+ review), `learn_screen.dart` (+ word search), `term_card.dart` (word card, sheet, page), `term_linker.dart` (finance words in case text) |
+| Learn (2026-11-15) | `learn/*` | `course.dart` (tiers, lessons, 330 words: Core = 100 finance words + 30 measures; `ReadingInfo`; `CourseProgress` unlock rules), `quiz.dart` (deterministic questions, including "read the number"), `quiz_runner.dart`, `lesson_screen.dart` (+ review), `learn_screen.dart` (+ word search), `term_card.dart` (word card, sheet, page), `reading_scale.dart` (a value on its scale with bands, marks and a key), `term_linker.dart` (every word in finance cases, the measures only in the others) |
 | Theme (2026-11-15) | `ui/theme/{tokens,typography,app_theme}.dart` | `CaseColors` ThemeExtension (paper, ink, highlighter, sector series), Archivo / JetBrains Mono, Material 3 component themes |
 | Cover | `ui/screens/cover_screen.dart`, `ui/widgets/real_curves.dart` | Initial route `/cover` (Settings toggle); four signature curves from chart JSON; Continue resumes the last case |
 
@@ -59,7 +59,7 @@ shaded regions → PlotBands, reference lines → zero-width PlotBands, annotati
 Test fixtures for every type live only in `app/test/chart_fixtures.dart`.
 
 ## Content bundle v2 and progress v2 (2026-11-15)
-content.sqlite adds `course`, `tiers`, `lessons`, `terms` (JSON per word, rank 1..300) and `formulas/*.png`; cases
+content.sqlite adds `course`, `tiers`, `lessons`, `terms` (JSON per word, rank 1..330 since 2026-11-16; measures words carry `used_for`, `in_finance` and a pre-rendered `reading`) and `formulas/*.png`; cases
 may carry `signature_chart`, steps may carry `context_snippets`. progress.sqlite (user_version 2) adds `drafts`,
 `term_progress` (known, ladder rung, due date) and `lesson_progress` (best score, attempts, passed).
 

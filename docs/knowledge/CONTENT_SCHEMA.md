@@ -74,9 +74,19 @@ Bundle schema v2 (2026-11-15) adds `course(id,title,json)`, `tiers(id,course,ord
 
 ## Finance course (`pipeline/learn/finance/`, schema in `pipeline/common/glossary.py`)
 `course.yaml`: `id, title, allowed_literals[], tiers[{id, title, blurb, read_next[source keys], lessons[{id, title,
-blurb, sources[]}]}]`. `terms/<lesson_id>.yaml`: ten words, each `{id, term, aliases[], short (≤ 30 words, must not
+blurb, kind ("finance" by default, or "measures"), sources[]}]}]`. `terms/<lesson_id>.yaml`: ten words, each `{id, term, aliases[], short (≤ 30 words, must not
 contain its own name or aliases), plain, formula{tex (matplotlib mathtext), plain, symbols[{symbol, means}]}?,
 example{values{}, compute{} (ordered expressions), formats{} ("£{:,.0f}", "{:.1%}"), text with {name}
 placeholders}?, fools_you, related[], in_cases[{case, step}], sources[]}`. Rank = file order. Prose fields contain no
 digits (course `allowed_literals` excepted); example numbers are computed and reach the app wrapped as `[[…]]`.
 Unknown fields fail validation, so YAML slips cannot silently drop text.
+
+Measures cards (lessons with `kind: measures`, 2026-11-16) must also have `used_for` (what the measure is for) and
+`in_finance` (how finance uses or names it; may contain `{name}` placeholders filled from the reading's values). They
+usually carry `reading{values{}, compute{}, formats{}, question, means, misreadings[3], scale{lo, hi, format, better:
+higher|lower|neither}?, point?, interval[lo, hi]?, marks[{at, label}], bands[{upto, label}], bands_source?}`. `lo`,
+`hi`, `at` and `upto` are numbers or names of reading values. The build checks that every point, mark, interval end and
+band lies on the scale, bands run contiguously from `lo` to `hi`, bands come with a VERIFIED `bands_source`,
+misreadings differ from each other and from the right reading, and no text carries a digit outside its placeholders.
+The bundle gets the texts filled in (`means` and `in_finance` with `[[…]]` markers) and every position as a number
+with its formatted label, so the app only places them.

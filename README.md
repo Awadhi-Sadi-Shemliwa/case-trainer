@@ -26,11 +26,14 @@ cd app && flutter test && flutter build apk --release --split-per-abi --target-p
 | P13 | Formula 1 | Where is the tyre degradation cliff, and when does an extra pit stop pay? |
 
 ## Finance Foundations (Learn tab)
-300 finance words ranked from most to least important, in three tiers of a hundred (core, intermediate, quant and
-machine learning), ten lessons each. Every word has a plain-English meaning, a formula where one exists, a worked
-example with made-up numbers computed by the pipeline, and "how it fools people". Lessons end in a ten-question
+330 words ranked from most to least important, in three tiers (core, intermediate, quant and machine learning).
+Core is the hundred finance words you need first, then thirty data-science measures every case uses: AUC and the
+Gini, precision, the Brier score, R-squared, RMSE, p-values, confidence intervals, EDA, PCA, KS, PSI and more. Every
+word has a plain-English meaning, a formula where one exists, a worked example with made-up numbers computed by the
+pipeline, and "how it fools people". Each measure also shows what one value of it means on a scale, the usual wrong
+readings, and how finance uses it. Lessons end in a ten-question
 quick check; a tier opens once every lesson before it is passed, and known words come back for spaced review.
-Finance words in the P50 case are linked to their cards. Definitions are original; the pages they were checked
+Finance words in the P50 case, and the measures in every case, are linked to their cards. Definitions are original; the pages they were checked
 against and the books suggested for further reading are listed, with short quotes, in `sources.json`.
 
 ## Data and credits

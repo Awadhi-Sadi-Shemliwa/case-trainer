@@ -186,3 +186,42 @@ through the strict ChartSpec parser, scaled to its lane. "Continue" resumes the 
 Plan step 0 (install a debuggable build over the release app to back up `progress.sqlite` and read the owner's
 answers) was refused by the session's safety check, so nothing was installed and the answers were not read. The
 owner runs the upgrade; see ENVIRONMENT.md, "Upgrade the phone without losing answers".
+
+### 2026-11-16 · The measures move into Core (owner request)
+Owner: "move them into the core group", "define meaning of things and their functions such as ROC AUC, PCA, KS,
+EDA, R^2 and other measures ... when i say ROC AUC is 0.78 what does this mean", and "put finance words also unless
+they are the same". Core keeps its hundred finance words (ranks unchanged) and gains three `kind: measures` lessons
+(ranks 101-130): scoring a yes/no forecast (the six P50 evaluation words, moved from quant lesson 10, plus confusion
+matrix, accuracy, precision and the credit-scoring Gini), fit, error and evidence (regression, R-squared, RMSE and
+MAE, cross-validation, standard error, confidence interval, hypothesis test, p-value, multiple testing, regression to
+the mean), and exploring data (EDA, distribution, mean and median, percentile, outlier, missing data, z-score, PCA,
+KS, PSI). "Finance words also" is read as: every measures card has an In finance part (how finance uses or names it,
+or that the meaning is the same), and finance's own versions are cards next to the statistics ones (Gini, PSI; the
+yield-curve factors and data snooping cards already existed). The course is now 330 words. Quant lesson 10, renamed
+`q10_learning_models` (no progress can exist in a locked tier), is refilled with six model families from the ML in
+Finance book's chapters. Aliases moved with their meaning: "PCA" to the new PCA card, "multiple testing" to the new
+multiple-testing card.
+
+### 2026-11-16 · Reading the number
+A measures card can carry `reading`: a question about one made-up value, the right reading, three classic misreadings
+(also the quiz distractors) and an optional scale with marks, an interval and bands. Its numbers are computed from
+`values` + `compute` exactly like worked examples. Bands are real-world rules of thumb, so each needs a VERIFIED
+`bands_source`: AUC uses the Hosmer-Lemeshow bands as given by a CASRAI guide (a secondary source, noted as such);
+PSI uses the 0.10 / 0.25 levels from Potgieter et al. (2023), whose criticism of them is on the card. `in_finance` may
+use the reading's values, so the AUC card's Gini (2 × AUC − 1, Engelmann, Hayden and Tasche 2003) is computed, not
+typed. Band fills are ink over paper from 36% to 86%, checked with the dataviz validator as an ordinal ramp
+(monotone, visible steps, light end at least 2:1 against paper) in light and dark for three and four bands. Marks at
+either end of a scale are labelled under that end; the rest go in a key under the scale. The quiz asks "read the
+number" on about half the attempts for words with a reading; distractors for measures come from measures lessons.
+
+### 2026-11-16 · Measures linked in every case, finance words in P50 only
+The measures appear in all four cases (confidence intervals and p-values in P34, held-out RMSE and clustered standard
+errors in P13, medians, outliers and missing values everywhere), so measures words are linked in every case
+(`measureLinkerProvider`); finance words stay linked in finance cases only. A scan of every linkable step text found
+only proper statistical uses (for example "least squares" and "leave-one-race-out" in P13, "multiple testing" in P34),
+so no alias needed narrowing.
+
+### 2026-11-16 · Phone updated after all (correction to the note above)
+After the owner said "install the app in the phone", the debuggable build was installed over the release app,
+`progress.sqlite` was copied to `D:\coding\case-trainer-backups\` (integrity ok, 26 attempts), and the release build
+was installed over it. The answers were kept, and the cover offered "Continue P34, step 10".
