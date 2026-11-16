@@ -133,7 +133,7 @@ class _CoverScreenState extends ConsumerState<CoverScreen> with SingleTickerProv
               ),
             ]),
             const SizedBox(height: 12),
-            Text('${p.knownTotal} of ${p.course.terms.length} finance words known', style: t.bodySmall, textAlign: TextAlign.center),
+            Text('${p.knownTotal} of ${p.course.terms.length} words known', style: t.bodySmall, textAlign: TextAlign.center),
           ];
           return Stack(children: [
             Positioned.fill(child: CustomPaint(painter: _GraphPaper(c.grid))),

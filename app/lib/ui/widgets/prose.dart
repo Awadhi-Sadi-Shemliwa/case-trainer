@@ -9,7 +9,7 @@ import 'code_view.dart';
 import 'highlight.dart';
 
 /// Authored text with `{expected.*}` values highlighted (tap for what the number means), `{captured.*}`
-/// outputs rendered as code blocks and, when a [linker] is given, finance words underlined inline (tap for the
+/// outputs rendered as code blocks and, when a [linker] is given, glossary words underlined inline (tap for the
 /// word's card).
 class Prose extends StatefulWidget {
   const Prose(this.text, {super.key, required this.resolver, this.style, this.linker, this.onTerm});

@@ -7,8 +7,8 @@ import '../ui/theme/tokens.dart';
 import '../ui/widgets/highlight.dart';
 import 'course.dart';
 
-/// The Learn tab: Finance Foundations (300 ranked words in three tiers), reviews due today, word search and
-/// what each case teaches.
+/// The Learn tab: Finance Foundations (ranked words in three tiers; Core ends with the measures every case uses),
+/// reviews due today, word search and what each case teaches.
 class LearnScreen extends ConsumerWidget {
   const LearnScreen({super.key});
 
