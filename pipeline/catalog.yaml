@@ -1,0 +1,269 @@
+# The 50 problems of the curriculum (owner's 'Data Science Strategy Game & 50-Problem Curriculum' PDF) with the
+# data tier from docs/spec.pdf §7 and the Tier A build order from §8. Titles and one-line descriptions are the
+# curriculum's own (lightly trimmed; its citations are removed because they are Gemini's and unverified). build_content.py marks a problem `built` when pipeline/cases/ has it; the app
+# shows the next unbuilt one in a sector as 'being prepared'. Tiers: A/A* = real free data (v1 builds these);
+# B = a real proxy answers a reframed question (later); C = no public data (excluded).
+problems:
+  - number: 1
+    domain: aviation
+    title: 'Jet Fuel Price Spread Hedging'
+    summary: "Forecasting crack spreads between Brent crude and jet fuel to optimize futures contract timing."
+    tier: 'A'
+    build_rank: 5
+  - number: 2
+    domain: aviation
+    title: 'Dynamic Airfare Elasticity'
+    summary: "Modeling demand drop-offs when booking windows close to mitigate empty seat loss on trans-Atlantic routes."
+    tier: 'B'
+  - number: 3
+    domain: aviation
+    title: 'Hub-and-Spoke Delay Propagation'
+    summary: "Predicting cascading flight delays across connecting banks due to localized weather events."
+    tier: 'A'
+    build_rank: 3
+  - number: 4
+    domain: aviation
+    title: 'Aircraft Maintenance Turnaround'
+    summary: "Optimizing predictive replacement schedules for auxiliary power units (APUs) to prevent gate delays."
+    tier: 'B'
+  - number: 5
+    domain: aviation
+    title: 'Baggage Handling Bottlenecks'
+    summary: "Analyzing sorting conveyor blockages during peak departure banks at mega-hubs."
+    tier: 'C'
+  - number: 6
+    domain: aviation
+    title: 'Cargo Payload Revenue Maximization'
+    summary: "Balancing belly-cargo weight allowances against passenger fuel burn on ultra-long-haul flights."
+    tier: 'B'
+  - number: 7
+    domain: aviation
+    title: 'Pilot Rostering Fatigue Risk'
+    summary: "Minimizing circadian disruption scores across multi-leg trans- meridian scheduling."
+    tier: 'C'
+  - number: 8
+    domain: aviation
+    title: 'Airport Slot Allocation Valuation'
+    summary: "Estimating secondary market pricing for peak arrival slots at capacity-constrained airports."
+    tier: 'C'
+  - number: 9
+    domain: aviation
+    title: 'Carbon Offset Pricing Impact'
+    summary: "Simulating passenger demand elasticity under mandatory CORSIA carbon tax levies."
+    tier: 'C'
+  - number: 10
+    domain: aviation
+    title: 'Gate Assignment Conflict Resolution'
+    summary: "Reducing tarmac holding times through automated gate-to-aircraft matching algorithms."
+    tier: 'B'
+  - number: 11
+    domain: aviation
+    title: 'Aircraft De-icing Fluid Inventory'
+    summary: "Predicting seasonal glycol chemical consumption based on freezing rain duration forecasts."
+    tier: 'C'
+  - number: 12
+    domain: aviation
+    title: 'Frequent Flyer Liability Provision'
+    summary: "Actuarial modeling of unredeemed loyalty miles redemption velocity and balance sheet liability."
+    tier: 'B'
+  - number: 13
+    domain: f1
+    title: 'Tire Degradation Cliff Modeling'
+    summary: "Predicting lap-time drop-offs across compound shifts (Soft to Hard) under varying track asphalt abrasiveness."
+    tier: 'A'
+    build_rank: 4
+  - number: 14
+    domain: f1
+    title: 'Undercut vs. Overcut Strategy Window'
+    summary: "Calculating optimal pit-stop timing relative to traffic density and clean-air delta."
+    tier: 'A'
+    build_rank: 9
+  - number: 15
+    domain: f1
+    title: 'Fuel Load vs. Lap Time Penalty'
+    summary: "Quantifying the secondary lap-time cost of carrying extra fuel margin at power-sensitive tracks."
+    tier: 'B'
+  - number: 16
+    domain: f1
+    title: 'Front Wing Downforce Setup Tuning'
+    summary: "Balancing high-speed cornering grip against straight- line DRS top-speed deficit."
+    tier: 'B'
+  - number: 17
+    domain: f1
+    title: 'Power Unit MGU-K Energy Harvesting'
+    summary: "Optimizing kinetic energy recovery deployment profiles across heavy braking zones."
+    tier: 'C'
+  - number: 18
+    domain: f1
+    title: 'Safety Car Probability & Pit Window'
+    summary: "Stochastic modeling of safety car deployments to trigger optimal cheap pit stops."
+    tier: 'A'
+    build_rank: 7
+  - number: 19
+    domain: f1
+    title: 'Wind Tunnel Correlation Error'
+    summary: "Correcting CFD scale-model discrepancies against real-world track telemetry sensor arrays."
+    tier: 'C'
+  - number: 20
+    domain: f1
+    title: 'Cost Cap Development Allocation'
+    summary: "Optimizing the marginal performance gain per dollar spent under the FIA financial regulations."
+    tier: 'C'
+  - number: 21
+    domain: f1
+    title: 'Brake Cooling Duct Drag Tradeoff'
+    summary: "Determining minimum cooling aperture size to prevent thermal glazing without inducing aerodynamic drag."
+    tier: 'C'
+  - number: 22
+    domain: f1
+    title: 'Starting Grid Launch Traction'
+    summary: "Modeling clutch bite-point sensitivity and rubber-patch grip variation on the grid."
+    tier: 'B'
+  - number: 23
+    domain: f1
+    title: 'Pit Crew Ergonomic Fatigue'
+    summary: "Analyzing sub-2-second pit stop error rates across consecutive race weekends."
+    tier: 'B'
+  - number: 24
+    domain: f1
+    title: 'Gearbox Reliability Stress Testing'
+    summary: "Predicting gear-dog wear failure probabilities under high kerb-strike frequencies."
+    tier: 'B'
+  - number: 25
+    domain: football
+    title: 'Publicly Traded Club Share Drop Prediction'
+    summary: "Modeling how unexpected Champions League elimination impacts club stock valuations."
+    tier: 'A*'
+    build_rank: 11
+  - number: 26
+    domain: football
+    title: 'Expected Goals (xG) Player Valuation'
+    summary: "Assessing transfer market under/over-valuation using high-frequency tracking shot data."
+    tier: 'B'
+  - number: 27
+    domain: football
+    title: 'High Pressing Intensity vs. Injury Risk'
+    summary: "Correlating defensive PPDA (passes allowed per defensive action) with soft-tissue injury spikes."
+    tier: 'C'
+  - number: 28
+    domain: football
+    title: 'Squad Depth Fatigue Rotation'
+    summary: "Determining optimal fixture-congestion rotation policies to maintain domestic league points per game."
+    tier: 'B'
+  - number: 29
+    domain: football
+    title: 'Set-Piece Tactical Conversion Efficiency'
+    summary: "Analyzing defensive zonal versus man-marking vulnerabilities on corner kick routines."
+    tier: 'B'
+  - number: 30
+    domain: football
+    title: 'Ticket Pricing & Dynamic Demand'
+    summary: "Maximizing stadium yield management through opponent tiering and member resale platforms."
+    tier: 'C'
+  - number: 31
+    domain: football
+    title: 'Academy Player Development ROI'
+    summary: "Projecting future sell-on value thresholds for youth prospects entering senior loan systems."
+    tier: 'C'
+  - number: 32
+    domain: football
+    title: 'Sponsorship Exposure Valuation'
+    summary: "Quantifying television screen-time seconds for shirt sponsors during high-viewership derby matches."
+    tier: 'C'
+  - number: 33
+    domain: football
+    title: 'Managerial Change Impact on Form'
+    summary: "Measuring the statistical significance of the 'new manager bounce' hypothesis on club point trajectories."
+    tier: 'A*'
+    build_rank: 6
+  - number: 34
+    domain: football
+    title: 'Referee Bias & Home Advantage'
+    summary: "Quantifying crowd noise influence on stoppage time duration and disciplinary card issuance."
+    tier: 'A'
+    build_rank: 2
+  - number: 35
+    domain: football
+    title: 'Broadcast Rights Revenue Distribution'
+    summary: "Modeling international vs. domestic broadcasting revenue disparities across leagues."
+    tier: 'B'
+  - number: 36
+    domain: football
+    title: 'Transfer Window Deadline Day Volatility'
+    summary: "Pricing panic-buy premiums paid during final 24- hour transfer window spikes."
+    tier: 'C'
+  - number: 37
+    domain: football
+    title: 'Fan Token Price Correlation'
+    summary: "Examining whether club fan token valuations track matchday win/loss outcomes."
+    tier: 'B'
+  - number: 38
+    domain: finance
+    title: 'High-Frequency Order Book Imbalance'
+    summary: "Predicting short-term price direction using Level 2 limit order book queue depths."
+    tier: 'A'
+    build_rank: 12
+  - number: 39
+    domain: finance
+    title: 'Commercial Real Estate Cap Rate Forecasting'
+    summary: "Predicting capitalization rate shifts under rising interest rate environments."
+    tier: 'C'
+  - number: 40
+    domain: finance
+    title: 'Retail Credit Default Risk Scoring'
+    summary: "Building machine learning credit scorecards using alternative non-traditional borrower data."
+    tier: 'A'
+    build_rank: 10
+  - number: 41
+    domain: finance
+    title: 'Statistical Arbitrage Pairs Trading'
+    summary: "Cointegration testing and spread mean-reversion threshold optimization across equity pairs."
+    tier: 'A'
+    build_rank: 8
+  - number: 42
+    domain: finance
+    title: 'Mortgage Prepayment Hazard Modeling'
+    summary: "Projecting refinancing velocities under shifting mortgage interest rate curves."
+    tier: 'A*'
+    build_rank: 13
+  - number: 43
+    domain: finance
+    title: 'ESG Portfolio Greenwashing Detection'
+    summary: "Uncovering discrepancies between corporate carbon disclosure and satellite emissions data."
+    tier: 'B'
+  - number: 44
+    domain: finance
+    title: 'Venture Capital Startup Valuation'
+    summary: "Predicting Series A unicorn probability using founding team network centrality metrics."
+    tier: 'C'
+  - number: 45
+    domain: finance
+    title: 'Catastrophe Bond Pricing'
+    summary: "Actuarial pricing of hurricane and earthquake reinsurance risk linked to parametric triggers."
+    tier: 'B'
+  - number: 46
+    domain: finance
+    title: 'Foreign Exchange Carry Trade Risk'
+    summary: "Managing drawdown risk in high-yielding emerging market currency baskets."
+    tier: 'B'
+  - number: 47
+    domain: finance
+    title: 'Liquidity Risk in Corporate Bond Portfolios'
+    summary: "Modeling bid-ask spread widening during corporate credit market sell-offs."
+    tier: 'B'
+  - number: 48
+    domain: finance
+    title: 'Options Volatility Surface Arbitrage'
+    summary: "Detecting mispriced strike options outside implied volatility smile boundaries."
+    tier: 'C'
+  - number: 49
+    domain: finance
+    title: 'Real Estate PropTech Rental Yields'
+    summary: "Dynamic micro-location rental pricing prediction using scraped neighborhood amenity data."
+    tier: 'B'
+  - number: 50
+    domain: finance
+    title: 'Macroeconomic Yield Curve Inversion Signal'
+    summary: "Estimating recession probability windows from 2S10S treasury spread inversions."
+    tier: 'A'
+    build_rank: 1

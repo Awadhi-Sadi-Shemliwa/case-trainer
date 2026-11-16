@@ -138,7 +138,7 @@
 
 - id: standard_error
   term: Standard error
-  aliases: [standard errors, clustered standard errors, SE]
+  aliases: [standard errors, SE]
   short: How much an estimate would wobble if the study were repeated on fresh samples, measured as a standard deviation.
   plain: >-
     Every average, slope or difference computed from data is uncertain because the data are a sample. This puts a
@@ -260,8 +260,7 @@
 
 - id: multiple_testing
   term: Multiple testing
-  aliases: [multiple comparisons, multiple-testing, Holm correction, Holm-adjusted, Bonferroni correction, Bonferroni,
-            family-wise error rate]
+  aliases: [multiple comparisons, multiple-testing, Bonferroni correction, Bonferroni, family-wise error rate]
   short: Running many tests at once, which makes a false discovery likely unless each test's cut-off is made stricter.
   plain: >-
     With a fixed cut-off, every extra test is another chance of a fluke, so across many tests a few false discoveries
@@ -285,7 +284,7 @@
   fools_you: >-
     The tests you did not report still count; picking the best of many and showing it alone is the classic way to fool
     yourself and others.
-  related: [p_value, data_snooping, hypothesis_test, overfitting]
+  related: [p_value, data_snooping, hypothesis_test, overfitting, holm_correction]
   in_cases: [{case: p34_home_adv, step: s12_plan_challenge}, {case: p34_home_adv, step: s13_result}, {case: p34_home_adv, step: s17_debrief}]
 
 - id: regression_to_the_mean

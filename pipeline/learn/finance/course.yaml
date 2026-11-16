@@ -1,5 +1,5 @@
-# Finance Foundations: 330 words in three tiers, ranked from most to least important (owner requests 2026-11-15/16).
-# Core = 100 finance words, then 30 data-science measures (kind: measures) moved up at the owner's request.
+# Finance Foundations: 340 words in three tiers, ranked from most to least important (owner requests 2026-11-15/16).
+# Core = 100 finance words, then 40 data-science measures and methods (kind: measures) moved up at the owner's request.
 # Order matters: rank = position (tier -> lesson -> word). Each lesson leans only on words from earlier lessons.
 # Definitions are written fresh for this app; `sources` are the pages they were checked against (VERIFIED in
 # sources.json). Worked examples use made-up numbers computed by the pipeline (common/glossary.py).
@@ -72,6 +72,12 @@ tiers:
         blurb: Look before you fit. Shapes, gaps, odd values, and how to tell when data have drifted.
         kind: measures
         sources: [nist_eda, nist_location, nist_outliers, nist_pca, nist_ks_test]
+      - id: core_14_methods
+        title: Methods used in the cases
+        blurb: What Holm, difference-in-differences, fixed effects and the other methods in the cases actually do.
+        kind: measures
+        sources: [statsmodels_multipletests, mixtape_did, mixtape_panel, mixtape_dags, statsmodels_count_models,
+                  statsmodels_cluster_se, nist_censoring]
 
   - id: intermediate
     title: Intermediate

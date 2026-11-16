@@ -1,4 +1,4 @@
-"""Finance Foundations course (owner requests 2026-11-15/16): 330 ranked words, validated like the cases."""
+"""Finance Foundations course (owner requests 2026-11-15/16): 340 ranked words (Core gained the methods lesson on 2026-11-16), validated like the cases."""
 
 from __future__ import annotations
 
@@ -69,15 +69,15 @@ def test_course_is_valid(course):
 
 
 def test_course_shape(course):
-    """Core = ten finance lessons + three lessons of measures (owner request 2026-11-16); the others ten each."""
+    """Core = ten finance lessons + four lessons of measures and methods (owner requests 2026-11-16); the others ten each."""
     c, ordered, _ = course
     assert [t.id for t in c.tiers] == ["core", "intermediate", "quant"]
-    assert [len(t.lessons) for t in c.tiers] == [13, 10, 10]
-    assert len(ordered) == 330
-    assert [sum(1 for tr, _, _ in ordered if tr.id == tier.id) for tier in c.tiers] == [130, 100, 100]
-    assert len({t.id for _, _, t in ordered}) == 330
+    assert [len(t.lessons) for t in c.tiers] == [14, 10, 10]
+    assert len(ordered) == 340
+    assert [sum(1 for tr, _, _ in ordered if tr.id == tier.id) for tier in c.tiers] == [140, 100, 100]
+    assert len({t.id for _, _, t in ordered}) == 340
     core = c.tiers[0].lessons
-    assert [ls.kind for ls in core] == ["finance"] * 10 + ["measures"] * 3
+    assert [ls.kind for ls in core] == ["finance"] * 10 + ["measures"] * 4
     assert all(ls.kind == "finance" for tier in c.tiers[1:] for ls in tier.lessons)
 
 
@@ -112,9 +112,9 @@ def test_bundle_has_terms_and_formula_images(course, tmp_path):
     c, ordered, _ = course
     con = sqlite3.connect(tmp_path / "c.sqlite")
     write_course(con, c, ordered, tmp_path)
-    assert con.execute("select count(*) from terms").fetchone()[0] == 330
-    assert con.execute("select count(*) from lessons").fetchone()[0] == 33
-    assert con.execute("select min(rank), max(rank) from terms").fetchone() == (1, 330)
+    assert con.execute("select count(*) from terms").fetchone()[0] == 340
+    assert con.execute("select count(*) from lessons").fetchone()[0] == 34
+    assert con.execute("select min(rank), max(rank) from terms").fetchone() == (1, 340)
     with_formula = [t for _, _, t in ordered if t.formula]
     assert len(list((tmp_path / "formulas").glob("*.png"))) == len(with_formula)
     png = (tmp_path / "formulas" / "equity.png").read_bytes()
@@ -207,7 +207,7 @@ def test_owner_named_measures_are_in_core(course):
 def test_measures_cards_explain_reading_and_finance(course):
     _, ordered, _ = course
     measures = [t for _, ls, t in ordered if ls.kind == "measures"]
-    assert len(measures) == 30
+    assert len(measures) == 40
     assert all(t.used_for and t.in_finance for t in measures)
     assert sum(1 for t in measures if t.reading) >= 20
     auc = next(t for t in measures if t.id == "roc_auc")
@@ -222,3 +222,17 @@ def test_aliases_moved_with_their_meaning(course):
     owner = {n.lower(): t.id for _, _, t in ordered for n in [t.term, *t.aliases]}
     assert owner["pca"] == "pca" and owner["level slope curvature"] == "yield_curve_pca"
     assert owner["multiple testing"] == "multiple_testing" and owner["p-hacking"] == "data_snooping"
+
+
+def test_methods_lesson_explains_the_case_methods(course):
+    """Owner 2026-11-16: 'i never heard of the holm method'. Each method a case relies on has its own card."""
+    _, ordered, _ = course
+    by_id = {t.id: (ls, t) for _, ls, t in ordered}
+    for tid in ["holm_correction", "difference_in_differences", "natural_experiment", "confounder", "poisson_model",
+                "rate_ratio", "interaction_term", "clustered_standard_errors", "fixed_effects", "censoring"]:
+        ls, t = by_id[tid]
+        assert ls.id == "core_14_methods" and ls.kind == "measures", tid
+        assert t.used_for and t.in_finance and t.sources, tid
+    names = {n.lower(): t.id for _, _, t in ordered for n in [t.term, *t.aliases]}
+    assert names["holm"] == "holm_correction" and names["holm-adjusted"] == "holm_correction"
+    assert names["bonferroni"] == "multiple_testing"

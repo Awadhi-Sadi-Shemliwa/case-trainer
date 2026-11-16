@@ -1,0 +1,236 @@
+# Core lesson 14 · Methods used in the cases. Measures, words 131-140 (owner request 2026-11-16: "i never heard of the
+# 'holm' method ... you need to describe such methods and what they do, cause all i know is p value and corr").
+# Each card says what the method does, when to use it and how it fools people. Linked in every case.
+- id: holm_correction
+  term: Holm correction
+  aliases: [Holm, Holm-adjusted, Holm method, Holm-Bonferroni, step-down correction]
+  short: A way to test several results at once that checks the smallest p-value against the strictest cut-off, then loosens the cut-off one step at a time.
+  plain: >-
+    Sort the p-values from smallest to largest. The smallest must beat the cut-off divided by the number of tests;
+    the next must beat the cut-off divided by one fewer; and so on. The moment one fails, it and every larger
+    p-value are declared not significant. It keeps the chance of any false discovery as low as Bonferroni does, but
+    finds real effects more often.
+  used_for: >-
+    Deciding which of several tests (four leagues, many players, many trading rules) still count as significant
+    once you admit you ran them all.
+  reading:
+    values: {k: 4, alpha: 0.05, p1: 0.01, p2: 0.03, p3: 0.04}
+    compute: {t1: alpha / k, t2: alpha / (k - 1)}
+    formats: {k: '{:.0f}', alpha: '{:.2f}', p1: '{:.2f}', p2: '{:.2f}', p3: '{:.2f}', t1: '{:.4f}', t2: '{:.4f}'}
+    question: You test {k} leagues. The three smallest p-values are {p1}, {p2} and {p3}, all below {alpha}. After a Holm correction, which are significant?
+    means: Only the first. The smallest, {p1}, beats the first cut-off of {t1}; the next, {p2}, misses its cut-off of {t2}, so Holm stops there and every larger p-value is not significant.
+    misreadings:
+      - All three, because each is below {alpha}.
+      - None, because Holm always removes every result.
+      - The first two, because {p2} is below {alpha} divided by two.
+  in_finance: >-
+    Quant researchers use the same step-down idea when they test many trading signals, so that a signal that
+    looks good by luck alone does not get traded.
+  fools_you: >-
+    A result that survives is still only one test's evidence, and a result that fails is not proof of no effect;
+    with few data a real effect can be lost. Pooling the groups into one planned test is often the better design.
+  related: [multiple_testing, p_value, hypothesis_test]
+  in_cases: [{case: p34_home_adv, step: s12_plan_challenge}, {case: p34_home_adv, step: s13_result}]
+  sources: [statsmodels_multipletests]
+
+- id: natural_experiment
+  term: Natural experiment
+  aliases: [natural experiments, quasi-experiment]
+  short: An event outside anyone's control that changes one thing for some units but not others, so you can compare them almost as if in a trial.
+  plain: >-
+    Nobody can randomly empty stadiums, but the pandemic did it for every club at once. When an outside shock
+    switches a factor on or off, comparing before with after (and the affected with the unaffected) gets close to
+    a real experiment, as long as nothing else changed at the same moment.
+  used_for: >-
+    Getting near-causal answers from observational data when a true randomised trial is impossible.
+  in_finance: >-
+    Economists treat surprise rule changes, index inclusions and policy announcements as natural experiments to
+    measure what a change really does to prices.
+  fools_you: >-
+    The shock rarely changes only one thing. Empty stadiums also came with packed fixture lists and new rules, so
+    the result is "consistent with" a crowd effect rather than proof.
+  related: [difference_in_differences, confounder, hypothesis_test]
+  in_cases: [{case: p34_home_adv, step: s01_brief}, {case: p34_home_adv, step: s09_chart_gd}, {case: p34_home_adv, step: s17_debrief}]
+  sources: [mixtape_did]
+
+- id: confounder
+  term: Confounder
+  aliases: [confounders, confounding, confounded, confounding variable]
+  short: A third factor that drives both the thing you think is the cause and the outcome, making the two look linked when they may not be.
+  plain: >-
+    Ice-cream sales and drownings rise together because hot weather drives both. If you skip the weather, ice cream
+    looks deadly. A design or model has to hold the third factor fixed before a link can be read as a cause.
+  used_for: >-
+    Checking whether a link could be explained by something else before you call it a cause.
+  in_finance: >-
+    A fund that beat the market may simply have held riskier shares in a rising market: market exposure confounds
+    the manager's skill, which is why returns are judged against a benchmark.
+  fools_you: >-
+    You only adjust for the confounders you thought of. A strong correlation, or a low p-value, says nothing about
+    the ones you left out.
+  related: [natural_experiment, correlation, regression, difference_in_differences]
+  in_cases: [{case: p34_home_adv, step: s09_chart_gd}, {case: p34_home_adv, step: s13_result}, {case: p3_delay_prop, step: s13_result}]
+  sources: [mixtape_dags]
+
+- id: difference_in_differences
+  term: Difference-in-differences
+  aliases: [difference in differences, diff-in-diff, DiD]
+  short: Compare how much a treated group changed with how much a similar untreated group changed over the same time, and take the gap between those changes.
+  plain: >-
+    The comparison group shows what would have happened anyway, such as a league-wide drift. Subtracting its
+    change from the treated group's change removes that shared trend, leaving the part of the change linked to the
+    treatment. It relies on the two groups having moved in parallel before the treatment.
+  used_for: >-
+    Measuring the effect of a change (empty stadiums, a new rule, a sacked manager) when some units were exposed and
+    others were not.
+  reading:
+    values: {tb: 0.46, ta: 0.41, cb: 0.44, ca: 0.43}
+    compute: {dt: ta - tb, dc: ca - cb, did: (ta - tb) - (ca - cb), gap: ta - ca}
+    formats: {tb: '{:.2f}', ta: '{:.2f}', cb: '{:.2f}', ca: '{:.2f}', dt: '{:+.2f}', dc: '{:+.2f}', did: '{:+.2f}', gap: '{:+.2f}'}
+    question: The treated group's rate moves from {tb} to {ta}; the comparison group's from {cb} to {ca}. What is the difference-in-differences?
+    means: "{did}: the treated group changed by {dt} while the comparison group changed by {dc}, so the change beyond the shared trend is {did}."
+    misreadings:
+      - "{dt}, the treated group's own change."
+      - "{gap}, the gap between the two groups afterwards."
+      - Zero, because both groups went down.
+  in_finance: >-
+    Event studies follow the same logic: a share's move around news minus the move of the market or similar firms
+    over the same days.
+  fools_you: >-
+    If the groups were already drifting apart before the treatment, the method credits that drift to the treatment.
+    Always plot both groups over time first.
+  related: [natural_experiment, confounder, interaction_term, regression]
+  in_cases: [{case: p34_home_adv, step: s11_method}, {case: p34_home_adv, step: s12_plan_challenge}, {case: p34_home_adv, step: s17_debrief}]
+  sources: [mixtape_did]
+
+- id: poisson_model
+  term: Poisson regression
+  aliases: [Poisson model, Poisson rate model, Poisson GLM, count model]
+  short: A regression for counts (cards, goals, delays) that models the rate at which events happen, optionally per unit of exposure such as per foul.
+  plain: >-
+    Counts cannot be negative and are often small, so an ordinary straight line fits them badly. This model works
+    on the log of the expected count, so each input multiplies the rate. Adding the log of the exposure (fouls,
+    minutes, flights) as an offset, a term with its coefficient fixed at one, turns counts into a rate per unit of
+    exposure.
+  used_for: >-
+    Comparing how often things happen between groups when the groups had different amounts of opportunity.
+  in_finance: >-
+    Insurers and credit teams model the number of claims or defaults per policy-year or per loan-month with the same
+    count models.
+  fools_you: >-
+    Real counts are often more spread out than the model assumes, which makes standard errors too small. Robust or
+    clustered errors, or a negative binomial model, guard against that.
+  related: [rate_ratio, regression, clustered_standard_errors, interaction_term]
+  in_cases: [{case: p34_home_adv, step: s11_method}, {case: p34_home_adv, step: s17_debrief}]
+  sources: [statsmodels_count_models, statsmodels_glm]
+
+- id: rate_ratio
+  term: Rate ratio
+  aliases: [rate ratios, incidence rate ratio, IRR, card rate ratio]
+  short: How many times higher or lower one group's event rate is than another's, with exposure taken into account; one means no difference.
+  plain: >-
+    Divide one group's rate by the other's. Above one, the first group has more events per unit of exposure; below
+    one, fewer. In a count model each coefficient, once exponentiated, is a rate ratio.
+  used_for: >-
+    Reporting the size of an effect on a count outcome in a way that does not depend on how much exposure each group
+    had.
+  reading:
+    values: {rr: 0.8}
+    compute: {drop: 1 - rr}
+    formats: {rr: '{:.2f}', drop: '{:.0%}'}
+    question: A card model gives a rate ratio of {rr} for away teams in ghost games. What does that mean?
+    means: Away teams got cards at {rr} times the rate they would otherwise have had, per foul committed, which is about {drop} lower once fouls are accounted for.
+    misreadings:
+      - Away teams got {drop} fewer cards in total.
+      - The difference is {rr} cards per match.
+      - It proves referees were biased by the crowd.
+  in_finance: >-
+    Default-rate ratios compare how often two groups of borrowers default per loan-year, for example before and after
+    a lending rule changed.
+  fools_you: >-
+    A ratio hides the base: a rate ratio of two on a tiny rate is still a tiny number of events. Report the rates as
+    well, and the confidence interval of the ratio.
+  related: [poisson_model, confidence_interval, interaction_term]
+  in_cases: [{case: p34_home_adv, step: s10_cards_card}, {case: p34_home_adv, step: s13_result}, {case: p34_home_adv, step: s16_memo}]
+  sources: [statsmodels_count_models]
+
+- id: interaction_term
+  term: Interaction
+  aliases: [interaction term, interactions, interaction effect]
+  short: A term in a model that lets the effect of one factor depend on another, such as the home effect being different with and without crowds.
+  plain: >-
+    Without it, a model assumes being at home helps by the same amount in every period. Multiplying "home" by
+    "ghost game" adds a separate number for how much the home effect changed in ghost games. That number is the
+    difference-in-differences inside a regression.
+  used_for: >-
+    Testing whether a gap between groups grew or shrank under some condition.
+  in_finance: >-
+    A model of returns can interact a signal with a market-stress flag to test whether the signal stops working in
+    sell-offs.
+  fools_you: >-
+    The main effects change meaning once an interaction is in the model: each one now describes the gap when the
+    other factor is switched off.
+  related: [difference_in_differences, regression, poisson_model]
+  in_cases: [{case: p34_home_adv, step: s11_method}, {case: p34_home_adv, step: s13_result}]
+  sources: [mixtape_did]
+
+- id: clustered_standard_errors
+  term: Clustered standard errors
+  aliases: [clustered standard error, cluster-robust standard errors, clustered errors, errors clustered by match]
+  short: Uncertainty estimates that treat rows from the same group (one match, one race, one driver) as related rather than as independent pieces of evidence.
+  plain: >-
+    Two teams' cards in the same match share a referee, a weather and a mood, so they are not two separate pieces of
+    evidence. Treating them as independent overstates how much you know. Clustering by match widens the standard
+    errors to the honest size.
+  used_for: >-
+    Getting confidence intervals and p-values that are not too optimistic when the data come in related groups.
+  in_finance: >-
+    Studies of many firms over many months cluster by firm and by month, because one firm's returns are related over
+    time and all firms move together in a crash.
+  fools_you: >-
+    With only a handful of clusters the correction itself becomes unreliable; and clustering fixes the error bars,
+    not a biased estimate.
+  related: [standard_error, confidence_interval, p_value, fixed_effects]
+  in_cases: [{case: p34_home_adv, step: s11_method}, {case: p13_tyre_deg, step: s11_read_fe}]
+  sources: [statsmodels_cluster_se]
+
+- id: fixed_effects
+  term: Fixed effects
+  aliases: [fixed effect, race fixed effects, driver fixed effects, league effects]
+  short: Giving every group (each race, driver or league) its own baseline in a model, so that comparisons are made only within each group.
+  plain: >-
+    Some tracks are simply slower and some leagues hand out more cards. A separate intercept per group soaks up
+    everything that is constant about that group, measured or not, so the remaining slope is learned from changes
+    within each group.
+  used_for: >-
+    Removing stable differences between groups that would otherwise confound the effect you care about.
+  in_finance: >-
+    Panel regressions on many companies use firm fixed effects so that a result is not driven by some firms always
+    being bigger or more profitable.
+  fools_you: >-
+    It only removes what is constant within a group. Anything that changes over time inside the group, such as
+    track temperature during a race, can still confound.
+  related: [regression, confounder, clustered_standard_errors]
+  in_cases: [{case: p13_tyre_deg, step: s10_method}, {case: p13_tyre_deg, step: s11_read_fe}, {case: p13_tyre_deg, step: s17_debrief}]
+  sources: [mixtape_panel]
+
+- id: censoring
+  term: Censoring
+  aliases: [censored, censored data, right-censored, right censoring]
+  short: Knowing only that an event had not happened yet when watching stopped, so the true time is longer than what you saw.
+  plain: >-
+    A tyre stint that ends with a planned pit stop tells you the tyre lasted at least that long, not when it would
+    have fallen off the cliff. Dropping such stints, or treating them as failures, biases the answer; survival
+    methods use them correctly as "at least this long".
+  used_for: >-
+    Handling time-to-event data (tyre life, time to default, time to churn) where many items had not reached the
+    event when observation ended.
+  in_finance: >-
+    Mortgages still running at the end of the data are censored for prepayment and default; hazard models keep them
+    in as "not yet".
+  fools_you: >-
+    The stints you see end are not a random sample: teams pit early when tyres are going off, so the longest-lasting
+    tyres are the ones most often censored.
+  related: [survivorship_bias, missing_data, regression]
+  in_cases: [{case: p13_tyre_deg, step: s09_chart_wear}, {case: p13_tyre_deg, step: s13_result}, {case: p13_tyre_deg, step: s17_debrief}]
+  sources: [nist_censoring]
