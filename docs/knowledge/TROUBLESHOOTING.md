@@ -90,3 +90,11 @@ Don't set `ndk.abiFilters`; use `--split-per-abi --target-platform android-arm64
 ### build_content: "provenance: <key>: missing ...raw/<file>" in a fresh clone
 The raw file is git-ignored (too big or not redistributable) but its provenance entry lacks `"committed": false`.
 Add it in the case's download.py (`prov.annotate(key, committed=False)`) and re-run the download, or add the field.
+
+### 2026-11-16 · `:share_plus:compileReleaseKotlin` "Could not close incremental caches"
+Kotlin incremental caches fail when plugin sources (pub cache on C:) and the build (D:) are on different drives.
+Fixed with `kotlin.incremental=false` in app/android/gradle.properties (then `gradlew --stop`).
+
+### 2026-11-16 · Examiner says "no credit left"
+The API returns 400 "Your credit balance is too low". Add credit at console.anthropic.com (Plans & Billing); the
+answer is kept and "Grade now" retries. Settings, Examiner, "Test the connection" checks it.
