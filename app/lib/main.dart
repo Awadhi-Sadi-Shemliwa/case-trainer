@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app.dart';
 import 'data/content_db.dart';
 import 'data/progress_db.dart';
+import 'engine/step_status.dart';
 import 'providers.dart';
 
 Future<void> main() async {
@@ -11,6 +12,7 @@ Future<void> main() async {
   final sw = Stopwatch()..start();
   final content = await ContentDb.openBundled();
   final progress = await ProgressDb.open();
+  reopenUnfinishedCases(content, progress);
   debugPrint('[CaseTrainer] databases ready in ${sw.elapsedMilliseconds} ms');
   runApp(ProviderScope(
     overrides: [

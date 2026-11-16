@@ -122,7 +122,7 @@ void main() {
       final steps = content.steps(p50);
       final idx = steps.indexWhere((s) => s.isGraded);
       progress.saveCaseState(p50, idx);
-      await pumpApp(tester, content, progress);
+      await pumpApp(tester, content, progress, grader: FakeGrader());
       await openCase(tester, content);
       await tester.enterText(find.byType(TextField).first, typed);
       await tapVisible(tester, find.text('Submit answer'));

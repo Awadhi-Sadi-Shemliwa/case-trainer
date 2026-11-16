@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models.dart';
+import '../../grading/claude_client.dart';
 import '../../providers.dart';
 import '../theme/tokens.dart';
 import '../widgets/highlight.dart';
@@ -169,6 +170,8 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (v) => ref.read(showCoverProvider.notifier).set(v),
           ),
           const SizedBox(height: 20),
+          const ExaminerSettings(),
+          const SizedBox(height: 20),
           SectionTitle('Your data', icon: Icons.storage_rounded),
           const SizedBox(height: 4),
           Text('Everything you type is saved on this phone only.', style: t.bodySmall),
@@ -224,5 +227,92 @@ class SettingsScreen extends ConsumerWidget {
         ]),
       ),
     );
+  }
+}
+
+/// The Claude examiner's key: the one built into this install, or one pasted here (kept on the phone only).
+class ExaminerSettings extends ConsumerStatefulWidget {
+  const ExaminerSettings({super.key});
+
+  @override
+  ConsumerState<ExaminerSettings> createState() => _ExaminerSettingsState();
+}
+
+class _ExaminerSettingsState extends ConsumerState<ExaminerSettings> {
+  String? _check;
+  bool _checking = false;
+
+  String _tail(String k) => k.length <= 4 ? '' : ' ending ${k.substring(k.length - 4)}';
+
+  Future<void> _paste() async {
+    final ctl = TextEditingController();
+    final key = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Claude API key'),
+        content: TextField(
+          key: const ValueKey('api_key_field'),
+          controller: ctl,
+          obscureText: true,
+          autocorrect: false,
+          enableSuggestions: false,
+          decoration: const InputDecoration(hintText: 'Paste the key here'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, ctl.text.trim()), child: const Text('Save')),
+        ],
+      ),
+    );
+    if (key == null || key.isEmpty) return;
+    ref.read(progressDbProvider).setSetting(apiKeySetting, key);
+    setState(() => _check = null);
+  }
+
+  Future<void> _test() async {
+    setState(() {
+      _checking = true;
+      _check = null;
+    });
+    final msg = await ref.read(claudeClientProvider).checkKey();
+    if (mounted) {
+      setState(() {
+        _checking = false;
+        _check = msg;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final p = ref.read(progressDbProvider);
+    final pasted = p.setting(apiKeySetting)?.trim() ?? '';
+    final key = currentApiKey(p);
+    final where = pasted.isNotEmpty
+        ? 'Using the key you pasted here${_tail(key)}.'
+        : (key.isNotEmpty ? 'Using the key built into this install${_tail(key)}.' : 'No key: answers are saved but not graded.');
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [
+      SectionTitle('Examiner', icon: Icons.fact_check_outlined),
+      Text('Written answers are graded by Claude ($examinerModel). The key stays on this phone.', style: t.bodySmall),
+      Text(where, key: const ValueKey('api_key_status'), style: t.bodyMedium),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        OutlinedButton.icon(onPressed: _paste, icon: const Icon(Icons.key_rounded), label: const Text('Paste a new key')),
+        if (pasted.isNotEmpty)
+          TextButton(
+            onPressed: () {
+              p.setSetting(apiKeySetting, '');
+              setState(() => _check = null);
+            },
+            child: const Text('Use the built-in key'),
+          ),
+        OutlinedButton.icon(
+          onPressed: key.isEmpty || _checking ? null : _test,
+          icon: const Icon(Icons.wifi_tethering_rounded),
+          label: Text(_checking ? 'Checking…' : 'Test the connection'),
+        ),
+      ]),
+      if (_check != null) Text(_check!, key: const ValueKey('api_key_check'), style: t.bodyMedium),
+    ]);
   }
 }

@@ -153,3 +153,28 @@ class SourceRef {
   String get status => json['status'] as String;
   bool get verified => status == 'VERIFIED';
 }
+
+/// One of the curriculum's 50 problems (pipeline/catalog.yaml). [caseId] is set when the case is built.
+class CatalogProblem {
+  const CatalogProblem({
+    required this.number,
+    required this.domain,
+    required this.title,
+    required this.summary,
+    required this.tier,
+    this.buildRank,
+    this.caseId,
+  });
+  final int number;
+  final String domain;
+  final String title;
+  final String summary;
+
+  /// A / A* = real free data (built in v1); B = later, on a proxy; C = no public data.
+  final String tier;
+
+  /// Position in the spec's build order (Tier A only).
+  final int? buildRank;
+  final String? caseId;
+  bool get built => caseId != null;
+}

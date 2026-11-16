@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../../grading/grader.dart';
+import '../../data/progress_db.dart';
 import '../widgets/code_context.dart';
+import '../widgets/examiner_card.dart';
 import '../widgets/code_view.dart';
 import '../widgets/prose.dart';
 import '../../charts/chart_view.dart';
@@ -23,28 +25,37 @@ class FreeTextStep extends StatefulWidget {
 }
 
 class _FreeTextStepState extends State<FreeTextStep> {
-  final _started = DateTime.now();
+  var _started = DateTime.now();
   late final TextEditingController _ctl;
   late final DraftSaver _draft;
   late String _seen;
   bool _restored = false;
-  GradeResult? _grade;
-  bool _submitted = false;
-  bool _showModel = false;
+
+  /// Text saved before the examiner existed (or while it was unreachable) and never graded.
+  bool _ungradedSaved = false;
+  bool _grading = false;
+
+  /// Why the last submit could not be graded (offline, no credit...). The attempt was not used up.
+  String? _unavailable;
+  late List<ExaminedAttempt> _history;
 
   StepScope get s => widget.scope;
+  ExaminedAttempt? get _latest => _history.isEmpty ? null : _history.last;
+  bool get _passed => _history.any((a) => a.passed);
+  bool get _revealed => _passed || _history.length >= revealAfterAttempts;
 
   @override
   void initState() {
     super.initState();
+    _history = s.progress.examinedAttempts(s.caseId, s.step.id);
     final last = s.progress.lastAttempt(s.caseId, s.step.id);
     final lastText = last == null ? '' : jsonDecode(last['answer_json'] as String) as String;
+    _ungradedSaved = last != null && (_history.isEmpty || _latest!.answer != lastText);
     // Unsent text wins over the last submitted answer: it is newer.
     final kept = s.progress.draft(s.caseId, s.step.id);
     _restored = kept is String && kept != lastText;
     _seen = kept is String ? kept : lastText;
     _ctl = TextEditingController(text: _seen);
-    _submitted = last != null;
     _draft = DraftSaver(() => s.progress.saveDraft(s.caseId, s.step.id, _ctl.text));
     _ctl.addListener(_onChanged);
   }
@@ -66,17 +77,57 @@ class _FreeTextStepState extends State<FreeTextStep> {
 
   int get _words => _ctl.text.trim().isEmpty ? 0 : _ctl.text.trim().split(RegExp(r'\s+')).length;
 
-  void _submit() {
-    if (_ctl.text.trim().isEmpty) return;
-    final g = s.grader.grade(s.step, _ctl.text);
-    s.record(answer: _ctl.text, startedAt: _started, correct: null, score: g.score);
+  Future<void> _submit({String? text}) async {
+    final answer = text ?? _ctl.text;
+    if (answer.trim().isEmpty || _grading) return;
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _grading = true;
+      _unavailable = null;
+    });
+    final g = await s.grader.grade(s.step, answer, s.resolver, caseInfo: s.caseInfo);
+    if (!mounted) return;
+    if (!g.countsAsAttempt) {
+      // Keep the text as a draft; nothing is used up.
+      s.progress.saveDraft(s.caseId, s.step.id, _ctl.text);
+      setState(() {
+        _grading = false;
+        _unavailable = g.message;
+      });
+      return;
+    }
+    s.progress.recordExaminedAttempt(
+      caseId: s.caseId,
+      stepId: s.step.id,
+      answer: answer,
+      startedAt: _started,
+      feedback: g.toJson(),
+      status: g.status.name,
+      score: g.score,
+      passed: g.passed,
+      model: g.model,
+      inputTokens: g.inputTokens,
+      outputTokens: g.outputTokens,
+      hintsUsed: _history.length.clamp(0, 2),
+    );
+    _history = s.progress.examinedAttempts(s.caseId, s.step.id);
+    if (_revealed) s.progress.scheduleReview(s.caseId, s.step.id);
+    s.onProgress();
     _draft.discard();
     s.progress.clearDraft(s.caseId, s.step.id);
     setState(() {
+      _grading = false;
       _restored = false;
-      _grade = g;
-      _submitted = true;
+      _ungradedSaved = false;
+      _started = DateTime.now();
     });
+  }
+
+  String get _tryLine {
+    final n = _history.length;
+    if (_passed) return 'Passed on try ${_history.indexWhere((a) => a.passed) + 1}.';
+    if (_revealed) return 'Three tries used. The answer is shown below, and this step now counts as answered.';
+    return 'Try $n of $revealAfterAttempts.';
   }
 
   @override
@@ -84,6 +135,8 @@ class _FreeTextStepState extends State<FreeTextStep> {
     final step = s.step;
     final c = context.colors;
     final t = Theme.of(context).textTheme;
+    final latest = _latest;
+    final hasText = _ctl.text.trim().isNotEmpty;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 16, children: [
       StepHeader(s),
       if (step.chart != null) InteractiveChart(step.chart!),
@@ -100,16 +153,26 @@ class _FreeTextStepState extends State<FreeTextStep> {
       ScaffoldGuide(step.scaffold),
       RuledAnswerBox(
         child: TextField(
+          key: const ValueKey('answer_field'),
           controller: _ctl,
           minLines: 8,
           maxLines: null,
+          enabled: !_grading,
           keyboardType: TextInputType.multiline,
           textCapitalization: TextCapitalization.sentences,
           style: t.bodyLarge?.copyWith(height: RuledAnswerBox.lineHeight),
           decoration: const InputDecoration(hintText: 'Explain in your own words…', fillColor: Colors.transparent),
         ),
       ),
-      DraftStatus(_draft, restored: _restored, leading: _words > 0 ? '$_words words' : null),
+      DraftStatus(_draft, restored: _restored, leading: _words > 0 ? (_words == 1 ? '1 word' : '$_words words') : null),
+      if (_ungradedSaved && !_grading && _unavailable == null)
+        FeedbackCard(
+          key: const ValueKey('ungraded_saved'),
+          kind: FeedbackKind.info,
+          title: 'Saved but not graded yet',
+          message: 'This answer was saved before the examiner could read it. Submit it to have it graded.',
+          resolver: s.resolver,
+        ),
       if (step.contextSnippets.isNotEmpty)
         Align(
           alignment: Alignment.centerLeft,
@@ -120,39 +183,44 @@ class _FreeTextStepState extends State<FreeTextStep> {
             label: const Text('Show the code'),
           ),
         ),
-      SubmitButton(label: _submitted ? 'Submit again' : 'Submit answer', onPressed: _ctl.text.trim().isEmpty ? null : _submit),
-      if (_grade != null)
-        FeedbackCard(kind: FeedbackKind.info, title: _grade!.message, resolver: s.resolver),
-      if (_submitted && step.analysisPointer != null)
-        FeedbackCard(kind: FeedbackKind.info, title: 'Where to look', message: step.analysisPointer, resolver: s.resolver),
-      if (_submitted) ..._reveals(),
-      // Until the examiner exists (Prompt 6) the model answer is available after you submit, for self-checking.
-      if (_submitted && s.grader.isStub && step.modelAnswer != null) ...[
-        OutlinedButton.icon(
-          style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
-          onPressed: () => setState(() => _showModel = !_showModel),
-          icon: Icon(_showModel ? Icons.visibility_off : Icons.visibility),
-          label: Text(_showModel ? 'Hide model answer' : 'Compare with the model answer'),
+      if (_grading)
+        const _Reading()
+      else ...[
+        SubmitButton(
+          label: _unavailable != null ? 'Grade now' : (latest == null ? 'Submit answer' : 'Submit again'),
+          onPressed: hasText ? _submit : null,
         ),
-        if (_showModel)
-          Card(
-            margin: EdgeInsets.zero,
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [
-                SectionTitle('Model answer', icon: Icons.task_alt_rounded),
-                Prose(step.modelAnswer!, resolver: s.resolver),
-                const Divider(),
-                SectionTitle('What the examiner will look for', icon: Icons.checklist_rounded),
-                for (final p in (step.rubric?['points'] as List? ?? const []))
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, spacing: 8, children: [
-                    const Text('•'),
-                    Expanded(child: Text((p as Map)['label'] as String)),
-                  ]),
-              ]),
-            ),
+        if (!_revealed)
+          OutlinedButton.icon(
+            key: const ValueKey('dont_know'),
+            style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(44)),
+            onPressed: () => _submit(text: "I don't know"),
+            icon: const Icon(Icons.help_outline_rounded),
+            label: Text(_history.length == revealAfterAttempts - 1
+                ? "I don't know: show me the answer"
+                : "I don't know: give me a hint"),
           ),
       ],
+      if (_unavailable != null)
+        FeedbackCard(
+          key: const ValueKey('examiner_unavailable'),
+          kind: FeedbackKind.wrong,
+          title: 'Not graded: your answer is saved',
+          message: _unavailable,
+          resolver: s.resolver,
+        ),
+      if (latest != null && !_grading) ...[
+        Text(_tryLine, style: t.labelLarge?.copyWith(color: c.inkSoft)),
+        ExaminerCard(
+          result: GradeResult.fromJson(latest.feedback),
+          attemptNo: _history.length,
+          step: step,
+          resolver: s.resolver,
+        ),
+      ],
+      if (_history.isNotEmpty && step.analysisPointer != null && !_grading && !_revealed)
+        FeedbackCard(kind: FeedbackKind.info, title: 'Where to look', message: step.analysisPointer, resolver: s.resolver),
+      if (_history.isNotEmpty) ..._reveals(),
     ]);
   }
 
@@ -227,6 +295,26 @@ class _TransformReveal extends StatelessWidget {
           Text('${t['reason']}'),
           if ((t['details'] as Map?)?.isNotEmpty ?? false)
             CodeView(const JsonEncoder.withIndent('  ').convert(t['details']), label: 'Details', highlight: false),
+        ]),
+      ),
+    );
+  }
+}
+
+class _Reading extends StatelessWidget {
+  const _Reading();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    return Card(
+      key: const ValueKey('examiner_reading'),
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(spacing: 14, children: [
+          const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5)),
+          Expanded(child: Text('The examiner is reading your answer…', style: t.bodyLarge)),
         ]),
       ),
     );
