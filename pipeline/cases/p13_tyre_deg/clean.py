@@ -162,6 +162,7 @@ def race_laps(s: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, d
         laps.loc[r["index"], "track_temp"] = r["track_temperature"].to_numpy()
 
     # traffic: median interval to the car ahead over the samples taken during the lap
+    # >>> snippet: traffic_gap
     laps["median_gap_ahead"] = np.nan
     if not iv.empty:
         iv = iv.assign(t=ts(iv["date"]), gap=pd.to_numeric(iv["interval"], errors="coerce")).dropna(subset=["t"])
@@ -173,6 +174,7 @@ def race_laps(s: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, d
         laps = laps.set_index(["driver_number", "lap_number"])
         laps.loc[med.index, "median_gap_ahead"] = med
         laps = laps.reset_index()
+    # <<< snippet
 
     # >>> snippet: drop_rules
     conds = {

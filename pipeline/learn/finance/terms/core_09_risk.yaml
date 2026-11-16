@@ -1,0 +1,165 @@
+# Lesson 9 · Risk and portfolios. Words 81-90.
+- id: risk
+  term: Risk
+  aliases: [risks, risky]
+  short: The chance that what happens differs from what you expected, especially that you lose money.
+  plain: >-
+    In finance it usually means uncertainty about returns: the wider the range of possible outcomes, the
+    riskier the investment. Some of it can be reduced by spreading money around; some, like a recession
+    hitting everything at once, cannot. Investors take it on only if they expect to be paid for it.
+  fools_you: >-
+    Low is not zero. And a measure based on calm years can badly understate the danger of a rare crash.
+  related: [volatility, risk_premium, diversification, systematic_risk]
+  sources: [finra_asset_allocation]
+
+- id: risk_free_rate
+  term: Risk-free rate
+  aliases: [risk-free rates]
+  short: The return on an investment with practically no chance of default, usually taken from short-term government debt.
+  plain: >-
+    It is the starting point for valuing everything else: any risky investment must offer more than this to
+    be worth holding. Analysts use yields on short government bills or, for sterling, the SONIA rate, which the
+    Bank of England describes in exactly these terms.
+  fools_you: >-
+    It means no default risk, not no risk at all: inflation can still erode it, and long government bonds can
+    still fall in price.
+  related: [risk_premium, treasury, cash_money_market, sonia_sofr]
+  sources: [boe_sonia]
+
+- id: risk_premium
+  term: Risk premium
+  aliases: [equity risk premium, risk premia]
+  short: The extra return investors expect for holding a risky asset instead of a risk-free one.
+  plain: >-
+    Shares are expected to beat cash over long periods because investors demand pay for sitting through
+    crashes. The equity version is that expected extra return over safe assets. It is not guaranteed in any
+    given year, or even decade.
+  formula:
+    tex: '\mathrm{RP} = E[R] - r_{f}'
+    plain: Risk premium = expected return − risk-free rate
+    symbols:
+      - {symbol: 'E[R]', means: expected return on the risky asset}
+      - {symbol: r f, means: risk-free rate}
+  example:
+    values: {er: 0.075, rf: 0.04}
+    compute: {rp: er - rf}
+    formats: {er: '{:.1%}', rf: '{:.1%}', rp: '{:.1%}'}
+    text: If shares are expected to return {er} a year and the risk-free rate is {rf}, the premium is {rp}.
+  fools_you: >-
+    Past averages are not promises. They are estimated from history with wide error and depend heavily on the
+    period chosen.
+  related: [risk, risk_free_rate, discounting, capm]
+
+- id: diversification
+  term: Diversification
+  aliases: [diversify, diversified, diversifying]
+  short: Spreading money across many investments that do not all move together, so one bad outcome does less damage.
+  plain: >-
+    Own one company and it fails, you lose everything; own a hundred and one failure barely matters. Spreading
+    out cuts the risk tied to single companies or sectors at little cost, which is why it is called the only
+    free lunch in investing. It cannot remove risks that hit everything at once.
+  fools_you: >-
+    Owning many things that move together does not count: ten technology shares are close to one big bet.
+  related: [portfolio, risk, correlation, asset_allocation]
+  sources: [finra_asset_allocation]
+
+- id: portfolio
+  term: Portfolio
+  aliases: [portfolios]
+  short: The whole collection of investments held by a person or fund, judged together rather than one by one.
+  plain: >-
+    Thinking this way means judging each investment by what it adds to the whole. A risky asset can even make
+    the whole collection safer, if it tends to rise when everything else falls.
+  formula:
+    tex: 'R_{p} = \sum_{i} w_{i} R_{i}'
+    plain: Portfolio return = sum of (weight × return) over every holding
+    symbols:
+      - {symbol: w i, means: share of money in holding i}
+      - {symbol: R i, means: return of holding i}
+  example:
+    values: {w1: 0.6, r1: 0.08, w2: 0.4, r2: 0.03}
+    compute: {rp: w1 * r1 + w2 * r2}
+    formats: {w1: '{:.0%}', r1: '{:.0%}', w2: '{:.0%}', r2: '{:.0%}', rp: '{:.1%}'}
+    text: With {w1} in shares returning {r1} and {w2} in bonds returning {r2}, the whole returns {rp}.
+  fools_you: >-
+    The risk of the whole is not the average of the parts' risks; how the parts move together matters as much
+    as how much each one moves.
+  related: [diversification, asset_allocation, correlation]
+
+- id: asset_allocation
+  term: Asset allocation
+  aliases: [allocation]
+  short: How a portfolio's money is split between broad groups such as shares, bonds and cash.
+  plain: >-
+    A cautious investor holds more bonds and cash; a long-term saver, more shares. The split between groups
+    drives much of how a portfolio behaves, and the P50 decision is exactly this kind of question: how much in
+    shares versus cash as the risk of a downturn changes.
+  fools_you: >-
+    The split drifts: if shares boom, they take up more of the portfolio than you chose, unless you rebalance.
+  related: [asset_class, portfolio, diversification, rebalancing]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [finra_asset_allocation]
+
+- id: asset_manager_pm
+  term: Asset manager and portfolio manager (PM)
+  aliases: [asset manager, asset managers, portfolio manager, portfolio managers, PM, fund manager, fund managers]
+  short: A firm that invests other people's money for a fee, and the person inside it who decides what a fund holds and trades.
+  plain: >-
+    Pension funds, insurers and savers hand money to these firms, which run funds with stated goals and are
+    judged against a benchmark. In the P50 case you work for the decision-maker: someone at a UK firm running
+    a global share portfolio, deciding when to cut risk.
+  fools_you: >-
+    They are paid on the money they run and on beating the benchmark, which can push them to avoid looking
+    different rather than to protect clients.
+  related: [portfolio, benchmark, fund_etf]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}, {case: p50_yield_curve, step: s23_memo}]
+
+- id: benchmark
+  term: Benchmark
+  aliases: [benchmarks, benchmark index]
+  short: A standard, usually an index, that a fund's performance is measured against.
+  plain: >-
+    A fund holding large UK companies might be measured against a broad UK share index. Beating it after fees
+    is the whole point of paying for active management. A fair comparison matters: setting a risky fund
+    against a safe yardstick flatters it.
+  fools_you: >-
+    A fund can beat its yardstick and still lose money, if the yardstick fell further.
+  related: [stock_index, asset_manager_pm, alpha, tracking_error]
+
+- id: hedging
+  term: Hedging
+  aliases: [hedge, hedges, hedged]
+  short: Taking a second position that gains when your main position loses, to limit the damage from a bad outcome.
+  plain: >-
+    An airline worried about fuel prices can buy contracts that pay out if oil rises; a UK investor holding US
+    shares can protect against the dollar falling. Like insurance, it costs money or gives up some of the
+    upside.
+  fools_you: >-
+    It can fail just when you need it, if the two positions stop moving the way they used to.
+  related: [derivative, futures_contract, option, risk]
+
+- id: leverage
+  term: Leverage
+  aliases: [leveraged, borrowing to invest]
+  short: Using borrowed money to make a bigger investment than your own money alone would allow.
+  plain: >-
+    It multiplies results both ways. If the investment rises, you keep the gain on the whole amount but pay
+    interest only on the borrowed part. If it falls, the loss lands on your smaller stake, and lenders may
+    force you to sell at the worst moment.
+  formula:
+    tex: 'R_{\mathrm{own}} = \frac{(E + D)\,R_{A} - D\,r_{D}}{E}'
+    plain: Return on your own money = ((own + borrowed) × asset return − borrowed × loan rate) ÷ own money
+    symbols:
+      - {symbol: E, means: your own money}
+      - {symbol: D, means: money borrowed}
+      - {symbol: R A, means: return on the investment}
+      - {symbol: r D, means: interest rate on the loan}
+  example:
+    values: {E: 10000, D: 20000, rA: 0.10, rD: 0.05, rB: -0.10}
+    compute: {up: ((E + D) * rA - D * rD) / E, loss: -((E + D) * rB - D * rD) / E, drop: -rB}
+    formats: {E: '£{:,.0f}', D: '£{:,.0f}', rA: '{:.0%}', rD: '{:.0%}', rB: '{:.0%}', up: '{:.0%}', loss: '{:.0%}', drop: '{:.0%}'}
+    text: Put {E} of your own money and {D} borrowed at {rD} into something. If it gains {rA}, you make {up} on your own money; if it falls {drop}, you lose {loss} of your own money.
+  fools_you: >-
+    It turns a bad year into a wipe-out: with enough borrowing, a modest fall in prices destroys all of your
+    own money.
+  related: [loan, risk, return_on_equity, debt_to_equity]

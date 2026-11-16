@@ -33,8 +33,10 @@ COLS = ["FlightDate", "Reporting_Airline", "Tail_Number", "Origin", "Dest", "CRS
         "DepDelay", "ArrDelay", "ArrDel15", "Cancelled", "Diverted",
         "CarrierDelay", "WeatherDelay", "NASDelay", "SecurityDelay", "LateAircraftDelay"]
 CAUSES = ["CarrierDelay", "WeatherDelay", "NASDelay", "SecurityDelay", "LateAircraftDelay"]
+# >>> snippet: turn_bands
 TURN_BANDS = [20, 45, 60, 75, 90, 120, 240]          # scheduled turn minutes; outside 20-240 is not a normal turn
 DELAY_BINS = list(range(0, 181, 15))         # inbound arrival delay bins (minutes); > 180 excluded as extreme
+# <<< snippet
 
 
 def load_month(m: int) -> pd.DataFrame:
@@ -98,8 +100,10 @@ def rotations(df: pd.DataFrame, counts: dict) -> pd.DataFrame:
     pairs = pairs[~pairs.overnight]
     # <<< snippet
     counts["not_overnight"] += len(pairs)
+    # >>> snippet: turn_window
     pairs = pairs[pairs.turn.between(TURN_BANDS[0], TURN_BANDS[-1], inclusive="left")]
     counts["turn_window"] += len(pairs)
+    # <<< snippet
     pairs = pairs[pairs.in_arr_delay.between(DELAY_BINS[0], DELAY_BINS[-1], inclusive="left")]
     counts["delay_range"] += len(pairs)
     pairs["band"] = pd.cut(pairs.turn, TURN_BANDS, right=False).astype(str)

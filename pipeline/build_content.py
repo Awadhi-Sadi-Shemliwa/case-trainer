@@ -10,6 +10,7 @@ FAILS (exit 1) if, for any case (spec §4 + project rules):
   * a dataset / transform referenced is missing from provenance.json, or a raw file's SHA-256 changed
   * a chart file (json + png) is missing
   * a code snippet / captured output / blank token is missing
+  * a context snippet would reveal the answer of a code_fill / code_fix step that comes at or after it
   * a graded step has no calibration set (>= 30 labelled answers, both labels present)
   * authored text contains a hand-typed number (digits outside placeholders and allowed_literals)
 """
@@ -30,6 +31,7 @@ import yaml
 from pydantic import ValidationError
 
 from common.content_schema import GRADED_TYPES, PLACEHOLDER_RE, Case
+from common.glossary import validate_course, write_course
 from common.io import extract_snippets, load_captured
 from common.provenance import Provenance
 from common.results import ResultStore
@@ -40,7 +42,9 @@ CASES_DIR = PIPELINE / "cases"
 CAL_DIR = PIPELINE / "calibration"
 SOURCES_FILE = REPO / "sources.json"
 OUT_DIR = REPO / "app" / "assets" / "content"
-BUNDLE_SCHEMA_VERSION = 1
+LEARN_DIR = PIPELINE / "learn" / "finance"
+# v2 (2026-11-15): finance course tables (course, tiers, lessons, terms) + formulas/*.png; context_snippets.
+BUNDLE_SCHEMA_VERSION = 2
 MIN_CALIBRATION = 30
 
 NEGATABLE_KEYWORDS = {"cause", "causes", "caused", "causation", "prove", "proves", "proof", "certain", "guarantee"}
@@ -50,7 +54,7 @@ SOURCE_FIELDS = {"key", "title", "authors", "year", "url", "verified_on", "quote
 NON_PROSE_KEYS = {
     "id", "file", "name", "chart", "dataset", "transform", "output_name", "answer_key", "key",
     "sources", "datasets", "allowed_literals", "scaffold", "type", "phase", "domain", "tier",
-    "token", "accept", "buggy_code", "redo_step", "evidence", "tolerance_kind",
+    "token", "accept", "buggy_code", "redo_step", "evidence", "tolerance_kind", "signature_chart",
 }
 
 
@@ -184,8 +188,32 @@ def validate_case(case_dir: Path, sources: dict[str, dict], cal_root: Path = CAL
             errs.append(f"snippet {sn.file}:{sn.name} not found")
         return code
 
-    for st in case.steps:
+    if case.signature_chart:
+        for ext in ("json", "png"):
+            if not (case_dir / "charts" / f"{case.signature_chart}.{ext}").exists():
+                errs.append(f"signature_chart charts/{case.signature_chart}.{ext} missing")
+
+    # Context code must never show the answer of a fill-the-blank / fix-the-bug step that is still ahead.
+    answer_code: dict[tuple[str, str], int] = {}
+    for i, st in enumerate(case.steps):
+        if st.type in ("code_fill", "code_fix") and st.snippet:
+            key = (st.snippet.file, st.snippet.name)
+            answer_code[key] = max(answer_code.get(key, -1), i)
+
+    for idx, st in enumerate(case.steps):
         where = f"step {st.id}"
+        if st.context_snippets and st.type in ("code_fill", "code_fix"):
+            errs.append(f"{where}: {st.type} steps cannot show context code (it would reveal the answer)")
+        seen_ctx: set[tuple[str, str]] = set()
+        for sn in st.context_snippets:
+            key = (sn.file, sn.name)
+            if key in seen_ctx:
+                errs.append(f"{where}: context snippet {sn.file}:{sn.name} listed twice")
+            seen_ctx.add(key)
+            snippet_code(sn)
+            if answer_code.get(key, -1) >= idx:
+                errs.append(f"{where}: context snippet {sn.file}:{sn.name} is the answer of a later "
+                            f"code_fill/code_fix step")
         if st.chart:
             for ext in ("json", "png"):
                 if not (case_dir / "charts" / f"{st.chart}.{ext}").exists():
@@ -245,10 +273,12 @@ CREATE TABLE captured(case_id TEXT, name TEXT, output TEXT, PRIMARY KEY(case_id,
 """
 
 
-def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_dir: Path) -> Path:
+def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_dir: Path, course=None) -> Path:
+    """course = (Course, ordered terms) from validate_course, or None (framework fixtures)."""
     if out_dir.exists():
         shutil.rmtree(out_dir)
     (out_dir / "charts").mkdir(parents=True)
+    (out_dir / "formulas").mkdir(parents=True)
     db_path = out_dir / "content.sqlite"
     con = sqlite3.connect(db_path)
     con.executescript(DDL)
@@ -264,13 +294,16 @@ def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_d
         cj = case.model_dump(exclude={"steps"})
         con.execute("INSERT INTO cases VALUES(?,?,?,?,?,?,?)",
                     (case.id, case.number, case.domain, case.title, case.tier, ord_, json.dumps(cj)))
+        if case.signature_chart:
+            for ext in ("json", "png"):
+                shutil.copy2(cdir / "charts" / f"{case.signature_chart}.{ext}",
+                             out_dir / "charts" / f"{case.signature_chart}.{ext}")
         snippets: dict[tuple[str, str], str] = {}
         for i, st in enumerate(case.steps):
             con.execute("INSERT INTO steps VALUES(?,?,?,?,?,?)",
                         (case.id, i, st.id, st.phase, st.type, json.dumps(st.model_dump(exclude_none=True))))
-            if st.snippet:
-                code = extract_snippets(cdir / st.snippet.file)[st.snippet.name]
-                snippets[(st.snippet.file, st.snippet.name)] = code
+            for sn in ([st.snippet] if st.snippet else []) + list(st.context_snippets):
+                snippets[(sn.file, sn.name)] = extract_snippets(cdir / sn.file)[sn.name]
             if st.chart:
                 for ext in ("json", "png"):
                     shutil.copy2(cdir / "charts" / f"{st.chart}.{ext}", out_dir / "charts" / f"{st.chart}.{ext}")
@@ -286,6 +319,8 @@ def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_d
             con.execute("INSERT INTO transforms VALUES(?,?,?)", (case.id, t["id"], json.dumps(t)))
         for n, o in load_captured(cdir).items():
             con.execute("INSERT INTO captured VALUES(?,?,?)", (case.id, n, o))
+    if course is not None:
+        write_course(con, course[0], course[1], out_dir)
     con.commit()
     con.close()
     return db_path
@@ -296,7 +331,9 @@ def discover_cases(cases_dir: Path) -> list[Path]:
 
 
 def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: Path = SOURCES_FILE,
-          out_dir: Path = OUT_DIR, check_only: bool = False, order: list[str] | None = None) -> int:
+          out_dir: Path = OUT_DIR, check_only: bool = False, order: list[str] | None = None,
+          learn_dir: Path | None = None, partial_course: bool = False) -> int:
+    """learn_dir: the finance course to validate and bundle (None = cases only, as in framework tests)."""
     sources, errors = load_sources(sources_file)
     for e in errors:
         print(f"FAIL sources: {e}")
@@ -311,6 +348,18 @@ def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: P
         else:
             print(f"OK   {cdir.name}: {len(case.steps)} steps")
             ok_cases.append((cdir, case))
+    course = None
+    if learn_dir is not None:
+        case_steps = {case.id: {s.id for s in case.steps} for _, case in ok_cases}
+        c, ordered, cerrs = validate_course(learn_dir, sources, case_steps, complete=not partial_course)
+        if cerrs:
+            errors += cerrs
+            print(f"FAIL course {learn_dir.name}: {len(cerrs)} problem(s)")
+            for e in cerrs:
+                print(f"   - {e}")
+        else:
+            print(f"OK   course {learn_dir.name}: {len(ordered)} words")
+            course = (c, ordered)
     if errors:
         print(f"\nBUILD FAILED: {len(errors)} problem(s)")
         return 1
@@ -318,7 +367,7 @@ def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: P
         rank = {cid: i for i, cid in enumerate(order)}
         ok_cases.sort(key=lambda t: rank.get(t[1].id, 999))
     if not check_only:
-        db = write_bundle(ok_cases, sources, out_dir)
+        db = write_bundle(ok_cases, sources, out_dir, course)
         print(f"\nwrote {db} ({len(ok_cases)} case(s))")
     return 0
 
@@ -331,5 +380,6 @@ BUILD_ORDER = ["p50_yield_curve", "p34_home_adv", "p3_delay_propagation", "p13_t
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="validate only")
+    ap.add_argument("--partial-course", action="store_true", help="allow an unfinished course (work in progress)")
     a = ap.parse_args()
-    sys.exit(build(check_only=a.check, order=BUILD_ORDER))
+    sys.exit(build(check_only=a.check, order=BUILD_ORDER, learn_dir=LEARN_DIR, partial_course=a.partial_course))

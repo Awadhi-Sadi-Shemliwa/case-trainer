@@ -1,0 +1,150 @@
+# Quant lesson 8 · Pricing derivatives. Words 271-280.
+- id: no_arbitrage_pricing
+  term: No-arbitrage pricing
+  aliases: [no-arbitrage, law of one price]
+  short: Pricing an asset so that no combination of trades could make a riskless profit, by matching it with a portfolio that copies its payoff.
+  plain: >-
+    If two portfolios pay exactly the same in every future state, they must cost the same today. Derivative
+    prices follow from this logic, not from guesses about where prices are heading.
+  fools_you: >-
+    The argument assumes you can trade freely and cheaply; when markets seize up, prices can drift far from
+    theory.
+  related: [arbitrage, risk_neutral_pricing, binomial_tree]
+  sources: [book_hull_derivatives]
+
+- id: risk_neutral_pricing
+  term: Risk-neutral pricing
+  aliases: [risk-neutral, risk-neutral measure, risk neutral valuation]
+  short: Valuing a derivative as its average payoff under adjusted probabilities, discounted at the risk-free rate.
+  plain: >-
+    Because a derivative can be hedged, its price does not depend on investors' appetite for risk, so we may
+    pretend everyone is indifferent to risk, which makes the maths tractable. The adjusted probabilities are not
+    real-world forecasts.
+  fools_you: >-
+    These probabilities are not the market's true beliefs; reading them as forecasts is a common mistake.
+  related: [no_arbitrage_pricing, binomial_tree, black_scholes]
+  sources: [book_hull_derivatives]
+
+- id: binomial_tree
+  term: Binomial tree
+  aliases: [binomial model, binomial trees, binomial lattice]
+  short: A model in which a price moves up or down by set amounts at each step, used to value options backwards from expiry.
+  plain: >-
+    It shows no-arbitrage pricing step by step, and it handles options that can be exercised early.
+  formula:
+    tex: 'q = \frac{(1 + r) - d}{u - d},\quad c = \frac{q\,c_{u} + (1 - q)\,c_{d}}{1 + r}'
+    plain: Up-probability q = (1 + r − d) ÷ (u − d); option value = (q × up payoff + (1 − q) × down payoff) ÷ (1 + r)
+    symbols:
+      - {symbol: u and d, means: up and down multipliers}
+      - {symbol: r, means: risk-free rate per step}
+      - {symbol: c u and c d, means: option payoffs after an up or down move}
+  example:
+    values: {S: 100, u: 1.2, d: 0.8, r: 0.05, K: 100}
+    compute: {up: S * u, down: S * d, q: (1 + r - d) / (u - d), cu: 'max(S * u - K, 0)', cd: 'max(S * d - K, 0)', c: '(((1 + r - d) / (u - d)) * max(S * u - K, 0) + (1 - (1 + r - d) / (u - d)) * max(S * d - K, 0)) / (1 + r)'}
+    formats: {S: '£{:,.0f}', u: '{:.1f}', d: '{:.1f}', r: '{:.0%}', K: '£{:,.0f}', up: '£{:,.0f}', down: '£{:,.0f}', q: '{:.3f}', cu: '£{:,.0f}', cd: '£{:,.0f}', c: '£{:,.2f}'}
+    text: A share at {S} can rise to {up} or fall to {down}. With a {r} risk-free rate the risk-neutral up-probability is {q}, so a call struck at {K}, paying {cu} or {cd}, is worth {c}.
+  fools_you: >-
+    With few steps it is crude; real models use hundreds of small steps.
+  related: [risk_neutral_pricing, no_arbitrage_pricing, black_scholes]
+  sources: [book_hull_derivatives]
+
+- id: brownian_motion
+  term: Brownian motion
+  aliases: [geometric Brownian motion, Wiener process]
+  short: A random process with continuous paths and independent, normally distributed steps, the building block of continuous-time finance.
+  plain: >-
+    In its geometric version, log prices follow such a process with a drift; this is the classic model for share
+    prices and the one Black-Scholes assumes.
+  fools_you: >-
+    Real prices jump and have fat tails; this process has neither.
+  related: [black_scholes, random_walk, monte_carlo_simulation]
+  sources: [book_hull_derivatives]
+
+- id: black_scholes
+  term: Black-Scholes model
+  aliases: [Black-Scholes, Black-Scholes-Merton]
+  short: A formula for the price of a European option from the share price, strike, time to expiry, interest rate and volatility.
+  plain: >-
+    It assumes prices follow geometric Brownian motion with constant volatility. Every input can be observed
+    except volatility, which is why traders quote options in implied volatility.
+  formula:
+    tex: 'C = S\,N(d_{1}) - K e^{-rT} N(d_{2}),\quad d_{1,2} = \frac{\ln(S/K) + (r \pm \sigma^{2}/2)\,T}{\sigma\sqrt{T}}'
+    plain: Call price = S × N(d1) − K × e^(−rT) × N(d2), with N the normal distribution's cumulative probability
+    symbols:
+      - {symbol: S and K, means: share price and strike}
+      - {symbol: r and T, means: risk-free rate and years to expiry}
+      - {symbol: σ, means: volatility}
+  fools_you: >-
+    Its assumptions are wrong in known ways (fat tails, changing volatility); traders use it as a shared language
+    and adjust it with the volatility smile.
+  related: [implied_volatility, brownian_motion, delta, risk_neutral_pricing]
+  sources: [book_hull_derivatives]
+
+- id: delta
+  term: Delta (option)
+  aliases: [option delta, delta hedging]
+  short: How much an option's price changes for a small change in the underlying's price.
+  plain: >-
+    A call's runs from zero to one, a put's from minus one to zero. Holding the opposite position in that many
+    shares per option hedges small moves.
+  example:
+    values: {dl: 0.6, dS: 2}
+    compute: {dC: dl * dS}
+    formats: {dl: '{:.1f}', dS: '£{:,.2f}', dC: '£{:,.2f}'}
+    text: An option with a delta of {dl} gains about {dC} when the share rises by {dS}.
+  fools_you: >-
+    It changes as the price moves (that change is gamma), so a hedge based on it must be adjusted constantly.
+  related: [gamma, black_scholes, hedging]
+  sources: [book_hull_derivatives]
+
+- id: gamma
+  term: Gamma (option)
+  aliases: [option gamma]
+  short: How fast an option's delta changes as the underlying's price moves.
+  plain: >-
+    When it is high, a hedge goes stale quickly; it peaks for options near the strike close to expiry.
+  fools_you: >-
+    Being short gamma feels profitable in calm markets and can be devastating in a sudden jump.
+  related: [delta, vega, theta]
+  sources: [book_hull_derivatives]
+
+- id: vega
+  term: Vega (option)
+  aliases: [option vega]
+  short: How much an option's price changes for a one-point change in implied volatility.
+  plain: >-
+    Options gain value when volatility rises, so buyers are exposed to it positively. Long-dated options near the
+    strike have the most.
+  fools_you: >-
+    An option can lose money even when the share moves your way, if implied volatility falls at the same time.
+  related: [implied_volatility, delta, option_premium]
+  sources: [book_hull_derivatives]
+
+- id: theta
+  term: Theta (option)
+  aliases: [option theta, time decay]
+  short: How much an option's price falls as one day passes with nothing else changing, the cost of time.
+  plain: >-
+    Option buyers pay it and sellers collect it. It speeds up as expiry approaches.
+  example:
+    values: {th: 0.05, days: 10}
+    compute: {loss: th * days}
+    formats: {th: '£{:,.2f}', days: '{:.0f}', loss: '£{:,.2f}'}
+    text: With a theta of minus {th} a day, an option loses about {loss} of value over {days} days if nothing else moves.
+  fools_you: >-
+    Collecting it looks like steady income until a big move arrives.
+  related: [time_value_option, gamma, expiry]
+  sources: [book_hull_derivatives]
+
+- id: monte_carlo_simulation
+  term: Monte Carlo simulation
+  aliases: [Monte Carlo, Monte Carlo method]
+  short: Estimating a value by simulating thousands of random scenarios and averaging the outcomes.
+  plain: >-
+    It prices complex derivatives, estimates risk and stress-tests portfolios. Accuracy improves only with the
+    square root of the number of paths, so halving the error takes four times as many.
+  fools_you: >-
+    It is only as good as the random model behind it: thousands of simulations of the wrong world give a precise
+    wrong answer.
+  related: [brownian_motion, risk_neutral_pricing, value_at_risk]
+  sources: [book_dixon_ml_finance]

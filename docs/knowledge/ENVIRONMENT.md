@@ -42,6 +42,32 @@ flutter_riverpod 3.5.0 · go_router 18.1.4 · sqlite3 3.5.2 (bundles native SQLi
 Android arm64 AND in host `flutter test` on Windows, no sqlite3_flutter_libs) · path_provider 2.1.6.
 sqlite3 3.9.1 existed but was published ~1 day earlier; not used.
 
+## Bundled fonts (2026-11-15, SIL Open Font License 1.1, licence texts in app/assets/fonts/)
+| File | Source | SHA-256 |
+|---|---|---|
+| Archivo-Regular/Medium/SemiBold/Bold.ttf | github.com/Omnibus-Type/Archivo @ 211127690e8f (fonts/ttf) | 59fbfd8a… / 6d42123d… / 6598b6ed… / 951a0eba… |
+| ArchivoCondensed-SemiBold/Bold/ExtraBold.ttf | same commit | 754eb469… / 8e2e9499… / 2a3198ab… |
+| JetBrainsMono-Regular/SemiBold.ttf | github.com/JetBrains/JetBrainsMono tag v2.304 (fonts/ttf) | a0bf60ef… / 1b3bfa1e… |
+About 1.9 MB in total. No new pub packages were added for the 2026-11-15 work.
+
+## Upgrade the phone without losing answers (2026-11-15)
+The phone runs the release build, which Android does not let `run-as` read, and release is signed with the debug
+key (app/android/app/build.gradle.kts), so builds from this PC install over it and keep app data. Never uninstall and
+never use `flutter drive` (both wipe answers).
+```
+$adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
+cd D:\coding\case-trainer\app
+# 1. back up first: install a debuggable build of the same code, then copy the database off the phone
+flutter build apk --debug --split-per-abi --target-platform android-arm64
+& $adb install -r build\app\outputs\flutter-apk\app-arm64-v8a-debug.apk
+New-Item -ItemType Directory -Force D:\coding\case-trainer-backups | Out-Null
+# cmd's redirect copies bytes exactly (older PowerShell re-encodes native output)
+cmd /c "`"$adb`" exec-out run-as dev.awadhi.case_trainer cat files/progress.sqlite > D:\coding\case-trainer-backups\progress.sqlite"
+# 2. install the fast release build for daily use (opening it upgrades the database to v2, adding tables only)
+flutter build apk --release --split-per-abi --target-platform android-arm64
+& $adb install -r build\app\outputs\flutter-apk\app-arm64-v8a-release.apk
+```
+
 ## Verified package versions (pub.dev / PyPI APIs, 2026-11-05)
 Flutter: flutter_riverpod 3.4.3 · go_router 18.1.3 · drift 2.35.3 · sqlite3 3.9.0 ·
 syncfusion_flutter_charts 35.1.43 · fl_chart 1.3.0 · flutter_onnxruntime 1.9.0 · flutter_edge_ai 2.5.6 ·

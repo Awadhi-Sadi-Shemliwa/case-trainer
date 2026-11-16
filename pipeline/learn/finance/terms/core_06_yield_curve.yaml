@@ -1,0 +1,180 @@
+# Lesson 6 · The yield curve. Words 51-60. Ties straight into the P50 case.
+- id: yield_curve
+  term: Yield curve
+  aliases: [yield curves, term structure of interest rates, term structure]
+  short: A line showing the yields of government bonds of equal quality but different maturities, from months to decades.
+  plain: >-
+    Plot the yields on three-month, two-year, ten-year and thirty-year government bonds on one day and join
+    the dots. The line usually slopes upward, because lenders want more for tying money up for longer. Its
+    shape sums up what markets expect for interest rates, inflation and growth, which is why the P50 case uses
+    it to warn of downturns.
+  fools_you: >-
+    It is not a history: each point is a different bond on the same day. The P50 charts follow one summary of
+    its shape, a spread, through time.
+  related: [short_long_rates, spread, inversion, normal_curve, curve_spreads]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}, {case: p50_yield_curve, step: s12_chart_spread}]
+  sources: [estrella_mishkin_1996, nyfed_ycfaq]
+
+- id: short_long_rates
+  term: Short-term and long-term rates
+  aliases: [short-term rates, long-term rates, short rates, long rates, short end, long end]
+  short: Rates for borrowing over months or a couple of years, which follow the central bank closely, versus rates for a decade or more.
+  plain: >-
+    Short rates move almost one for one with the policy rate. Long rates reflect where markets expect short
+    rates to be over many years, plus extra pay for tying money up. So a central bank can push the short end
+    up while the long end stays put, or even falls.
+  fools_you: >-
+    The central bank does not set long rates; investors trade them, and they can move the "wrong" way after a
+    policy decision.
+  related: [yield_curve, policy_rate, rate_expectations, term_premium]
+  sources: [estrella_mishkin_1996]
+
+- id: spread
+  term: Spread
+  aliases: [spreads, yield spread]
+  short: The difference between two yields or prices, usually given in percentage points or basis points.
+  plain: >-
+    They are everywhere: a company bond's yield minus a government bond's (pay for default risk), long minus
+    short government yields (the slope of the yield curve), the price to buy minus the price to sell. Because
+    it compares two things that usually move together, the difference can say more than either one alone.
+  formula:
+    tex: 's = y_{\mathrm{long}} - y_{\mathrm{short}}'
+    plain: Spread = long-term yield − short-term yield
+    symbols:
+      - {symbol: y long, means: yield on the longer bond}
+      - {symbol: y short, means: yield on the shorter bond}
+  example:
+    values: {yl: 0.042, ys: 0.051, hundred: 100}
+    compute: {s: (yl - ys) * hundred}
+    formats: {yl: '{:.1%}', ys: '{:.1%}', s: '{:.1f}', hundred: '{:.0f}'}
+    text: A ten-year yield of {yl} and a three-month yield of {ys} give a spread of {s} percentage points, below zero, so this curve is inverted.
+  fools_you: >-
+    It can change because either side moved. A narrower long-minus-short gap may mean long rates fell, short
+    rates rose, or both, and those tell different stories.
+  related: [yield_curve, basis_point, curve_spreads, credit_spread, bid_ask]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}, {case: p50_yield_curve, step: s12_chart_spread}]
+  sources: [estrella_mishkin_1996]
+
+- id: basis_point
+  term: Basis point
+  aliases: [basis points, bps]
+  short: One hundredth of a percentage point, the unit traders use for small moves in interest rates.
+  plain: >-
+    A move from four percent to four and a quarter percent is twenty-five of them. The unit avoids mixing up
+    "up one percent" (a relative change) with "up one percentage point" (an absolute one).
+  formula:
+    tex: '1\ \mathrm{bp} = 0.01\ \mathrm{percentage\ points} = 0.0001'
+    plain: 1 basis point = 0.01 percentage points = 0.0001
+    symbols:
+      - {symbol: bp, means: basis point}
+  example:
+    values: {r0: 0.04, r1: 0.0425, k: 10000}
+    compute: {bp: (r1 - r0) * k}
+    formats: {r0: '{:.2%}', r1: '{:.2%}', bp: '{:.0f}', k: '{:,.0f}'}
+    text: A rate that rises from {r0} to {r1} has gone up by {bp} basis points.
+  fools_you: >-
+    Percent and percentage points differ: a rate going from two to three percent rose by one percentage
+    point, but by half in percentage terms.
+  related: [spread, interest_rate]
+
+- id: normal_curve
+  term: Normal (upward-sloping) yield curve
+  aliases: [upward-sloping yield curve, steep yield curve, steepening, steepens]
+  short: The usual shape, in which longer-dated government debt pays more than shorter-dated debt.
+  plain: >-
+    Lenders normally want extra pay for tying money up longer and for the chance that inflation or rates rise
+    meanwhile, so the line climbs from left to right. A steep slope often appears when the central bank has
+    cut rates to lift a weak economy and markets expect better times.
+  fools_you: >-
+    Upward-sloping does not promise good times. The curve often steepens sharply during a downturn, because
+    short rates are being cut. That is why the P50 model leaves out months already in recession.
+  related: [yield_curve, inversion, term_premium]
+  in_cases: [{case: p50_yield_curve, step: s11_clean_recession_months}]
+  sources: [estrella_mishkin_1996]
+
+- id: inversion
+  term: Yield-curve inversion
+  aliases: [inverted yield curve, inverted curve, inversion, inversions, inverted, inverts]
+  short: When short-term government yields rise above long-term ones, so the curve slopes downward.
+  plain: >-
+    It usually happens when the central bank has raised short rates to fight inflation while markets expect
+    cuts later, because they see a slowdown coming. In US data it has come before most downturns, often by a
+    year or more, which is the pattern the P50 case tests with real data, false alarms included.
+  fools_you: >-
+    It is a warning, not a timetable. The lag to a downturn has varied a lot, there have been false alarms,
+    and the curve often turns upward again just before or during the downturn itself.
+  related: [yield_curve, spread, recession, leading_indicator, rate_expectations]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}, {case: p50_yield_curve, step: s12_chart_spread}, {case: p50_yield_curve, step: s20_numeric_lead}]
+  sources: [estrella_mishkin_1996, nyfed_ycfaq]
+
+- id: term_premium
+  term: Term premium
+  aliases: [term premia]
+  short: The extra yield investors demand for holding one long bond instead of a chain of short ones over the same time.
+  plain: >-
+    Even if markets expected short rates to stay flat, a ten-year bond would usually yield a bit more, as pay
+    for the risk of inflation surprises and price swings over a long horizon. That extra is this premium. It
+    cannot be seen directly, only estimated, and estimates differ.
+  fools_you: >-
+    A flat or inverted curve does not have to mean rate cuts are coming. A shrinking premium, for example
+    after heavy central-bank bond buying, can flatten the curve too, which may weaken the old warning signal.
+  related: [yield_curve, rate_expectations, quantitative_easing]
+  sources: [nyfed_ycfaq]
+
+- id: rate_expectations
+  term: Rate expectations
+  aliases: [expectations hypothesis, expected path of rates]
+  short: What investors as a whole think short-term interest rates will be in the future, which is built into long yields today.
+  plain: >-
+    A two-year yield is roughly the average of the short rates markets expect over the next two years, plus a
+    small premium. So when long yields fall below short ones, markets are saying they expect short rates to
+    drop, often because they expect a slowdown that will make the central bank cut.
+  formula:
+    tex: '(1 + y_{2})^{2} = (1 + y_{1})\,(1 + f_{1,2})'
+    plain: (1 + two-year yield)² = (1 + one-year yield) × (1 + rate implied for the second year)
+    symbols:
+      - {symbol: y1, means: one-year yield}
+      - {symbol: y2, means: two-year yield per year}
+      - {symbol: f, means: the rate the market implies for the second year}
+  example:
+    values: {y1: 0.05, y2: 0.045}
+    compute: {f: (1 + y2) ** 2 / (1 + y1) - 1}
+    formats: {y1: '{:.1%}', y2: '{:.1%}', f: '{:.1%}'}
+    text: If the one-year rate is {y1} and the two-year rate is {y2} a year, markets imply a rate of about {f} for the second year, a cut.
+  fools_you: >-
+    Implied rates are not forecasts to trust blindly: they include a premium, and markets have often been
+    wrong about the path of rates.
+  related: [short_long_rates, term_premium, inversion, rate_hike_cut]
+  sources: [estrella_mishkin_1996]
+
+- id: leading_indicator
+  term: Leading indicator
+  aliases: [leading indicators, lagging indicator, coincident indicator]
+  short: A measure that tends to turn before the economy does, so it can warn of what is coming.
+  plain: >-
+    Some data move ahead of the cycle (new orders, building permits, the slope of the yield curve), some move
+    with it (output, sales) and some after it (unemployment often keeps rising after a downturn ends). The
+    early ones are useful precisely because they are early, and risky for the same reason: they give false
+    alarms.
+  fools_you: >-
+    Leading is about timing, not cause. A signal can come before a downturn without causing it, which is why
+    the P50 case avoids claiming the curve causes recessions.
+  related: [inversion, business_cycle, recession]
+  in_cases: [{case: p50_yield_curve, step: s02_question}]
+  sources: [nyfed_ycfaq]
+
+- id: curve_spreads
+  term: 2s10s and 10y-3m spreads
+  aliases: [2s10s, 10y-3m, T10Y2Y, T10Y3M]
+  short: Two common measures of the curve's slope, the ten-year yield minus the two-year yield, and the ten-year minus the three-month yield.
+  plain: >-
+    Traders often quote the first; research on predicting downturns often prefers the second, because the
+    three-month rate tracks the central bank most closely. When either drops below zero, the curve has
+    inverted on that measure. The P50 case downloads both from FRED as daily series and tests which one
+    predicted better.
+  fools_you: >-
+    The two do not always agree: one can be below zero while the other is not. "The curve inverted" always
+    needs the follow-up question "on which measure?".
+  related: [spread, yield_curve, inversion]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}, {case: p50_yield_curve, step: s05_predict_data}, {case: p50_yield_curve, step: s19_result}]
+  sources: [estrella_mishkin_1996]

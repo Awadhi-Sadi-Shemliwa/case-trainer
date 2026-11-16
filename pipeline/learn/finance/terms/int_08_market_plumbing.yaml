@@ -1,0 +1,127 @@
+# Intermediate lesson 8 · Market plumbing. Words 171-180.
+- id: market_order
+  term: Market order
+  aliases: [market orders]
+  short: An order to buy or sell immediately at the best price currently available.
+  plain: >-
+    It guarantees the trade happens, but not the price. In a fast or thin market, a large one can be filled at
+    much worse prices than the last quote.
+  fools_you: >-
+    The quote on screen is not your price; you get whatever is available when your order arrives.
+  related: [limit_order, bid_ask, slippage]
+  sources: [finra_stocks]
+
+- id: limit_order
+  term: Limit order
+  aliases: [limit orders]
+  short: An order to buy or sell only at a stated price or better.
+  plain: >-
+    It controls the price but not whether the trade happens: if the market never reaches your level, nothing is
+    bought or sold. Waiting orders of this kind make up the order book you will meet in the quant tier.
+  fools_you: >-
+    It can be filled exactly when the news turns against you, because that is when the price comes to you.
+  related: [market_order, limit_order_book, bid_ask]
+  sources: [finra_stocks]
+
+- id: stop_loss
+  term: Stop-loss order
+  aliases: [stop-loss, stop loss, stop order, stop orders]
+  short: An order that turns into a sell order once the price falls to a chosen trigger level, meant to cap a loss.
+  plain: >-
+    Investors use it to enforce discipline. Once triggered it usually becomes a market order, so the sale price
+    can be well below the trigger in a fast fall.
+  fools_you: >-
+    In a sudden plunge it can sell at the bottom of a brief drop that soon reverses.
+  related: [market_order, limit_order, drawdown]
+
+- id: broker
+  term: Broker
+  aliases: [brokers, brokerage, stockbroker, stockbrokers]
+  short: A firm or person that carries out buy and sell orders for clients, for a fee.
+  plain: >-
+    You cannot usually trade on an exchange directly; this middleman connects you. They differ in fees, in how
+    well they execute orders and in how they protect client money.
+  fools_you: >-
+    Trading advertised as commission-free is not free: the firm may earn from the spread or by selling your
+    order flow.
+  related: [stock_exchange, market_maker, transaction_costs]
+
+- id: market_maker
+  term: Market maker
+  aliases: [market makers, market making, dealer, dealers]
+  short: A firm that always stands ready to buy and to sell, quoting both prices and earning the gap between them.
+  plain: >-
+    They keep markets liquid so you can trade at any moment. They take the risk of holding stock in between, and
+    widen their quotes when markets are volatile.
+  fools_you: >-
+    They are neither on your side nor against you; they profit from the flow and step back exactly when markets
+    are most stressed.
+  related: [bid_ask, liquidity, limit_order_book]
+
+- id: over_the_counter
+  term: Over the counter (OTC)
+  aliases: [OTC, over-the-counter]
+  short: Trading done directly between two parties rather than on an exchange.
+  plain: >-
+    Many bonds, currencies and swaps trade this way, through dealers. It allows made-to-measure contracts, but
+    offers less public pricing and more counterparty risk.
+  fools_you: >-
+    With no public screen, the price you are offered may be far from fair; it pays to ask several dealers.
+  related: [counterparty_risk, market_maker, swap]
+
+- id: clearing_settlement
+  term: Clearing and settlement
+  aliases: [clearing house, clearing houses, central counterparty, clearing]
+  short: What happens after a trade is agreed, checking it, guaranteeing it and finally swapping the money for the securities.
+  plain: >-
+    A clearing house becomes the buyer to every seller and the seller to every buyer, collecting margin so that
+    one firm's failure does not spread. Settlement is the actual transfer, usually a day or two after the
+    trade.
+  fools_you: >-
+    A trade is not finished when you press buy; until settlement there is still a chain of promises.
+  related: [counterparty_risk, margin_call, futures_contract]
+  sources: [cftc_futures_basics]
+
+- id: short_selling
+  term: Short selling
+  aliases: [shorting, short seller, short sellers, short position, going short]
+  short: Selling borrowed shares in the hope of buying them back later at a lower price and returning them.
+  plain: >-
+    It lets investors profit from, or hedge against, falling prices, and helps push overpriced shares down. The
+    borrower pays a fee to whoever lent the shares.
+  example:
+    values: {n: 1000, s: 50, b: 38}
+    compute: {pnl: (s - b) * n}
+    formats: {n: '{:,.0f}', s: '£{:,.2f}', b: '£{:,.2f}', pnl: '£{:,.0f}'}
+    text: Borrow and sell {n} shares at {s}, then buy them back at {b} and return them, keeping {pnl} before fees.
+  fools_you: >-
+    Losses are unlimited in principle: a share can only fall to zero, but it can rise without limit.
+  related: [hedging, hedge_fund, pairs_trading]
+
+- id: arbitrage
+  term: Arbitrage
+  aliases: [arbitrageur, arbitrageurs, arbitrage opportunity]
+  short: Making a riskless profit from a price gap by buying something cheap in one place and selling it dear in another at once.
+  plain: >-
+    Real opportunities are rare and vanish fast, because traders compete to grab them, and that competition
+    keeps related prices in line. Much of pricing theory assumes such free lunches cannot last.
+  fools_you: >-
+    Most trades sold as risk-free gaps carry real risk, and some "sure things" have blown up spectacularly.
+  related: [no_arbitrage_pricing, efficient_market_hypothesis, pairs_trading]
+
+- id: transaction_costs
+  term: Transaction costs
+  aliases: [trading costs, transaction cost]
+  short: Everything it costs to trade, from fees and taxes to the bid-ask spread and the price impact of your own order.
+  plain: >-
+    They are small per trade but add up for strategies that trade often. A backtest that ignores them can turn
+    a losing strategy into an apparent winner.
+  example:
+    values: {n: 50, c: 0.001, cap: 100000, two: 2}
+    compute: {cost: n * c * cap * two}
+    formats: {n: '{:.0f}', c: '{:.1%}', cap: '£{:,.0f}', two: '{:.0f}', cost: '£{:,.0f}'}
+    text: Trading {cap} {n} times a year, paying {c} on the way in and again on the way out, costs {cost} a year.
+  fools_you: >-
+    For large orders the visible fee is the smallest part; the price moving against you as you trade usually
+    costs more.
+  related: [bid_ask, market_impact, slippage, backtest]

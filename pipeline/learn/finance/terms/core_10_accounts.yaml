@@ -1,0 +1,173 @@
+# Lesson 10 · Accounts and value. Words 91-100.
+- id: balance_sheet
+  term: Balance sheet
+  aliases: [balance sheets, statement of financial position]
+  short: A snapshot of what a company owns, what it owes and what is left for its owners, on one date.
+  plain: >-
+    It always balances because of the accounting equation: what is owned equals what is owed plus the
+    owners' share. Read it to see how much debt a company carries, how much cash it holds and what its assets
+    are.
+  formula:
+    tex: '\mathrm{Assets} = \mathrm{Liabilities} + \mathrm{Equity}'
+    plain: Assets = Liabilities + Equity
+    symbols:
+      - {symbol: Assets, means: what the company owns}
+      - {symbol: Liabilities, means: what it owes}
+      - {symbol: Equity, means: what is left for owners}
+  example:
+    values: {L: 700, E: 300}
+    compute: {A: L + E}
+    formats: {L: '£{:,.0f}m', E: '£{:,.0f}m', A: '£{:,.0f}m'}
+    text: A company with liabilities of {L} and equity of {E} must show assets of {A}.
+  fools_you: >-
+    Assets are mostly recorded at what they cost, not what they would sell for today, so this snapshot can be
+    far from market value.
+  related: [asset, liability, equity, income_statement, cash_flow_statement]
+  sources: [sec_financial_statements]
+
+- id: income_statement
+  term: Income statement
+  aliases: [income statements, profit and loss account, P&L]
+  short: A report of a company's revenue, costs and profit over a period such as a quarter or a year.
+  plain: >-
+    It starts at the top line (revenue), takes away the cost of what was sold, running costs, interest and
+    tax, and ends at the bottom line, net profit. Comparing periods shows whether the business is growing and
+    whether its margins are improving.
+  fools_you: >-
+    It follows accounting rules about when sales and costs count, not when cash moves, so it can show a profit
+    while cash drains away.
+  related: [revenue, cost, profit, profit_margin, balance_sheet]
+  sources: [sec_financial_statements]
+
+- id: cash_flow_statement
+  term: Cash-flow statement
+  aliases: [cash flow statement, statement of cash flows]
+  short: A report of the actual cash coming into and going out of a company over a period, from running the business, investing and financing.
+  plain: >-
+    It has three parts: operating (cash from customers minus cash paid to suppliers and staff), investing
+    (buying or selling equipment and businesses) and financing (borrowing, repaying, issuing shares, paying
+    dividends). Many analysts trust it more than profit, because cash is harder to dress up.
+  fools_you: >-
+    A big inflow from financing only means the company borrowed or sold shares; it says nothing about whether
+    the business itself makes money.
+  related: [cash_flow, income_statement, free_cash_flow]
+  sources: [sec_financial_statements]
+
+- id: profit_margin
+  term: Profit margin
+  aliases: [profit margins, net margin, operating margin, gross margin]
+  short: Profit as a percentage of revenue, how many pence of each pound of sales a company keeps.
+  plain: >-
+    Margins let you compare companies of different sizes and see how efficiently each turns sales into profit.
+    Supermarkets live on thin margins and huge volumes; software firms can have very wide ones.
+  formula:
+    tex: '\mathrm{margin} = \frac{\mathrm{profit}}{\mathrm{revenue}}'
+    plain: Margin = profit ÷ revenue
+    symbols:
+      - {symbol: profit, means: "the profit measure you choose (gross, operating or net)"}
+      - {symbol: revenue, means: sales in the same period}
+  example:
+    values: {P: 4, R: 50}
+    compute: {m: P / R}
+    formats: {P: '£{:,.0f}m', R: '£{:,.0f}m', m: '{:.0%}'}
+    text: A company that makes {P} of net profit on {R} of sales has a net margin of {m}.
+  fools_you: >-
+    A rising margin can come from cutting spending that keeps the business healthy, such as research or
+    maintenance.
+  related: [profit, revenue, income_statement]
+
+- id: debt_vs_equity_financing
+  term: Debt and equity financing
+  aliases: [debt financing, equity financing, capital structure]
+  short: The two ways a company raises money, borrowing it and repaying with interest, or selling ownership and sharing future profits.
+  plain: >-
+    Borrowing is usually cheaper, because lenders take less risk and interest reduces tax, but it must be paid
+    whatever happens. Selling shares never has to be repaid, but it dilutes existing owners. The mix of the
+    two is the company's capital structure.
+  fools_you: >-
+    Cheap borrowing can look free until profits fall; then the fixed payments are what sink the company.
+  related: [loan, bond, equity, leverage, wacc]
+
+- id: net_present_value
+  term: Net present value (NPV)
+  aliases: [NPV]
+  short: The present value of all of a project's future cash flows minus what it costs today; above zero means it adds value.
+  plain: >-
+    It pulls together everything from the interest lesson: discount each future cash flow back to today, add
+    them up, and subtract the cost. If the answer is above zero, the project earns more than the discount
+    rate; below zero, you would do better elsewhere.
+  formula:
+    tex: '\mathrm{NPV} = -C_{0} + \sum_{t=1}^{n} \frac{CF_{t}}{(1 + r)^{t}}'
+    plain: NPV = − cost today + sum of each future cash flow ÷ (1 + rate)^year
+    symbols:
+      - {symbol: C0, means: cost paid today}
+      - {symbol: CF t, means: cash flow in year t}
+      - {symbol: r, means: discount rate}
+  example:
+    values: {C0: 1000, c1: 300, c2: 400, c3: 500, r: 0.08}
+    compute: {npv: -C0 + c1 / (1 + r) + c2 / (1 + r) ** 2 + c3 / (1 + r) ** 3}
+    formats: {C0: '£{:,.0f}', c1: '£{:,.0f}', c2: '£{:,.0f}', c3: '£{:,.0f}', r: '{:.0%}', npv: '£{:,.2f}'}
+    text: A machine costing {C0} that brings in {c1}, {c2} and {c3} over the next three years is worth an NPV of {npv} at a discount rate of {r}, so it just about pays.
+  fools_you: >-
+    It is only as good as its guesses: the cash-flow forecasts and the discount rate are both judgements, and
+    optimistic ones are common.
+  related: [present_value, discounting, valuation, discounted_cash_flow]
+
+- id: return_on_equity
+  term: Return on equity (ROE)
+  aliases: [ROE]
+  short: A company's yearly profit divided by its shareholders' equity, showing how hard the owners' money is working.
+  plain: >-
+    A high figure means the business earns a lot on what owners have put in. Compare it with what owners
+    could earn elsewhere: if it is below the return they require, the company is shrinking their wealth.
+  formula:
+    tex: '\mathrm{ROE} = \frac{\mathrm{net\ profit}}{\mathrm{equity}}'
+    plain: ROE = net profit ÷ shareholders' equity
+    symbols:
+      - {symbol: net profit, means: profit for the year after tax}
+      - {symbol: equity, means: the owners' share on the balance sheet}
+  example:
+    values: {NP: 60, E: 400}
+    compute: {roe: NP / E}
+    formats: {NP: '£{:,.0f}m', E: '£{:,.0f}m', roe: '{:.0%}'}
+    text: Net profit of {NP} on equity of {E} is a return on equity of {roe}.
+  fools_you: >-
+    Borrowing can inflate it: more debt means less equity, so the same profit looks better while the company
+    becomes riskier.
+  related: [equity, profit, leverage, cost_of_equity]
+
+- id: valuation
+  term: Valuation
+  aliases: [valuations, valuing]
+  short: Working out what an asset or a whole company is worth, from its future cash flows or by comparison with similar businesses.
+  plain: >-
+    There are two broad roads: discounting expected cash flows (as in net present value), and applying ratios
+    such as price-to-earnings taken from similar companies. Good analysts use both and ask why they disagree.
+  fools_you: >-
+    A precise-looking answer can rest on very rough guesses: small changes to growth or discount rates swing it
+    a lot.
+  related: [net_present_value, pe_ratio, discounted_cash_flow, enterprise_value]
+
+- id: fund_etf
+  term: Fund and ETF
+  aliases: [fund, funds, ETF, ETFs, exchange-traded fund, exchange-traded funds, mutual fund, mutual funds, unit trust]
+  short: A pot of many investors' money managed as one portfolio; some trade on stock exchanges all day just like shares.
+  plain: >-
+    Pooling gives small investors diversification and professional management. Traditional funds are bought
+    and sold once a day at the value of their holdings; exchange-traded funds trade continuously while markets
+    are open. Many of both simply track an index.
+  fools_you: >-
+    You pay the fees every year, and two products with similar names can hold very different things.
+  related: [index_fund, asset_manager_pm, diversification, expense_ratio]
+
+- id: index_fund
+  term: Index fund
+  aliases: [index funds, tracker fund, tracker funds, passive fund]
+  short: A fund that simply copies a stock index instead of trying to pick winners, which keeps its costs very low.
+  plain: >-
+    Because it is hard for active managers to beat their benchmark after fees, many investors prefer to own
+    the whole market cheaply. This idea is at the heart of A Random Walk Down Wall Street, one of the books to
+    read after the next tier.
+  fools_you: >-
+    It is not safe: it falls with the market, all the way down in a crash.
+  related: [stock_index, fund_etf, passive_investing, benchmark]

@@ -5,27 +5,46 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 /// Writable store on the phone: every attempt, score, hint and answer (spec §1 examiner loop),
-/// where each case was left, the spaced-review schedule (filled from Prompt 6), and settings.
+/// where each case was left, unsubmitted drafts, the spaced-review schedule, finance-learning progress and settings.
 class ProgressDb {
   ProgressDb._(this._db) {
     _migrate();
   }
 
   final Database _db;
-  static const schemaVersion = 1;
+
+  /// v1: attempts, case_state, reviews, settings. v2 (2026-11-15): drafts, term_progress, lesson_progress.
+  static const schemaVersion = 2;
 
   static Future<ProgressDb> open() async {
     final dir = await getApplicationSupportDirectory();
-    return ProgressDb._(sqlite3.open('${dir.path}${Platform.pathSeparator}progress.sqlite'));
+    return ProgressDb.openFile('${dir.path}${Platform.pathSeparator}progress.sqlite');
   }
+
+  /// Opens (and migrates) a progress file directly; tests use it to check upgrades keep old data.
+  factory ProgressDb.openFile(String path) => ProgressDb._(sqlite3.open(path));
 
   factory ProgressDb.inMemory() => ProgressDb._(sqlite3.openInMemory());
 
   void close() => _db.close();
 
+  /// Each version only ADDS tables, so upgrading never touches saved attempts.
   void _migrate() {
-    if (_db.userVersion >= schemaVersion) return;
-    _db.execute('''
+    final from = _db.userVersion;
+    if (from >= schemaVersion) return;
+    _db.execute('BEGIN IMMEDIATE');
+    try {
+      if (from < 1) _db.execute(_v1);
+      if (from < 2) _db.execute(_v2);
+      _db.userVersion = schemaVersion;
+      _db.execute('COMMIT');
+    } catch (_) {
+      _db.execute('ROLLBACK');
+      rethrow;
+    }
+  }
+
+  static const _v1 = '''
       CREATE TABLE IF NOT EXISTS attempts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         case_id TEXT NOT NULL, step_id TEXT NOT NULL, attempt_no INTEGER NOT NULL,
@@ -45,9 +64,29 @@ class ProgressDb {
         PRIMARY KEY(case_id, step_id)
       );
       CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT NOT NULL);
-    ''');
-    _db.userVersion = schemaVersion;
-  }
+    ''';
+
+  static const _v2 = '''
+      CREATE TABLE IF NOT EXISTS drafts(
+        case_id TEXT NOT NULL, step_id TEXT NOT NULL,
+        value_json TEXT NOT NULL,   -- whatever the step had in its inputs, not yet submitted
+        updated_at TEXT NOT NULL,
+        PRIMARY KEY(case_id, step_id)
+      );
+      CREATE TABLE IF NOT EXISTS term_progress(
+        term_id TEXT PRIMARY KEY,
+        known INTEGER NOT NULL DEFAULT 0,  -- 1 once answered correctly in a lesson check
+        box INTEGER NOT NULL DEFAULT 0,    -- spaced-review rung: 0..3 -> due after 1, 3, 7, 21 days
+        due_at TEXT,                       -- next review (UTC ISO); NULL until known
+        correct INTEGER NOT NULL DEFAULT 0, wrong INTEGER NOT NULL DEFAULT 0,
+        updated_at TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS lesson_progress(
+        lesson_id TEXT PRIMARY KEY,
+        best_score INTEGER NOT NULL, attempts INTEGER NOT NULL,
+        passed INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL
+      );
+    ''';
 
   String _now() => DateTime.now().toUtc().toIso8601String();
 
@@ -106,6 +145,81 @@ class ProgressDb {
     );
   }
 
+  // ------------------------------------------------------------------ drafts (typed input survives Back and restarts)
+  /// Stores whatever a step's inputs hold right now (text, blanks, selection, order), not yet submitted.
+  void saveDraft(String caseId, String stepId, Object value) => _db.execute(
+        'INSERT INTO drafts(case_id, step_id, value_json, updated_at) VALUES(?,?,?,?) '
+        'ON CONFLICT(case_id, step_id) DO UPDATE SET value_json = excluded.value_json, updated_at = excluded.updated_at',
+        [caseId, stepId, jsonEncode(value), _now()],
+      );
+
+  /// The unsubmitted input of a step (decoded JSON), or null when there is none.
+  Object? draft(String caseId, String stepId) {
+    final rows = _db.select('SELECT value_json FROM drafts WHERE case_id = ? AND step_id = ?', [caseId, stepId]);
+    return rows.isEmpty ? null : jsonDecode(rows.first['value_json'] as String);
+  }
+
+  void clearDraft(String caseId, String stepId) =>
+      _db.execute('DELETE FROM drafts WHERE case_id = ? AND step_id = ?', [caseId, stepId]);
+
+  // ------------------------------------------------------------------ finance learning
+  /// Spaced re-test ladder in days (same as the examiner's, docs/knowledge/GRADING.md).
+  static const reviewLadderDays = [1, 3, 7, 21];
+
+  TermState? termState(String termId) {
+    final rows = _db.select('SELECT * FROM term_progress WHERE term_id = ?', [termId]);
+    return rows.isEmpty ? null : TermState._(rows.first);
+  }
+
+  Map<String, TermState> termStates() =>
+      {for (final r in _db.select('SELECT * FROM term_progress')) r['term_id'] as String: TermState._(r)};
+
+  /// One answer about a word, from a lesson check or a review.
+  /// First correct answer makes the word known (due again in a day). Each later correct review climbs the ladder;
+  /// a wrong answer drops a known word back to the first rung.
+  void recordTermAnswer(String termId, {required bool correct, DateTime? now}) {
+    final t = (now ?? DateTime.now()).toUtc();
+    final prev = termState(termId);
+    final wasKnown = prev?.known ?? false;
+    final known = wasKnown || correct;
+    final box = !correct ? 0 : (wasKnown ? ((prev!.box + 1).clamp(0, reviewLadderDays.length - 1)) : 0);
+    final due = known ? t.add(Duration(days: reviewLadderDays[box])).toIso8601String() : null;
+    _db.execute(
+      'INSERT INTO term_progress(term_id, known, box, due_at, correct, wrong, updated_at) VALUES(?,?,?,?,?,?,?) '
+      'ON CONFLICT(term_id) DO UPDATE SET known = excluded.known, box = excluded.box, due_at = excluded.due_at, '
+      'correct = term_progress.correct + excluded.correct, wrong = term_progress.wrong + excluded.wrong, '
+      'updated_at = excluded.updated_at',
+      [termId, known ? 1 : 0, box, due, correct ? 1 : 0, correct ? 0 : 1, t.toIso8601String()],
+    );
+  }
+
+  /// Known words whose review is due at [now], oldest first.
+  List<String> dueTerms(DateTime now) => [
+        for (final r in _db.select(
+            'SELECT term_id FROM term_progress WHERE known = 1 AND due_at <= ? ORDER BY due_at, term_id',
+            [now.toUtc().toIso8601String()]))
+          r['term_id'] as String
+      ];
+
+  void recordLesson(String lessonId, {required int score, required bool passed}) => _db.execute(
+        'INSERT INTO lesson_progress(lesson_id, best_score, attempts, passed, updated_at) VALUES(?,?,1,?,?) '
+        'ON CONFLICT(lesson_id) DO UPDATE SET best_score = MAX(lesson_progress.best_score, excluded.best_score), '
+        'attempts = lesson_progress.attempts + 1, passed = MAX(lesson_progress.passed, excluded.passed), '
+        'updated_at = excluded.updated_at',
+        [lessonId, score, passed ? 1 : 0, _now()],
+      );
+
+  Map<String, ({int bestScore, int attempts, bool passed})> lessonStates() => {
+        for (final r in _db.select('SELECT * FROM lesson_progress'))
+          r['lesson_id'] as String: (
+            bestScore: r['best_score'] as int,
+            attempts: r['attempts'] as int,
+            passed: (r['passed'] as int) == 1,
+          )
+      };
+
+  void resetLearning() => _db.execute('DELETE FROM term_progress; DELETE FROM lesson_progress;');
+
   // ------------------------------------------------------------------ summaries
   ({int attempts, int stepsAttempted, int checkedSolved, int freeTextSaved}) caseSummary(String caseId) {
     final r = _db.select('''
@@ -139,7 +253,32 @@ class ProgressDb {
   void setSetting(String key, String value) =>
       _db.execute('INSERT INTO settings(key, value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value = excluded.value', [key, value]);
 
+  /// Case progress only (attempts, positions, drafts, reviews). Finance learning has its own reset.
   void resetProgress() {
-    _db.execute('DELETE FROM attempts; DELETE FROM case_state; DELETE FROM reviews;');
+    _db.execute('DELETE FROM attempts; DELETE FROM case_state; DELETE FROM reviews; DELETE FROM drafts;');
   }
+
+  /// Most recently touched case that is not finished (the cover's "Continue" target), or null.
+  ({String caseId, int stepIdx})? lastOpenCase() {
+    final rows = _db.select(
+        'SELECT case_id, step_idx FROM case_state WHERE completed = 0 ORDER BY updated_at DESC LIMIT 1');
+    if (rows.isEmpty) return null;
+    return (caseId: rows.first['case_id'] as String, stepIdx: rows.first['step_idx'] as int);
+  }
+}
+
+/// Learning state of one finance word.
+class TermState {
+  TermState._(Row r)
+      : known = (r['known'] as int) == 1,
+        box = r['box'] as int,
+        dueAt = r['due_at'] == null ? null : DateTime.parse(r['due_at'] as String),
+        correct = r['correct'] as int,
+        wrong = r['wrong'] as int;
+
+  final bool known;
+  final int box;
+  final DateTime? dueAt;
+  final int correct;
+  final int wrong;
 }

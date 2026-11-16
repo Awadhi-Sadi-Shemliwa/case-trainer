@@ -112,6 +112,10 @@ class Step(BaseModel):
     items: list[str] | None = None      # order_steps: correct order
     # code
     snippet: Snippet | None = None
+    # Real code shown for reference on ANY step type ("the code behind this step"), e.g. a cleaning
+    # justification shows the lines that did the cleaning. build_content.py refuses one that would reveal the
+    # answer of a code_fill / code_fix step at the same or a later position.
+    context_snippets: list[Snippet] = Field(default_factory=list)
     output_name: str | None = None      # captured_outputs.json key for code_predict
     blanks: list[Blank] | None = None   # code_fill
     buggy_code: str | None = None       # code_fix: the snippet with ONE injected bug
@@ -194,6 +198,8 @@ class Case(BaseModel):
     sources: list[str]
     datasets: list[str]
     allowed_literals: list[str] = Field(default_factory=list)   # e.g. "10-year", "2s10s"
+    # Chart whose first data series the app draws on the cover and the case card (real data, never typed).
+    signature_chart: str | None = None
     steps: list[Step]
     debrief: Debrief
 

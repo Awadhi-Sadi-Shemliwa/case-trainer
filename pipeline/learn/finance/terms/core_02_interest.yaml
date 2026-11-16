@@ -1,0 +1,215 @@
+# Lesson 2 · Interest and time. Words 11-20.
+- id: interest
+  term: Interest
+  short: The price of borrowing money, paid by the borrower to the lender on top of the amount borrowed.
+  plain: >-
+    Lend a friend money for a year and you cannot use it in the meantime; interest pays you for that wait,
+    and for the risk you are not paid back. Banks pay interest on savings because they lend your money on to
+    others at a higher rate. Borrowers pay it on loans, mortgages and credit cards.
+  formula:
+    tex: 'I = P \times r \times t'
+    plain: Simple interest = principal × rate per year × years
+    symbols:
+      - {symbol: P, means: the amount lent or saved}
+      - {symbol: r, means: the interest rate per year}
+      - {symbol: t, means: the number of years}
+  example:
+    values: {P: 1000, r: 0.04, t: 3}
+    compute: {I: P * r * t}
+    formats: {P: '£{:,.0f}', r: '{:.0%}', t: '{:.0f}', I: '£{:,.0f}'}
+    text: Lending {P} for {t} years at {r} a year of simple interest earns {I}.
+  fools_you: >-
+    Interest on savings can look like a gain while prices rise faster, so you end up able to buy less.
+    Compare it with inflation, not with zero.
+  related: [interest_rate, principal, loan, inflation]
+  sources: [boe_interest_rates_explainer]
+
+- id: interest_rate
+  term: Interest rate
+  aliases: [interest rates, rate of interest]
+  short: Interest written as a percentage of the amount borrowed or saved, usually for one year.
+  plain: >-
+    Saying "four percent a year" lets you compare any two loans or savings accounts, whatever their size.
+    Rates across an economy are linked: when the central bank changes its own rate, banks soon change what
+    they charge on loans and pay on savings. Higher rates make borrowing dearer and saving more rewarding, so
+    people and firms tend to spend less.
+  formula:
+    tex: 'r = \frac{I}{P \times t}'
+    plain: Rate = interest ÷ (principal × years)
+    symbols:
+      - {symbol: I, means: interest paid}
+      - {symbol: P, means: amount borrowed or saved}
+      - {symbol: t, means: years}
+  example:
+    values: {P: 5000, I: 225}
+    compute: {r: I / P}
+    formats: {P: '£{:,.0f}', I: '£{:,.0f}', r: '{:.1%}'}
+    text: A one-year loan of {P} that costs {I} in interest has an interest rate of {r}.
+  fools_you: >-
+    A small monthly rate can hide a large yearly one. A rate quoted per month must be compounded over twelve
+    months before you compare it with a yearly rate.
+  related: [interest, apr_aer, policy_rate, yield]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [boe_interest_rates_explainer]
+
+- id: principal
+  term: Principal
+  short: The original amount of money borrowed or invested, before any interest is added.
+  plain: >-
+    If you borrow to buy a car, the amount the seller received is the principal; interest is the charge on
+    top. Each repayment usually covers some interest and some principal. Early on, most of a payment goes on
+    interest; later, more of it reduces what you owe.
+  fools_you: >-
+    Paying every month does not mean the principal is shrinking fast. On a long mortgage the first years
+    mostly pay interest.
+  related: [interest, loan, amortisation]
+
+- id: loan
+  term: Loan
+  aliases: [loans]
+  short: Money handed over now on a promise that it will be paid back later, usually with interest.
+  plain: >-
+    Every loan has a few parts: the principal, an interest rate, a schedule of repayments and what happens if
+    they are missed. Some loans are secured on an asset, like a mortgage on a house, which the lender can take
+    if payments stop. Others, like most credit cards, are unsecured, and charge more because the lender is
+    less protected.
+  fools_you: >-
+    A loan's cost is not just its rate. Fees, the length of the loan and charges for paying early can change
+    what you really pay.
+  related: [principal, interest, collateral, mortgage]
+
+- id: compound_interest
+  term: Compound interest
+  aliases: [compounding]
+  short: Interest added to the balance so that later interest is also earned on the earlier interest.
+  plain: >-
+    Leave savings untouched and each year's interest joins the pile, so next year's interest is a little
+    bigger. The effect is slow at first and dramatic over decades. It works against borrowers too: unpaid
+    card interest is added to what you owe and then charged interest itself.
+  formula:
+    tex: 'FV = P\,(1 + r)^{n}'
+    plain: Future value = principal × (1 + rate)^years
+    symbols:
+      - {symbol: P, means: amount saved today}
+      - {symbol: r, means: interest rate per year}
+      - {symbol: n, means: number of years}
+  example:
+    values: {P: 1000, r: 0.06, n: 20}
+    compute: {FV: P * (1 + r) ** n, simple: P * (1 + r * n)}
+    formats: {P: '£{:,.0f}', r: '{:.0%}', n: '{:.0f}', FV: '£{:,.0f}', simple: '£{:,.0f}'}
+    text: Saving {P} at {r} a year for {n} years grows to {FV} with compounding, against {simple} with simple interest.
+  fools_you: >-
+    Small differences in rate become large over long periods. That is why a yearly fee that sounds tiny can
+    take a big bite out of long-term savings.
+  related: [interest, future_value, time_value_of_money]
+
+- id: time_value_of_money
+  term: Time value of money
+  short: The idea that money today is worth more than the same amount later, because today's money can earn a return.
+  plain: >-
+    Offered a hundred pounds today or a hundred pounds next year, take it today: you could save it and have
+    more next year, prices may rise meanwhile, and a promise can be broken. This one idea sits under loans,
+    bonds, pensions and company valuations: future money must be shrunk before it can be compared with money
+    now.
+  fools_you: >-
+    It is tempting to compare future amounts at face value, like a pension paying a large sum decades from
+    now. Without discounting, distant money looks far more valuable than it is.
+  related: [present_value, future_value, discounting, interest_rate]
+
+- id: present_value
+  term: Present value
+  aliases: [PV]
+  short: What a payment due in the future is worth today, once you allow for the return you could earn meanwhile.
+  plain: >-
+    Present value runs compounding backwards. Ask: how much would I need to put aside today, at the going
+    rate, to end up with that future payment? That amount is its present value. The higher the rate, or the
+    longer the wait, the smaller it gets.
+  formula:
+    tex: 'PV = \frac{FV}{(1 + r)^{n}}'
+    plain: Present value = future value ÷ (1 + rate)^years
+    symbols:
+      - {symbol: FV, means: the future payment}
+      - {symbol: r, means: rate per year}
+      - {symbol: n, means: years until it is paid}
+  example:
+    values: {FV: 10000, r: 0.05, n: 5}
+    compute: {PV: FV / (1 + r) ** n}
+    formats: {FV: '£{:,.0f}', r: '{:.0%}', n: '{:.0f}', PV: '£{:,.0f}'}
+    text: A payment of {FV} due in {n} years is worth {PV} today if you could earn {r} a year elsewhere.
+  fools_you: >-
+    Present value depends heavily on the rate you pick. A small change in the rate moves the value of far-off
+    payments a lot, which is why valuations of long projects are fragile.
+  related: [future_value, discounting, time_value_of_money, net_present_value]
+
+- id: future_value
+  term: Future value
+  aliases: [FV]
+  short: How much a sum invested today will be worth at a later date after earning interest.
+  plain: >-
+    Future value is compounding run forwards: start with an amount, apply the rate year after year and see
+    where it ends up. It answers "if I save this now, what will I have then?".
+  formula:
+    tex: 'FV = PV\,(1 + r)^{n}'
+    plain: Future value = present value × (1 + rate)^years
+    symbols:
+      - {symbol: PV, means: amount invested today}
+      - {symbol: r, means: rate per year}
+      - {symbol: n, means: years}
+  example:
+    values: {PV: 2500, r: 0.035, n: 10}
+    compute: {FV: PV * (1 + r) ** n}
+    formats: {PV: '£{:,.0f}', r: '{:.1%}', n: '{:.0f}', FV: '£{:,.0f}'}
+    text: Putting away {PV} at {r} a year for {n} years gives a future value of {FV}.
+  fools_you: >-
+    A future value is counted in future pounds. If prices rise at a similar rate, you may be no better off in
+    what you can actually buy.
+  related: [present_value, compound_interest, real_vs_nominal]
+
+- id: discounting
+  term: Discounting
+  aliases: [discount rate, discount factor]
+  short: Turning future amounts into today's money by dividing by one plus a rate, once for each year of waiting.
+  plain: >-
+    The discount rate is the return you demand for waiting, such as what you could earn elsewhere with
+    similar risk. Multiply each future payment by its discount factor and you have its present value. Riskier
+    payments deserve a higher rate, so they count for less today.
+  formula:
+    tex: 'DF_{n} = \frac{1}{(1 + r)^{n}}'
+    plain: Discount factor = 1 ÷ (1 + rate)^years
+    symbols:
+      - {symbol: r, means: the discount rate per year}
+      - {symbol: n, means: years until the payment}
+  example:
+    values: {r: 0.08, a: 1, b: 3, one: 1}
+    compute: {d1: one / (1 + r) ** a, d3: one / (1 + r) ** b}
+    formats: {r: '{:.0%}', a: '{:.0f}', b: '{:.0f}', one: '£{:,.0f}', d1: '£{:,.2f}', d3: '£{:,.2f}'}
+    text: At a discount rate of {r}, {one} due in {a} year is worth {d1} today, and {one} due in {b} years is worth {d3}.
+  fools_you: >-
+    The rate is a judgement, not a fact. Two analysts using different rates can value the same plan very
+    differently, and both can claim to have "done the maths".
+  related: [present_value, time_value_of_money, risk_premium]
+
+- id: apr_aer
+  term: APR and AER
+  aliases: [APR, AER, annual percentage rate, annual equivalent rate, effective annual rate]
+  short: Standard yearly rates, one for borrowing including fees and one for saving including compounding, that make offers fair to compare.
+  plain: >-
+    Lenders quote rates in many ways: per month, with fees on top, with interest added monthly or yearly.
+    The annual percentage rate (APR) on a loan or card folds the fees in. The annual equivalent rate (AER) on
+    savings shows what you would earn over a year once interest is compounded. In the UK you will see both;
+    always compare like with like.
+  formula:
+    tex: 'AER = \left(1 + \frac{r}{m}\right)^{m} - 1'
+    plain: AER = (1 + yearly rate ÷ payments per year)^payments per year − 1
+    symbols:
+      - {symbol: r, means: the stated yearly rate}
+      - {symbol: m, means: how many times a year interest is added}
+  example:
+    values: {r: 0.048, m: 12}
+    compute: {aer: (1 + r / m) ** m - 1}
+    formats: {r: '{:.2%}', m: '{:.0f}', aer: '{:.2%}'}
+    text: A stated rate of {r} with interest added {m} times a year is an AER of {aer}.
+  fools_you: >-
+    A loan advertised by its monthly payment can hide a high APR. And an advertised APR is a typical figure:
+    the rate you are actually offered can be higher.
+  related: [interest_rate, compound_interest]

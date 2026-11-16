@@ -1,0 +1,184 @@
+# Intermediate lesson 4 · Company health. Words 131-140.
+- id: working_capital
+  term: Working capital
+  aliases: [net working capital]
+  short: The cash tied up in running a business day to day, in stock and unpaid customer bills, minus what it owes suppliers.
+  plain: >-
+    A growing business needs more stock and gives more credit, which soaks up cash before any profit shows.
+    Good managers keep it lean by collecting fast and paying on time.
+  formula:
+    tex: '\mathrm{WC} = \mathrm{current\ assets} - \mathrm{current\ liabilities}'
+    plain: Working capital = current assets − current liabilities
+    symbols:
+      - {symbol: current assets, means: cash and items turning into cash within a year}
+      - {symbol: current liabilities, means: bills due within a year}
+  example:
+    values: {ca: 450, cl: 300}
+    compute: {wc: ca - cl}
+    formats: {ca: '£{:,.0f}m', cl: '£{:,.0f}m', wc: '£{:,.0f}m'}
+    text: Current assets of {ca} against current liabilities of {cl} leave working capital of {wc}.
+  fools_you: >-
+    More is not always safer: too much means cash sitting idle in warehouses and unpaid invoices.
+  related: [current_ratio, cash_flow, liquidity]
+  sources: [sec_financial_statements]
+
+- id: current_ratio
+  term: Current ratio
+  aliases: [quick ratio, acid test]
+  short: Short-term assets divided by short-term debts, a quick check of whether a company can pay the bills due within a year.
+  plain: >-
+    Above one means more is coming in soon than going out soon. The stricter quick ratio leaves out stock,
+    which may be hard to sell fast.
+  formula:
+    tex: '\mathrm{CR} = \frac{\mathrm{current\ assets}}{\mathrm{current\ liabilities}}'
+    plain: Current ratio = current assets ÷ current liabilities
+    symbols:
+      - {symbol: current assets, means: cash and items turning into cash within a year}
+      - {symbol: current liabilities, means: bills due within a year}
+  example:
+    values: {ca: 450, cl: 300}
+    compute: {cr: ca / cl}
+    formats: {ca: '£{:,.0f}m', cl: '£{:,.0f}m', cr: '{:.1f}'}
+    text: Current assets of {ca} over current liabilities of {cl} give a ratio of {cr}.
+  fools_you: >-
+    A high figure can hide slow-paying customers or stock nobody wants.
+  related: [working_capital, liquidity, balance_sheet]
+  sources: [sec_financial_statements]
+
+- id: debt_to_equity
+  term: Debt-to-equity ratio (gearing)
+  aliases: [gearing, debt-to-equity, leverage ratio]
+  short: How much a company has borrowed compared with what its owners have put in.
+  plain: >-
+    More borrowing boosts owners' returns in good times and raises the risk of trouble in bad times. A utility
+    with steady income can carry far more than a volatile young technology firm.
+  formula:
+    tex: 'D/E = \frac{\mathrm{debt}}{\mathrm{equity}}'
+    plain: Debt-to-equity = total debt ÷ shareholders' equity
+    symbols:
+      - {symbol: debt, means: borrowings}
+      - {symbol: equity, means: the owners' share on the balance sheet}
+  example:
+    values: {d: 400, e: 600}
+    compute: {de: d / e}
+    formats: {d: '£{:,.0f}m', e: '£{:,.0f}m', de: '{:.2f}'}
+    text: Debt of {d} against equity of {e} is a ratio of {de}.
+  fools_you: >-
+    Leases and other commitments can act like debt without being called debt, so check what is counted.
+  related: [leverage, debt_vs_equity_financing, interest_coverage]
+
+- id: interest_coverage
+  term: Interest cover
+  aliases: [interest coverage, times interest earned]
+  short: Operating profit divided by interest costs, how many times over a company could pay its interest bill.
+  plain: >-
+    Lenders watch it closely. When it slides towards one, a small dip in profit could mean missed interest
+    payments, a step towards default.
+  formula:
+    tex: '\mathrm{cover} = \frac{\mathrm{EBIT}}{\mathrm{interest}}'
+    plain: Interest cover = operating profit ÷ interest payable
+    symbols:
+      - {symbol: EBIT, means: operating profit}
+      - {symbol: interest, means: interest due for the year}
+  example:
+    values: {ebit: 90, i: 15}
+    compute: {ic: ebit / i}
+    formats: {ebit: '£{:,.0f}m', i: '£{:,.0f}m', ic: '{:.1f}'}
+    text: Operating profit of {ebit} with an interest bill of {i} gives cover of {ic} times.
+  fools_you: >-
+    It uses profit, not cash, and a single good year can flatter it.
+  related: [operating_profit, default, debt_to_equity]
+
+- id: operating_profit
+  term: Operating profit
+  aliases: [EBIT, operating income]
+  short: Profit from the core business, before interest on debt and before tax.
+  plain: >-
+    It shows how well the business itself performs, however it is financed. Comparing it across years strips
+    out the noise of changing interest bills and tax.
+  formula:
+    tex: '\mathrm{operating\ profit} = \mathrm{revenue} - \mathrm{operating\ costs}'
+    plain: Operating profit = revenue − operating costs
+    symbols:
+      - {symbol: revenue, means: sales}
+      - {symbol: operating costs, means: costs of running the business}
+  example:
+    values: {rev: 500, opc: 410}
+    compute: {op: rev - opc}
+    formats: {rev: '£{:,.0f}m', opc: '£{:,.0f}m', op: '£{:,.0f}m'}
+    text: Revenue of {rev} minus operating costs of {opc} leaves operating profit of {op}.
+  fools_you: >-
+    One-off gains or charges can sneak in or be left out as "exceptional"; check what was excluded.
+  related: [profit, ebitda, interest_coverage, profit_margin]
+
+- id: depreciation
+  term: Depreciation
+  aliases: [depreciation and amortisation, amortisation of intangibles]
+  short: Spreading the cost of a long-lasting asset, such as a machine, over the years it is used, as a yearly expense.
+  plain: >-
+    A delivery van costs a lot in one year but works for several, so the accounts charge part of its cost
+    each year. It is an expense without cash leaving that year.
+  formula:
+    tex: '\mathrm{yearly\ charge} = \frac{\mathrm{cost} - \mathrm{residual\ value}}{\mathrm{useful\ life}}'
+    plain: Straight-line yearly charge = (cost − value at the end) ÷ years of use
+    symbols:
+      - {symbol: cost, means: price paid for the asset}
+      - {symbol: residual value, means: what it is worth at the end}
+      - {symbol: useful life, means: years it will be used}
+  example:
+    values: {cost: 50000, res: 5000, life: 5}
+    compute: {d: (cost - res) / life}
+    formats: {cost: '£{:,.0f}', res: '£{:,.0f}', life: '{:.0f}', d: '£{:,.0f}'}
+    text: A van costing {cost}, worth {res} after {life} years, is charged at {d} a year.
+  fools_you: >-
+    Because it is a non-cash charge, people add it back and forget that equipment really does wear out and
+    must be replaced.
+  related: [capex, ebitda, income_statement]
+
+- id: capex
+  term: Capital expenditure (capex)
+  aliases: [capex, capital spending]
+  short: Money spent on long-lasting assets such as buildings, machines and software, rather than on day-to-day costs.
+  plain: >-
+    It shows up on the cash-flow statement, not as one big expense on the income statement; its cost reaches
+    profit slowly through depreciation. Heavy industries need lots of it just to stand still.
+  fools_you: >-
+    Cutting it lifts free cash flow today and can leave the business weaker tomorrow.
+  related: [depreciation, free_cash_flow, cash_flow_statement]
+
+- id: retained_earnings
+  term: Retained earnings
+  aliases: [retained profits]
+  short: Profits a company has kept over the years instead of paying them out to shareholders.
+  plain: >-
+    They fund growth without new borrowing or new shares. On the balance sheet they are part of equity.
+  fools_you: >-
+    They are not a pile of cash: the money has usually already been spent on assets.
+  related: [profit, dividend, equity, balance_sheet]
+
+- id: share_buyback
+  term: Share buyback
+  aliases: [buyback, buybacks, share buybacks, share repurchase]
+  short: A company using its cash to buy back its own shares from investors, leaving fewer shares in issue.
+  plain: >-
+    It returns cash to owners like a dividend, but only to those who sell, and lifts earnings per share for
+    those who stay. Companies say they do it when their shares are cheap.
+  fools_you: >-
+    Done at high prices it destroys value, and doing it with borrowed money adds risk.
+  related: [dividend, eps, dilution]
+
+- id: dilution
+  term: Dilution
+  aliases: [share dilution, diluted]
+  short: When a company issues new shares, so each existing share owns a smaller slice of the business.
+  plain: >-
+    Selling new shares, paying staff in shares and turning convertible bonds into shares all do it. It is fine
+    if the new money earns more than it costs existing owners.
+  example:
+    values: {mine: 10, old: 100, new: 25}
+    compute: {before: mine / old, after: mine / (old + new)}
+    formats: {mine: '{:,.0f} million', old: '{:,.0f} million', new: '{:,.0f} million', before: '{:.0%}', after: '{:.0%}'}
+    text: Holding {mine} of {old} shares is a {before} stake; after {new} new shares are issued, the same holding is {after}.
+  fools_you: >-
+    Earnings per share can fall even when total profit rises, because more shares now share it.
+  related: [share, eps, share_buyback]

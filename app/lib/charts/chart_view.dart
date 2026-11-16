@@ -144,7 +144,7 @@ class _ChartPanelState extends State<ChartPanel> {
         SizedBox(height: widget.height, child: chart),
       Wrap(spacing: 12, children: [
         if (shadedLabel != null) Text('Grey bands: $shadedLabel', style: t.labelSmall),
-        if (!isHeat) Text('Pinch to zoom · drag to pan · tap a point · tap legend to hide a series', style: t.labelSmall?.copyWith(color: cs.onSurfaceVariant)),
+        if (!isHeat) Text('Pinch to zoom, drag to pan, tap a point, tap the legend to hide a series', style: t.labelSmall?.copyWith(color: cs.onSurfaceVariant)),
       ]),
       Text(spec.sourceNote, style: t.labelSmall?.copyWith(color: cs.onSurfaceVariant, fontSize: 10)),
     ]);

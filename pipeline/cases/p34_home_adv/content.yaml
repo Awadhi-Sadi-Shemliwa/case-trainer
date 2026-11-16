@@ -15,6 +15,7 @@ sources: [leitner_2022_review, leitner_richlan_2021]
 datasets: [fd_E0_1718, fd_E0_1920, fd_D1_1920, fd_SP1_1920, fd_I1_1920, fd_E0_2122]
 allowed_literals: [COVID-19, "2017/18", "2019/20", "2020/21", "2021/22", "2020"]
 
+signature_chart: p34_home_gd_timeline   # drawn on the cover and the case card (first data series)
 steps:
 # ============================================================== BRIEF
 - id: s01_brief
@@ -206,6 +207,7 @@ steps:
 - id: s07_justify_period
   phase: data
   type: cleaning_justification
+  context_snippets: [{file: clean.py, name: assign_period}]
   title: Justify how ghost games were defined
   transform: assign_period
   prompt: >-
@@ -310,6 +312,7 @@ steps:
 - id: s09_chart_gd
   phase: explore
   type: chart_explain
+  context_snippets: [{file: analyse.py, name: half_seasons}]
   title: Read the home goal difference by half-season
   chart: p34_home_gd_timeline
   prompt: Explain what this chart shows and what it does NOT show.
@@ -548,6 +551,7 @@ steps:
 - id: s13_result
   phase: model
   type: result_explain
+  context_snippets: [{file: analyse.py, name: league_tests}, {file: analyse.py, name: card_model}]
   title: Interpret the results
   chart: p34_home_win_by_period
   prompt: >-

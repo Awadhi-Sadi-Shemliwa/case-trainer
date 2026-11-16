@@ -1,0 +1,165 @@
+# Intermediate lesson 1 · Derivatives. Words 101-110.
+- id: derivative
+  term: Derivative
+  aliases: [derivatives]
+  short: A contract whose value depends on the price of something else, such as a share, a bond, a currency or oil.
+  plain: >-
+    Instead of buying the thing itself, you agree terms about its future price. These contracts let people
+    hedge risks they already carry, bet on price moves with little money up front, or reshape cash flows. The
+    main families are forwards and futures, options and swaps.
+  fools_you: >-
+    A small upfront cost does not mean a small risk: many of these contracts can lose far more than you paid
+    for them.
+  related: [underlying, forward_contract, futures_contract, option, swap]
+  sources: [finra_options, cftc_futures_basics]
+
+- id: underlying
+  term: Underlying
+  aliases: [underlying asset, underlying assets]
+  short: The asset, rate or index whose price a derivative's value is based on.
+  plain: >-
+    For an oil future it is oil; for a share option it is the share; for an interest-rate swap it is a
+    benchmark rate. When its price moves, the contract's value moves with it.
+  fools_you: >-
+    The contract can behave very differently from the thing it is based on, especially near its end date or
+    when prices jump, so owning one is not the same as owning the other.
+  related: [derivative, option, futures_contract]
+  sources: [finra_options]
+
+- id: forward_contract
+  term: Forward contract
+  aliases: [forward contracts, forwards]
+  short: A private agreement to buy or sell something on a future date at a price fixed today.
+  plain: >-
+    A UK company due to pay a US supplier in dollars in three months can fix the exchange rate today with its
+    bank. Nobody pays upfront; at the end, one side gains and the other loses compared with the market price
+    on the day. Because it is private, each side depends on the other honouring it.
+  formula:
+    tex: '\mathrm{payoff} = (S_{T} - K) \times N'
+    plain: Payoff to the buyer = (price at the end − agreed price) × quantity
+    symbols:
+      - {symbol: S T, means: market price on the end date}
+      - {symbol: K, means: price agreed today}
+      - {symbol: N, means: quantity}
+  example:
+    values: {N: 1000, K: 60, ST: 66}
+    compute: {pay: (ST - K) * N}
+    formats: {N: '{:,.0f}', K: '£{:,.2f}', ST: '£{:,.2f}', pay: '£{:,.0f}'}
+    text: You agree today to buy {N} barrels at {K} each in three months. If oil is then {ST}, the contract is worth {pay} to you, and the seller loses the same.
+  fools_you: >-
+    It fixes the price, it does not guarantee a good one: if prices move your way, you miss out.
+  related: [futures_contract, derivative, hedging, counterparty_risk]
+  sources: [cftc_futures_basics]
+
+- id: futures_contract
+  term: Futures contract
+  aliases: [futures, futures contracts]
+  short: A standardised agreement traded on an exchange to buy or sell a set amount of something at a set price on a later date.
+  plain: >-
+    Think of a forward made safe for strangers: the exchange sets the size and dates, and a clearing house
+    stands between buyer and seller. Gains and losses are settled every day through margin accounts, so
+    nobody can build up a huge unpaid loss.
+  fools_you: >-
+    Daily settlement means you may have to put in cash during a bad patch, even if the trade would come good
+    by the end.
+  related: [forward_contract, margin_call, clearing_settlement, commodity]
+  sources: [cftc_futures_basics]
+
+- id: option
+  term: Option (contract)
+  aliases: [option contract, option contracts, stock option, stock options]
+  short: A contract giving the right, but not the duty, to buy or sell something at a set price on or before a set date.
+  plain: >-
+    "But not the duty" is the whole point: you use the right only if it pays, so as a buyer your loss is
+    limited to what you paid. Rights to buy are calls; rights to sell are puts. They are used to insure
+    portfolios, to earn income and to speculate.
+  fools_you: >-
+    Selling these contracts is very different from buying them: the seller collects a small fee and can face
+    large losses.
+  related: [call_option, put_option, strike_price, option_premium, expiry]
+  sources: [finra_options]
+
+- id: call_option
+  term: Call option
+  aliases: [call options]
+  short: The right to buy the underlying at the strike price, used when you expect the price to rise.
+  plain: >-
+    If the price ends above the strike, you can buy below market and pocket the difference; if not, you let
+    the contract lapse and lose only what you paid for it.
+  formula:
+    tex: '\mathrm{payoff} = \max(S_{T} - K,\ 0)'
+    plain: Payoff = the larger of (price at expiry − strike) and zero
+    symbols:
+      - {symbol: S T, means: price of the underlying at expiry}
+      - {symbol: K, means: strike price}
+  example:
+    values: {K: 100, ST: 112, c: 4}
+    compute: {pay: 'max(ST - K, 0)', profit: 'max(ST - K, 0) - c'}
+    formats: {K: '£{:,.0f}', ST: '£{:,.0f}', c: '£{:,.0f}', pay: '£{:,.0f}', profit: '£{:,.0f}'}
+    text: A call with a strike of {K}, bought for {c}, pays {pay} if the share ends at {ST}, a profit of {profit}.
+  fools_you: >-
+    The share must rise by more than you paid for the contract before you make any profit, and it must do so
+    before expiry.
+  related: [option, put_option, strike_price, intrinsic_value]
+  sources: [finra_options]
+
+- id: put_option
+  term: Put option
+  aliases: [put options, protective put]
+  short: The right to sell the underlying at the strike price, which gains when the price falls.
+  plain: >-
+    Puts work like insurance: a portfolio manager worried about a downturn can buy them on an index instead
+    of selling shares. In the P50 setting, that is another way to cut equity risk.
+  formula:
+    tex: '\mathrm{payoff} = \max(K - S_{T},\ 0)'
+    plain: Payoff = the larger of (strike − price at expiry) and zero
+    symbols:
+      - {symbol: K, means: strike price}
+      - {symbol: S T, means: price of the underlying at expiry}
+  example:
+    values: {K: 95, ST: 80, p: 3}
+    compute: {pay: 'max(K - ST, 0)', profit: 'max(K - ST, 0) - p'}
+    formats: {K: '£{:,.0f}', ST: '£{:,.0f}', p: '£{:,.0f}', pay: '£{:,.0f}', profit: '£{:,.0f}'}
+    text: A put with a strike of {K}, bought for {p}, pays {pay} if the share falls to {ST}, a profit of {profit}.
+  fools_you: >-
+    Insurance has a price: buy puts every year and the cost can eat much of your return if the crash never
+    comes.
+  related: [option, call_option, hedging, strike_price]
+  sources: [finra_options]
+
+- id: strike_price
+  term: Strike price
+  aliases: [strike, exercise price, strike prices]
+  short: The fixed price at which an option lets you buy or sell the underlying.
+  plain: >-
+    A call with a low one, or a put with a high one, is worth more because it is more likely to pay out.
+    Choosing it is choosing how much protection or exposure you buy, and at what cost.
+  fools_you: >-
+    It is not where the price is expected to be; it is simply the level at which the contract starts to pay.
+  related: [option, call_option, put_option, moneyness]
+  sources: [finra_options]
+
+- id: option_premium
+  term: Option premium
+  short: The price paid to buy an option, which the seller keeps whatever happens next.
+  plain: >-
+    It is made of intrinsic value, what the contract would pay if used right now, plus time value, extra paid
+    for the chance of a better outcome before expiry. Higher volatility makes it dearer, because big moves make
+    a payout more likely.
+  fools_you: >-
+    A cheap option is not a bargain if it is very unlikely to pay out; most cheap, far-off contracts expire
+    worthless.
+  related: [option, intrinsic_value, time_value_option, implied_volatility]
+  sources: [finra_options]
+
+- id: expiry
+  term: Expiry
+  aliases: [expiration, expiry date, expiration date]
+  short: The date after which an option or future can no longer be used, and the contract ends.
+  plain: >-
+    As it approaches, an option's time value shrinks towards zero, so its price closes in on what it would pay
+    right now. Futures stop trading near it and are settled in cash or by delivery.
+  fools_you: >-
+    Holding an option that loses time value every day is costly even if the price never moves against you.
+  related: [option, time_value_option, futures_contract]
+  sources: [finra_options]

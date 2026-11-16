@@ -1,0 +1,343 @@
+# Core lesson 11 · Scoring a yes/no forecast. Measures, words 101-110 (owner request 2026-11-16: moved up from the
+# last quant lesson, plus the counts and finance names around them). Readings use made-up numbers computed by the
+# pipeline; rule-of-thumb bands carry their own VERIFIED source.
+- id: base_rate
+  term: Base rate
+  aliases: [base rates, prior probability, prevalence]
+  short: How often an outcome happens in the data overall, before any predictor is used.
+  plain: >-
+    In the P50 case only a small share of expansion months are followed by a recession, so a model that always
+    says "no" scores high accuracy while being useless. Every forecast must be judged against this figure.
+  used_for: >-
+    Setting the bar. Before praising any score, ask what you would get by always predicting the common outcome, or
+    by always forecasting the base rate as a probability.
+  example:
+    values: {pos: 60, n: 500}
+    compute: {br: pos / n, acc: (n - pos) / n}
+    formats: {pos: '{:,.0f}', n: '{:,.0f}', br: '{:.0%}', acc: '{:.0%}'}
+    text: If {pos} of {n} months are followed by a recession, the base rate is {br}, and always predicting "no" is already {acc} accurate.
+  in_finance: >-
+    Same idea under finance names: the default rate of a loan book, the share of card payments that are fraud, the
+    share of months in recession. All are small, which is why accuracy flatters credit, fraud and recession models.
+  fools_you: >-
+    Ignoring it is the most common forecasting mistake: a test that is usually right can still be wrong about
+    most of its alarms.
+  related: [accuracy, precision, hit_false_alarm, brier_score, calibration]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s19_result}]
+
+- id: confusion_matrix
+  term: Confusion matrix
+  aliases: [confusion matrices, error matrix]
+  short: A two-by-two table that counts a yes/no model's hits, misses, false alarms and correct all-clears.
+  plain: >-
+    One side says what really happened, the other what the model said (check which way round the labels go). The
+    four cells are true positives (hits), false negatives (misses), false positives (false alarms) and true
+    negatives (correct all-clears). Every yes/no measure in this lesson is built from these four counts.
+  used_for: >-
+    Seeing every kind of error at once before summarising them, and computing accuracy, precision, hit rate and
+    false-alarm rate from the same four numbers.
+  example:
+    values: {tp: 8, fn: 2, fp: 30, tn: 360}
+    compute: {n: tp + fn + fp + tn, alarms: tp + fp}
+    formats: {tp: '{:.0f}', fn: '{:.0f}', fp: '{:.0f}', tn: '{:.0f}', n: '{:.0f}', alarms: '{:.0f}'}
+    text: Over {n} months the model raised {alarms} alarms, {tp} of them before real recessions and {fp} false. It missed {fn} recessions and stayed rightly quiet in {tn} months.
+  in_finance: >-
+    Lenders read the same table for loan decisions: approved loans that defaulted, declined applicants who would have
+    repaid, and so on. The two kinds of error cost very different amounts, so they are never simply added up.
+  fools_you: >-
+    A single summary score hides which cell the errors sit in; two models with the same score can make completely
+    different mistakes.
+  related: [accuracy, hit_false_alarm, precision, decision_threshold]
+  sources: [sklearn_metrics]
+
+- id: accuracy
+  term: Accuracy
+  aliases: [classification accuracy, accuracy rate]
+  short: The share of all cases a yes/no model gets right, counting hits and correct all-clears together.
+  plain: >-
+    It is the most intuitive score and the most misleading one when one outcome is rare. If recessions follow only a
+    small share of months, a model that never predicts one is right most of the time.
+  used_for: >-
+    Summarising a model when both outcomes are common and both kinds of error cost about the same. Otherwise report
+    the hit rate, false-alarm rate and precision instead.
+  formula:
+    tex: '\mathrm{accuracy} = \frac{TP + TN}{TP + TN + FP + FN}'
+    plain: Accuracy = (hits + correct all-clears) ÷ all cases
+    symbols:
+      - {symbol: TP and TN, means: true positives (hits) and true negatives (correct all-clears)}
+      - {symbol: FP and FN, means: false positives (false alarms) and false negatives (misses)}
+  reading:
+    values: {acc: 0.9, br: 0.12}
+    compute: {lazy: 1 - br, err: 1 - acc}
+    formats: {acc: '{:.0%}', br: '{:.0%}', lazy: '{:.0%}', err: '{:.0%}'}
+    question: A model is {acc} accurate, and recessions follow {br} of months. What does that tell you?
+    means: Very little on its own. Always saying "no" would already be {lazy} accurate, so the model beats doing nothing by only a little. Look at its hit rate and false alarms before trusting it.
+    misreadings:
+      - The model catches {acc} of recessions.
+      - When the model warns of a recession, it is right {acc} of the time.
+      - Only {err} of its forecasts are wrong, so it can hardly miss a recession.
+    scale: {lo: 0, hi: 1, format: '{:.0%}', better: higher}
+    point: acc
+    marks:
+      - {at: lazy, label: 'always saying "no"'}
+  in_finance: >-
+    Credit, fraud and recession models all chase rare events, so finance teams seldom quote accuracy alone; they use
+    hit and false-alarm rates, the ROC area or its credit-scoring name, the Gini coefficient.
+  fools_you: >-
+    A high score can be nothing but the base rate. A model that never flags fraud is right about almost every
+    payment.
+  related: [base_rate, confusion_matrix, hit_false_alarm, precision]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s11_clean_recession_months}]
+  sources: [sklearn_metrics]
+
+- id: hit_false_alarm
+  term: Hit rate and false-alarm rate
+  aliases: [hit rate, false-alarm rate, false alarm rate, true positive rate, false positive rate, recall, TPR, FPR,
+            sensitivity (medicine), specificity]
+  short: The share of real events a signal catches, and the share of quiet periods in which it wrongly raises an alarm.
+  plain: >-
+    Raising a trigger cuts false alarms and misses more events; lowering it does the reverse. The P50 PM must choose a
+    point on that trade-off. Machine learning calls the hit rate recall, medicine calls it sensitivity, and the share
+    of quiet periods correctly left alone is the specificity.
+  used_for: >-
+    Describing a warning signal's two kinds of error separately, so you can choose the trade-off between missed events
+    and false alarms.
+  example:
+    values: {tp: 8, fn: 2, fp: 30, tn: 360}
+    compute: {events: tp + fn, calm: fp + tn, hr: tp / (tp + fn), far: fp / (fp + tn)}
+    formats: {tp: '{:.0f}', fn: '{:.0f}', fp: '{:.0f}', tn: '{:.0f}', events: '{:.0f}', calm: '{:.0f}', hr: '{:.0%}', far: '{:.1%}'}
+    text: Catching {tp} of {events} recessions is a hit rate of {hr}; alarming in {fp} of {calm} calm months is a false-alarm rate of {far}.
+  reading:
+    values: {hr: 0.8, far: 0.07}
+    formats: {hr: '{:.0%}', far: '{:.0%}'}
+    question: A signal has a hit rate of {hr} and a false-alarm rate of {far}. What does that mean?
+    means: It flagged {hr} of the months that really were followed by a recession, and raised a wrong alarm in {far} of the calm months.
+    misreadings:
+      - When it raises an alarm, a recession follows {hr} of the time.
+      - Only {far} of its alarms are false.
+      - It is right in {hr} of all months.
+  in_finance: >-
+    Recession and credit warning signals are judged this way. Beware the trader's "hit ratio", which usually means the
+    share of winning trades: that is closer to precision than to this hit rate.
+  fools_you: >-
+    A low false-alarm rate can still mean most alarms are false, when events are rare.
+  related: [precision, roc_auc, decision_threshold, base_rate, confusion_matrix]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s22_threshold}]
+  sources: [sklearn_metrics]
+
+- id: precision
+  term: Precision
+  aliases: [positive predictive value, PPV]
+  short: Of all the alarms a model raises, the share that turn out to be real events.
+  plain: >-
+    It answers the question a decision-maker asks after an alarm: how worried should I be now? When events are rare,
+    it is low even for a decent signal, because most alarms fall in the many calm periods. The F1 score blends it with
+    the hit rate into one number, which hides the trade-off between them.
+  used_for: >-
+    Judging how much to trust each alarm, and how many false alarms you will have to act on, or ignore, for every real
+    event.
+  formula:
+    tex: '\mathrm{precision} = \frac{TP}{TP + FP}'
+    plain: Precision = hits ÷ all alarms
+    symbols:
+      - {symbol: TP, means: true positives (alarms followed by the event)}
+      - {symbol: FP, means: false positives (alarms that were not)}
+  reading:
+    values: {prec: 0.3, br: 0.12}
+    compute: {lift: prec / br}
+    formats: {prec: '{:.0%}', br: '{:.0%}', lift: '{:.1f}'}
+    question: A recession signal has a precision of {prec}, and recessions follow {br} of months. What does that mean?
+    means: When the signal is on, a recession follows {prec} of the time, against {br} for a month picked at random. Most alarms are false, yet each one makes a recession {lift} times as likely as usual.
+    misreadings:
+      - The signal catches {prec} of recessions.
+      - The signal is right in {prec} of all months.
+      - The signal is useless, because most of its alarms are false.
+    scale: {lo: 0, hi: 1, format: '{:.0%}', better: higher}
+    point: prec
+    marks:
+      - {at: br, label: alarms raised at random}
+  in_finance: >-
+    The P50 memo reports exactly this: how often a recession followed when the signal was on. A trading desk's hit
+    ratio (the share of winning trades) and a fraud team's share of flagged payments that were really fraud are
+    precision too.
+  fools_you: >-
+    It depends on the base rate: the same signal looks worse in calm decades and better in turbulent ones without
+    changing at all.
+  related: [hit_false_alarm, base_rate, confusion_matrix, decision_threshold]
+  in_cases: [{case: p50_yield_curve, step: s22_threshold}, {case: p50_yield_curve, step: s23_memo}]
+  sources: [sklearn_metrics]
+
+- id: decision_threshold
+  term: Decision threshold
+  aliases: [trigger level, probability threshold, cut-off probability, cut-off score, Youden's J]
+  short: The probability or signal level at which you act, turning a forecast into a decision.
+  plain: >-
+    Choosing it means weighing the cost of missed events against the cost of false alarms. The P50 case picks it
+    by maximising hit rate minus false-alarm rate on training data only, then reports the error rates at that
+    level.
+  used_for: >-
+    Turning a probability into an action, and choosing which kind of error you would rather make.
+  in_finance: >-
+    Lenders call it the cut-off score: applicants below it are declined. Moving it trades loans that later default
+    against good customers turned away, a choice priced in money rather than in accuracy.
+  fools_you: >-
+    A level tuned on the test period looks great and is worthless; it must be fixed before you look.
+  related: [hit_false_alarm, precision, roc_auc, ks_statistic, out_of_sample]
+  in_cases: [{case: p50_yield_curve, step: s21_threshold_card}, {case: p50_yield_curve, step: s22_threshold}]
+
+- id: roc_auc
+  term: ROC curve and AUC
+  aliases: [AUC, ROC, ROC curve, ROC AUC, AUROC, area under the curve]
+  short: A plot of hit rate against false-alarm rate across every possible threshold, and the area under it, which measures how well a model ranks cases.
+  plain: >-
+    An area of one half is no better than a coin toss, below one half the model ranks backwards, and one is perfect
+    ranking. It depends neither on a single threshold nor on the base rate, which makes it handy for comparing models.
+    In the P50 case it compares the two spreads.
+  used_for: >-
+    Comparing models by how well they put risky cases above safe ones, before any threshold is chosen.
+  reading:
+    values: {auc: 0.78}
+    compute: {pct: auc, gini: 2 * auc - 1}
+    formats: {auc: '{:.2f}', pct: '{:.0%}', gini: '{:.2f}'}
+    question: What does an AUC of {auc} mean?
+    means: Take one month that was followed by a recession and one that was not. In {pct} of such pairs the model gives the recession month the higher score. A coin toss manages half the pairs; a perfect ranking, all of them.
+    misreadings:
+      - The model classifies {pct} of months correctly.
+      - When the model raises an alarm, a recession follows {pct} of the time.
+      - The model catches {pct} of recessions.
+    scale: {lo: 0.5, hi: 1, format: '{:.1f}', better: higher}
+    point: auc
+    marks:
+      - {at: 0.5, label: coin toss}
+      - {at: 1, label: perfect ranking}
+    bands:
+      - {upto: 0.7, label: below acceptable}
+      - {upto: 0.8, label: acceptable}
+      - {upto: 0.9, label: excellent}
+      - {upto: 1, label: outstanding}
+    bands_source: casrai_auc_bands
+  in_finance: >-
+    Credit-risk teams quote the same skill as the Gini coefficient, or accuracy ratio, which is twice the area minus
+    one: {gini} for this model. Banks validating rating systems report it next to the KS statistic.
+  fools_you: >-
+    Good ranking is not good probabilities: a model can rank perfectly and still say "five percent" when the
+    truth is fifty.
+  related: [gini_accuracy_ratio, hit_false_alarm, ks_statistic, calibration, brier_score]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s19_result}, {case: p50_yield_curve, step: s19b_roc_card}]
+  sources: [estrella_mishkin_1996, sklearn_metrics]
+
+- id: gini_accuracy_ratio
+  term: Gini coefficient (accuracy ratio)
+  aliases: [accuracy ratio, Gini, Gini coefficient, Somers' D, cumulative accuracy profile, CAP curve]
+  short: The credit-scoring measure of how well a model separates borrowers who default from those who repay, from zero for guessing to one for perfect.
+  plain: >-
+    It comes from the cumulative accuracy profile: sort borrowers from riskiest score to safest and plot the share of
+    all defaulters caught as you go down the list. The ratio compares the area your model gains over random sorting
+    with the area a perfect model would gain. It holds exactly the same information as the ROC area, rescaled.
+  used_for: >-
+    Reporting and comparing the ranking power of credit scorecards and rating systems, the way banks and their
+    supervisors usually quote it.
+  formula:
+    tex: '\mathrm{Gini} = AR = 2 \times AUC - 1'
+    plain: Gini (accuracy ratio) = 2 × AUC − 1
+    symbols:
+      - {symbol: AR, means: 'accuracy ratio, the same number'}
+      - {symbol: AUC, means: area under the ROC curve}
+  reading:
+    values: {gini: 0.56}
+    compute: {auc: (gini + 1) / 2, pct: (gini + 1) / 2, gpct: gini}
+    formats: {gini: '{:.2f}', auc: '{:.2f}', pct: '{:.0%}', gpct: '{:.0%}'}
+    question: A credit scorecard has a Gini of {gini}. What does that mean?
+    means: It ranks borrowers well above guessing. It is the same skill as an AUC of {auc}. Take one borrower who defaulted and one who repaid, and {pct} of the time the defaulter has the riskier score.
+    misreadings:
+      - '{gpct} of the borrowers will default.'
+      - The scorecard is right about {gpct} of borrowers.
+      - The borrowers' incomes are unequal, with an inequality index of {gini}.
+    scale: {lo: 0, hi: 1, format: '{:.1f}', better: higher}
+    point: gini
+    marks:
+      - {at: 0, label: random sorting}
+      - {at: 1, label: perfect sorting}
+  in_finance: >-
+    This is the finance name for the ROC area's skill. Banks validating scorecards quote it with the KS statistic;
+    because the two areas are linked by a fixed formula, they always agree on which model ranks better.
+  fools_you: >-
+    It shares its name with the economists' Gini coefficient of income inequality, a different measure. And like the
+    ROC area, it says nothing about whether the default probabilities themselves are right.
+  related: [roc_auc, ks_statistic, credit_scoring, calibration]
+  sources: [engelmann_ar_auc_2003, mathworks_scorecard_metrics]
+
+- id: brier_score
+  term: Brier score
+  aliases: [Brier, Brier skill score]
+  short: The average squared difference between forecast probabilities and what actually happened, where lower is better.
+  plain: >-
+    It rewards being confident and right and punishes confident mistakes. Comparing it with the score of always
+    forecasting the base rate gives a skill score, as the P50 case does.
+  used_for: >-
+    Scoring the probabilities themselves, not just their ranking, against the lazy forecast that always says the base
+    rate.
+  formula:
+    tex: 'BS = \frac{1}{N}\sum_{i=1}^{N} (p_{i} - o_{i})^{2}'
+    plain: Brier score = average of (forecast probability − outcome)², with outcome 1 or 0
+    symbols:
+      - {symbol: p i, means: forecast probability}
+      - {symbol: o i, means: what happened (1 or 0)}
+  reading:
+    values: {bs: 0.08, br: 0.12, half: 0.5}
+    compute: {lazy: br * (1 - br), coin: half * half, skill: 1 - bs / (br * (1 - br)), bspct: bs}
+    formats: {bs: '{:.2f}', br: '{:.0%}', half: '{:.0%}', lazy: '{:.3f}', coin: '{:.2f}', skill: '{:.0%}', bspct: '{:.0%}'}
+    question: A recession model has a Brier score of {bs}, and recessions follow {br} of months. Is that good?
+    means: Lower is better. Always forecasting {br} would score {lazy}, so the model beats the lazy forecast, with a skill score of {skill}. Saying {half} every month would score {coin}.
+    misreadings:
+      - '{bspct} of its forecasts are wrong.'
+      - Higher is better, so the model is weak.
+      - It ranks recession months above calm months {bspct} of the time.
+    scale: {lo: 0, hi: coin, format: '{:.2f}', better: lower}
+    point: bs
+    marks:
+      - {at: 0, label: perfect forecasts}
+      - {at: lazy, label: always forecasting the base rate}
+      - {at: coin, label: always saying fifty-fifty}
+  example:
+    values: {p1: 0.8, o1: 1, p2: 0.3, o2: 0, p3: 0.6, o3: 0, n: 3}
+    compute: {bs: ((p1 - o1) ** 2 + (p2 - o2) ** 2 + (p3 - o3) ** 2) / n}
+    formats: {p1: '{:.0%}', o1: '{:.0f}', p2: '{:.0%}', o2: '{:.0f}', p3: '{:.0%}', o3: '{:.0f}', n: '{:.0f}', bs: '{:.3f}'}
+    text: Forecasts of {p1}, {p2} and {p3} for outcomes of {o1}, {o2} and {o3} score {bs}.
+  in_finance: >-
+    Used to score recession-probability forecasts, as in the P50 case, and default-probability forecasts when credit
+    models are validated. The meaning is the same as in statistics.
+  fools_you: >-
+    With rare events a lazy base-rate forecast already scores well, so always compare against that benchmark.
+  related: [calibration, base_rate, roc_auc]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s19_result}]
+  sources: [sklearn_metrics]
+
+- id: calibration
+  term: Calibration
+  aliases: [calibrated, well-calibrated, PD calibration]
+  short: Whether forecast probabilities match how often things actually happen, so that events given seventy percent happen about seventy percent of the time.
+  plain: >-
+    It is separate from ranking skill. The P50 debrief stresses that a model can order months well and still give
+    badly matched probabilities, which matters if the PM acts on the number itself.
+  used_for: >-
+    Checking that a forecast's probabilities can be taken at face value, which matters whenever someone acts on the
+    number rather than on the ranking.
+  reading:
+    values: {said: 0.3, got: 0.29}
+    formats: {said: '{:.0%}', got: '{:.0%}'}
+    question: Months the model gave about {said} were followed by a recession {got} of the time. What does that show?
+    means: In that range the model is well calibrated, its probabilities match how often recessions really followed. It says nothing yet about how well it ranks months.
+    misreadings:
+      - The model is right {got} of the time.
+      - The model ranks months well.
+      - The model catches {got} of recessions.
+  in_finance: >-
+    Banks call it PD calibration: for each rating grade, the predicted probability of default is compared with the
+    default rate that followed. Validation checks it separately from the ranking power measured by the Gini
+    coefficient.
+  fools_you: >-
+    Perfectly matched forecasts can still be useless if they never move away from the base rate.
+  related: [brier_score, roc_auc, base_rate, probit_logit, gini_accuracy_ratio]
+  in_cases: [{case: p50_yield_curve, step: s24_debrief_card}]
+  sources: [bcbs_wp14]

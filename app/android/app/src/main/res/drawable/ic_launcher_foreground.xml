@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive-icon foreground (108dp canvas, keep marks inside the central 66dp safe zone).
+     A line that bends upward at a point marked with a highlighter dot: the threshold every case ends on. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- faint axis -->
+    <path
+        android:pathData="M30,76 L78,76"
+        android:strokeColor="#F2F4F1"
+        android:strokeAlpha="0.35"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+    <!-- the line with a break -->
+    <path
+        android:pathData="M30,68 L53,60 L78,33"
+        android:strokeColor="#F2F4F1"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- highlighter dot at the break, ringed in ink so it reads on the line -->
+    <path
+        android:pathData="M53,60 m-7.5,0 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0"
+        android:fillColor="#1B2A4A" />
+    <path
+        android:pathData="M53,60 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0"
+        android:fillColor="#F6D84A" />
+</vector>

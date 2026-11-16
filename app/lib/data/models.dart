@@ -1,6 +1,8 @@
 /// Plain data classes parsed from content.sqlite rows (JSON written by pipeline/build_content.py).
 library;
 
+import 'dart:convert';
+
 const phaseOrder = ['brief', 'frame', 'predict', 'data', 'explore', 'model', 'decide', 'debrief'];
 const phaseLabels = {
   'brief': 'Brief',
@@ -43,6 +45,9 @@ class CaseInfo {
   List<String> get sources => List<String>.from(json['sources'] as List);
   List<String> get allowedLiterals => List<String>.from(json['allowed_literals'] as List? ?? const []);
   Map<String, dynamic> get debrief => json['debrief'] as Map<String, dynamic>;
+
+  /// Chart whose first data series is drawn on the cover and on this case's card.
+  String? get signatureChart => json['signature_chart'] as String?;
 }
 
 class Option {
@@ -105,6 +110,12 @@ class StepData {
     return s == null ? null : (file: s['file'] as String, name: s['name'] as String);
   }
 
+  /// Real pipeline code shown beside this step for reference (any step type).
+  List<({String file, String name})> get contextSnippets => [
+        for (final s in (json['context_snippets'] as List? ?? const []))
+          (file: (s as Map<String, dynamic>)['file'] as String, name: s['name'] as String)
+      ];
+
   Map<String, dynamic>? get rubric => json['rubric'] as Map<String, dynamic>?;
   bool get isGraded => gradedTypes.contains(type);
   bool get isInfo => type == 'code_read' || type == 'concept_card';
@@ -125,6 +136,17 @@ class SourceRef {
   String get key => json['key'] as String;
   String get title => json['title'] as String;
   String get authors => json['authors'] as String;
+
+  /// Authors as readable text (the bundle stores a JSON list for multi-author sources).
+  String get authorNames {
+    final a = authors.trim();
+    if (!a.startsWith('[')) return a;
+    try {
+      return List<String>.from(jsonDecode(a) as List).join(', ');
+    } on FormatException {
+      return a;
+    }
+  }
   String get year => json['year'] as String;
   String get url => json['url'] as String;
   String get quote => json['quote'] as String;

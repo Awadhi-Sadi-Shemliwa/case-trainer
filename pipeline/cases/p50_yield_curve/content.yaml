@@ -18,6 +18,7 @@ sources: [estrella_mishkin_1996, nyfed_ycfaq, johansson_meldrum_2018]
 datasets: [fred_T10Y2Y, fred_T10Y3M, fred_USREC]
 allowed_literals: [T10Y2Y, T10Y3M, 2s10s, 10y-3m, 10-year, 2-year, 3-month, 10y, "0/1", R2]
 
+signature_chart: p50_spread_recessions   # drawn on the cover and the case card (first data series)
 steps:
 # ============================================================== 1 BRIEF
 - id: s01_brief
@@ -237,6 +238,7 @@ steps:
 - id: s08_clean_blanks
   phase: data
   type: cleaning_justification
+  context_snippets: [{file: clean.py, name: load_daily}, {file: clean.py, name: to_monthly}]
   title: Justify dropping the blank days
   transform: drop_blank_t10y2y
   prompt: >-
@@ -349,6 +351,7 @@ steps:
 - id: s11_clean_recession_months
   phase: data
   type: cleaning_justification
+  context_snippets: [{file: clean.py, name: model_sample}]
   title: Why drop months already in recession?
   transform: exclude_current_recession
   prompt: >-
@@ -683,6 +686,7 @@ steps:
 - id: s15_hac_card
   phase: model
   type: concept_card
+  context_snippets: [{file: analyse.py, name: probit_hac}]
   title: Why HAC standard errors?
   prompt: Overlapping targets make the evidence look stronger than it is.
   body: >-
@@ -810,6 +814,7 @@ steps:
 - id: s19_result
   phase: model
   type: result_explain
+  context_snippets: [{file: analyse.py, name: expanding_oos}]
   title: Interpret the out-of-sample results
   chart: p50_oos_probability
   prompt: >-
@@ -931,6 +936,7 @@ steps:
 - id: s20_numeric_lead
   phase: model
   type: numeric
+  context_snippets: [{file: analyse.py, name: lead_table}]
   title: Read the lead time
   prompt: >-
     From the 2s10s lead-time table, what is the median number of months between the first inversion and
@@ -943,6 +949,7 @@ steps:
 - id: s21_threshold_card
   phase: decide
   type: concept_card
+  context_snippets: [{file: analyse.py, name: choose_threshold}]
   title: How the trigger was chosen
   prompt: The trigger was chosen BEFORE the test period, but on very little evidence.
   body: >-
@@ -959,6 +966,7 @@ steps:
 - id: s22_threshold
   phase: decide
   type: decision_threshold
+  context_snippets: [{file: analyse.py, name: choose_threshold}]
   title: State the trigger
   prompt: >-
     Write the rule the PM can follow: the trigger metric, its value, the action, and the error rate to

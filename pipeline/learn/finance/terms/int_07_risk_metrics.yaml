@@ -1,0 +1,208 @@
+# Intermediate lesson 7 · Measuring risk. Words 161-170.
+- id: expected_return
+  term: Expected return
+  aliases: [mean return, average return, expected returns]
+  short: What an investment would earn on average if it could be repeated many times, weighting each outcome by its probability.
+  plain: >-
+    It is a long-run average, not a forecast for any single year. Investors set it against risk to decide
+    whether something is worth holding.
+  formula:
+    tex: 'E[R] = \sum_{i} p_{i}\,R_{i}'
+    plain: Expected return = sum of (probability × return) over all outcomes
+    symbols:
+      - {symbol: p i, means: probability of outcome i}
+      - {symbol: R i, means: return in outcome i}
+  example:
+    values: {p1: 0.5, r1: 0.12, p2: 0.3, r2: 0.02, p3: 0.2, r3: -0.15}
+    compute: {er: p1 * r1 + p2 * r2 + p3 * r3}
+    formats: {p1: '{:.0%}', r1: '{:.0%}', p2: '{:.0%}', r2: '{:.0%}', p3: '{:.0%}', r3: '{:.0%}', er: '{:.1%}'}
+    text: With a {p1} chance of {r1}, a {p2} chance of {r2} and a {p3} chance of {r3}, the expected return is {er}.
+  fools_you: >-
+    You will almost never earn exactly this in a given year; real outcomes are spread around it.
+  related: [variance, standard_deviation, risk_premium, sharpe_ratio]
+
+- id: variance
+  term: Variance
+  short: The average of the squared differences from the mean, a measure of how spread out returns are.
+  plain: >-
+    Squaring makes every difference positive and punishes big ones more. The result is in squared units, which
+    is awkward to read, so we usually take its square root: the standard deviation.
+  formula:
+    tex: '\sigma^{2} = \frac{1}{n - 1}\sum_{i=1}^{n} (R_{i} - \bar{R})^{2}'
+    plain: Sample variance = sum of squared differences from the mean ÷ (number of returns − 1)
+    symbols:
+      - {symbol: R i, means: each return}
+      - {symbol: R bar, means: their mean}
+      - {symbol: n, means: number of returns}
+  example:
+    values: {a: 0.05, b: -0.02, c: 0.08, n: 3}
+    compute: {m: (a + b + c) / n, v: ((a - m) ** 2 + (b - m) ** 2 + (c - m) ** 2) / (n - 1)}
+    formats: {a: '{:.0%}', b: '{:.0%}', c: '{:.0%}', n: '{:.0f}', m: '{:.2%}', v: '{:.5f}'}
+    text: Yearly returns of {a}, {b} and {c} have a mean of {m} and a sample variance of {v}.
+  fools_you: >-
+    A small value measured in calm years can hide the danger of rare, extreme moves.
+  related: [standard_deviation, covariance, volatility]
+
+- id: standard_deviation
+  term: Standard deviation
+  aliases: [standard deviations, std dev]
+  short: The square root of variance, the typical distance of returns from their average, in the same units as the returns.
+  plain: >-
+    For roughly bell-shaped returns, about two in three periods land within one of these of the average. For
+    returns, this number is what finance means by volatility.
+  formula:
+    tex: '\sigma = \sqrt{\sigma^{2}}'
+    plain: Standard deviation = square root of variance
+    symbols:
+      - {symbol: σ², means: variance}
+  example:
+    values: {a: 0.05, b: -0.02, c: 0.08, n: 3}
+    compute: {m: (a + b + c) / n, s: 'sqrt(((a - m) ** 2 + (b - m) ** 2 + (c - m) ** 2) / (n - 1))'}
+    formats: {a: '{:.0%}', b: '{:.0%}', c: '{:.0%}', n: '{:.0f}', m: '{:.2%}', s: '{:.2%}'}
+    text: Returns of {a}, {b} and {c} have a standard deviation of {s} a year around their mean of {m}.
+  fools_you: >-
+    Returns are not truly bell-shaped: crashes happen far more often than the bell curve suggests.
+  related: [variance, volatility, sharpe_ratio, value_at_risk]
+
+- id: covariance
+  term: Covariance
+  short: A measure of whether two returns tend to move together (positive) or in opposite directions (negative).
+  plain: >-
+    It is the building block of portfolio risk: two holdings that move in opposite directions cancel out some
+    of each other's swings. Its size depends on the units, so correlation is easier to read.
+  formula:
+    tex: '\mathrm{Cov}(X, Y) = \frac{1}{n - 1}\sum_{i} (x_{i} - \bar{x})(y_{i} - \bar{y})'
+    plain: Covariance = sum of (x difference × y difference) ÷ (n − 1)
+    symbols:
+      - {symbol: x i and y i, means: paired returns}
+      - {symbol: x bar and y bar, means: their means}
+  fools_you: >-
+    It is measured in the past, and it can change sign in a crisis.
+  related: [correlation, variance, beta, portfolio]
+
+- id: correlation
+  term: Correlation
+  aliases: [correlated, correlations, correlation coefficient]
+  short: A number between minus one and plus one that measures how closely two things move together in a straight-line way.
+  plain: >-
+    Plus one means lockstep, zero means no straight-line link, minus one means exact opposites. Spreading money
+    across holdings works best when these numbers are low or negative.
+  formula:
+    tex: '\rho = \frac{\mathrm{Cov}(X, Y)}{\sigma_{X}\,\sigma_{Y}}'
+    plain: Correlation = covariance ÷ (standard deviation of X × standard deviation of Y)
+    symbols:
+      - {symbol: ρ, means: correlation}
+      - {symbol: σ X and σ Y, means: standard deviations}
+  example:
+    values: {cov: 0.0012, sx: 0.04, sy: 0.05}
+    compute: {rho: cov / (sx * sy)}
+    formats: {cov: '{:.4f}', sx: '{:.0%}', sy: '{:.0%}', rho: '{:.2f}'}
+    text: A covariance of {cov} between returns with standard deviations of {sx} and {sy} is a correlation of {rho}.
+  fools_you: >-
+    It is not cause, and it can jump towards one in a crash, just when you need diversification most.
+  related: [covariance, diversification, beta, cointegration]
+
+- id: beta
+  term: Beta
+  aliases: [market beta, betas]
+  short: How much a share tends to move when the whole market moves, a measure of its exposure to market-wide risk.
+  plain: >-
+    Above one, the share amplifies market moves; below one, it dampens them. It is used to estimate the cost of
+    equity and to hedge portfolios.
+  formula:
+    tex: '\beta = \frac{\mathrm{Cov}(R_{i}, R_{m})}{\mathrm{Var}(R_{m})}'
+    plain: Beta = covariance of the share with the market ÷ variance of the market
+    symbols:
+      - {symbol: R i, means: the share's returns}
+      - {symbol: R m, means: the market's returns}
+  example:
+    values: {cov: 0.0216, vm: 0.018}
+    compute: {b: cov / vm}
+    formats: {cov: '{:.4f}', vm: '{:.3f}', b: '{:.1f}'}
+    text: A share whose returns have a covariance of {cov} with a market of variance {vm} has a beta of {b}, so it tends to move about {b} times as much as the market.
+  fools_you: >-
+    It is estimated from the past and can drift, and it ignores risks specific to the company.
+  related: [capm, systematic_risk, cost_of_equity, correlation]
+
+- id: alpha
+  term: Alpha
+  aliases: [Jensen's alpha]
+  short: The part of a return not explained by exposure to the market or other known factors, often read as skill.
+  plain: >-
+    A fund that beat the market only by taking more market risk has none. The real thing is rare, and it tends
+    to shrink once many people chase the same idea.
+  formula:
+    tex: '\alpha = R_{p} - [r_{f} + \beta\,(R_{m} - r_{f})]'
+    plain: Alpha = portfolio return − (risk-free rate + beta × market excess return)
+    symbols:
+      - {symbol: R p, means: portfolio return}
+      - {symbol: R m, means: market return}
+      - {symbol: r f, means: risk-free rate}
+  example:
+    values: {rp: 0.11, rf: 0.04, b: 1.1, rm: 0.09}
+    compute: {a: rp - (rf + b * (rm - rf))}
+    formats: {rp: '{:.0%}', rf: '{:.0%}', b: '{:.1f}', rm: '{:.0%}', a: '{:.1%}'}
+    text: A fund returning {rp} with a beta of {b}, when the market returned {rm} and the risk-free rate was {rf}, has an alpha of {a}.
+  fools_you: >-
+    Apparent skill is often luck, or exposure to a factor you forgot to measure.
+  related: [beta, capm, alpha_decay, factor_model, benchmark]
+
+- id: sharpe_ratio
+  term: Sharpe ratio
+  short: Average return above the risk-free rate divided by the standard deviation of returns, the return earned per unit of risk.
+  plain: >-
+    It lets you compare a calm strategy with a wild one: higher is better. A strategy with a high value can be
+    scaled up with borrowing.
+  formula:
+    tex: 'SR = \frac{R_{p} - r_{f}}{\sigma_{p}}'
+    plain: Sharpe ratio = (portfolio return − risk-free rate) ÷ standard deviation
+    symbols:
+      - {symbol: R p, means: average portfolio return}
+      - {symbol: r f, means: risk-free rate}
+      - {symbol: σ p, means: standard deviation of the portfolio}
+  example:
+    values: {rp: 0.08, rf: 0.03, s: 0.12}
+    compute: {sr: (rp - rf) / s}
+    formats: {rp: '{:.0%}', rf: '{:.0%}', s: '{:.0%}', sr: '{:.2f}'}
+    text: A strategy returning {rp} a year with a standard deviation of {s}, when cash pays {rf}, has a ratio of {sr}.
+  fools_you: >-
+    It treats upside and downside swings alike, and it can look great for strategies that hide rare large
+    losses.
+  related: [standard_deviation, excess_return, information_ratio, tangency_portfolio]
+
+- id: value_at_risk
+  term: Value at risk (VaR)
+  aliases: [VaR, value-at-risk]
+  short: A loss level that should be exceeded only on a small, stated share of days, such as one day in a hundred.
+  plain: >-
+    Banks and funds report it daily because it is easy to communicate: on most days we expect to lose less than
+    this.
+  formula:
+    tex: '\mathrm{VaR} \approx z\,\sigma\,V'
+    plain: VaR ≈ z-score × daily volatility × portfolio value (normal-distribution version)
+    symbols:
+      - {symbol: z, means: number of standard deviations for the chosen confidence}
+      - {symbol: σ, means: daily volatility}
+      - {symbol: V, means: portfolio value}
+  example:
+    values: {V: 1000000, s: 0.012, z: 2.33}
+    compute: {var: z * s * V}
+    formats: {V: '£{:,.0f}', s: '{:.1%}', z: '{:.2f}', var: '£{:,.0f}'}
+    text: For a {V} portfolio with daily volatility of {s}, a z-score of {z} puts the one-in-a-hundred-days loss at about {var}.
+  fools_you: >-
+    It says nothing about how bad the bad days are. Losses beyond it can be many times larger, which is what
+    tail risk is about.
+  related: [tail_risk, standard_deviation, fat_tails]
+
+- id: tail_risk
+  term: Tail risk
+  aliases: [tail risks, black swan]
+  short: The risk of rare, extreme outcomes far from the average, such as a market crash.
+  plain: >-
+    Financial returns have more extreme days than a bell curve predicts. These dangers are what
+    diversification, value at risk and Sharpe ratios tend to understate. Expected shortfall, the average loss
+    on the worst days, measures them more directly.
+  fools_you: >-
+    Rare is not never: a strategy that wins a little most years and occasionally loses everything is common,
+    and dangerous.
+  related: [value_at_risk, fat_tails, drawdown, volatility]

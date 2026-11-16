@@ -1,0 +1,124 @@
+# Quant lesson 5 · Backtesting honestly. Words 241-250. Close to the P50 method steps.
+- id: backtest
+  term: Backtest
+  aliases: [backtests, backtesting]
+  short: Simulating how a trading rule would have performed on historical data, as if it had been used at the time.
+  plain: >-
+    It is the quant's experiment. Done honestly, it uses only information available at each date, includes
+    costs, and is checked on data not used to design the rule.
+  fools_you: >-
+    A spectacular result is easy to produce and usually means something went wrong; treat it with suspicion.
+  related: [look_ahead_bias, survivorship_bias, transaction_costs, out_of_sample]
+  sources: [book_dixon_ml_finance]
+
+- id: look_ahead_bias
+  term: Look-ahead bias
+  aliases: [look-ahead leakage, lookahead bias, data leakage, leakage]
+  short: Using information in a test that would not have been available at the time, which makes results look better than they could have been.
+  plain: >-
+    Classic examples: using revised economic data instead of what was published then, or building a target
+    that peeks at rows from the future. The P50 case is built to avoid it, and one of its steps shows what it
+    does to a model.
+  fools_you: >-
+    It can hide in one line of code, such as a shift in the wrong direction, and turn noise into a brilliant
+    result.
+  related: [backtest, embargo, expanding_window, out_of_sample]
+  in_cases: [{case: p50_yield_curve, step: s16_read_oos}]
+  sources: [book_dixon_ml_finance]
+
+- id: survivorship_bias
+  term: Survivorship bias
+  aliases: [survivorship]
+  short: Testing only on things that still exist today, such as companies still listed, and ignoring those that failed along the way.
+  plain: >-
+    A backtest on today's index members quietly leaves out companies that went bust, so past returns look too
+    good. Fund studies suffer from it when closed funds vanish from databases.
+  fools_you: >-
+    It is invisible: the missing data never appears to warn you.
+  related: [backtest, data_snooping]
+
+- id: data_snooping
+  term: Data snooping
+  aliases: [data-snooping, p-hacking, data mining bias]
+  short: Finding patterns by testing many ideas on the same data until one looks good by chance.
+  plain: >-
+    Try a thousand random rules and dozens will look significant at the usual level. Corrections for multiple
+    testing, and fresh out-of-sample data, are the defence.
+  fools_you: >-
+    Every tweak you try counts as a test, including the ones you forget to report.
+  related: [multiple_testing, overfitting, out_of_sample, alpha_decay]
+
+- id: overfitting
+  term: Overfitting
+  aliases: [overfit, overfitted, over-fitting]
+  short: Building a model so closely around past data that it captures noise and fails on new data.
+  plain: >-
+    Complex models with many parameters can fit history perfectly and predict nothing. Simpler models,
+    regularisation and honest out-of-sample tests guard against it.
+  fools_you: >-
+    A better in-sample fit is often a warning sign, not an achievement.
+  related: [data_snooping, out_of_sample, walk_forward_validation]
+  sources: [book_dixon_ml_finance]
+
+- id: walk_forward_validation
+  term: Walk-forward validation
+  aliases: [walk-forward, walk-forward testing, rolling validation]
+  short: Testing a model by repeatedly training on the past and predicting the next period, then stepping forward in time.
+  plain: >-
+    It mimics real use: the model is retrained as data arrives and always predicts the unknown future.
+  fools_you: >-
+    If you choose settings by looking at these results many times, you have snooped again.
+  related: [expanding_window, embargo, out_of_sample, time_series]
+  sources: [book_dixon_ml_finance]
+
+- id: expanding_window
+  term: Expanding window
+  aliases: [expanding-window, recursive window]
+  short: A walk-forward scheme where each refit uses all data from the start up to the current date, so the training set keeps growing.
+  plain: >-
+    The P50 case refits its model every month on all months whose outcome was already known. A rolling window
+    instead drops the oldest data to adapt faster to change.
+  fools_you: >-
+    Using all of the past assumes old data is still relevant; after a regime change it can drag the model the
+    wrong way.
+  related: [walk_forward_validation, embargo, regime_switching]
+  in_cases: [{case: p50_yield_curve, step: s16_read_oos}]
+
+- id: embargo
+  term: Embargo
+  aliases: [embargo period, purging]
+  short: A gap left between training data and the forecast date so that no training target overlaps the period being predicted.
+  plain: >-
+    When each target looks months ahead, the most recent training rows would otherwise contain outcomes not yet
+    known at forecast time. A gap as long as the target's horizon removes the leak.
+  fools_you: >-
+    A gap of one period is not enough when targets span many periods; it must match the horizon.
+  related: [look_ahead_bias, expanding_window, walk_forward_validation]
+  in_cases: [{case: p50_yield_curve, step: s16_read_oos}]
+
+- id: out_of_sample
+  term: Out-of-sample test
+  aliases: [out-of-sample, pseudo-out-of-sample, holdout, hold-out]
+  short: Testing a model on data it never saw while being fitted or designed, the only honest measure of predictive skill.
+  plain: >-
+    In-sample fit rewards memorising; this kind of test rewards learning. "Pseudo" versions, as in the P50 case,
+    use data that already existed when the method was designed, so some leakage of judgement is possible.
+  fools_you: >-
+    Peeking at the test set and going back to change the model quietly turns it into training data.
+  related: [overfitting, walk_forward_validation, backtest]
+  in_cases: [{case: p50_yield_curve, step: s16_read_oos}, {case: p50_yield_curve, step: s19_result}]
+
+- id: portfolio_turnover
+  term: Portfolio turnover
+  aliases: [trading turnover]
+  short: How much of a portfolio is bought and sold over a period, as a share of its value.
+  plain: >-
+    High turnover means high trading costs and often more tax. A strategy's edge has to clear these costs.
+  example:
+    values: {traded: 1500000, V: 1000000}
+    compute: {to: traded / V}
+    formats: {traded: '£{:,.0f}', V: '£{:,.0f}', to: '{:.0%}'}
+    text: Trading {traded} in a year on a portfolio of {V} is a turnover of {to}.
+  fools_you: >-
+    It hides in rebalancing: even an index fund trades whenever the index changes.
+  related: [transaction_costs, rebalancing, backtest]

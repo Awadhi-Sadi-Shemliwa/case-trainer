@@ -1,0 +1,172 @@
+# Lesson 5 · Bonds. Words 41-50.
+- id: bond
+  term: Bond
+  aliases: [bonds, fixed income]
+  short: A loan you make to a government or company in return for regular interest and your money back on a set date.
+  plain: >-
+    Buying one makes you a lender. The borrower promises fixed interest payments, called coupons, and
+    repayment of the face value at maturity. These IOUs are traded after they are issued, so their prices move
+    with interest rates and with how safe the borrower looks. Together they are called fixed income.
+  fools_you: >-
+    They are not risk-free: prices fall when rates rise, inflation eats into fixed payments, and companies can
+    fail to pay.
+  related: [issuer, coupon, face_value, maturity, yield]
+  sources: [finra_bonds]
+
+- id: issuer
+  term: Issuer
+  aliases: [issuers]
+  short: The government, company or other body that raises money by selling a security such as a bond or a share.
+  plain: >-
+    The issuer is whoever owes the payments. A bond's safety depends mostly on it: a stable government
+    borrowing in its own currency is very unlikely to miss a payment, while a struggling company might.
+  fools_you: >-
+    The bank or broker that sells you a bond is usually not its issuer, and does not promise to pay you if
+    the issuer fails.
+  related: [bond, default, credit_rating]
+  sources: [finra_bonds]
+
+- id: coupon
+  term: Coupon
+  aliases: [coupons, coupon rate]
+  short: The fixed interest a bond pays each year, set as a percentage of its face value when it is issued.
+  plain: >-
+    The name comes from old paper bonds, which had coupons you cut off and handed in to collect interest.
+    Whatever happens to the bond's market price later, the coupon payments stay the same. Many government
+    bonds pay them in two halves each year.
+  formula:
+    tex: 'C = c \times F'
+    plain: Coupon payment per year = coupon rate × face value
+    symbols:
+      - {symbol: c, means: the coupon rate}
+      - {symbol: F, means: the face value}
+  example:
+    values: {F: 1000, c: 0.045, two: 2}
+    compute: {C: c * F, half: c * F / two}
+    formats: {F: '£{:,.0f}', c: '{:.1%}', C: '£{:,.0f}', half: '£{:,.2f}', two: '{:.0f}'}
+    text: A bond with a face value of {F} and a coupon of {c} pays {C} a year, often as {two} payments of {half}.
+  fools_you: >-
+    The coupon is not the return you get if you buy later. Pay more than face value and your yield ends up
+    below the coupon.
+  related: [bond, face_value, yield]
+  sources: [treasurydirect_bonds]
+
+- id: face_value
+  term: Face value
+  aliases: [par value, face amount]
+  short: The amount a bond repays at the end of its life, and the base its yearly interest is calculated on.
+  plain: >-
+    Bonds are usually sold at or near this amount when they are first issued. Afterwards their price moves
+    above it when interest rates fall and below it when rates rise. Whatever the price in between, the issuer
+    repays this amount at the end, unless it defaults.
+  fools_you: >-
+    It is not what the bond is worth today; that is its market price.
+  related: [bond, coupon, maturity]
+  sources: [finra_bonds]
+
+- id: maturity
+  term: Maturity
+  aliases: [maturity date, maturities]
+  short: The date when a bond ends and the borrower must repay what it borrowed.
+  plain: >-
+    Lives range from a few weeks to several decades. Short bonds hardly react to interest-rate changes; long
+    ones swing more, because their fixed payments stretch further into the future. The P50 case compares
+    rates on government debt with different lives, such as three months, two years and ten years.
+  fools_you: >-
+    Some bonds can be repaid early by the issuer, so their real life may be shorter than the stated one.
+  related: [bond, yield_curve, short_long_rates]
+  sources: [treasurydirect_bonds]
+
+- id: yield
+  term: Yield
+  aliases: [yields, bond yield, bond yields]
+  short: The yearly return a bond gives at today's price, combining its interest payments with any gain or loss at the end.
+  plain: >-
+    Think of it as the bond's interest rate seen through today's price. If you buy for less than face value,
+    you earn the coupons plus the pull back up to face value, so you earn more than the coupon rate. When
+    people say "the ten-year rose", they mean ten-year government bonds got cheaper.
+  formula:
+    tex: 'y_{\mathrm{current}} = \frac{C}{P}'
+    plain: Current yield = yearly coupon ÷ price
+    symbols:
+      - {symbol: C, means: coupon paid per year}
+      - {symbol: P, means: the bond's price today}
+  example:
+    values: {C: 45, P: 960}
+    compute: {y: C / P}
+    formats: {C: '£{:,.0f}', P: '£{:,.0f}', y: '{:.2%}'}
+    text: A bond paying {C} a year that costs {P} has a current yield of {y}.
+  fools_you: >-
+    The simple version above ignores the gain or loss at the end. The full measure, yield to maturity, includes
+    it, and that is what the yield curve plots.
+  related: [coupon, price_yield, yield_curve, yield_to_maturity]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [finra_bonds]
+
+- id: price_yield
+  term: Bond price and yield seesaw
+  short: When interest rates rise, existing bonds fall in price, and when rates fall they rise, because their fixed payments become less or more attractive.
+  plain: >-
+    Say you hold a bond paying four percent and new bonds start paying five. Nobody will pay full price for
+    yours, so its price drops until its return matches five percent. The longer the time until the bond ends,
+    the bigger the price move for the same change in rates.
+  formula:
+    tex: 'P = \sum_{t=1}^{n} \frac{C}{(1+y)^{t}} + \frac{F}{(1+y)^{n}}'
+    plain: Price = sum of each coupon discounted at the yield + face value discounted at the yield
+    symbols:
+      - {symbol: C, means: yearly coupon}
+      - {symbol: F, means: face value}
+      - {symbol: y, means: yield}
+      - {symbol: n, means: years to maturity}
+  example:
+    values: {C: 40, F: 1000, y1: 0.04, y2: 0.05}
+    compute: {p1: C / (1 + y1) + (C + F) / (1 + y1) ** 2, p2: C / (1 + y2) + (C + F) / (1 + y2) ** 2}
+    formats: {C: '£{:,.0f}', F: '£{:,.0f}', y1: '{:.0%}', y2: '{:.0%}', p1: '£{:,.2f}', p2: '£{:,.2f}'}
+    text: A two-year bond paying {C} a year on {F} is worth {p1} when yields are {y1}, but only {p2} if yields rise to {y2}.
+  fools_you: >-
+    A bond's price can fall when nothing is wrong with the borrower; rising rates alone do it. Holding until
+    the end avoids the loss only if you never need to sell early.
+  related: [yield, bond, duration, discounting]
+  sources: [finra_bonds]
+
+- id: treasury
+  term: Treasuries (US government bonds)
+  aliases: [Treasury, Treasuries, US Treasury, US Treasuries, T-bill, T-bills, Treasury bills]
+  short: Debt sold by the US government, from short bills to medium notes and long-dated bonds.
+  plain: >-
+    Because the US government borrows in its own currency and is seen as very unlikely to miss a payment,
+    this debt is treated as the safest dollar asset, and its yields are the benchmark for other dollar rates.
+    The P50 case uses the gap between ten-year and shorter yields on this debt.
+  fools_you: >-
+    Safe from default is not safe from loss: a long-dated bond can fall sharply in price when rates jump.
+  related: [bond, yield_curve, risk_free_rate, federal_reserve]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [treasurydirect_bonds]
+
+- id: default
+  term: Default
+  aliases: [defaults, defaulted]
+  short: Failing to make a promised payment of interest or principal on time.
+  plain: >-
+    It can mean a missed coupon, a missed repayment or a forced change to the terms. Lenders usually get back
+    only part of what they were owed. The chance of this happening is the main thing separating a risky
+    company bond from a safe government one, and it is what credit scoring tries to predict.
+  fools_you: >-
+    It is not the same as going bust: a borrower can miss a payment and then agree new terms without shutting
+    down.
+  related: [credit_rating, issuer, credit_spread, probability_of_default]
+  sources: [finra_bonds]
+
+- id: credit_rating
+  term: Credit rating
+  aliases: [credit ratings, rating agency, rating agencies, downgrade]
+  short: A grade from an agency such as S&P or Moody's on how likely a borrower is to pay its debts on time.
+  plain: >-
+    Grades run from AAA, the safest, down through BBB to C and D (already in default). Bonds rated BBB- or
+    higher are "investment grade"; below that they are "high yield" or "junk" and must pay more interest. Many
+    funds may only hold investment-grade bonds, so a downgrade can force them to sell.
+  fools_you: >-
+    Ratings are opinions and can lag reality. Some top-rated mortgage securities collapsed in the global
+    financial crisis.
+  related: [default, investment_grade, high_yield, credit_spread]
+  sources: [finra_bonds]

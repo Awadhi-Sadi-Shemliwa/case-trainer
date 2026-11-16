@@ -1,0 +1,147 @@
+# Quant lesson 4 · Factors and benchmarks. Words 231-240.
+- id: capm
+  term: CAPM (capital asset pricing model)
+  aliases: [CAPM, capital asset pricing model]
+  short: A model saying an asset's expected return equals the risk-free rate plus its beta times the market's risk premium.
+  plain: >-
+    Its key idea is that only market-wide risk is rewarded, because company-specific risk can be diversified
+    away. It is simple and widely used for the cost of equity, even though tests show it explains returns only
+    partly.
+  formula:
+    tex: 'E[R_{i}] = r_{f} + \beta_{i}\,(E[R_{m}] - r_{f})'
+    plain: Expected return = risk-free rate + beta × (expected market return − risk-free rate)
+    symbols:
+      - {symbol: β i, means: the asset's beta}
+      - {symbol: 'E[R m]', means: expected market return}
+      - {symbol: r f, means: risk-free rate}
+  example:
+    values: {rf: 0.035, b: 0.8, mrp: 0.055}
+    compute: {er: rf + b * mrp}
+    formats: {rf: '{:.1%}', b: '{:.1f}', mrp: '{:.1%}', er: '{:.1%}'}
+    text: With a risk-free rate of {rf}, a beta of {b} and a market premium of {mrp}, the model expects {er} a year.
+  fools_you: >-
+    Real data fit it poorly; treat it as a starting point and a shared language, not a law.
+  related: [beta, systematic_risk, cost_of_equity, factor_model]
+  sources: [book_dixon_ml_finance]
+
+- id: systematic_risk
+  term: Systematic risk
+  aliases: [market risk, undiversifiable risk, non-diversifiable risk]
+  short: Risk that hits the whole market at once, such as a recession or a rate shock, and cannot be removed by diversifying.
+  plain: >-
+    Because everyone bears it, investors demand to be paid for it. Beta measures how much of it a share
+    carries.
+  fools_you: >-
+    In practice the market is not the only rewarded risk; factor models add others such as size and value.
+  related: [idiosyncratic_risk, beta, capm, diversification]
+
+- id: idiosyncratic_risk
+  term: Idiosyncratic risk
+  aliases: [specific risk, diversifiable risk, unsystematic risk]
+  short: Risk particular to one company or asset, such as a failed product or a fraud, which largely cancels out in a diversified portfolio.
+  plain: >-
+    Since it can be diversified away cheaply, theory says it earns no extra expected return.
+  fools_you: >-
+    A concentrated portfolio carries a lot of it, whether or not it is rewarded.
+  related: [systematic_risk, diversification, portfolio]
+
+- id: factor_model
+  term: Factor model
+  aliases: [factor models, multi-factor model]
+  short: A model explaining asset returns through their exposures to a few common drivers, such as the market, company size or value.
+  plain: >-
+    Instead of every pair of assets needing its own correlation, assets move together through shared factors.
+    This simplifies risk estimates and separates skill from factor exposure. The ML in Finance book extends such
+    models with neural networks.
+  formula:
+    tex: 'R_{i} - r_{f} = \alpha_{i} + \sum_{k} \beta_{i,k}\,F_{k} + \varepsilon_{i}'
+    plain: Excess return = alpha + sum of (loading × factor return) + noise
+    symbols:
+      - {symbol: F k, means: return of factor k}
+      - {symbol: β i k, means: loading of asset i on factor k}
+  fools_you: >-
+    With enough candidate factors, some will "explain" returns by chance; many published factors fail out of
+    sample.
+  related: [capm, fama_french, factor_loading, alpha]
+  sources: [book_dixon_ml_finance]
+
+- id: fama_french
+  term: Fama-French three-factor model
+  aliases: [Fama-French, Fama-French factors, size factor, value factor]
+  short: A factor model that adds two drivers to the market, small firms minus big firms and cheap shares minus expensive ones.
+  plain: >-
+    It was built to explain why small and cheap shares earned more than CAPM predicted. Later versions add
+    profitability and investment factors.
+  fools_you: >-
+    Factor rewards vary a lot over time; the value factor went through long losing spells.
+  related: [factor_model, capm, factor_loading]
+
+- id: factor_loading
+  term: Factor loading
+  aliases: [factor loadings, factor exposure, factor exposures]
+  short: How strongly an asset's returns respond to a given factor, the factor's coefficient in a factor model.
+  plain: >-
+    A fund with a large exposure to value behaves like a basket of cheap shares. Loadings are estimated by
+    regressing returns on factor returns.
+  fools_you: >-
+    Loadings estimated over one period can change; a fund's style can drift.
+  related: [factor_model, beta, fama_french]
+
+- id: tracking_error
+  term: Tracking error
+  aliases: [tracking errors, active risk]
+  short: The standard deviation of the gap between a fund's returns and its benchmark's returns.
+  plain: >-
+    Index funds aim for almost none; active funds take some on purpose to try to beat the benchmark.
+  formula:
+    tex: '\mathrm{TE} = \sigma(R_{p} - R_{b})'
+    plain: Tracking error = standard deviation of (fund return − benchmark return)
+    symbols:
+      - {symbol: R p, means: fund return}
+      - {symbol: R b, means: benchmark return}
+  fools_you: >-
+    Low means close to the benchmark, not safe: the benchmark itself can fall a long way.
+  related: [benchmark, information_ratio, index_fund]
+
+- id: information_ratio
+  term: Information ratio
+  aliases: [information ratios]
+  short: Average return above the benchmark divided by tracking error, the extra return earned per unit of active risk.
+  plain: >-
+    It is the active manager's version of the Sharpe ratio.
+  formula:
+    tex: 'IR = \frac{\overline{R_{p} - R_{b}}}{\mathrm{TE}}'
+    plain: Information ratio = average (fund − benchmark) return ÷ tracking error
+    symbols:
+      - {symbol: R p − R b, means: return above the benchmark}
+      - {symbol: TE, means: tracking error}
+  example:
+    values: {ex: 0.015, te: 0.04}
+    compute: {ir: ex / te}
+    formats: {ex: '{:.1%}', te: '{:.0%}', ir: '{:.2f}'}
+    text: Beating the benchmark by {ex} a year with a tracking error of {te} is a ratio of {ir}.
+  fools_you: >-
+    A high figure over a short period is often luck; it takes many years to judge.
+  related: [tracking_error, sharpe_ratio, alpha]
+
+- id: efficient_market_hypothesis
+  term: Efficient market hypothesis
+  aliases: [efficient markets, EMH, market efficiency]
+  short: The idea that market prices already reflect the information available, so beating the market consistently is very hard.
+  plain: >-
+    In strong forms it says nobody can beat the market except by luck or by taking more risk. Evidence suggests
+    markets are efficient enough that most attempts fail, though some patterns persist.
+  fools_you: >-
+    It does not say prices are right; it says mistakes are hard to profit from reliably.
+  related: [random_walk, arbitrage, alpha_decay, passive_investing]
+
+- id: alpha_decay
+  term: Alpha decay
+  aliases: [signal decay, crowding]
+  short: The fading of a trading strategy's edge over time as others discover and trade on the same idea.
+  plain: >-
+    Published anomalies tend to weaken after publication. Quant funds hunt constantly for new signals because
+    old ones get crowded.
+  fools_you: >-
+    A backtest on old data shows the edge from before everyone knew about it.
+  related: [alpha, backtest, efficient_market_hypothesis, data_snooping]

@@ -5,6 +5,11 @@ import '../../data/models.dart';
 import '../../data/progress_db.dart';
 import '../../engine/placeholders.dart';
 import '../../grading/grader.dart';
+import '../../learn/course.dart';
+import '../../learn/term_linker.dart';
+import '../theme/tokens.dart';
+import '../widgets/code_context.dart';
+import '../widgets/highlight.dart';
 import '../widgets/prose.dart';
 
 /// Everything a step widget needs, handed down by the case player.
@@ -17,6 +22,8 @@ class StepScope {
     required this.progress,
     required this.grader,
     required this.onProgress,
+    this.linker,
+    this.onTerm,
   });
 
   final CaseInfo caseInfo;
@@ -26,6 +33,10 @@ class StepScope {
   final ProgressDb progress;
   final Grader grader;
   final VoidCallback onProgress;
+
+  /// Finance words in step text become tappable when set (finance cases).
+  final TermLinker? linker;
+  final void Function(GlossaryTerm term)? onTerm;
 
   String get caseId => caseInfo.id;
 
@@ -49,9 +60,14 @@ class StepHeader extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final s = scope.step;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 12, children: [
-      Text(s.title, style: t.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
-      if (s.body != null) Prose(s.body!, resolver: scope.resolver),
-      Prose(s.prompt, resolver: scope.resolver, style: t.bodyLarge?.copyWith(fontWeight: FontWeight.w600)),
+      Text(s.title, style: t.headlineSmall),
+      if (s.body != null) Prose(s.body!, resolver: scope.resolver, linker: scope.linker, onTerm: scope.onTerm),
+      Prose(s.prompt,
+          resolver: scope.resolver,
+          style: t.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+          linker: scope.linker,
+          onTerm: scope.onTerm),
+      if (s.contextSnippets.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: CodeContext(scope)),
     ]);
   }
 }
@@ -68,23 +84,20 @@ class FeedbackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final (bg, fg, icon) = switch (kind) {
-      FeedbackKind.correct => (cs.primaryContainer, cs.onPrimaryContainer, Icons.check_circle_outline),
-      FeedbackKind.wrong => (cs.errorContainer, cs.onErrorContainer, Icons.highlight_off),
-      FeedbackKind.info => (cs.secondaryContainer, cs.onSecondaryContainer, Icons.info_outline),
+    final c = context.colors;
+    final (rule, bg, icon) = switch (kind) {
+      FeedbackKind.correct => (c.good, c.goodContainer, Icons.check_circle_rounded),
+      FeedbackKind.wrong => (c.bad, c.badContainer, Icons.highlight_off_rounded),
+      FeedbackKind.info => (c.ink, c.paperRaised, Icons.info_outline_rounded),
     };
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 6, children: [
-        Row(spacing: 8, children: [
-          Icon(icon, color: fg),
-          Expanded(child: Text(title, style: TextStyle(fontWeight: FontWeight.w700, color: fg))),
-        ]),
-        if (message != null && message!.isNotEmpty)
-          Prose(message!, resolver: resolver, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: fg)),
-      ]),
+    return RuledNote(
+      title: title,
+      icon: icon,
+      rule: rule,
+      background: bg,
+      child: message != null && message!.isNotEmpty
+          ? Prose(message!, resolver: resolver, style: Theme.of(context).textTheme.bodyMedium)
+          : const SizedBox.shrink(),
     );
   }
 }
@@ -128,7 +141,7 @@ class ScaffoldGuide extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = templates[scaffold];
     if (items == null) return const SizedBox.shrink();
-    return Card.outlined(
+    return Card(
       margin: EdgeInsets.zero,
       child: ExpansionTile(
         shape: const Border(),

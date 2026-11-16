@@ -1,0 +1,196 @@
+# Quant lesson 1 · Returns, properly. Words 201-210.
+- id: simple_return
+  term: Simple return
+  aliases: [simple returns, arithmetic return, percentage return]
+  short: The change in price over one period divided by the starting price, plus any income, as a fraction or percentage.
+  plain: >-
+    It is the everyday return from the first lesson, written for one step of a price series. Returns of
+    different holdings over the same period combine neatly: a portfolio's return is their weighted sum.
+  formula:
+    tex: 'R_{t} = \frac{P_{t}}{P_{t-1}} - 1'
+    plain: Return = price now ÷ price before − 1
+    symbols:
+      - {symbol: P t, means: price at the end of the period}
+      - {symbol: P t−1, means: price at the start}
+  example:
+    values: {p0: 100, p1: 104}
+    compute: {r: p1 / p0 - 1}
+    formats: {p0: '£{:,.0f}', p1: '£{:,.0f}', r: '{:.1%}'}
+    text: A price moving from {p0} to {p1} is a return of {r}.
+  fools_you: >-
+    They do not add up across time: a gain of a tenth followed by a loss of a tenth leaves you down, not flat.
+  related: [log_return, cumulative_return, return]
+  sources: [book_dixon_ml_finance]
+
+- id: log_return
+  term: Log return
+  aliases: [log returns, logarithmic return, continuously compounded return]
+  short: The natural logarithm of the ratio of today's price to yesterday's, which adds up neatly over time.
+  plain: >-
+    Quant models like them because a return over many periods is just the sum of the single-period ones, and
+    they behave better statistically. For small moves they are almost equal to simple returns.
+  formula:
+    tex: 'r_{t} = \ln\frac{P_{t}}{P_{t-1}}'
+    plain: Log return = natural log of (price now ÷ price before)
+    symbols:
+      - {symbol: P t, means: price now}
+      - {symbol: P t−1, means: price one period before}
+  example:
+    values: {p0: 100, p1: 110, p2: 99}
+    compute: {s1: p1 / p0 - 1, s2: p2 / p1 - 1, l1: log(p1 / p0), l2: log(p2 / p1), ltot: log(p2 / p0)}
+    formats: {p0: '£{:,.0f}', p1: '£{:,.0f}', p2: '£{:,.0f}', s1: '{:.1%}', s2: '{:.1%}', l1: '{:.2%}', l2: '{:.2%}', ltot: '{:.2%}'}
+    text: A price going {p0}, {p1}, {p2} has simple returns of {s1} and {s2}, but log returns of {l1} and {l2}, which add up exactly to the total of {ltot}.
+  fools_you: >-
+    They do not add up across holdings in a portfolio; for weighting holdings, go back to simple returns.
+  related: [simple_return, continuous_compounding, cumulative_return]
+  sources: [book_dixon_ml_finance]
+
+- id: cumulative_return
+  term: Cumulative return
+  aliases: [cumulative returns]
+  short: The total gain or loss over many periods, found by multiplying together one plus each period's return.
+  plain: >-
+    Plotting it through time gives the familiar "growth of a pound" chart for a strategy.
+  formula:
+    tex: 'R_{\mathrm{cum}} = \prod_{t=1}^{n} (1 + R_{t}) - 1'
+    plain: Cumulative return = (1 + R1) × (1 + R2) × … × (1 + Rn) − 1
+    symbols:
+      - {symbol: R t, means: return in period t}
+  example:
+    values: {a: 0.10, b: -0.10, c: 0.05}
+    compute: {cum: (1 + a) * (1 + b) * (1 + c) - 1, added: a + b + c}
+    formats: {a: '{:.0%}', b: '{:.0%}', c: '{:.0%}', cum: '{:.2%}', added: '{:.0%}'}
+    text: Returns of {a}, {b} and {c} compound to {cum}, not the {added} you get by adding them.
+  fools_you: >-
+    Adding returns overstates growth whenever returns vary; always compound.
+  related: [simple_return, log_return, geometric_mean_return]
+
+- id: annualised_return
+  term: Annualised return
+  aliases: [annualized return, annual return]
+  short: A return over any length of time converted into the equivalent steady rate per year.
+  plain: >-
+    It lets you compare a strategy tested over three months with one tested over ten years. It is the same idea
+    as the compound annual growth rate.
+  formula:
+    tex: 'R_{\mathrm{ann}} = (1 + R_{\mathrm{total}})^{1/T} - 1'
+    plain: Annualised return = (1 + total return)^(1 ÷ years) − 1
+    symbols:
+      - {symbol: R total, means: return over the whole period}
+      - {symbol: T, means: length of the period in years}
+  example:
+    values: {tot: 0.5, yrs: 4}
+    compute: {ann: (1 + tot) ** (1 / yrs) - 1}
+    formats: {tot: '{:.0%}', yrs: '{:.0f}', ann: '{:.2%}'}
+    text: A total return of {tot} over {yrs} years is an annualised return of {ann}.
+  fools_you: >-
+    Annualising a short lucky streak gives absurd numbers; short samples need wide error bars.
+  related: [cagr, annualised_volatility, cumulative_return]
+
+- id: annualised_volatility
+  term: Annualised volatility
+  aliases: [annualized volatility, annual volatility]
+  short: The standard deviation of returns scaled to a one-year horizon, so data of different frequencies can be compared.
+  plain: >-
+    Volatility grows with the square root of time, not with time itself, as long as returns are independent
+    from one period to the next.
+  formula:
+    tex: '\sigma_{\mathrm{year}} = \sigma_{\mathrm{period}}\,\sqrt{m}'
+    plain: Yearly volatility = volatility per period × square root of periods per year
+    symbols:
+      - {symbol: σ period, means: standard deviation per day or month}
+      - {symbol: m, means: periods per year (trading days or months)}
+  example:
+    values: {sd: 0.012, n: 252}
+    compute: {sa: sd * sqrt(n)}
+    formats: {sd: '{:.1%}', n: '{:.0f}', sa: '{:.1%}'}
+    text: A daily standard deviation of {sd} over {n} trading days is an annualised volatility of {sa}.
+  fools_you: >-
+    If returns trend (positive autocorrelation), the square-root rule understates the true yearly risk.
+  related: [standard_deviation, volatility, autocorrelation]
+
+- id: excess_return
+  term: Excess return
+  aliases: [excess returns]
+  short: The return of an asset minus a reference return, usually the risk-free rate or a benchmark.
+  plain: >-
+    Measuring performance above cash is the honest test: earning a modest return when cash pays the same adds
+    nothing. Sharpe ratios and factor models are built on this quantity.
+  example:
+    values: {r: 0.09, rf: 0.035}
+    compute: {ex: r - rf}
+    formats: {r: '{:.0%}', rf: '{:.1%}', ex: '{:.1%}'}
+    text: Earning {r} when the risk-free rate is {rf} is an excess return of {ex}.
+  fools_you: >-
+    Always check what was subtracted; measuring against the wrong yardstick can flatter a fund.
+  related: [risk_free_rate, sharpe_ratio, risk_premium, alpha]
+
+- id: geometric_mean_return
+  term: Geometric mean return
+  aliases: [geometric average return, geometric mean]
+  short: The average yearly growth rate that compounding actually delivered, which is below the simple average whenever returns vary.
+  plain: >-
+    Volatility drags this figure below the arithmetic mean; the bigger the swings, the bigger the drag. It is
+    what your wealth actually experiences.
+  formula:
+    tex: '\bar{R}_{g} = \left(\prod_{t=1}^{n} (1 + R_{t})\right)^{1/n} - 1'
+    plain: Geometric mean = (product of (1 + each return))^(1 ÷ n) − 1
+    symbols:
+      - {symbol: R t, means: return in period t}
+      - {symbol: n, means: number of periods}
+  example:
+    values: {a: 0.5, b: -0.5, two: 2}
+    compute: {arith: (a + b) / two, shrink: 1 - ((1 + a) * (1 + b)) ** (1 / two)}
+    formats: {a: '{:.0%}', b: '{:.0%}', two: '{:.0f}', arith: '{:.0%}', shrink: '{:.1%}'}
+    text: Returns of {a} then {b} average {arith}, yet the money actually shrank by {shrink} a year.
+  fools_you: >-
+    A strategy can have a positive average return and still lose money over time if it is volatile enough.
+  related: [cumulative_return, cagr, volatility]
+
+- id: continuous_compounding
+  term: Continuous compounding
+  aliases: [continuously compounded]
+  short: Compounding interest infinitely often, so that growth is given by the exponential function.
+  plain: >-
+    It is the limit as compounding periods get shorter and shorter. Pricing models such as Black-Scholes use it
+    because the maths is cleaner, and it links log returns to interest rates.
+  formula:
+    tex: 'FV = PV\,e^{r t}'
+    plain: Future value = present value × e^(rate × years)
+    symbols:
+      - {symbol: e, means: the mathematical constant (about 2.718)}
+      - {symbol: r, means: continuously compounded rate}
+      - {symbol: t, means: years}
+  example:
+    values: {pv: 1000, r: 0.05, t: 10}
+    compute: {fv: pv * exp(r * t), yearly: pv * (1 + r) ** t}
+    formats: {pv: '£{:,.0f}', r: '{:.0%}', t: '{:.0f}', fv: '£{:,.2f}', yearly: '£{:,.2f}'}
+    text: '{pv} at {r} for {t} years grows to {fv} with continuous compounding, against {yearly} with yearly compounding.'
+  fools_you: >-
+    At low rates the difference from yearly compounding is small; an elegant formula is not a different
+    product.
+  related: [compound_interest, log_return, black_scholes]
+
+- id: fat_tails
+  term: Fat tails
+  aliases: [fat tail, heavy tails, kurtosis, excess kurtosis]
+  short: When extreme outcomes happen far more often than a bell-shaped normal distribution predicts.
+  plain: >-
+    Daily share returns contain many more very large moves than a normal distribution allows; kurtosis measures
+    this. Models that assume normality understate the chance of crashes.
+  fools_you: >-
+    A model can work for years and fail spectacularly on the one day that matters, because the warning data
+    was rare.
+  related: [tail_risk, value_at_risk, skewness, standard_deviation]
+
+- id: skewness
+  term: Skewness
+  aliases: [skew, negatively skewed, positively skewed]
+  short: How lopsided a distribution is, whether the big surprises tend to fall on the downside or on the upside.
+  plain: >-
+    Share returns are often negatively skewed: many small gains and a few large losses. Lottery-like assets are
+    positively skewed. Investors usually dislike negative skew and want to be paid for bearing it.
+  fools_you: >-
+    Two strategies with the same average and volatility can have very different skew, and very different
+    chances of ruin.
+  related: [fat_tails, tail_risk, expected_return]

@@ -16,6 +16,7 @@ sources: [bts_delay_cause_stats]
 datasets: [bts_ontime_2025_01, bts_ontime_2025_07, bts_ontime_2025_12]
 allowed_literals: ["2025", hhmm]
 
+signature_chart: p3_propagation_by_turn   # drawn on the cover and the case card (first data series)
 steps:
 # ============================================================== BRIEF
 - id: s01_brief
@@ -193,6 +194,7 @@ steps:
 - id: s07_justify_turns
   phase: data
   type: cleaning_justification
+  context_snippets: [{file: clean.py, name: turn_bands}, {file: clean.py, name: turn_window}]
   title: Justify the turn-time window
   transform: rotation_turn_window
   prompt: >-
@@ -275,6 +277,7 @@ steps:
 - id: s08_cause_card
   phase: explore
   type: concept_card
+  context_snippets: [{file: analyse.py, name: cause_shares}]
   title: What delay minutes are coded as
   chart: p3_cause_share_by_month
   prompt: Carriers label each delayed flight's minutes by cause, and BTS prorates them by minutes.
@@ -289,6 +292,7 @@ steps:
 - id: s09_chart_heatmap
   phase: explore
   type: chart_explain
+  context_snippets: [{file: analyse.py, name: hub_hour}]
   title: Read the airport-by-hour heatmap
   chart: p3_hub_hour_heatmap
   prompt: Explain what this chart shows and what it does NOT show.
@@ -511,6 +515,7 @@ steps:
 - id: s13_result
   phase: model
   type: result_explain
+  context_snippets: [{file: analyse.py, name: pass_through}]
   title: Interpret the propagation results
   chart: p3_propagation_by_turn
   prompt: >-
@@ -608,6 +613,7 @@ steps:
 - id: s14_numeric
   phase: model
   type: numeric
+  context_snippets: [{file: analyse.py, name: hub_hour}]
   title: Read the evening build-up
   prompt: At the busiest airports, how many times higher is late-aircraft delay per departure in the evening than in the morning?
   answer_key: la_evening_ratio
@@ -618,6 +624,7 @@ steps:
 - id: s15_threshold
   phase: decide
   type: decision_threshold
+  context_snippets: [{file: analyse.py, name: carrier_weighted}, {file: analyse.py, name: buffer_rule}]
   title: Set the buffer rule
   prompt: >-
     State the rule for the schedule planners: the metric, the target, the minimum turn, where to apply it, what to

@@ -1,0 +1,207 @@
+# Lesson 3 · The economy. Words 21-30.
+- id: economy
+  term: Economy
+  aliases: [the economy, economies]
+  short: All the producing, buying, selling and working that goes on in a country or region.
+  plain: >-
+    Households work and spend, firms hire and invest, the government taxes and spends, and goods flow in and
+    out across borders. When people talk about "the economy doing well", they mostly mean that output and
+    jobs are growing and prices are fairly stable.
+  fools_you: >-
+    The economy is not the stock market. Share prices can rise while many households struggle, and the other
+    way round.
+  related: [gdp, economic_growth, recession]
+
+- id: gdp
+  term: GDP (gross domestic product)
+  aliases: [GDP, gross domestic product]
+  short: The total value of all final goods and services produced in a country over a period, usually a quarter or a year.
+  plain: >-
+    Count everything made for final users, from haircuts and cars to software and meals out, add it up at
+    market prices, and you have this measure of a country's output. "Final" matters: the steel in a car is
+    not counted twice. Its changes are the most watched sign of whether an economy is growing or shrinking.
+  formula:
+    tex: 'GDP = C + I + G + (X - M)'
+    plain: GDP = consumer spending + investment + government spending + (exports − imports)
+    symbols:
+      - {symbol: C, means: spending by households}
+      - {symbol: I, means: investment by businesses}
+      - {symbol: G, means: government spending on goods and services}
+      - {symbol: X − M, means: exports minus imports}
+  example:
+    values: {C: 1500, I: 350, G: 450, X: 700, M: 750}
+    compute: {Y: C + I + G + X - M}
+    formats: {C: '£{:,.0f}bn', I: '£{:,.0f}bn', G: '£{:,.0f}bn', X: '£{:,.0f}bn', M: '£{:,.0f}bn', Y: '£{:,.0f}bn'}
+    text: With household spending of {C}, investment of {I}, government spending of {G}, exports of {X} and imports of {M}, GDP is {Y}.
+  fools_you: >-
+    It measures output, not wellbeing. It ignores unpaid work and how income is shared, and rebuilding after
+    a disaster adds to it.
+  related: [economy, economic_growth, recession, real_vs_nominal]
+  in_cases: [{case: p50_yield_curve, step: s02_question}]
+  sources: [bea_gdp]
+
+- id: economic_growth
+  term: Economic growth
+  short: A rise in how much an economy produces, usually measured as the percentage change in output after inflation.
+  plain: >-
+    Growth comes from more people working, more and better equipment, and better ways of doing things. It is
+    usually quoted for a quarter or a year. Steady growth lets incomes and tax receipts rise; when it turns
+    negative for a while, the economy is shrinking.
+  formula:
+    tex: 'g = \frac{Y_{t} - Y_{t-1}}{Y_{t-1}}'
+    plain: Growth = (output this period − output last period) ÷ output last period
+    symbols:
+      - {symbol: Y t, means: output this period}
+      - {symbol: Y t−1, means: output in the previous period}
+  example:
+    values: {Y0: 2250, Y1: 2295}
+    compute: {g: (Y1 - Y0) / Y0}
+    formats: {Y0: '£{:,.0f}bn', Y1: '£{:,.0f}bn', g: '{:.1%}'}
+    text: If output rises from {Y0} to {Y1} after removing inflation, growth is {g}.
+  fools_you: >-
+    Headline growth can come from more people rather than richer people. Growth per person tells you more
+    about living standards.
+  related: [gdp, recession, business_cycle]
+  sources: [bea_gdp]
+
+- id: recession
+  term: Recession
+  aliases: [recessions]
+  short: A broad, lasting fall in economic activity, with output, jobs, incomes and spending shrinking across much of the economy.
+  plain: >-
+    In a downturn, firms sell less, so they cut hiring and investment; people lose jobs, so they spend less,
+    and the slowdown feeds on itself for a while. In the US, a committee at the National Bureau of Economic
+    Research dates these periods after the fact, looking at several measures rather than output alone. The
+    P50 case predicts a monthly indicator built from those dates.
+  fools_you: >-
+    "Two quarters of falling output" is a popular rule of thumb, not the definition used to date US
+    downturns. Official dates are usually announced well after the downturn has begun, so you only know for
+    sure in hindsight.
+  related: [business_cycle, gdp, unemployment_rate, leading_indicator, inversion]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}, {case: p50_yield_curve, step: s12_chart_spread}]
+  sources: [nber_business_cycle_dating]
+
+- id: business_cycle
+  term: Business cycle
+  aliases: [economic cycle]
+  short: The repeating pattern of an economy speeding up, peaking, slowing, hitting a low and recovering.
+  plain: >-
+    Expansion, peak, contraction and trough follow each other, but not on a timetable: expansions vary a lot
+    in length. Investors try to judge where we are in the cycle because different assets tend to do well at
+    different stages, for example shares in an early recovery and safe bonds as growth fades.
+  fools_you: >-
+    "Cycle" suggests regular timing, and there is none. Spotting the peak as it happens is very hard, which is
+    exactly why a warning sign like the yield curve gets so much attention.
+  related: [recession, economic_growth, leading_indicator]
+  in_cases: [{case: p50_yield_curve, step: s01_brief}]
+  sources: [nber_business_cycle_dating]
+
+- id: inflation
+  term: Inflation
+  short: A general rise in the prices of goods and services over time, so each pound buys a little less.
+  plain: >-
+    If the same basket of shopping costs more than it did a year ago, that rise is this word in action. A
+    little is normal, and most central banks aim for a low, steady rate. High or unpredictable price rises
+    hurt savers, make planning hard and usually lead central banks to raise interest rates.
+  formula:
+    tex: '\pi = \frac{P_{t} - P_{t-1}}{P_{t-1}}'
+    plain: Inflation = (price level now − price level a year ago) ÷ price level a year ago
+    symbols:
+      - {symbol: π, means: the inflation rate}
+      - {symbol: P, means: a price index such as CPI}
+  example:
+    values: {P0: 120, P1: 124.8}
+    compute: {pi: (P1 - P0) / P0}
+    formats: {P0: '{:.1f}', P1: '{:.1f}', pi: '{:.1%}'}
+    text: A price index that rises from {P0} to {P1} in a year shows inflation of {pi}.
+  fools_you: >-
+    Falling inflation does not mean falling prices, only prices rising more slowly than before.
+  related: [deflation, cpi, real_vs_nominal, monetary_policy]
+  sources: [boe_inflation_explainer]
+
+- id: deflation
+  term: Deflation
+  short: A general fall in prices over time, so money buys more than before.
+  plain: >-
+    Cheaper prices sound good, but widespread, lasting falls can do harm: people delay buying while they wait
+    for lower prices, firms' sales fall while their debts do not, and wages may be cut. Central banks usually
+    work hard to avoid it.
+  fools_you: >-
+    It is not the same as disinflation, which means inflation slowing down. Prices can still be rising while
+    inflation falls.
+  related: [inflation, cpi, monetary_policy]
+  sources: [boe_inflation_explainer]
+
+- id: cpi
+  term: Consumer price index (CPI)
+  aliases: [CPI, consumer price index, price index]
+  short: A measure of the average price of a fixed basket of everyday goods and services, followed over time.
+  plain: >-
+    Statisticians record the prices of hundreds of items, from bread to rent to train fares, weight them by
+    how much households spend on each, and combine them into one number. Its change over a year is the
+    headline inflation rate you see in the news.
+  formula:
+    tex: '\mathrm{CPI}_{t} = \frac{\mathrm{cost\ of\ basket}_{t}}{\mathrm{cost\ of\ basket}_{\mathrm{base}}} \times 100'
+    plain: Index = cost of the basket now ÷ cost in the base year × 100
+    symbols:
+      - {symbol: cost of basket, means: what the fixed shopping list costs}
+      - {symbol: base, means: the reference year the index is measured against}
+  example:
+    values: {b0: 250, b1: 262.5}
+    compute: {idx: b1 / b0 * 100}
+    formats: {b0: '£{:,.2f}', b1: '£{:,.2f}', idx: '{:.1f}'}
+    text: A basket that cost {b0} in the base year and costs {b1} now gives an index of {idx}.
+  fools_you: >-
+    Your own inflation can differ from the headline: if you spend more than the average household on rent or
+    energy, your costs may be rising faster.
+  related: [inflation, real_vs_nominal]
+  sources: [boe_inflation_explainer]
+
+- id: unemployment_rate
+  term: Unemployment rate
+  aliases: [unemployment]
+  short: The share of people who want a job and are looking for one but do not have one.
+  plain: >-
+    It is not the share of everyone without a job: students, retired people and others not looking are left
+    out of the count. It tends to rise in downturns and fall in expansions, but it often keeps rising for a
+    while after a downturn has ended.
+  formula:
+    tex: 'u = \frac{U}{E + U}'
+    plain: Rate = unemployed ÷ (employed + unemployed)
+    symbols:
+      - {symbol: U, means: people looking for work without a job}
+      - {symbol: E, means: people in work}
+  example:
+    values: {U: 1.5, E: 33.0}
+    compute: {u: U / (E + U)}
+    formats: {U: '{:.1f} million', E: '{:.1f} million', u: '{:.1%}'}
+    text: With {U} people out of work and looking, and {E} in work, the rate is {u}.
+  fools_you: >-
+    A falling rate is not always good news: it also falls when discouraged people stop looking and drop out
+    of the count.
+  related: [recession, economy, business_cycle]
+
+- id: real_vs_nominal
+  term: Real and nominal
+  aliases: [real terms, nominal terms, real interest rate, nominal interest rate, inflation-adjusted]
+  short: Nominal figures are in money as written at the time; real figures strip out inflation to show what that money can buy.
+  plain: >-
+    If your pay rises by three percent while prices rise by four, your nominal pay went up but your real pay
+    fell. The same goes for interest rates and output: economists usually talk about real growth, because more
+    pounds that each buy less is not progress.
+  formula:
+    tex: 'r_{\mathrm{real}} = \frac{1 + r_{\mathrm{nominal}}}{1 + \pi} - 1 \approx r_{\mathrm{nominal}} - \pi'
+    plain: Real rate = (1 + nominal rate) ÷ (1 + inflation) − 1, roughly nominal rate minus inflation
+    symbols:
+      - {symbol: r nominal, means: the rate as quoted}
+      - {symbol: π, means: inflation}
+  example:
+    values: {rn: 0.05, pi: 0.03}
+    compute: {rr: (1 + rn) / (1 + pi) - 1}
+    formats: {rn: '{:.0%}', pi: '{:.0%}', rr: '{:.2%}'}
+    text: Savings paying {rn} while inflation runs at {pi} earn a real return of {rr}.
+  fools_you: >-
+    Comparing sums from different years without adjusting for inflation makes the past look cheap and growth
+    look bigger than it was.
+  related: [inflation, cpi, interest_rate, gdp]
+  sources: [boe_inflation_explainer]

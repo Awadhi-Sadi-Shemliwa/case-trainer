@@ -1,0 +1,182 @@
+# Intermediate lesson 5 · Bonds, deeper. Words 141-150.
+- id: yield_to_maturity
+  term: Yield to maturity (YTM)
+  aliases: [YTM, yield-to-maturity, redemption yield]
+  short: The single rate that makes the present value of a bond's remaining payments equal its price today.
+  plain: >-
+    It is the bond's return if you hold it to the end and every payment arrives. Unlike current yield, it
+    includes the gain or loss as the price is pulled back to face value. Yield curves plot this measure.
+  formula:
+    tex: 'P = \sum_{t=1}^{n} \frac{C}{(1 + y)^{t}} + \frac{F}{(1 + y)^{n}}\quad \mathrm{(solve\ for\ }y\mathrm{)}'
+    plain: Find the yield y at which discounted coupons plus discounted face value equal the price
+    symbols:
+      - {symbol: P, means: price today}
+      - {symbol: C, means: yearly coupon}
+      - {symbol: F, means: face value}
+  example:
+    values: {C: 50, F: 1000, P: 990}
+    compute: {y: (C + F) / P - 1}
+    formats: {C: '£{:,.0f}', F: '£{:,.0f}', P: '£{:,.0f}', y: '{:.2%}'}
+    text: A bond with a year left, paying {C} plus {F} at the end and costing {P} today, has a yield to maturity of {y}.
+  fools_you: >-
+    It assumes coupons are reinvested at the same rate and that the borrower pays in full; neither is
+    guaranteed.
+  related: [yield, price_yield, yield_curve, zero_coupon_bond]
+  sources: [finra_bonds]
+
+- id: zero_coupon_bond
+  term: Zero-coupon bond
+  aliases: [zero-coupon bonds, zero coupon bond, discount bond]
+  short: A bond that pays no interest along the way, only its face value at the end, so it sells well below that value.
+  plain: >-
+    Its whole return comes from the price rising to face value. Short Treasury bills work this way. Yields on
+    such bonds at each maturity are the cleanest building blocks of a yield curve.
+  formula:
+    tex: 'P = \frac{F}{(1 + y)^{n}}'
+    plain: Price = face value ÷ (1 + yield)^years
+    symbols:
+      - {symbol: F, means: face value paid at the end}
+      - {symbol: y, means: yield}
+      - {symbol: n, means: years to maturity}
+  example:
+    values: {F: 1000, y: 0.04, n: 10}
+    compute: {P: F / (1 + y) ** n}
+    formats: {F: '£{:,.0f}', y: '{:.0%}', n: '{:.0f}', P: '£{:,.2f}'}
+    text: A bond paying {F} after {n} years and nothing before costs {P} today at a yield of {y}.
+  fools_you: >-
+    With no coupons to soften things, long ones swing hugely in price when rates move.
+  related: [bond, yield_to_maturity, treasury, duration]
+  sources: [treasurydirect_bonds]
+
+- id: duration
+  term: Duration
+  aliases: [modified duration, Macaulay duration]
+  short: How sensitive a bond's price is to interest rates, roughly the percentage price change for a one-point move in yield.
+  plain: >-
+    It is also the weighted average time until you receive the bond's cash, which is why long bonds with small
+    coupons score highest. A manager who expects rates to rise shortens it.
+  formula:
+    tex: '\frac{\Delta P}{P} \approx -D_{\mathrm{mod}}\,\Delta y'
+    plain: Percentage price change ≈ − modified duration × change in yield
+    symbols:
+      - {symbol: D mod, means: modified duration}
+      - {symbol: Δy, means: change in yield}
+  example:
+    values: {D: 7.5, dy: 0.005}
+    compute: {fall: D * dy}
+    formats: {D: '{:.1f}', dy: '{:.2%}', fall: '{:.2%}'}
+    text: A bond with a modified duration of {D} falls by about {fall} in price if yields rise by {dy}.
+  fools_you: >-
+    It is a straight-line estimate that works for small moves; for big jumps in rates, convexity matters too.
+  related: [convexity, price_yield, maturity, zero_coupon_bond]
+
+- id: convexity
+  term: Convexity
+  short: How a bond's sensitivity to rates itself changes as rates move, the bend a duration estimate misses.
+  plain: >-
+    Prices do not move in a straight line with yields: they rise a little more when yields fall than they drop
+    when yields rise by the same amount. That bend helps holders and matters most for long bonds and big
+    moves.
+  formula:
+    tex: '\frac{\Delta P}{P} \approx -D\,\Delta y + \frac{1}{2}\,C\,(\Delta y)^{2}'
+    plain: Percentage price change ≈ − duration × Δy + ½ × convexity × Δy²
+    symbols:
+      - {symbol: D, means: modified duration}
+      - {symbol: C, means: convexity}
+      - {symbol: Δy, means: change in yield}
+  example:
+    values: {D: 7.5, C: 70, dy: 0.01, half: 0.5}
+    compute: {lin: -D * dy, adj: -D * dy + half * C * dy ** 2}
+    formats: {D: '{:.1f}', C: '{:.0f}', dy: '{:.0%}', half: '{:.1f}', lin: '{:.2%}', adj: '{:.2%}'}
+    text: For a rise of {dy} in yield, duration alone predicts {lin}; adding convexity of {C} gives {adj}.
+  fools_you: >-
+    Some bonds bend the other way, such as mortgage securities that can be repaid early, which hurts holders
+    when rates fall.
+  related: [duration, price_yield, mortgage_backed_security]
+
+- id: credit_spread
+  term: Credit spread
+  aliases: [credit spreads]
+  short: The extra yield a riskier borrower's bond pays over a safe government bond of the same maturity.
+  plain: >-
+    It is the market's price for default risk and for the bond being harder to sell. These gaps widen when
+    investors grow nervous, often before and during recessions, so they are another warning light.
+  formula:
+    tex: 's_{\mathrm{credit}} = y_{\mathrm{company}} - y_{\mathrm{government}}'
+    plain: Credit spread = company bond yield − government bond yield (same maturity)
+    symbols:
+      - {symbol: y company, means: yield on the company bond}
+      - {symbol: y government, means: yield on the government bond}
+  example:
+    values: {yc: 0.062, yg: 0.041, k: 10000}
+    compute: {bp: (yc - yg) * k}
+    formats: {yc: '{:.1%}', yg: '{:.1%}', k: '{:,.0f}', bp: '{:.0f}'}
+    text: A company bond yielding {yc} against a government yield of {yg} has a spread of {bp} basis points.
+  fools_you: >-
+    A wide gap is not automatically a bargain; it may be fair pay for a real chance of default.
+  related: [spread, default, high_yield, investment_grade, credit_default_swap]
+  sources: [finra_bonds]
+
+- id: investment_grade
+  term: Investment grade
+  aliases: [investment-grade]
+  short: Bonds rated BBB- or higher, judged by rating agencies to carry a low risk of default.
+  plain: >-
+    Many pension funds and insurers may only hold these. Being cut below the line can force such holders to
+    sell, which is why a downgrade to junk moves prices sharply.
+  fools_you: >-
+    The bottom rung is not far from junk; quality varies a lot within the group.
+  related: [credit_rating, high_yield, credit_spread]
+  sources: [finra_bonds]
+
+- id: high_yield
+  term: High-yield (junk) bonds
+  aliases: [high yield, high-yield, junk bonds, junk bond]
+  short: Bonds rated below investment grade, which pay more interest because their issuers are more likely to default.
+  plain: >-
+    They behave partly like shares: fine when the economy is strong, painful in downturns, when defaults rise.
+    Their returns depend heavily on the economic cycle.
+  fools_you: >-
+    The headline yield is not what you will earn on average: some issuers will default and pay back only part.
+  related: [investment_grade, credit_rating, credit_spread, default]
+  sources: [finra_bonds]
+
+- id: sovereign_debt
+  term: Sovereign debt
+  aliases: [sovereign bonds, sovereign bond, government bonds, government bond]
+  short: Money borrowed by a national government, usually by selling bonds to investors at home and abroad.
+  plain: >-
+    A government borrowing in its own currency can always create money to pay, so outright default is rare,
+    though inflation can erode what lenders get back. Governments borrowing in foreign currencies have
+    defaulted many times.
+  fools_you: >-
+    Low default risk is not low price risk: long-dated government bonds can fall sharply when rates rise.
+  related: [treasury, gilt, government_debt_deficit, bond]
+
+- id: gilt
+  term: Gilt
+  aliases: [gilts, UK gilts, UK government bonds]
+  short: A bond issued by the UK government, the sterling counterpart of a US Treasury.
+  plain: >-
+    The name comes from the gilded edges of old certificates. These bonds set the benchmark for UK interest
+    rates, and UK pension funds hold large amounts of them.
+  fools_you: >-
+    Even these can swing wildly: sharp rises in yields cause big losses for holders who are forced to sell.
+  related: [sovereign_debt, treasury, inflation_linked_bond]
+
+- id: inflation_linked_bond
+  term: Inflation-linked bond
+  aliases: [inflation-linked bonds, index-linked gilt, index-linked gilts, TIPS, linkers]
+  short: A bond whose payments rise with a price index, protecting the lender's real return.
+  plain: >-
+    The gap between ordinary and inflation-linked yields of the same maturity is called breakeven inflation, a
+    market estimate of inflation to come.
+  example:
+    values: {F: 1000, c: 0.01, pi: 0.05}
+    compute: {Fi: F * (1 + pi), C: c * F * (1 + pi)}
+    formats: {F: '£{:,.0f}', c: '{:.0%}', pi: '{:.0%}', Fi: '£{:,.0f}', C: '£{:,.2f}'}
+    text: After a year of {pi} inflation, a linked bond with a face value of {F} and a real coupon of {c} is uplifted to {Fi} and pays {C}.
+  fools_you: >-
+    It protects against inflation, not against rising real interest rates, which can still push its price
+    down.
+  related: [real_vs_nominal, inflation, gilt, treasury]

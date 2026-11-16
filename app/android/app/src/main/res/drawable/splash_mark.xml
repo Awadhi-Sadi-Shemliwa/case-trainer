@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launch mark for Android 8-11 (Android 12+ uses the adaptive icon through the SplashScreen API). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M28,6 L80,6 A22,22 0 0,1 102,28 L102,80 A22,22 0 0,1 80,102 L28,102 A22,22 0 0,1 6,80 L6,28 A22,22 0 0,1 28,6 Z"
+        android:fillColor="#1B2A4A" />
+    <path
+        android:pathData="M30,68 L53,60 L78,33"
+        android:strokeColor="#F2F4F1"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M53,60 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0"
+        android:fillColor="#F6D84A" />
+</vector>

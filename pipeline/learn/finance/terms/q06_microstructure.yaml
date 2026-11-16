@@ -1,0 +1,146 @@
+# Quant lesson 6 · Inside the order book. Words 251-260.
+- id: limit_order_book
+  term: Limit order book
+  aliases: [order book, order books, LOB]
+  short: The live list of every waiting buy and sell limit order for an asset, sorted by price.
+  plain: >-
+    Bids sit on one side and asks on the other; the best of each set the spread. Market orders eat into it, and
+    traders read its shape to guess short-term moves. The ML in Finance book predicts prices from this data,
+    and a planned case studies it.
+  fools_you: >-
+    Much of it can vanish in an instant: orders are cancelled far more often than they are filled.
+  related: [limit_order, bid_ask, market_depth, mid_price]
+  sources: [book_dixon_ml_finance]
+
+- id: mid_price
+  term: Mid-price
+  aliases: [mid price, midpoint price]
+  short: The average of the best bid and the best ask, a common estimate of an asset's current fair price.
+  plain: >-
+    Many models predict it, because the last traded price bounces between bid and ask.
+  formula:
+    tex: 'm = \frac{\mathrm{bid} + \mathrm{ask}}{2}'
+    plain: Mid-price = (best bid + best ask) ÷ 2
+    symbols:
+      - {symbol: bid, means: best price a buyer offers}
+      - {symbol: ask, means: best price a seller asks}
+  example:
+    values: {b: 101.2, a: 101.3, two: 2}
+    compute: {m: (b + a) / two}
+    formats: {b: '£{:,.2f}', a: '£{:,.2f}', two: '{:.0f}', m: '£{:,.2f}'}
+    text: A best bid of {b} and a best ask of {a} put the mid-price at {m}.
+  fools_you: >-
+    You cannot trade at it; it is a reference point, not a price anyone is offering.
+  related: [bid_ask, limit_order_book]
+
+- id: tick_size
+  term: Tick size
+  aliases: [minimum price increment]
+  short: The smallest step by which a price can move on an exchange.
+  plain: >-
+    A large step relative to the price makes spreads wide and queues long; a tiny one lets prices move finely. It
+    shapes how traders compete for priority in the book.
+  fools_you: >-
+    A spread of one step can still be expensive if the step is large compared with the price.
+  related: [limit_order_book, bid_ask]
+
+- id: market_depth
+  term: Market depth
+  aliases: [depth of book, order book depth]
+  short: How much volume is waiting in the order book near the best prices, and so how much can trade without moving the price much.
+  plain: >-
+    Deep markets absorb large orders quietly; shallow ones lurch. It usually thins out in stressful periods.
+  fools_you: >-
+    Displayed volume may not be real: some orders are hidden and many are cancelled the moment someone tries to
+    trade against them.
+  related: [limit_order_book, liquidity, market_impact]
+
+- id: order_flow_imbalance
+  term: Order flow imbalance
+  aliases: [order imbalance, OFI]
+  short: The excess of buying pressure over selling pressure in recent orders, a strong short-term predictor of price moves.
+  plain: >-
+    If far more volume arrives on the bid than on the ask, prices tend to tick up. Machine-learning models on
+    order-book data often find this signal at very short horizons.
+  fools_you: >-
+    Its predictive power lasts seconds to minutes; for slow investors it is useless and costly to trade on.
+  related: [limit_order_book, high_frequency_trading, market_impact]
+  sources: [book_dixon_ml_finance]
+
+- id: market_impact
+  term: Market impact
+  aliases: [price impact]
+  short: How much your own trading moves the price against you.
+  plain: >-
+    Large orders reveal demand and use up the best prices. For large investors it is usually the biggest trading
+    cost, so they split orders over time.
+  formula:
+    tex: '\mathrm{impact} \approx c\,\sigma\,\sqrt{\frac{Q}{V}}'
+    plain: Impact ≈ constant × daily volatility × square root of (order size ÷ daily volume)
+    symbols:
+      - {symbol: σ, means: daily volatility}
+      - {symbol: Q, means: order size}
+      - {symbol: V, means: daily volume}
+  example:
+    values: {c: 1.0, s: 0.02, q: 50000, v: 2000000}
+    compute: {imp: 'c * s * sqrt(q / v)'}
+    formats: {c: '{:.1f}', s: '{:.0%}', q: '{:,.0f}', v: '{:,.0f}', imp: '{:.2%}'}
+    text: Buying {q} shares of a stock that trades {v} a day with daily volatility of {s} costs roughly {imp} in impact under the square-root rule.
+  fools_you: >-
+    A backtest trading at closing prices ignores it and can promise profits that vanish at real size.
+  related: [slippage, transaction_costs, vwap, market_depth]
+
+- id: slippage
+  term: Slippage
+  short: The difference between the price you expected when you decided to trade and the price you actually got.
+  plain: >-
+    It includes the spread, market impact and any move in the market while your order was being filled.
+    Measuring it honestly is the first step to cutting trading costs.
+  fools_you: >-
+    It is easy to leave out of a backtest and impossible to avoid in reality.
+  related: [market_impact, transaction_costs, market_order]
+
+- id: high_frequency_trading
+  term: High-frequency trading
+  aliases: [HFT, high frequency trading]
+  short: Trading by computers that place and cancel huge numbers of orders in fractions of a second to profit from tiny price differences.
+  plain: >-
+    Much electronic market making is now done this way. Speed, being close to the exchange's computers and clean
+    data are the edge.
+  fools_you: >-
+    Not all fast trading is predatory; much of it narrows spreads for everyone else.
+  related: [market_maker, order_flow_imbalance, limit_order_book]
+  sources: [book_dixon_ml_finance]
+
+- id: vwap
+  term: VWAP (volume-weighted average price)
+  aliases: [VWAP]
+  short: The average price over a period, weighting each trade by its size.
+  plain: >-
+    Brokers often promise to buy or sell at this level, trading in step with the market's volume through the
+    day to keep impact low.
+  formula:
+    tex: '\mathrm{VWAP} = \frac{\sum_{i} p_{i}\,q_{i}}{\sum_{i} q_{i}}'
+    plain: VWAP = sum of (price × quantity) ÷ total quantity
+    symbols:
+      - {symbol: p i, means: price of trade i}
+      - {symbol: q i, means: size of trade i}
+  example:
+    values: {p1: 10, q1: 100, p2: 11, q2: 300}
+    compute: {v: (p1 * q1 + p2 * q2) / (q1 + q2)}
+    formats: {p1: '£{:,.2f}', q1: '{:,.0f}', p2: '£{:,.2f}', q2: '{:,.0f}', v: '£{:,.2f}'}
+    text: Trades of {q1} shares at {p1} and {q2} shares at {p2} have a VWAP of {v}.
+  fools_you: >-
+    Beating it is a weak test: if your large order moved the market, it moved this average too.
+  related: [twap, market_impact, transaction_costs]
+
+- id: twap
+  term: TWAP (time-weighted average price)
+  aliases: [TWAP]
+  short: An execution plan that splits an order into equal slices traded at regular time intervals.
+  plain: >-
+    It is simpler than following volume and suits markets without reliable volume patterns. Both approaches aim
+    to hide a large order among normal trading.
+  fools_you: >-
+    Predictable slices can be spotted by other traders, who then trade ahead of you.
+  related: [vwap, market_impact]
