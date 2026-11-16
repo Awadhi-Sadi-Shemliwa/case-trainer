@@ -56,7 +56,7 @@ void main() {
     expect(progress.caseState(p50)!.stepIdx, 2);
   });
 
-  testWidgets('free-text step saves the answer and reports not graded yet', (tester) async {
+  testWidgets('free-text step without an examiner keeps the answer and does not use up an attempt', (tester) async {
     final progress = ProgressDb.inMemory();
     final steps = content.steps(p50);
     final idx = steps.indexWhere((s) => s.isGraded);
@@ -67,7 +67,9 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'Daily rows in percentage points with holiday blanks.');
     await tester.pump();
     await tapVisible(tester, find.text('Submit answer'));
-    expect(find.textContaining('Not graded yet'), findsOneWidget);
-    expect(progress.attemptCount(p50, steps[idx].id), 1);
+    expect(find.byKey(const ValueKey('examiner_unavailable')), findsOneWidget);
+    expect(find.text('Grade now'), findsOneWidget);
+    expect(progress.attemptCount(p50, steps[idx].id), 0);
+    expect(progress.draft(p50, steps[idx].id), 'Daily rows in percentage points with holiday blanks.');
   });
 }

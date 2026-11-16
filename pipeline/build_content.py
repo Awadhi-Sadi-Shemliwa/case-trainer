@@ -43,8 +43,12 @@ CAL_DIR = PIPELINE / "calibration"
 SOURCES_FILE = REPO / "sources.json"
 OUT_DIR = REPO / "app" / "assets" / "content"
 LEARN_DIR = PIPELINE / "learn" / "finance"
+CATALOG_FILE = PIPELINE / "catalog.yaml"
+CATALOG_SIZE = 50
+CATALOG_TIERS = {"A", "A*", "B", "C"}
 # v2 (2026-11-15): finance course tables (course, tiers, lessons, terms) + formulas/*.png; context_snippets.
-BUNDLE_SCHEMA_VERSION = 2
+# v3 (2026-11-16): catalog (all 50 curriculum problems; `case_id` set where the case is built).
+BUNDLE_SCHEMA_VERSION = 3
 MIN_CALIBRATION = 30
 
 NEGATABLE_KEYWORDS = {"cause", "causes", "caused", "causation", "prove", "proves", "proof", "certain", "guarantee"}
@@ -273,8 +277,9 @@ CREATE TABLE captured(case_id TEXT, name TEXT, output TEXT, PRIMARY KEY(case_id,
 """
 
 
-def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_dir: Path, course=None) -> Path:
-    """course = (Course, ordered terms) from validate_course, or None (framework fixtures)."""
+def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_dir: Path, course=None,
+                 catalog: list[dict] | None = None) -> Path:
+    """course = (Course, ordered terms) from validate_course, or None (framework fixtures); catalog likewise."""
     if out_dir.exists():
         shutil.rmtree(out_dir)
     (out_dir / "charts").mkdir(parents=True)
@@ -321,9 +326,50 @@ def write_bundle(cases: list[tuple[Path, Case]], sources: dict[str, dict], out_d
             con.execute("INSERT INTO captured VALUES(?,?,?)", (case.id, n, o))
     if course is not None:
         write_course(con, course[0], course[1], out_dir)
+    if catalog is not None:
+        write_catalog(con, catalog)
     con.commit()
     con.close()
     return db_path
+
+
+def load_catalog(path: Path, cases: list[Case]) -> tuple[list[dict], list[str]]:
+    """The 50 curriculum problems (pipeline/catalog.yaml). Every built case must be in it, in the same sector."""
+    errs: list[str] = []
+    probs = (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("problems", [])
+    nums = [p.get("number") for p in probs]
+    if sorted(nums) != list(range(1, CATALOG_SIZE + 1)):
+        errs.append(f"catalog: problems must be numbered 1..{CATALOG_SIZE} exactly once")
+    for p in probs:
+        where = f"catalog P{p.get('number')}"
+        for k in ("domain", "title", "summary", "tier"):
+            if not p.get(k):
+                errs.append(f"{where}: missing {k}")
+        if p.get("tier") not in CATALOG_TIERS:
+            errs.append(f"{where}: tier {p.get('tier')!r} not in {sorted(CATALOG_TIERS)}")
+        if re.search(r"\(\D*\d{4}\)", p.get("summary", "")):
+            errs.append(f"{where}: summary carries a citation; only VERIFIED sources may be shown")
+    by_num = {p.get("number"): p for p in probs}
+    for c in cases:
+        p = by_num.get(c.number)
+        if p is None:
+            errs.append(f"catalog: built case {c.id} (P{c.number}) is not in the catalog")
+        elif p["domain"] != c.domain:
+            errs.append(f"catalog: P{c.number} is {p['domain']} in the catalog but {c.domain} in {c.id}")
+        else:
+            p["case_id"] = c.id
+    ranks = [p["build_rank"] for p in probs if p.get("build_rank") is not None]
+    if len(ranks) != len(set(ranks)):
+        errs.append("catalog: build_rank values must be unique")
+    return probs, errs
+
+
+def write_catalog(con, probs: list[dict]) -> None:
+    con.execute("CREATE TABLE catalog(number INTEGER PRIMARY KEY, domain TEXT, title TEXT, summary TEXT, tier TEXT, "
+                "build_rank INTEGER, case_id TEXT)")
+    for p in probs:
+        con.execute("INSERT INTO catalog VALUES(?,?,?,?,?,?,?)", (p["number"], p["domain"], p["title"], p["summary"],
+                                                                  p["tier"], p.get("build_rank"), p.get("case_id")))
 
 
 def discover_cases(cases_dir: Path) -> list[Path]:
@@ -332,7 +378,7 @@ def discover_cases(cases_dir: Path) -> list[Path]:
 
 def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: Path = SOURCES_FILE,
           out_dir: Path = OUT_DIR, check_only: bool = False, order: list[str] | None = None,
-          learn_dir: Path | None = None, partial_course: bool = False) -> int:
+          learn_dir: Path | None = None, partial_course: bool = False, catalog_file: Path | None = None) -> int:
     """learn_dir: the finance course to validate and bundle (None = cases only, as in framework tests)."""
     sources, errors = load_sources(sources_file)
     for e in errors:
@@ -360,6 +406,15 @@ def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: P
         else:
             print(f"OK   course {learn_dir.name}: {len(ordered)} words")
             course = (c, ordered)
+    catalog = None
+    if catalog_file is not None:
+        catalog, kerrs = load_catalog(catalog_file, [c for _, c in ok_cases])
+        if kerrs:
+            errors += kerrs
+            for e in kerrs:
+                print(f"FAIL {e}")
+        else:
+            print(f"OK   catalog: {len(catalog)} problems, {sum(1 for p in catalog if p.get('case_id'))} built")
     if errors:
         print(f"\nBUILD FAILED: {len(errors)} problem(s)")
         return 1
@@ -367,7 +422,7 @@ def build(cases_dir: Path = CASES_DIR, cal_root: Path = CAL_DIR, sources_file: P
         rank = {cid: i for i, cid in enumerate(order)}
         ok_cases.sort(key=lambda t: rank.get(t[1].id, 999))
     if not check_only:
-        db = write_bundle(ok_cases, sources, out_dir, course)
+        db = write_bundle(ok_cases, sources, out_dir, course, catalog)
         print(f"\nwrote {db} ({len(ok_cases)} case(s))")
     return 0
 
@@ -382,4 +437,5 @@ if __name__ == "__main__":
     ap.add_argument("--check", action="store_true", help="validate only")
     ap.add_argument("--partial-course", action="store_true", help="allow an unfinished course (work in progress)")
     a = ap.parse_args()
-    sys.exit(build(check_only=a.check, order=BUILD_ORDER, learn_dir=LEARN_DIR, partial_course=a.partial_course))
+    sys.exit(build(check_only=a.check, order=BUILD_ORDER, learn_dir=LEARN_DIR, partial_course=a.partial_course,
+                   catalog_file=CATALOG_FILE))

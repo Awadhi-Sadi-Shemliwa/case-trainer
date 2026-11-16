@@ -21,15 +21,15 @@ void main() {
   tearDownAll(() => content.close());
 
   group('course', () {
-    test('Core holds 100 finance words then 30 measures; the other tiers 100 each; ranked 1..330', () {
+    test('Core holds 100 finance words then 40 measures and methods; the other tiers 100 each; ranked 1..340', () {
       expect(course.tiers.map((t) => t.id), ['core', 'intermediate', 'quant']);
-      expect(course.terms.length, 330);
-      expect(course.lessons.length, 33);
-      expect([for (final t in course.tiers) course.termsOfTier(t.id).length], [130, 100, 100]);
-      expect([for (final t in course.tiers) course.lessonsOf(t.id).length], [13, 10, 10]);
-      expect([for (final l in course.lessonsOf('core')) l.isMeasures], [...List.filled(10, false), true, true, true]);
+      expect(course.terms.length, 340);
+      expect(course.lessons.length, 34);
+      expect([for (final t in course.tiers) course.termsOfTier(t.id).length], [140, 100, 100]);
+      expect([for (final t in course.tiers) course.lessonsOf(t.id).length], [14, 10, 10]);
+      expect([for (final l in course.lessonsOf('core')) l.isMeasures], [...List.filled(10, false), true, true, true, true]);
       expect(course.lessons.where((l) => l.isMeasures).every((l) => l.tier == 'core'), isTrue);
-      expect([for (final t in course.terms) t.rank], List.generate(330, (i) => i + 1));
+      expect([for (final t in course.terms) t.rank], List.generate(340, (i) => i + 1));
       expect(course.byId['equity']!.rank, lessThanOrEqualTo(10), reason: 'the owner did not know equity');
     });
 
@@ -142,13 +142,26 @@ void main() {
   });
 
   group('measures (owner request 2026-11-16)', () {
+    test('every method the owner had not met has a card, linked in every case (Holm, DiD, fixed effects...)', () {
+      final linker = TermLinker(course, where: course.isMeasure);
+      for (final (text, id) in [
+        ('Leagues significant after Holm correction', 'holm_correction'),
+        ('a difference-in-differences on cards per foul', 'difference_in_differences'),
+        ('race fixed effects absorb the track', 'fixed_effects'),
+        ('stints ending in a pit stop are censored', 'censoring'),
+      ]) {
+        final ids = [for (final p in linker.split(text)) if (p is TermPiece) p.term.id];
+        expect(ids, contains(id), reason: text);
+      }
+    });
+
     test('the P50 evaluation words and the measures the owner named sit in Core', () {
       for (final id in ['base_rate', 'hit_false_alarm', 'roc_auc', 'brier_score', 'calibration', 'decision_threshold',
           'pca', 'ks_statistic', 'eda', 'r_squared', 'gini_accuracy_ratio', 'population_stability_index']) {
         final t = course.byId[id]!;
         expect(t.tier, 'core', reason: id);
         expect(course.isMeasure(t), isTrue, reason: id);
-        expect(t.rank, inInclusiveRange(101, 130), reason: id);
+        expect(t.rank, inInclusiveRange(101, 140), reason: id);
         expect(t.usedFor, isNotNull, reason: id);
         expect(t.inFinance, isNotNull, reason: id);
       }

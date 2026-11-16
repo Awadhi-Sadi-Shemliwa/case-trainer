@@ -228,3 +228,38 @@ was installed over it. The answers were kept, and the cover offered "Continue P3
 The measures build went on the same way the same day: a fresh backup (`progress-2026-11-16-before-measures.sqlite`:
 integrity ok, schema v2, 26 attempts, no lessons yet), then the release build (`am start -W` 834 ms, then 601 ms). The
 cover offered "Continue P3, step 1", the case opened most recently, and the AUC card rendered as in the tests.
+
+### 2026-11-16 · The examiner is Claude (owner decision; overrides "no LLM decides pass/fail")
+Owner: answers must be graded "instantly ... with accuracy and pin point areas i got wrong in explaining". The planned
+offline MiniLM grader could not quote wrong sentences or explain them. Kept deterministic: score from rubric weights,
+numeric anchors against expected_results, pass mark and critical flags, "I don't know" detection. Model
+`claude-opus-5-5` (current default Opus) at effort medium with structured JSON output and server-side refusal
+fallback (`fallbacks: "default"`); raw HTTP via `http` because Dart has no official SDK. Calibration (Prompt 7) now
+means measuring the Claude examiner against the labelled answers.
+
+### 2026-11-16 · API key handling
+The owner's key is built in with `--dart-define-from-file=secrets.json` (app/secrets.json is git-ignored; a test fails
+if any tracked file contains a key prefix). Settings can paste a replacement, stored in progress.sqlite on the phone.
+A key in an APK can be extracted, so the APK must not be shared. First check: the key was valid but the account had
+no credit ("Your credit balance is too low"), so live grading waits on the owner adding credit.
+
+### 2026-11-16 · Finish rule, hint ladder, reopened P34
+Finish is locked (Next is not, owner's choice) until every non-reading step is passed/solved or revealed after three
+tries. P34 had been finished with steps 7, 13, 16 never answered, 4/9/12/15 never graded and 14 unsolved; cases
+finished like that are reopened at start-up. Answers saved before the examiner are shown as "saved but not graded"
+and do not use up tries.
+
+### 2026-11-16 · Methods lesson
+Owner: "i never heard of the 'holm' method ... describe such methods". Core lesson 14 (`kind: measures`, ranks
+131-140): Holm correction (aliases moved from multiple testing; Bonferroni stays there), natural experiment,
+confounder, difference-in-differences, Poisson regression, rate ratio, interaction, clustered standard errors (alias
+moved from standard error), fixed effects, censoring. Sources opened and quoted: statsmodels docs, Cunningham's
+*Causal Inference: The Remix* chapters 4, 8, 9, NIST censoring. The course is now 340 words.
+
+### 2026-11-16 · Case report and sector slots
+Finishing a case writes a PDF (`pdf` package; Archivo fonts) with every step, every try, the examiner's quotes and
+the model answers shown, plus a Claude-written summary page when reachable; saved to Downloads/CaseTrainer through
+MediaStore (Kotlin channel in MainActivity; no permission; media_store_plus was last released in 2024) and offered
+via `share_plus`. pipeline/catalog.yaml lists all 50 curriculum problems with spec tiers and the build order
+(Gemini's citations stripped: unverified). Home shows one active case per sector; when a sector's built cases are all
+finished, the next Tier A/A* problem appears as "being prepared".

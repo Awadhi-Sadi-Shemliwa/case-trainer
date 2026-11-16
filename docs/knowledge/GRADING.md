@@ -1,30 +1,35 @@
-# Grading (the examiner) — spec §5
+# Grading (the examiner)
 
-Status: design only; implemented in Prompt 6, calibrated in Prompt 7.
+Status (2026-11-16): **live**, Claude examiner. Owner decision: "i want the examiner to be there like instantly and
+grade me effectively with accuracy and pin point areas i got wrong in explaining". This replaces the planned offline
+MiniLM grader (spec §5, Prompt 6/7); the rule "no LLM decides pass/fail" is overridden by the owner, see DECISIONS.
 
-## Rules that never change
-- Deterministic and offline. No LLM decides pass/fail or touches numbers (LLMs may only rephrase feedback).
-- **Pass = total ≥ 85 and no critical red flag.**
-- 3 attempts:
-  1. score + names of missing rubric areas (no answers) + the step's explanation template + `analysis_pointer`
-  2. `hint` for each missing point + `feedback` for each red flag triggered + `redo_step`
-  3. model answer with each rubric point highlighted and linked to `evidence`, plus `why`; schedule
-     spaced re-test at 1, 3, 7, 21 days
-- Every attempt, score and hint is stored in progress.sqlite.
+## Who decides what
+| Part | Who | Where |
+|---|---|---|
+| Coverage of each rubric point (full / partial / none), quotes of wrong sentences, red flags asserted, "no attempt" | Claude (`claude-opus-5-5`, effort medium, structured JSON output) | `app/lib/grading/claude_grader.dart` |
+| Score = sum of weight x coverage minus red-flag penalties, clipped 0-100 | app | `grading/score.dart` |
+| Numeric anchor: a point with `numeric` keeps full credit only if the answer has the pipeline number within tolerance (else capped at partial) | app | `score.dart` |
+| Pass = score >= 85 and no critical red flag | app | `score.dart` |
+| "I don't know" / near-empty answers | app, no API call | `grading/no_attempt.dart` |
 
-## Scoring algorithm
-1. Split the answer into sentences. Embed each sentence and each paraphrase (all-MiniLM-L6-v2, 384-dim).
-2. Semantic score per point = max cosine over (sentence, paraphrase), mapped to 0–1 with a logistic
-   curve **fitted on calibration data** (never raw cosine thresholds).
-3. Keyword score per point = fraction of concept groups present (lower-cased, lemmatised, synonyms).
-4. Coverage = 0.6 × semantic + 0.4 × keyword (weights tuned during calibration).
-5. Numeric anchor: extract numbers from the answer; credit only if within tolerance of the pipeline value.
-6. Red flags: matched above a calibrated threshold → subtract penalty. Negation check ("it is *not*
-   causal") prevents false triggers.
-7. Total = Σ(weight × coverage) − penalties, clipped to 0–100.
+Claude sees the step, the model answer, the rubric (labels, weights, paraphrases, why), the red flags, every
+pipeline number the step uses (placeholders resolved), a text description of the chart, and the answer. Unknown point
+or flag ids it returns are ignored.
 
-## Calibration (required before a case ships)
-- 30–50 labelled answers per graded step (strong / partial / wrong / red-flag); owner reviews those
-  marked `owner_review: true`.
-- Fit curves, tune weights: acceptable answers ≥ 85, false-pass rate < 5%. Report Cohen's κ.
-- The Python and Dart graders must agree within a small tolerance (test in Prompt 7).
+## Attempt ladder (3 tries)
+1. score, every rubric point with what is missing, every wrong sentence quoted with the problem and a better
+   version, strengths, `analysis_pointer`
+2. plus a `hint` per missing point, red-flag feedback, `redo_step`
+3. (or a pass) plus the model answer and each point's `why`; the step joins the 1/3/7/21-day review ladder
+
+"I don't know" counts as a try on the same ladder: pointer + first hint, then every hint, then the model answer.
+If the examiner cannot be reached (offline, no key, no credit, rate limit) the answer is kept as a draft and the try
+is NOT used up; "Grade now" retries. Answers saved before 2026-11-16 were never graded and do not count as tries.
+
+## Storage
+progress.sqlite v3 `examiner_feedback` (one row per counted try: status, score, passed, the full verdict JSON, model,
+tokens). The finish rule (`engine/step_status.dart`) counts a written step as answered once passed or after three tries.
+
+## Cost
+About 3-6k input and 1-2k output tokens per grade on Opus 5.5 ($4 / $20 per million): roughly 2-6 US cents each.

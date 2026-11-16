@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models.dart';
 import '../../engine/placeholders.dart';
+import '../../engine/step_status.dart';
+import '../../report/finish_flow.dart';
 import '../../learn/term_card.dart';
 import '../../providers.dart';
 import '../steps/step_common.dart';
@@ -34,8 +36,13 @@ class _CasePlayerScreenState extends ConsumerState<CasePlayerScreen> {
     _case = content.caseById(widget.caseId);
     _steps = content.steps(widget.caseId);
     _resolver = Resolver(content.results(widget.caseId), content.captured(widget.caseId));
-    final saved = ref.read(progressDbProvider).caseState(widget.caseId);
+    final progress = ref.read(progressDbProvider);
+    final saved = progress.caseState(widget.caseId);
     _idx = (saved?.stepIdx ?? 0).clamp(0, _steps.length - 1);
+    // Finished before the finish rule existed, with questions left open: open it again (owner request 2026-11-16).
+    if (saved != null && saved.completed && unfinishedSteps(progress, widget.caseId, _steps).isNotEmpty) {
+      progress.reopenCase(widget.caseId);
+    }
     // Always stamp the visit, so the cover's Continue picks the case you opened last.
     ref.read(progressDbProvider).saveCaseState(widget.caseId, _idx);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -57,10 +64,65 @@ class _CasePlayerScreenState extends ConsumerState<CasePlayerScreen> {
     _save();
   }
 
-  void _finish() {
+  /// Finish is locked until every question is answered (passed, solved, or revealed after three tries).
+  Future<void> _finish() async {
+    FocusScope.of(context).unfocus();
+    final progress = ref.read(progressDbProvider);
+    final missing = unfinishedSteps(progress, widget.caseId, _steps);
+    if (missing.isNotEmpty) {
+      _showUnfinished(missing);
+      return;
+    }
     _save(completed: true);
-    Navigator.of(context).maybePop();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Case completed: ${_case.title}')));
+    await runFinishFlow(context, ref, _case);
+    if (mounted) Navigator.of(context).maybePop();
+  }
+
+  void _showUnfinished(List<StepData> missing) {
+    final progress = ref.read(progressDbProvider);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (ctx) {
+        final t = Theme.of(ctx).textTheme;
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.6,
+          maxChildSize: 0.95,
+          builder: (ctx, scroll) => ListView(
+            key: const ValueKey('unfinished_sheet'),
+            controller: scroll,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            children: [
+              Text(missing.length == 1 ? 'One question is still open' : '${missing.length} questions are still open',
+                  style: t.titleLarge),
+              const SizedBox(height: 4),
+              Text(
+                'Answer each one before you finish. A question counts as answered once you pass it, or once its answer '
+                "is shown after three tries. \"I don't know\" gets you hints.",
+                style: t.bodyMedium,
+              ),
+              const SizedBox(height: 8),
+              for (final st in missing)
+                ListTile(
+                  key: ValueKey('open_${st.id}'),
+                  leading: Text('${st.index + 1}', style: t.titleMedium),
+                  title: Text(st.title),
+                  subtitle: Text(stepStatus(progress, widget.caseId, st) == StepStatus.started
+                      ? '${stepTask(st.type)}: started, not passed yet'
+                      : '${stepTask(st.type)}: not answered'),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () {
+                    Navigator.of(ctx).pop();
+                    _go(st.index);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showMap() {
@@ -95,6 +157,11 @@ class _CasePlayerScreenState extends ConsumerState<CasePlayerScreen> {
                   leading: Text('${i + 1}', style: t.labelLarge?.copyWith(fontFeatures: const [FontFeature.tabularFigures()])),
                   title: Text(s.title),
                   subtitle: Text(stepTask(s.type)),
+                  trailing: switch (stepStatus(ref.read(progressDbProvider), widget.caseId, s)) {
+                    StepStatus.done => Icon(Icons.check_circle_rounded, color: c.good, semanticLabel: 'answered'),
+                    StepStatus.started => Icon(Icons.contrast_rounded, color: c.inkSoft, semanticLabel: 'started'),
+                    StepStatus.untouched => Icon(Icons.radio_button_unchecked_rounded, color: c.inkMuted, semanticLabel: 'open'),
+                  },
                   onTap: () {
                     Navigator.of(ctx).pop();
                     _go(i);

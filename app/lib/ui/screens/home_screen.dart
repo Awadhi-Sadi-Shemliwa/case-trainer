@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/models.dart';
+import '../../engine/sector_slots.dart';
+import '../../report/finish_flow.dart';
 import '../../providers.dart';
 import '../theme/tokens.dart';
 import '../widgets/phase_bar.dart';
@@ -72,11 +76,14 @@ class HomeScreen extends ConsumerWidget {
               ]),
               const SizedBox(height: 10),
               ...() {
-                final inDomain = cases.where((x) => x.domain == d).toList();
-                if (inDomain.isEmpty) {
-                  return [Text('No cases yet. They are built in later batches.', style: t.bodyMedium?.copyWith(color: c.inkSoft))];
-                }
-                return [for (final x in inDomain) _CaseCard(x)];
+                final slot = sectorSlot(d, cases, content.catalog(), progress);
+                return [
+                  if (slot.active != null) _CaseCard(slot.active!),
+                  if (slot.active == null && slot.preparing != null) _PreparingCard(slot.preparing!),
+                  if (slot.active == null && slot.preparing == null)
+                    Text('No cases yet. They are built in later batches.', style: t.bodyMedium?.copyWith(color: c.inkSoft)),
+                  for (final f in slot.finished) _FinishedTile(f),
+                ];
               }(),
             ],
           ],
@@ -178,6 +185,69 @@ class _Tag extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(color: c.paperSunken, borderRadius: BorderRadius.circular(6)),
       child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.labelMedium),
+    );
+  }
+}
+
+/// The sector's next curriculum problem, not built yet (P33 after P34 in football).
+class _PreparingCard extends StatelessWidget {
+  const _PreparingCard(this.p);
+  final CatalogProblem p;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final t = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        key: ValueKey('preparing_${p.number}'),
+        child: Container(
+          decoration: BoxDecoration(border: Border(left: BorderSide(color: c.sector(p.domain).withValues(alpha: 0.5), width: 5))),
+          padding: const EdgeInsets.all(14),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [
+            Row(spacing: 8, children: [
+              Text('P${p.number}', style: t.titleLarge),
+              _Tag('Tier ${p.tier}'),
+              const Spacer(),
+              Text('Being prepared', style: t.labelLarge?.copyWith(color: c.inkSoft)),
+            ]),
+            Text(p.title, style: t.titleLarge),
+            Text(p.summary, style: t.bodyMedium),
+            Text('Up next in this sector. It opens here once it has been solved on real data.', style: t.bodySmall),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// A finished case: open it again, or share its report.
+class _FinishedTile extends ConsumerWidget {
+  const _FinishedTile(this.info);
+  final CaseInfo info;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = context.colors;
+    final report = ref.read(progressDbProvider).latestReport(info.id);
+    return Card.outlined(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        key: ValueKey('finished_${info.id}'),
+        leading: Icon(Icons.task_alt_rounded, color: c.good),
+        title: Text('P${info.number}: ${info.title}'),
+        subtitle: Text(report == null ? 'Finished' : 'Finished. Report: ${report.downloadName ?? 'saved in the app'}'),
+        onTap: () => context.push('/case/${info.id}'),
+        trailing: IconButton(
+          tooltip: report == null ? 'Write the report' : 'Share the report',
+          icon: Icon(report == null ? Icons.picture_as_pdf_outlined : Icons.ios_share_rounded),
+          onPressed: () async {
+            final path = report != null && File(report.filePath).existsSync() ? report.filePath : (await writeReport(ref, info)).path;
+            await shareReport(path, info);
+          },
+        ),
+      ),
     );
   }
 }

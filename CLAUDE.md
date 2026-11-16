@@ -25,7 +25,10 @@ content bundle; Flutter Android app (app/) only presents and examines. The app n
 - Cite Gemini's references (docs/source/) or any source not VERIFIED in sources.json.
 - Use synthetic/simulated data in a case. No real data => STOP and report.
 - Silently drop rows/outliers — log what and why.
-- Let any LLM decide pass/fail or change numbers; the deterministic grader decides.
+- Let any LLM change or invent numbers. Grading (owner decision 2026-11-16): the Claude examiner judges coverage of
+  each rubric point; the app computes the score from the weights, checks numbers against expected_results, and
+  applies pass = score >= 85 with no critical red flag (docs/knowledge/GRADING.md).
+- Commit an API key. The Claude key lives in git-ignored app/secrets.json (`--dart-define-from-file=secrets.json`).
 - Redistribute data beyond its terms (StatsBomb credit+logo; LOBSTER research use; check Yahoo/Kaggle).
 - Build features from a later prompt than the current one.
 - Claim causation unless the design supports it; always state limitations.

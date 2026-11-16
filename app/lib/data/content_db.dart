@@ -126,6 +126,24 @@ class ContentDb {
     );
   }
 
+  /// The 50 curriculum problems (bundle v3), in number order; empty for an older bundle.
+  List<CatalogProblem> catalog() {
+    final has = _db.select("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'catalog'").isNotEmpty;
+    if (!has) return const [];
+    return [
+      for (final r in _db.select('SELECT * FROM catalog ORDER BY number'))
+        CatalogProblem(
+          number: r['number'] as int,
+          domain: r['domain'] as String,
+          title: r['title'] as String,
+          summary: r['summary'] as String,
+          tier: r['tier'] as String,
+          buildRank: r['build_rank'] as int?,
+          caseId: r['case_id'] as String?,
+        )
+    ];
+  }
+
   /// A step's title, for "where you meet this word" links (null when unknown).
   String? stepTitle(String caseId, String stepId) {
     final rows = _db.select('SELECT json FROM steps WHERE case_id = ? AND id = ?', [caseId, stepId]);

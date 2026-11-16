@@ -64,7 +64,7 @@ New-Item -ItemType Directory -Force D:\coding\case-trainer-backups | Out-Null
 # cmd's redirect copies bytes exactly (older PowerShell re-encodes native output)
 cmd /c "`"$adb`" exec-out run-as dev.awadhi.case_trainer cat files/progress.sqlite > D:\coding\case-trainer-backups\progress.sqlite"
 # 2. install the fast release build for daily use (opening it upgrades the database to v2, adding tables only)
-flutter build apk --release --split-per-abi --target-platform android-arm64
+flutter build apk --release --split-per-abi --target-platform android-arm64 --dart-define-from-file=secrets.json
 & $adb install -r build\app\outputs\flutter-apk\app-arm64-v8a-release.apk
 ```
 

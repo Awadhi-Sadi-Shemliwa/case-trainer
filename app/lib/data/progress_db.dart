@@ -14,7 +14,8 @@ class ProgressDb {
   final Database _db;
 
   /// v1: attempts, case_state, reviews, settings. v2 (2026-11-15): drafts, term_progress, lesson_progress.
-  static const schemaVersion = 2;
+  /// v3 (2026-11-16): examiner_feedback (the Claude examiner's verdict per attempt), case_reports (finished-case PDFs).
+  static const schemaVersion = 3;
 
   static Future<ProgressDb> open() async {
     final dir = await getApplicationSupportDirectory();
@@ -36,6 +37,7 @@ class ProgressDb {
     try {
       if (from < 1) _db.execute(_v1);
       if (from < 2) _db.execute(_v2);
+      if (from < 3) _db.execute(_v3);
       _db.userVersion = schemaVersion;
       _db.execute('COMMIT');
     } catch (_) {
@@ -88,6 +90,26 @@ class ProgressDb {
       );
     ''';
 
+  static const _v3 = '''
+      CREATE TABLE IF NOT EXISTS examiner_feedback(
+        attempt_id INTEGER PRIMARY KEY,   -- attempts.id
+        case_id TEXT NOT NULL, step_id TEXT NOT NULL,
+        status TEXT NOT NULL,             -- graded | noAttempt
+        score REAL, passed INTEGER NOT NULL DEFAULT 0,
+        feedback_json TEXT NOT NULL,      -- GradeResult.toJson()
+        model TEXT, input_tokens INTEGER, output_tokens INTEGER,
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS feedback_step ON examiner_feedback(case_id, step_id);
+      CREATE TABLE IF NOT EXISTS case_reports(
+        case_id TEXT NOT NULL, created_at TEXT NOT NULL,
+        file_path TEXT NOT NULL,          -- copy in app storage
+        download_name TEXT,               -- name in Downloads/CaseTrainer, when saved there
+        summary_json TEXT,                -- the examiner's case summary
+        PRIMARY KEY(case_id, created_at)
+      );
+    ''';
+
   String _now() => DateTime.now().toUtc().toIso8601String();
 
   // ------------------------------------------------------------------ attempts
@@ -122,6 +144,101 @@ class ProgressDb {
     final r = rows.first;
     return {for (final k in r.keys) k: r[k]};
   }
+
+  // ------------------------------------------------------------------ examiner (v3)
+  /// Records a free-text attempt together with the examiner's verdict; returns the attempt number.
+  /// Answers the examiner could not grade (offline, no credit) are NOT recorded: the attempt is not used up.
+  int recordExaminedAttempt({
+    required String caseId,
+    required String stepId,
+    required String answer,
+    required DateTime startedAt,
+    required Map<String, dynamic> feedback,
+    required String status,
+    double? score,
+    bool passed = false,
+    String? model,
+    int? inputTokens,
+    int? outputTokens,
+    int hintsUsed = 0,
+  }) {
+    _db.execute('BEGIN IMMEDIATE');
+    try {
+      final n = recordAttempt(caseId: caseId, stepId: stepId, answer: answer, startedAt: startedAt, score: score, hintsUsed: hintsUsed);
+      final id = _db.lastInsertRowId;
+      _db.execute(
+        'INSERT INTO examiner_feedback(attempt_id, case_id, step_id, status, score, passed, feedback_json, model, '
+        'input_tokens, output_tokens, created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)',
+        [id, caseId, stepId, status, score, passed ? 1 : 0, jsonEncode(feedback), model, inputTokens, outputTokens, _now()],
+      );
+      _db.execute('COMMIT');
+      return n;
+    } catch (_) {
+      _db.execute('ROLLBACK');
+      rethrow;
+    }
+  }
+
+  /// Examined attempts of one step, oldest first (attempts saved before the examiner existed are not included).
+  List<ExaminedAttempt> examinedAttempts(String caseId, String stepId) => [
+        for (final r in _db.select(
+            'SELECT a.attempt_no, a.answer_json, a.submitted_at, a.hints_used, f.status, f.score, f.passed, f.feedback_json '
+            'FROM attempts a JOIN examiner_feedback f ON f.attempt_id = a.id '
+            'WHERE a.case_id = ? AND a.step_id = ? ORDER BY a.id',
+            [caseId, stepId]))
+          ExaminedAttempt._(r)
+      ];
+
+  /// Number of attempts the examiner has counted on this step (the 3-attempt ladder runs on this).
+  int examinedCount(String caseId, String stepId) => _db.select(
+      'SELECT COUNT(*) AS n FROM examiner_feedback WHERE case_id = ? AND step_id = ?', [caseId, stepId]).first['n'] as int;
+
+  bool examinerPassed(String caseId, String stepId) => _db.select(
+      'SELECT 1 FROM examiner_feedback WHERE case_id = ? AND step_id = ? AND passed = 1 LIMIT 1', [caseId, stepId]).isNotEmpty;
+
+  /// Best examiner score on a step, or null when never graded.
+  double? bestScore(String caseId, String stepId) => (_db.select(
+          "SELECT MAX(score) AS s FROM examiner_feedback WHERE case_id = ? AND step_id = ? AND status = 'graded'",
+          [caseId, stepId]).first['s'] as num?)
+      ?.toDouble();
+
+  /// Puts a step on the spaced re-test ladder (1, 3, 7, 21 days) once it is passed or revealed.
+  void scheduleReview(String caseId, String stepId, {DateTime? now}) {
+    final due = (now ?? DateTime.now()).toUtc().add(Duration(days: reviewLadderDays.first)).toIso8601String();
+    _db.execute(
+      'INSERT INTO reviews(case_id, step_id, due_at, interval_days) VALUES(?,?,?,?) ON CONFLICT(case_id, step_id) DO NOTHING',
+      [caseId, stepId, due, reviewLadderDays.first],
+    );
+  }
+
+  /// Marks a case unfinished again (it was finished with steps still unanswered, before the finish rule existed).
+  void reopenCase(String caseId) =>
+      _db.execute('UPDATE case_state SET completed = 0, updated_at = ? WHERE case_id = ?', [_now(), caseId]);
+
+  // ------------------------------------------------------------------ finished-case reports (v3)
+  void recordReport(String caseId, {required String filePath, String? downloadName, Map<String, dynamic>? summary}) =>
+      _db.execute(
+        'INSERT INTO case_reports(case_id, created_at, file_path, download_name, summary_json) VALUES(?,?,?,?,?)',
+        [caseId, _now(), filePath, downloadName, summary == null ? null : jsonEncode(summary)],
+      );
+
+  /// The newest report of a case, or null.
+  ({String filePath, String? downloadName, DateTime createdAt, Map<String, dynamic>? summary})? latestReport(String caseId) {
+    final rows = _db.select('SELECT * FROM case_reports WHERE case_id = ? ORDER BY created_at DESC LIMIT 1', [caseId]);
+    if (rows.isEmpty) return null;
+    final r = rows.first;
+    return (
+      filePath: r['file_path'] as String,
+      downloadName: r['download_name'] as String?,
+      createdAt: DateTime.parse(r['created_at'] as String),
+      summary: r['summary_json'] == null ? null : jsonDecode(r['summary_json'] as String) as Map<String, dynamic>,
+    );
+  }
+
+  /// Every attempt of a case, oldest first (for the report).
+  List<Map<String, dynamic>> attemptsOf(String caseId) => [
+        for (final r in _db.select('SELECT * FROM attempts WHERE case_id = ? ORDER BY id', [caseId])) {for (final k in r.keys) k: r[k]}
+      ];
 
   bool solved(String caseId, String stepId) => _db.select(
       'SELECT 1 FROM attempts WHERE case_id = ? AND step_id = ? AND correct = 1 LIMIT 1', [caseId, stepId]).isNotEmpty;
@@ -265,6 +382,28 @@ class ProgressDb {
     if (rows.isEmpty) return null;
     return (caseId: rows.first['case_id'] as String, stepIdx: rows.first['step_idx'] as int);
   }
+}
+
+/// One free-text attempt with the examiner's verdict.
+class ExaminedAttempt {
+  ExaminedAttempt._(Row r)
+      : attemptNo = r['attempt_no'] as int,
+        answer = jsonDecode(r['answer_json'] as String) as String,
+        submittedAt = DateTime.parse(r['submitted_at'] as String),
+        hintsUsed = r['hints_used'] as int,
+        status = r['status'] as String,
+        score = (r['score'] as num?)?.toDouble(),
+        passed = (r['passed'] as int) == 1,
+        feedback = jsonDecode(r['feedback_json'] as String) as Map<String, dynamic>;
+
+  final int attemptNo;
+  final String answer;
+  final DateTime submittedAt;
+  final int hintsUsed;
+  final String status;
+  final double? score;
+  final bool passed;
+  final Map<String, dynamic> feedback;
 }
 
 /// Learning state of one finance word.

@@ -544,5 +544,93 @@
     "quote": "indicates the maximal separation of defaulters from non-defaulters that the model achieves",
     "status": "VERIFIED",
     "note": "Vendor documentation (Risk Management Toolbox). Lists the accuracy ratio, AUROC and the KS statistic as the scorecard validation metrics."
+  },
+  {
+    "key": "statsmodels_multipletests",
+    "title": "statsmodels.stats.multitest.multipletests",
+    "authors": "statsmodels developers",
+    "year": 2026,
+    "url": "https://www.statsmodels.org/stable/generated/statsmodels.stats.multitest.multipletests.html",
+    "quote": "holm : step-down method using Bonferroni adjustments",
+    "note": "statsmodels 0.15.0 docs; also lists 'bonferroni : one-step correction'.",
+    "verified_on": "2026-11-16",
+    "status": "VERIFIED"
+  },
+  {
+    "key": "statsmodels_glm",
+    "title": "statsmodels.genmod.generalized_linear_model.GLM",
+    "authors": "statsmodels developers",
+    "year": 2026,
+    "url": "https://www.statsmodels.org/stable/generated/statsmodels.genmod.generalized_linear_model.GLM.html",
+    "quote": "An offset to be included in the model.",
+    "note": "statsmodels 0.15.0 docs, description of the offset parameter.",
+    "verified_on": "2026-11-16",
+    "status": "VERIFIED"
+  },
+  {
+    "key": "statsmodels_count_models",
+    "title": "Regression with Discrete Dependent Variable",
+    "authors": "statsmodels developers",
+    "year": 2026,
+    "url": "https://www.statsmodels.org/stable/discretemod.html",
+    "quote": "count (Poisson, NegativeBinomial) data",
+    "note": "statsmodels 0.15.0 docs.",
+    "verified_on": "2026-11-16",
+    "status": "VERIFIED"
+  },
+  {
+    "key": "statsmodels_cluster_se",
+    "title": "RegressionResults.get_robustcov_results",
+    "authors": "statsmodels developers",
+    "year": 2026,
+    "url": "https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.RegressionResults.get_robustcov_results.html",
+    "quote": "clustered covariance estimator (CRV1)",
+    "note": "statsmodels 0.15.0 docs, cov_type 'cluster'.",
+    "verified_on": "2026-11-16",
+    "status": "VERIFIED"
+  },
+  {
+    "key": "mixtape_did",
+    "title": "Difference-in-Differences Fundamentals (Causal Inference: The Remix, chapter 9)",
+    "authors": "Scott Cunningham",
+    "year": 2026,
+    "url": "https://mixtape.scunning.com/09-difference_in_differences",
+    "quote": "Diff-in-diff is a causal design, not simply four numbers subtracted in a row.",
+    "note": "Free online book; author credited on the site's code headers.",
+    "verified_on": "2026-11-16",
+    "status": "VERIFIED"
+  },
+  {
+    "key": "mixtape_panel",
+    "title": "Causal Panel Designs (Causal Inference: The Remix, chapter 8)",
+    "authors": "Scott Cunningham",
+    "year": 2026,
+    "url": "https://mixtape.scunning.com/08-panel_data",
+    "quote": "It was deleted when we time demeaned the data.",
+    "note": "On fixed effects removing unobserved time-invariant heterogeneity.",
+    "verified_on": "2026-11-16",
+    "status": "VERIFIED"
+  },
+  {
+    "key": "mixtape_dags",
+    "title": "Directed Acyclic Graphs (Causal Inference: The Remix, chapter 4)",
+    "authors": "Scott Cunningham",
+    "year": 2026,
+    "url": "https://mixtape.scunning.com/04-directed_acyclical_graphs",
+    "quote": "We therefore call X a confounder",
+    "note": "Definition of a confounder.",
+    "verified_on": "2026-11-16",
+    "status": "VERIFIED"
+  },
+  {
+    "key": "nist_censoring",
+    "title": "Censoring (e-Handbook of Statistical Methods, 8.1.3.1)",
+    "authors": "NIST/SEMATECH",
+    "year": 2012,
+    "url": "https://www.itl.nist.gov/div898/handbook/apr/section1/apr131.htm",
+    "quote": "When not all units on test fail we have censored data",
+    "note": "",
+    "verified_on": "2026-11-16",
+    "status": "VERIFIED"
   }
 ]
