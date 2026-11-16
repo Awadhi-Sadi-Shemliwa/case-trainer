@@ -225,3 +225,6 @@ so no alias needed narrowing.
 After the owner said "install the app in the phone", the debuggable build was installed over the release app,
 `progress.sqlite` was copied to `D:\coding\case-trainer-backups\` (integrity ok, 26 attempts), and the release build
 was installed over it. The answers were kept, and the cover offered "Continue P34, step 10".
+The measures build went on the same way the same day: a fresh backup (`progress-2026-11-16-before-measures.sqlite`:
+integrity ok, schema v2, 26 attempts, no lessons yet), then the release build (`am start -W` 834 ms, then 601 ms). The
+cover offered "Continue P3, step 1", the case opened most recently, and the AUC card rendered as in the tests.
