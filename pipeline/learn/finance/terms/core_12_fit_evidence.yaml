@@ -1,0 +1,307 @@
+# Core lesson 12 · Fit, error and evidence. Measures, words 111-120 (owner request 2026-11-16). These are the
+# measures behind P13's held-out errors, P34's confidence intervals and p-values, and P50's standard errors.
+- id: regression
+  term: Regression
+  aliases: [regressions, linear regression, regression model, least squares, OLS, slope coefficient]
+  short: Fitting a line or curve that predicts an outcome from one or more inputs, with a number for each input saying how much the outcome moves with it.
+  plain: >-
+    Ordinary least squares picks the line that makes the squared misses as small as possible. A slope says how much
+    the outcome changes, on average, when its input rises by one unit and the other inputs stay fixed. Probit and logit
+    models are regressions for yes/no outcomes.
+  used_for: >-
+    Measuring how an outcome moves with its inputs while holding the others fixed, and making predictions.
+  reading:
+    values: {b: 0.4}
+    compute: {bp: b, bc: b}
+    formats: {b: '{:.1f} s', bp: '{:.0%}', bc: '{:.1f}'}
+    question: A regression of lap time on tyre age has a slope of {b} per lap. What does that mean?
+    means: Each extra lap on the tyres goes with about {b} more on the lap time, on average, with the other inputs in the model held fixed.
+    misreadings:
+      - Tyre age explains {bp} of the variation in lap time.
+      - Every lap is exactly {b} slower than the one before.
+      - Tyre age and lap time have a correlation of {bc}.
+  in_finance: >-
+    Regressing a share's returns on the market's gives its beta (the slope) and its alpha (the intercept). Factor
+    models are regressions on several return series at once.
+  fools_you: >-
+    A slope is an association, not a cause, unless the design rules out other explanations, and it only holds within
+    the range of data it was fitted on.
+  related: [r_squared, standard_error, correlation, beta, probit_logit]
+  in_cases: [{case: p13_tyre_deg, step: s11_read_fe}, {case: p3_delay_prop, step: s11_read_suff}, {case: p34_home_adv, step: s11_method}]
+
+- id: r_squared
+  term: R-squared (R²)
+  aliases: [R², R-squared, R2, coefficient of determination, pseudo R-squared, adjusted R-squared, out-of-sample R-squared]
+  short: The share of the variation in an outcome that a model's predictions account for, from zero (no better than the average) to one (perfect).
+  plain: >-
+    It compares the model's squared misses with those of simply predicting the average every time. Adding inputs
+    never lowers it on the data used for fitting, which is why adjusted and out-of-sample versions exist; out of sample
+    it can even fall below zero. Yes/no models such as probits report a pseudo version on a similar scale.
+  used_for: >-
+    Saying how much of the ups and downs a regression explains, and comparing models of the same outcome.
+  formula:
+    tex: 'R^{2} = 1 - \frac{\sum (y_{i} - \hat{y}_{i})^{2}}{\sum (y_{i} - \bar{y})^{2}}'
+    plain: R² = 1 − (sum of squared misses ÷ sum of squared distances from the average)
+    symbols:
+      - {symbol: y i, means: what happened}
+      - {symbol: ŷ i, means: the model's prediction}
+      - {symbol: ȳ, means: the average outcome}
+  reading:
+    values: {r2: 0.6}
+    compute: {pct: r2, left: 1 - r2}
+    formats: {r2: '{:.1f}', pct: '{:.0%}', left: '{:.0%}'}
+    question: A regression has an R-squared of {r2}. What does that mean?
+    means: Its predictions account for {pct} of the variation in the outcome around its average, and {left} is left unexplained. Whether that is good depends entirely on the field and the question.
+    misreadings:
+      - The model's predictions are right {pct} of the time.
+      - The inputs cause {pct} of the outcome.
+      - The outcome and the input have a correlation of {r2}.
+    scale: {lo: 0, hi: 1, format: '{:.1f}', better: higher}
+    point: r2
+    marks:
+      - {at: 0, label: no better than the average}
+      - {at: 1, label: explains everything}
+  in_finance: >-
+    Regress a fund's returns on its benchmark and a value near one means the fund mostly moves with its index, so its
+    beta and alpha are meaningful. In return forecasting even a tiny out-of-sample value can be worth money, because
+    small edges add up over many trades.
+  fools_you: >-
+    A high value on the fitting data can be pure overfitting, and a low one can still be useful. The P50 case shows it
+    is the wrong yardstick for a yes/no forecast.
+  related: [regression, rmse_mae, correlation, overfitting, out_of_sample]
+  in_cases: [{case: p50_yield_curve, step: s03_kpis}, {case: p50_yield_curve, step: s11_clean_recession_months}]
+  sources: [sklearn_metrics]
+
+- id: rmse_mae
+  term: RMSE and MAE
+  aliases: [RMSE, MAE, root mean squared error, root mean square error, root-mean-square error, mean absolute error]
+  short: Two ways of measuring a prediction's typical miss in the outcome's own units, the squared version punishing big misses more.
+  plain: >-
+    The mean absolute error averages the size of the misses. The root mean squared error squares them first, averages,
+    then takes the square root, so one big miss counts heavily. Both are in the outcome's units (seconds, minutes,
+    pounds), which makes them easy to explain.
+  used_for: >-
+    Comparing prediction models of the same outcome, ideally on data the models never saw, as the P13 case does race
+    by race.
+  formula:
+    tex: '\mathrm{RMSE} = \sqrt{\frac{1}{n}\sum (y_{i} - \hat{y}_{i})^{2}},\quad \mathrm{MAE} = \frac{1}{n}\sum \left|\, y_{i} - \hat{y}_{i}\, \right|'
+    plain: RMSE = square root of the average squared miss; MAE = average size of the miss
+    symbols:
+      - {symbol: y i, means: what happened}
+      - {symbol: ŷ i, means: the prediction}
+      - {symbol: n, means: number of predictions}
+  reading:
+    values: {rmse: 0.4, sd: 1.1}
+    compute: {rp: rmse}
+    formats: {rmse: '{:.1f} s', sd: '{:.1f} s', rp: '{:.0%}'}
+    question: A lap-time model has a held-out RMSE of {rmse}, and lap times have a standard deviation of {sd}. What does that mean?
+    means: On laps it never saw, its typical miss is about {rmse}. Always guessing the average lap time would miss by about {sd}, so the model removes most of the error.
+    misreadings:
+      - Every prediction is within {rmse} of the true lap time.
+      - The model is wrong on {rp} of laps.
+      - Its predictions are {rmse} too slow on average.
+    scale: {lo: 0, hi: sd, format: '{:.1f} s', better: lower}
+    point: rmse
+    marks:
+      - {at: 0, label: perfect predictions}
+      - {at: sd, label: always guessing the average}
+  in_finance: >-
+    Forecast errors for interest rates, prices or volatility are reported the same way, often in basis points or
+    percentage points. The meaning is the same as in statistics.
+  fools_you: >-
+    A small error on the data used for fitting proves little; only errors on held-out data show how the model will do
+    next time. There is no fixed good or bad level either, so compare it with a simple benchmark.
+  related: [r_squared, cross_validation, out_of_sample, standard_deviation]
+  in_cases: [{case: p13_tyre_deg, step: s12_plan_challenge}, {case: p13_tyre_deg, step: s13_result}]
+  sources: [sklearn_metrics]
+
+- id: cross_validation
+  term: Cross-validation
+  aliases: [cross validation, k-fold, k-fold cross-validation, leave-one-group-out, leave-one-race-out, train-test split,
+            training set, test set, validation set]
+  short: Judging a model on data it was not fitted on, by splitting the data into parts and letting each part take a turn being held back.
+  plain: >-
+    Fit on the training part, score on the held-back part, repeat and average. Splits must respect the data's
+    structure. All laps of one race go in the same part (leave one group out), and time-ordered data are split by time
+    so the model never learns from the future.
+  used_for: >-
+    Estimating how a model will do on new data, and choosing between models or settings without fooling yourself.
+  in_finance: >-
+    With market data, finance uses walk-forward validation, a time-ordered version: fit on the past, test on the next
+    period, roll forward. Random splits leak future information into the past.
+  fools_you: >-
+    Try many models and keep the best cross-validated score, and that score is optimistic too; a final test set,
+    touched once, is the honest check.
+  related: [overfitting, out_of_sample, walk_forward_validation, look_ahead_bias, rmse_mae]
+  in_cases: [{case: p13_tyre_deg, step: s12_plan_challenge}, {case: p13_tyre_deg, step: s13_result}, {case: p50_yield_curve, step: s16_read_oos}]
+  sources: [sklearn_cross_validation]
+
+- id: standard_error
+  term: Standard error
+  aliases: [standard errors, clustered standard errors, SE]
+  short: How much an estimate would wobble if the study were repeated on fresh samples, measured as a standard deviation.
+  plain: >-
+    Every average, slope or difference computed from data is uncertain because the data are a sample. This puts a
+    size on that uncertainty. It shrinks as samples grow, and it must allow for observations that are not independent
+    (laps in the same race, overlapping months), or it comes out too small.
+  used_for: >-
+    Building confidence intervals and tests, and deciding whether an estimate is precise enough to act on.
+  reading:
+    values: {est: 0.3, se: 0.1, z: 1.96}
+    compute: {lo: est - z * se, hi: est + z * se, sep: se}
+    formats: {est: '{:.2f}', se: '{:.2f}', z: '{:.2f}', lo: '{:.2f}', hi: '{:.2f}', sep: '{:.0%}'}
+    question: A slope is estimated at {est} with a standard error of {se}. What does that mean?
+    means: Repeated samples would give slopes scattered around the truth by about {se}. Roughly, the true slope is likely to lie between {lo} and {hi}, the estimate plus or minus {z} standard errors.
+    misreadings:
+      - The slope is wrong by exactly {se}.
+      - The data points sit {se} away from the fitted line on average.
+      - There is a {sep} chance that the slope is wrong.
+  in_finance: >-
+    Returns are often correlated over time and their volatility comes in waves, so finance research uses HAC
+    (Newey-West) standard errors, as the P50 case does, instead of the textbook formula.
+  fools_you: >-
+    Treating related observations as independent makes it look smaller than it is, and weak results look strong.
+  related: [confidence_interval, hac_standard_errors, standard_deviation, hypothesis_test]
+  in_cases: [{case: p13_tyre_deg, step: s11_read_fe}, {case: p50_yield_curve, step: s15_hac_card}]
+  sources: [nist_confidence_limits]
+
+- id: confidence_interval
+  term: Confidence interval
+  aliases: [confidence intervals, confidence limits, margin of error, interval estimate, CI]
+  short: A range of plausible values for something estimated from data, made by a method that captures the true value in a stated share of repeated samples.
+  plain: >-
+    The confidence level is the share of samples in which the method's interval would contain the truth. A narrow
+    interval means a precise estimate. An interval that leaves out zero means "no effect at all" fits the data poorly.
+  used_for: >-
+    Showing an estimate together with its uncertainty, and checking whether an effect could plausibly be zero or
+    could be large.
+  reading:
+    values: {est: 0.3, lo: 0.1, hi: 0.5, level: 0.95}
+    compute: {tail: 1 - level}
+    formats: {est: '{:.2f}', lo: '{:.2f}', hi: '{:.2f}', level: '{:.0%}', tail: '{:.0%}'}
+    question: An effect is estimated at {est}, with a {level} confidence interval from {lo} to {hi}. What does that mean?
+    means: Values from {lo} to {hi} are all reasonably consistent with the data. The interval leaves out zero, so "no effect" fits poorly, but the true effect could be anywhere from small to fairly large.
+    misreadings:
+      - There is a {level} chance that the true effect is exactly {est}.
+      - '{level} of the individual observations lie between {lo} and {hi}.'
+      - The effect is certainly larger than {lo}.
+    scale: {lo: -0.2, hi: 0.6, format: '{:.1f}', better: neither}
+    interval: [lo, hi]
+    point: est
+    marks:
+      - {at: 0, label: no effect}
+  in_finance: >-
+    Risk reports use the same percentages for a different idea. A {level} value at risk is the loss exceeded only on
+    the worst {tail} of days, a percentile of losses, not the uncertainty of an estimate.
+  fools_you: >-
+    The level describes the method, not this one interval, and it covers only sampling error, not bad data or a wrong
+    model.
+  related: [standard_error, p_value, value_at_risk, percentile]
+  in_cases: [{case: p13_tyre_deg, step: s09_chart_wear}, {case: p34_home_adv, step: s13_result}, {case: p34_home_adv, step: s15_threshold}]
+  sources: [nist_confidence_limits]
+
+- id: hypothesis_test
+  term: Hypothesis test
+  aliases: [hypothesis tests, significance test, null hypothesis, test statistic, t-test, t-statistic, chi-square test]
+  short: A procedure that asks how surprising the data would be if a default assumption, usually "no effect", were true.
+  plain: >-
+    State the null hypothesis (no difference, no effect), compute a test statistic that grows as the data move away
+    from it, and see how unusual that value would be under the null. A t-test compares means; a chi-square test
+    compares counts in a table.
+  used_for: >-
+    Deciding whether an apparent effect could easily be chance, with the risk of a false alarm fixed in advance.
+  in_finance: >-
+    Finance tests whether a strategy's average return or alpha differs from zero, whether a factor earns a premium, or
+    whether returns are predictable at all. The logic is the same; returns are noisy and correlated, so the right
+    standard error matters.
+  fools_you: >-
+    Failing to reject the null is not proof of no effect, because small samples often cannot tell. And a test answers
+    only the question it was built for.
+  related: [p_value, standard_error, multiple_testing, confidence_interval]
+  in_cases: [{case: p34_home_adv, step: s11_method}, {case: p50_yield_curve, step: s14_method}]
+  sources: [nist_pvalues]
+
+- id: p_value
+  term: p-value
+  aliases: [p-values, p value, statistically significant, statistical significance, not significant, significance level]
+  short: The chance of data at least as extreme as yours if the null hypothesis were true; small values mean the data sit badly with it.
+  plain: >-
+    It is a measure of surprise computed while assuming no effect. A result is called statistically significant when it
+    falls below a cut-off chosen in advance; the common cut-offs are marked on the scale. It is not the chance that the
+    null is true, and it says nothing about how big or important the effect is.
+  used_for: >-
+    Judging whether an effect could easily be noise, as one piece of evidence next to the effect's size and its
+    confidence interval.
+  reading:
+    values: {p: 0.03, a1: 0.01, a5: 0.05, a10: 0.1}
+    compute: {pct: p, rev: 1 - p}
+    formats: {p: '{:.2f}', a1: '{:.2f}', a5: '{:.2f}', a10: '{:.2f}', pct: '{:.0%}', rev: '{:.0%}'}
+    question: A test of home advantage gives p = {p}. What does that mean?
+    means: If there were really no effect, data at least this extreme would turn up only about {pct} of the time. That passes a {a5} cut-off, but it says nothing about how big the effect is.
+    misreadings:
+      - There is a {pct} chance that there is no home advantage.
+      - There is a {rev} chance that the home advantage is real.
+      - The home advantage is large and important.
+    scale: {lo: 0, hi: a10, format: '{:.2f}', better: neither}
+    point: p
+    marks:
+      - {at: a1, label: strict cut-off}
+      - {at: a5, label: usual cut-off}
+      - {at: a10, label: lenient cut-off}
+  in_finance: >-
+    Finance adds "economically significant", an effect worth money after costs. A strategy can be statistically
+    significant and still too small to trade, or economically large but too noisy to trust.
+  fools_you: >-
+    Run enough tests and some pass by luck, so a lone small value among many tries is weak evidence. The American
+    Statistical Association warns against treating any cut-off as a bright line.
+  related: [hypothesis_test, multiple_testing, confidence_interval, data_snooping]
+  in_cases: [{case: p34_home_adv, step: s13_result}, {case: p50_yield_curve, step: s15_hac_card}, {case: p13_tyre_deg, step: s13_result}]
+  sources: [nist_pvalues, asa_pvalues_2016]
+
+- id: multiple_testing
+  term: Multiple testing
+  aliases: [multiple comparisons, multiple-testing, Holm correction, Holm-adjusted, Bonferroni correction, Bonferroni,
+            family-wise error rate]
+  short: Running many tests at once, which makes a false discovery likely unless each test's cut-off is made stricter.
+  plain: >-
+    With a fixed cut-off, every extra test is another chance of a fluke, so across many tests a few false discoveries
+    are nearly certain. Corrections such as Bonferroni and Holm tighten the cut-off so that the chance of any false
+    discovery stays small.
+  used_for: >-
+    Keeping the false-alarm risk honest when a study checks several leagues, groups or outcomes, as the P34 case does.
+  reading:
+    values: {k: 20, alpha: 0.05}
+    compute: {expect: k * alpha, atleast: 1 - (1 - alpha) ** k, strict: alpha / k}
+    formats: {k: '{:.0f}', alpha: '{:.0%}', expect: '{:.0f}', atleast: '{:.0%}', strict: '{:.2%}'}
+    question: You run {k} independent tests at a {alpha} cut-off and one comes out "significant". What does that mean?
+    means: Even with no real effects at all you would expect about {expect} such result by luck, and the chance of at least one is {atleast}. On its own it is weak evidence; a Bonferroni correction would ask for p below {strict}.
+    misreadings:
+      - There is only a {alpha} chance that this result is a fluke.
+      - The other tests do not matter when judging this one.
+      - Running {k} tests makes each result more reliable, not less.
+  in_finance: >-
+    In finance it is called data snooping: try enough trading rules on the same history and one will look brilliant by
+    luck. Honest backtests count every strategy tried and ask for stronger evidence.
+  fools_you: >-
+    The tests you did not report still count; picking the best of many and showing it alone is the classic way to fool
+    yourself and others.
+  related: [p_value, data_snooping, hypothesis_test, overfitting]
+  in_cases: [{case: p34_home_adv, step: s12_plan_challenge}, {case: p34_home_adv, step: s13_result}, {case: p34_home_adv, step: s17_debrief}]
+
+- id: regression_to_the_mean
+  term: Regression to the mean
+  aliases: [regression toward the mean, regression towards the mean, regression to the base rate, reversion to the mean]
+  short: The tendency of an extreme result to be followed by a more ordinary one, simply because luck helped make it extreme.
+  plain: >-
+    Any measured result mixes skill and luck. Pick the top performers and part of what put them there was good luck,
+    which does not repeat, so as a group they fall back toward the average next time even if nothing changed.
+  used_for: >-
+    Avoiding false stories. Before crediting a coach, a policy or a treatment with a change, check whether the starting
+    point was extreme.
+  in_finance: >-
+    Last year's best funds and fund managers tend to look more ordinary this year. Choosing a fund on one great year
+    mostly buys luck that has already been used up.
+  fools_you: >-
+    It looks exactly like a real effect: the worst improve and the best decline, with no cause needed. Compare like
+    with like, or with a group that had no intervention.
+  related: [mean_reversion, base_rate, active_investing, mean_median]

@@ -1,4 +1,5 @@
-# Finance Foundations: 300 words in three tiers, ranked from most to least important (owner request 2026-11-15).
+# Finance Foundations: 330 words in three tiers, ranked from most to least important (owner requests 2026-11-15/16).
+# Core = 100 finance words, then 30 data-science measures (kind: measures) moved up at the owner's request.
 # Order matters: rank = position (tier -> lesson -> word). Each lesson leans only on words from earlier lessons.
 # Definitions are written fresh for this app; `sources` are the pages they were checked against (VERIFIED in
 # sources.json). Worked examples use made-up numbers computed by the pipeline (common/glossary.py).
@@ -6,11 +7,14 @@ id: finance
 title: Finance Foundations
 allowed_literals: ["S&P 500", "FTSE 100", "2s10s", "10y-3m", "10-year", "2-year", "3-month", "P/E", "EV/EBITDA",
                    "GARCH(1,1)", "AR(1)", "MA(1)", "Fama-French three-factor", "VIX", "SONIA", "SOFR", "AAA", "BBB",
-                   "BBB-", "T10Y2Y", "T10Y3M", "USREC", "401(k)", "P50", "P34", "P13", "P3"]
+                   "BBB-", "T10Y2Y", "T10Y3M", "USREC", "401(k)", "P50", "P34", "P13", "P3",
+                   "F1", "R2"]
 tiers:
   - id: core
     title: Core
-    blurb: The hundred words you need to follow financial news and the P50 yield-curve case.
+    blurb: >-
+      The finance words you need to follow financial news and the P50 yield-curve case, then the measures every
+      case is judged by.
     read_next: [book_napkin_finance, book_economist_markets]
     lessons:
       - id: core_01_money
@@ -53,6 +57,21 @@ tiers:
         title: Accounts and value
         blurb: Reading a company's numbers and putting a value on it.
         sources: [sec_financial_statements]
+      - id: core_11_forecast_scores
+        title: Scoring a yes/no forecast
+        blurb: From the four counts of right and wrong to the curve that ranks a model.
+        kind: measures
+        sources: [sklearn_metrics, engelmann_ar_auc_2003]
+      - id: core_12_fit_evidence
+        title: Fit, error and evidence
+        blurb: How well a model fits, how far off it is, and whether a result could be luck.
+        kind: measures
+        sources: [sklearn_metrics, sklearn_cross_validation, nist_confidence_limits, nist_pvalues, asa_pvalues_2016]
+      - id: core_13_exploring
+        title: Exploring data
+        blurb: Look before you fit. Shapes, gaps, odd values, and how to tell when data have drifted.
+        kind: measures
+        sources: [nist_eda, nist_location, nist_outliers, nist_pca, nist_ks_test]
 
   - id: intermediate
     title: Intermediate
@@ -141,7 +160,7 @@ tiers:
         title: Credit, mortgages and pairs
         blurb: Predicting default, prepayment and prices that move together.
         sources: [book_dixon_ml_finance]
-      - id: q10_ml_signals
-        title: Judging signals and hidden states
-        blurb: Scoring forecasts and finding the regime the market is in.
-        sources: [book_dixon_ml_finance, estrella_mishkin_1996]
+      - id: q10_learning_models
+        title: Learning models and hidden states
+        blurb: The model families of the ML in Finance book, and the hidden regimes they look for.
+        sources: [book_dixon_ml_finance]

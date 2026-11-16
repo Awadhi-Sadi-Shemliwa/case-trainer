@@ -1,0 +1,135 @@
+# Quant lesson 10 · Learning models and hidden states. Words 321-330. Until 2026-11-16 this lesson held the P50
+# evaluation words; the owner asked for those in Core (now core_11_forecast_scores). Six model families from the ML in
+# Finance book's chapters took their places.
+- id: neural_network
+  term: Neural network
+  aliases: [neural networks, neural net, neural nets, deep learning, feedforward network, multilayer perceptron, MLP]
+  short: A flexible model built from layers of simple units, each mixing its inputs and passing the result through a bend, trained to fit almost any pattern.
+  plain: >-
+    Inputs flow forward through hidden layers to an output, and training nudges every weight to shrink the error, an
+    algorithm called back-propagation. With enough units it can mimic very complicated relationships. The ML in Finance
+    book uses such networks to predict returns and to price and hedge options.
+  fools_you: >-
+    Its flexibility makes overfitting easy, especially on the short, noisy histories typical of finance.
+  related: [recurrent_neural_network, overfitting, interpretability, regression]
+  sources: [book_dixon_ml_finance]
+
+- id: recurrent_neural_network
+  term: Recurrent neural network (RNN)
+  aliases: [RNN, RNNs, recurrent network, recurrent networks, LSTM, long short-term memory, GRU]
+  short: A neural network for sequences that carries a memory from one time step to the next, so earlier observations can shape later predictions.
+  plain: >-
+    Long short-term memory networks (LSTM) and gated recurrent units (GRU) add gates that decide what to keep and what
+    to forget, which helps with longer memories. In finance they are applied to price, order-book and economic time
+    series.
+  fools_you: >-
+    A memory the data do not support is just more room to overfit; a simple autoregressive model is the benchmark to
+    beat.
+  related: [neural_network, time_series, autoregressive_model]
+  sources: [book_dixon_ml_finance]
+
+- id: autoencoder
+  term: Autoencoder
+  aliases: [autoencoders]
+  short: A neural network trained to squeeze its input through a narrow middle layer and rebuild it, so the middle layer learns a compact summary.
+  plain: >-
+    With straight-line units it finds the same summary as principal component analysis; with bends it can capture
+    curved patterns that PCA misses. Finance uses it for compact summaries of yield curves and factors, and to spot
+    unusual trades that it rebuilds badly.
+  fools_you: >-
+    A compact summary is not automatically a meaningful one; the learned features can be hard to interpret and can
+    change from one training run to the next.
+  related: [pca, neural_network, yield_curve_pca]
+  sources: [book_dixon_ml_finance]
+
+- id: yield_curve_pca
+  term: Yield-curve factors (level, slope, curvature)
+  aliases: [yield-curve factors, yield curve factors, level slope curvature, level slope and curvature]
+  short: Summarising daily moves across all maturities with a few principal components, usually read as the curve's level, slope and curvature.
+  plain: >-
+    Most of the variation in yield curves comes from parallel shifts (level), then steepening or flattening
+    (slope), then bending (curvature). The spreads in the P50 case are simple measures of the slope.
+  fools_you: >-
+    Components are statistical, not economic; their shapes and labels can change between samples.
+  related: [pca, yield_curve, curve_spreads, factor_model]
+  sources: [book_dixon_ml_finance]
+
+- id: bayesian_inference
+  term: Bayesian inference
+  aliases: [Bayesian, Bayesian statistics, Bayes' theorem, Bayes theorem, Bayes' rule]
+  short: Updating beliefs with data, by combining a prior distribution for the unknowns with how likely the data are, to get a posterior distribution.
+  plain: >-
+    Instead of one best estimate it gives a whole distribution of plausible values, so uncertainty comes built in. The
+    other school, frequentist statistics, treats the unknowns as fixed and the data as random. The ML in Finance book
+    contrasts the two early on.
+  fools_you: >-
+    With little data the answer leans on the prior, which is a choice; check how much the conclusions move when it
+    changes.
+  related: [base_rate, gaussian_process, hidden_markov_model]
+  sources: [book_dixon_ml_finance]
+
+- id: gaussian_process
+  term: Gaussian process
+  aliases: [Gaussian processes, Gaussian process regression, kriging]
+  short: A flexible way to fit a smooth curve through data that also says how uncertain the curve is at every point.
+  plain: >-
+    It treats the unknown function itself as random, with a kernel saying how alike nearby points should be. The ML in
+    Finance book trains them on a slow pricing model so that option prices and their sensitivities can then be
+    computed fast.
+  fools_you: >-
+    The uncertainty bands are only as good as the kernel chosen, and the plain version slows down badly as the data
+    grow.
+  related: [bayesian_inference, black_scholes, neural_network]
+  sources: [book_dixon_ml_finance]
+
+- id: interpretability
+  term: Interpretability
+  aliases: [interpretable, explainability, explainable AI, feature importance]
+  short: How well people can see why a model gives the answers it does, for example which inputs matter most and in which direction.
+  plain: >-
+    Linear models can be read from their coefficients; for neural networks, methods measure how the output responds to
+    small changes in each input. In lending and trading, people often need to know why a model decided as it did, not
+    only how accurate it is.
+  fools_you: >-
+    An importance score shows what the model relies on, not what causes the outcome in the world.
+  related: [neural_network, regression, credit_scoring]
+  sources: [book_dixon_ml_finance]
+
+- id: regime_switching
+  term: Regime switching
+  aliases: [regime change, regime changes, regime-switching, structural break, structural breaks]
+  short: Allowing a market or economy to move between distinct states, such as calm and crisis, each with its own behaviour.
+  plain: >-
+    Relationships that hold in one state can fail in another. The P50 results differ before and after a split
+    date, a reminder that the yield curve's signal may have changed.
+  fools_you: >-
+    States are easy to see in hindsight and hard to identify as they happen.
+  related: [hidden_markov_model, stationarity, expanding_window]
+  in_cases: [{case: p50_yield_curve, step: s19_result}]
+  sources: [book_dixon_ml_finance]
+
+- id: hidden_markov_model
+  term: Hidden Markov model (HMM)
+  aliases: [HMM, hidden Markov model]
+  short: A model in which an unseen state, such as a bull or bear market, switches with fixed probabilities and shapes what we can observe.
+  plain: >-
+    We see returns, not the state; the model infers the most likely state at each date and the chances of
+    switching. The ML in Finance book covers these alongside particle filters.
+  fools_you: >-
+    The fitted states are statistical labels; naming them confidently, as "crisis" for example, can overstate what
+    the model knows.
+  related: [regime_switching, kalman_filter, bayesian_inference]
+  sources: [book_dixon_ml_finance]
+
+- id: reinforcement_learning
+  term: Reinforcement learning
+  aliases: [RL, Q-learning]
+  short: A branch of machine learning in which an agent learns which actions to take by trial and error, guided by rewards.
+  plain: >-
+    In finance it is applied to trade execution, portfolio choice and pricing when trading has costs. The last
+    part of the ML in Finance book is devoted to it.
+  fools_you: >-
+    Markets react to your actions and change over time; an agent trained on past data may find its world no
+    longer exists.
+  related: [backtest, position_sizing, transaction_costs]
+  sources: [book_dixon_ml_finance]

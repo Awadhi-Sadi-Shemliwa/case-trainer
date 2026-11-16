@@ -39,14 +39,14 @@
 
 - id: data_snooping
   term: Data snooping
-  aliases: [data-snooping, p-hacking, data mining bias, multiple testing]
+  aliases: [data-snooping, p-hacking, data mining bias]
   short: Finding patterns by testing many ideas on the same data until one looks good by chance.
   plain: >-
     Try a thousand random rules and dozens will look significant at the usual level. Corrections for multiple
     testing, and fresh out-of-sample data, are the defence.
   fools_you: >-
     Every tweak you try counts as a test, including the ones you forget to report.
-  related: [overfitting, out_of_sample, alpha_decay]
+  related: [multiple_testing, overfitting, out_of_sample, alpha_decay]
 
 - id: overfitting
   term: Overfitting

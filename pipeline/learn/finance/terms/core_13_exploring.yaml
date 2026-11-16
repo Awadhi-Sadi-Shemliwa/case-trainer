@@ -1,0 +1,291 @@
+# Core lesson 13 · Exploring data. Measures, words 121-130 (owner request 2026-11-16: EDA, PCA and KS by name, plus
+# the summaries every case uses, and the credit-risk drift measure PSI as the finance counterpart of the KS test).
+- id: eda
+  term: Exploratory data analysis (EDA)
+  aliases: [EDA, exploratory data analysis, exploratory analysis, data exploration]
+  short: Looking at data with plots and simple summaries before modelling, to learn its shape, units, gaps and oddities.
+  plain: >-
+    Check what each column measures and in what units, how often rows arrive and over which period, how many values
+    are missing and how gaps are coded, what the distributions look like, and whether anything is impossible or
+    extreme. Plots first, models later.
+  used_for: >-
+    Catching data problems and wrong assumptions early, and choosing a sensible model, before any result depends on
+    them.
+  in_finance: >-
+    Market data have their own traps: weekends and holidays without prices, stale quotes, share splits and dividends
+    that make prices jump, firms that disappear from the data, and figures revised after their first release. Checking
+    these is exploratory analysis too.
+  fools_you: >-
+    It is easy to skip when a deadline looms, and easy to overdo: staring at the data until a pattern appears is a form
+    of data snooping.
+  related: [distribution, missing_data, outlier, mean_median, survivorship_bias]
+  in_cases: [{case: p50_yield_curve, step: s05_predict_data}, {case: p50_yield_curve, step: s12_chart_spread}, {case: p3_delay_prop, step: s09_chart_heatmap}, {case: p34_home_adv, step: s09_chart_gd}, {case: p13_tyre_deg, step: s09_chart_wear}]
+  sources: [nist_eda]
+
+- id: distribution
+  term: Distribution
+  aliases: [distributions, histogram, histograms, frequency distribution, density plot]
+  short: How often each value, or range of values, occurs in a set of data; its shape shows the centre, spread, skew and tails.
+  plain: >-
+    A histogram draws it as bars: split the range into bins and count the values in each. Shapes worth recognising are
+    a symmetric bell, a long right tail (delays, incomes, losses), two humps (two groups mixed together) and spikes at
+    round or default values.
+  used_for: >-
+    Seeing what typical and unusual values look like, choosing a summary such as the mean or median, and spotting
+    errors before modelling.
+  in_finance: >-
+    Daily returns look roughly bell-shaped but have fat tails, so crashes happen far more often than a normal curve
+    allows. Loan losses and insurance claims have long right tails.
+  fools_you: >-
+    A histogram's look depends on the bin width; very wide or very narrow bins can hide humps or invent them.
+  related: [mean_median, percentile, skewness, fat_tails, eda]
+  sources: [nist_eda]
+
+- id: mean_median
+  term: Mean and median
+  aliases: [median, medians, arithmetic mean, sample mean]
+  short: Two kinds of average, the total divided by the count, and the middle value once the data are sorted.
+  plain: >-
+    The median ignores how extreme the extremes are, so a few huge values pull the mean but barely move the median.
+    When the two differ a lot the data are skewed, and the median usually describes a typical case better.
+  used_for: >-
+    Summarising a typical value in one number, using the median when the data have long tails or outliers.
+  reading:
+    values: {mean: 22, median: 9}
+    compute: {top: mean + median}
+    formats: {mean: '{:.0f} min', median: '{:.0f} min', top: '{:.0f} min'}
+    question: Delayed flights have a mean delay of {mean} and a median of {median}. What does that tell you?
+    means: Half the delayed flights were held up by {median} or less, but a few very long delays pull the average up to {mean}. The data have a long right tail, so the median is the better picture of a typical delay.
+    misreadings:
+      - A typical delayed flight is held up by about {mean}.
+      - Half the delayed flights were held up by more than {mean}.
+      - One of the two figures must be a mistake.
+    scale: {lo: 0, hi: top, format: '{:.0f} min', better: neither}
+    marks:
+      - {at: median, label: median}
+      - {at: mean, label: mean}
+  in_finance: >-
+    Pay, house prices and fund sizes are reported as medians for the same reason. Returns are a special case: the mean
+    of yearly returns overstates what compounding actually delivers, which is why growth is measured with the
+    geometric mean.
+  fools_you: >-
+    "The average" in a headline may be either one, and with skewed data they tell different stories.
+  related: [distribution, outlier, percentile, geometric_mean_return, expected_return]
+  in_cases: [{case: p13_tyre_deg, step: s07_justify_traffic}, {case: p3_delay_prop, step: s09_chart_heatmap}, {case: p50_yield_curve, step: s20_numeric_lead}]
+  sources: [nist_location]
+
+- id: percentile
+  term: Percentile
+  aliases: [percentiles, quantile, quantiles, quartile, quartiles, interquartile range, IQR, box plot]
+  short: The value below which a given share of the data falls; the median is the one halfway up.
+  plain: >-
+    Quartiles cut the sorted data into four equal groups, and the interquartile range, from the lower to the upper
+    quartile, measures spread while ignoring the extremes. Box plots draw exactly these.
+  used_for: >-
+    Describing spread and tails without being thrown by extremes, and setting thresholds such as "the slowest tenth of
+    turnarounds".
+  reading:
+    values: {qn: 90, v: 47}
+    compute: {share: qn / 100, rest: 1 - qn / 100}
+    formats: {qn: '{:.0f}th', v: '{:.0f} min', share: '{:.0%}', rest: '{:.0%}'}
+    question: The {qn} percentile of arrival delay is {v}. What does that mean?
+    means: '{share} of flights arrived less than {v} late and {rest} arrived later than that. It describes the bad tail, not the typical flight.'
+    misreadings:
+      - A typical flight arrives {v} late.
+      - '{share} of flights arrived {v} late.'
+      - Only {rest} of flights were delayed at all.
+  in_finance: >-
+    Value at risk is a percentile of losses: the loss exceeded only on a small share of the worst days. Fund rankings
+    use quartiles too, as in "a top-quartile manager".
+  fools_you: >-
+    A percentile says nothing about how bad things get beyond it; the worst days past the value-at-risk line can be far
+    worse than the line itself.
+  related: [mean_median, distribution, value_at_risk, outlier]
+
+- id: outlier
+  term: Outlier
+  aliases: [outliers, extreme value, extreme values, anomaly, anomalies]
+  short: A value far from the rest of the data, which may be an error, a rare real event or a sign of a different process.
+  plain: >-
+    Common screens flag values several standard deviations from the mean, or far outside the box of a box plot. Each
+    one needs a reason before it is kept or removed: a typo, a different mechanism (traffic laps in the P13 case), or
+    the most important observation you have.
+  used_for: >-
+    Finding data errors and unusual cases early, and checking whether a result depends on a handful of points.
+  in_finance: >-
+    Crashes, defaults and squeezes are the outliers that matter most, and deleting them makes risk look smaller than it
+    is. Bad ticks and mistyped trades, on the other hand, are errors to clean.
+  fools_you: >-
+    Dropping awkward points until the result looks clean is a quiet form of cheating; log what was dropped and why.
+  related: [z_score, mean_median, distribution, fat_tails, eda]
+  in_cases: [{case: p13_tyre_deg, step: s07_justify_traffic}, {case: p3_delay_prop, step: s07_justify_turns}, {case: p50_yield_curve, step: s08_clean_blanks}]
+  sources: [nist_outliers]
+
+- id: missing_data
+  term: Missing data
+  aliases: [missing values, missing value, NaN, NaNs, null values, imputation, impute]
+  short: Values that should be there but are not, stored as empty cells, a not-a-number marker, a special code or sometimes a misleading zero.
+  plain: >-
+    First find out how gaps are coded and why they happen. Random gaps are a nuisance; gaps tied to the outcome (failed
+    firms stop reporting, cancelled flights have no arrival time) bias every result. Filling gaps in is called
+    imputation, and dropping rows is also a choice that must be logged.
+  used_for: >-
+    Deciding, column by column, whether to drop, fill or model the gaps, and checking that the choice does not change
+    the answer.
+  in_finance: >-
+    Markets close at weekends and on holidays, some series are published only monthly, and firms that fail or merge
+    vanish from the data. Filling such gaps carelessly creates look-ahead or survivorship bias.
+  fools_you: >-
+    A gap stored as zero looks like a real value and silently drags averages down; always check how gaps are coded.
+  related: [eda, survivorship_bias, look_ahead_bias, outlier]
+  in_cases: [{case: p50_yield_curve, step: s05_predict_data}, {case: p50_yield_curve, step: s08_clean_blanks}, {case: p3_delay_prop, step: s04_predict_data}]
+  sources: [nist_eda]
+
+- id: z_score
+  term: Z-score
+  aliases: [z-score, z-scores, standard score, standardise, standardised, standardize, standardized]
+  short: How many standard deviations a value sits above or below the mean.
+  plain: >-
+    Subtract the mean and divide by the standard deviation. Standardising every input this way puts them all on one
+    scale, which principal component analysis and many machine-learning models need.
+  used_for: >-
+    Comparing values measured in different units, flagging unusual values and putting inputs on a common scale.
+  formula:
+    tex: 'z = \frac{x - \bar{x}}{s}'
+    plain: z = (value − mean) ÷ standard deviation
+    symbols:
+      - {symbol: x, means: the value}
+      - {symbol: x̄ and s, means: the mean and the standard deviation}
+  reading:
+    values: {z: 2.5}
+    compute: {zp: z}
+    formats: {z: '{:.1f}', zp: '{:.0%}'}
+    question: A day's trading volume has a z-score of {z}. What does that mean?
+    means: Volume was {z} standard deviations above its usual level, which is unusually high. With a roughly bell-shaped spread of values that happens on only a small share of days.
+    misreadings:
+      - Volume was {z} times its usual level.
+      - Volume was {zp} above normal.
+      - Volume was {z} shares above the average.
+    scale: {lo: -3, hi: 3, format: '{:.0f}', better: neither}
+    point: z
+    marks:
+      - {at: 0, label: the mean}
+  in_finance: >-
+    Trading signals are often z-scores, such as a spread's distance from its recent average in pairs trading. Not to be
+    confused with the Altman Z-score, a bankruptcy predictor built from accounting ratios.
+  fools_you: >-
+    The usual rules about how rare a given score is assume a bell shape; with fat-tailed data, big scores turn up far
+    more often.
+  related: [standard_deviation, outlier, pairs_trading, pca]
+
+- id: pca
+  term: Principal component analysis (PCA)
+  aliases: [PCA, principal component analysis, principal components, principal component, explained variance]
+  short: Replacing many correlated variables with a few combined ones, ordered by how much of the total variation each captures.
+  plain: >-
+    The first component is the direction along which the data vary most; the next captures the most of what is left,
+    at right angles to the first, and so on. Keeping the first few often keeps most of the information in far fewer
+    columns. Standardise the inputs first, or the column with the biggest units dominates.
+  used_for: >-
+    Shrinking many related inputs to a few, removing noise, and seeing the main patterns that move a group of
+    variables together.
+  reading:
+    values: {pc1: 0.85, pc2: 0.1}
+    compute: {both: pc1 + pc2, rest: 1 - pc1 - pc2}
+    formats: {pc1: '{:.0%}', pc2: '{:.0%}', both: '{:.0%}', rest: '{:.0%}'}
+    question: In a PCA of daily yield changes, the first component explains {pc1} of the variance and the second {pc2}. What does that mean?
+    means: One pattern accounts for most of how yields move from day to day, and two patterns together cover {both}, leaving only {rest} for everything else. Two numbers a day summarise the whole curve well.
+    misreadings:
+      - The first maturity in the data explains {pc1} of the variance.
+      - '{pc1} of the days follow the first pattern.'
+      - The components are what cause yields to move.
+    scale: {lo: 0, hi: 1, format: '{:.0%}', better: neither}
+    marks:
+      - {at: pc1, label: first component}
+      - {at: both, label: first two together}
+  in_finance: >-
+    Applied to yield curves, it finds the three classic patterns: level (all rates move together), slope (short and long
+    rates move apart) and curvature (the middle bends). The yield-curve factors card is that finance version.
+  fools_you: >-
+    Components are statistical summaries, not causes, and their signs and order can change between samples.
+  related: [yield_curve_pca, z_score, correlation, autoencoder]
+  sources: [nist_pca]
+
+- id: ks_statistic
+  term: Kolmogorov-Smirnov (KS) statistic
+  aliases: [KS, KS statistic, KS test, K-S test, Kolmogorov-Smirnov test, Kolmogorov-Smirnov]
+  short: The largest vertical gap between two cumulative distribution curves, used to test whether two samples differ or how well a score separates two groups.
+  plain: >-
+    Sort each group's values and draw, for every value, the share of the group at or below it. The statistic is the
+    biggest gap between the two curves. As a test it asks whether two samples could come from the same distribution;
+    applied to a model's scores for events and non-events it measures separation, and equals the largest hit rate minus
+    false-alarm rate over all thresholds.
+  used_for: >-
+    Checking whether data have shifted between two periods, and measuring how well a score separates two groups at its
+    best cut-off.
+  reading:
+    values: {ks: 0.45, far: 0.2}
+    compute: {pct: ks, hr: far + ks}
+    formats: {ks: '{:.2f}', far: '{:.0%}', pct: '{:.0%}', hr: '{:.0%}'}
+    question: A credit scorecard has a KS of {ks}. What does that mean?
+    means: At its best cut-off, the share of defaulters it flags beats the share of good payers it flags by {ks}, for example {hr} against {far}. No other cut-off opens a bigger gap between hit rate and false-alarm rate.
+    misreadings:
+      - '{pct} of the loans will default.'
+      - The scorecard is right about {pct} of borrowers.
+      - The scorecard ranks a defaulter above a good payer {pct} of the time.
+    scale: {lo: 0, hi: 1, format: '{:.1f}', better: higher}
+    point: ks
+    marks:
+      - {at: 0, label: no separation}
+      - {at: 1, label: complete separation}
+  in_finance: >-
+    Credit scoring is where it is most quoted: scorecard validation reports it with the accuracy ratio (Gini) and the
+    ROC area, and the test version checks whether today's applicants still look like those the model was built on.
+  fools_you: >-
+    It reflects only the single best cut-off, which may not be the one you use, and with very large samples the test
+    flags even trivial shifts as significant.
+  related: [roc_auc, gini_accuracy_ratio, population_stability_index, decision_threshold, distribution]
+  sources: [nist_ks_test, mathworks_scorecard_metrics]
+
+- id: population_stability_index
+  term: Population stability index (PSI)
+  aliases: [PSI, population stability index, stability index, characteristic stability index]
+  short: A credit-risk measure of how far the spread of a score or variable has shifted between the population a model was built on and today's.
+  plain: >-
+    Split the score into bins, compare the share of people in each bin then and now, and add up the differences, each
+    weighted by the log of the ratio of the two shares. Zero means identical; bigger means more drift.
+  used_for: >-
+    Monitoring a model in use; a rising value warns that the applicants, customers or markets it scores no longer look
+    like its training data.
+  formula:
+    tex: '\mathrm{PSI} = \sum_{i} (a_{i} - e_{i}) \ln\frac{a_{i}}{e_{i}}'
+    plain: PSI = sum over bins of (share now − share then) × ln(share now ÷ share then)
+    symbols:
+      - {symbol: a i, means: share of today's population in bin i}
+      - {symbol: e i, means: share of the original population in bin i}
+  reading:
+    values: {psi: 0.18, low: 0.1, high: 0.25, top: 0.4}
+    compute: {psip: psi}
+    formats: {psi: '{:.2f}', low: '{:.2f}', high: '{:.2f}', top: '{:.2f}', psip: '{:.0%}'}
+    question: A scorecard's monitoring report shows a PSI of {psi}. What does that mean?
+    means: The applicants have shifted noticeably since the model was built. By the usual rule of thumb that calls for a closer look, short of the {high} level read as a material change.
+    misreadings:
+      - '{psip} of the applicants are new customers.'
+      - The model's accuracy has fallen by {psip}.
+      - The model is broken and must be rebuilt at once.
+    scale: {lo: 0, hi: top, format: '{:.2f}', better: lower}
+    point: psi
+    bands:
+      - {upto: low, label: stable}
+      - {upto: high, label: investigate}
+      - {upto: top, label: material change}
+    bands_source: potgieter_psi_2023
+  in_finance: >-
+    A finance-native measure: credit-risk teams use it to watch scorecards in use, with the traffic-light levels shown
+    on the scale. The Kolmogorov-Smirnov test asks a similar question with a significance test instead of a rule of
+    thumb.
+  fools_you: >-
+    The traffic-light levels are a convention without statistical backing; with huge samples tiny shifts look alarming,
+    with small ones big shifts can hide. It also depends on how the bins are cut.
+  related: [ks_statistic, distribution, credit_scoring]
+  sources: [potgieter_psi_2023]

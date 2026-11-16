@@ -1,14 +1,19 @@
-"""Finance Foundations: the ranked glossary course (owner request 2026-11-15).
+"""Finance Foundations: the ranked glossary course (owner requests 2026-11-15 and 2026-11-16).
 
 Layout (pipeline/learn/finance/):
     course.yaml                   tiers -> lessons (order = rank order), allowed_literals, read-next books
     terms/<lesson_id>.yaml        the ten words of one lesson, in rank order
 
-Rules (same spirit as the cases, adapted to teaching content; see docs/knowledge/DECISIONS.md 2026-11-15):
+Lessons are `kind: finance` (finance words, linked in finance cases) or `kind: measures` (the data-science measures
+every case uses, linked in all four cases). Measures cards also say what the measure is for (`used_for`), how finance
+uses it or names it (`in_finance`), and usually how to read one value of it (`reading`).
+
+Rules (same spirit as the cases, adapted to teaching content; see docs/knowledge/DECISIONS.md 2026-11-15/16):
   * Definitions are written fresh in plain English (the repo is public; nothing is copied from books).
   * Prose fields contain no hand-typed digits (allowed_literals such as "S&P 500" excepted).
-  * Worked examples use made-up numbers that are COMPUTED here from `values` + `compute` with a whitelisted
-    arithmetic evaluator, so an example can never contain an arithmetic slip; pytest re-checks every one.
+  * Worked examples and readings use made-up numbers that are COMPUTED here from `values` + `compute` with a
+    whitelisted arithmetic evaluator, so a card can never contain an arithmetic slip; pytest re-checks every one.
+  * Rule-of-thumb bands on a reading scale are real-world claims: each needs a VERIFIED `bands_source`.
   * Formulas are matplotlib mathtext, rendered to transparent PNGs the app tints to its theme.
   * Every source shown (pages definitions were checked against, books to read next) is VERIFIED in sources.json.
 """
@@ -20,17 +25,19 @@ import json
 import math
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 ID_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 PLACEHOLDER_RE = re.compile(r"\{([a-zA-Z_][a-zA-Z0-9_]*)\}")
+NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 TIERS_EXPECTED = 3
-LESSONS_PER_TIER = 10
-TERMS_PER_LESSON = 10
+MIN_LESSONS_PER_TIER = 10           # Core has 13 since 2026-11-16 (ten finance lessons + three of measures)
+TERMS_PER_LESSON = 10               # a lesson's quick check is one question per word, pass mark 8 of 10
 MAX_SHORT_WORDS = 30
+MISREADINGS = 3                     # wrong readings of a value: the distractors of a "read the number" question
 
 
 # --------------------------------------------------------------------------- schema
@@ -62,8 +69,57 @@ class Example(_Strict):
     @classmethod
     def _names(cls, v: dict) -> dict:
         for k in v:
-            if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", k):
+            if not NAME_RE.match(k):
                 raise ValueError(f"bad example name {k!r}")
+        return v
+
+
+class Scale(_Strict):
+    """The axis a reading is drawn on. lo/hi are numbers or names of reading values."""
+
+    lo: float | str
+    hi: float | str
+    format: str | None = None       # for literal numbers on the axis (lo, hi, marks, band edges)
+    better: Literal["higher", "lower", "neither"] = "neither"
+
+
+class Mark(_Strict):
+    at: float | str                 # a number or the name of a reading value
+    label: str
+
+
+class Band(_Strict):
+    upto: float | str               # bands run from the scale's lo, each ending where the next begins
+    label: str
+
+
+class Reading(_Strict):
+    """How to read one value of a measure ("What does an AUC of 0.78 mean?").
+
+    Numbers come from `values` + `compute` like a worked example. `means` is the right reading; `misreadings` are
+    the classic wrong ones (they are the distractors of the quiz question). The optional scale draws the value
+    (`point`, or an `interval` of two names) against marks and rule-of-thumb bands (which need a VERIFIED source).
+    """
+
+    values: dict[str, float]
+    compute: dict[str, str] = Field(default_factory=dict)
+    formats: dict[str, str] = Field(default_factory=dict)
+    question: str
+    means: str
+    misreadings: list[str] = Field(min_length=MISREADINGS, max_length=MISREADINGS)
+    scale: Scale | None = None
+    point: str | None = None
+    interval: list[str] | None = Field(default=None, min_length=2, max_length=2)
+    marks: list[Mark] = Field(default_factory=list)
+    bands: list[Band] = Field(default_factory=list)
+    bands_source: str | None = None
+
+    @field_validator("values", "compute")
+    @classmethod
+    def _names(cls, v: dict) -> dict:
+        for k in v:
+            if not NAME_RE.match(k):
+                raise ValueError(f"bad reading name {k!r}")
         return v
 
 
@@ -78,8 +134,11 @@ class Term(_Strict):
     aliases: list[str] = Field(default_factory=list)
     short: str                      # one sentence; the quick-check question is built from it
     plain: str                      # plain meaning with an everyday picture
+    used_for: str | None = None     # what the measure is for (required on measures cards)
     formula: Formula | None = None
+    reading: Reading | None = None  # how to read one value of it
     example: Example | None = None
+    in_finance: str | None = None   # how finance uses or names it (required on measures cards); may use reading values
     fools_you: str                  # how it fools people (spec's glossary card)
     related: list[str] = Field(default_factory=list)
     in_cases: list[CaseRef] = Field(default_factory=list)
@@ -103,6 +162,7 @@ class Lesson(_Strict):
     id: str
     title: str
     blurb: str
+    kind: Literal["finance", "measures"] = "finance"
     sources: list[str] = Field(default_factory=list)   # pages the definitions were checked against
 
 
@@ -169,24 +229,101 @@ def _fmt(value: float, spec: str | None) -> str:
     return spec.format(value)
 
 
-def render_example(ex: Example) -> tuple[str, dict[str, float]]:
-    """Returns the text with every number wrapped as [[number]] (the app highlights these) and all values."""
-    env: dict[str, float] = dict(ex.values)
-    for name, expr in ex.compute.items():
+def evaluate(values: dict[str, float], compute: dict[str, str], formats: dict[str, str]) -> dict[str, float]:
+    """Values plus every computed result, in order. Formats must name known values."""
+    env: dict[str, float] = {k: float(v) for k, v in values.items()}
+    for name, expr in compute.items():
         if name in env:
             raise ExampleError(f"{name!r} computed twice")
         env[name] = safe_eval(expr, env)
-    for name in ex.formats:
+    for name in formats:
         if name not in env:
             raise ExampleError(f"format given for unknown name {name!r}")
+    return env
+
+
+def fill(text: str, env: dict[str, float], formats: dict[str, str], mark: bool = True) -> str:
+    """Replaces {name} with its formatted value, wrapped as [[value]] when `mark` (the app highlights these)."""
 
     def sub(m: re.Match) -> str:
         name = m.group(1)
         if name not in env:
             raise ExampleError(f"placeholder {{{name}}} has no value")
-        return f"[[{_fmt(env[name], ex.formats.get(name))}]]"
+        s = _fmt(env[name], formats.get(name))
+        return f"[[{s}]]" if mark else s
 
-    return PLACEHOLDER_RE.sub(sub, ex.text), env
+    return PLACEHOLDER_RE.sub(sub, text)
+
+
+def render_example(ex: Example) -> tuple[str, dict[str, float]]:
+    """Returns the text with every number wrapped as [[number]] (the app highlights these) and all values."""
+    env = evaluate(ex.values, ex.compute, ex.formats)
+    return fill(ex.text, env, ex.formats), env
+
+
+def render_reading(r: Reading) -> tuple[dict[str, Any], dict[str, float]]:
+    """The reading as the app gets it: texts filled in, positions as numbers, labels already formatted."""
+    env = evaluate(r.values, r.compute, r.formats)
+
+    def num(v: float | str) -> float:
+        if isinstance(v, str):
+            if v not in env:
+                raise ExampleError(f"reading name {v!r} has no value")
+            return env[v]
+        return float(v)
+
+    def text(v: float | str) -> str:
+        if isinstance(v, str):
+            return _fmt(num(v), r.formats.get(v))
+        return _fmt(float(v), r.scale.format if r.scale else None)
+
+    out: dict[str, Any] = {
+        "question": fill(r.question, env, r.formats, mark=False),
+        "means": fill(r.means, env, r.formats),
+        "misreadings": [fill(m, env, r.formats, mark=False) for m in r.misreadings],
+        "scale": None, "point": None, "interval": None, "marks": [], "bands": [],
+        "bands_source": r.bands_source,
+    }
+    plain_means = fill(r.means, env, r.formats, mark=False)
+    if len({plain_means.lower(), *(m.lower() for m in out["misreadings"])}) != 1 + MISREADINGS:
+        raise ExampleError("misreadings must differ from each other and from the right reading")
+    if r.scale is None:
+        if r.point or r.interval or r.marks or r.bands:
+            raise ExampleError("point, interval, marks and bands need a scale")
+        return out, env
+
+    lo, hi = num(r.scale.lo), num(r.scale.hi)
+    if not lo < hi:
+        raise ExampleError(f"scale lo {lo} must be below hi {hi}")
+
+    def inside(x: float, what: str) -> float:
+        if not (lo - 1e-9 <= x <= hi + 1e-9):
+            raise ExampleError(f"{what} {x} is outside the scale {lo}..{hi}")
+        return x
+
+    out["scale"] = {"lo": lo, "hi": hi, "lo_text": text(r.scale.lo), "hi_text": text(r.scale.hi),
+                    "better": r.scale.better}
+    if r.point is not None:
+        out["point"] = {"at": inside(num(r.point), "point"), "text": text(r.point)}
+    if r.interval is not None:
+        a, b = (inside(num(v), "interval end") for v in r.interval)
+        if a > b:
+            raise ExampleError("interval ends are the wrong way round")
+        out["interval"] = {"lo": a, "hi": b, "lo_text": text(r.interval[0]), "hi_text": text(r.interval[1])}
+    for m in r.marks:
+        out["marks"].append({"at": inside(num(m.at), f"mark {m.label!r}"), "text": text(m.at), "label": m.label})
+    prev, prev_text = lo, text(r.scale.lo)
+    for b in r.bands:
+        x = inside(num(b.upto), f"band {b.label!r}")
+        if not x > prev:
+            raise ExampleError(f"band {b.label!r} must end above where it starts")
+        out["bands"].append({"lo": prev, "hi": x, "lo_text": prev_text, "hi_text": text(b.upto), "label": b.label})
+        prev, prev_text = x, text(b.upto)
+    if r.bands and abs(prev - hi) > 1e-9:
+        raise ExampleError("the last band must end at the top of the scale")
+    if bool(r.bands) != bool(r.bands_source):
+        raise ExampleError("bands and bands_source come together (a rule of thumb needs its source)")
+    return out, env
 
 
 # --------------------------------------------------------------------------- formulas
@@ -285,8 +422,8 @@ def validate_course(course_dir: Path, sources: dict[str, dict], case_steps: dict
         if len(course.tiers) != TIERS_EXPECTED:
             errs.append(f"{len(course.tiers)} tiers, expected {TIERS_EXPECTED}")
         for tier in course.tiers:
-            if len(tier.lessons) != LESSONS_PER_TIER:
-                errs.append(f"tier {tier.id}: {len(tier.lessons)} lessons, expected {LESSONS_PER_TIER}")
+            if len(tier.lessons) < MIN_LESSONS_PER_TIER:
+                errs.append(f"tier {tier.id}: {len(tier.lessons)} lessons, expected at least {MIN_LESSONS_PER_TIER}")
             for lesson in tier.lessons:
                 n = len(by_lesson.get(lesson.id, []))
                 if n != TERMS_PER_LESSON:
@@ -314,12 +451,44 @@ def validate_course(course_dir: Path, sources: dict[str, dict], case_steps: dict
             names[k] = t.id
 
     lit = course.allowed_literals
+
+    def digits_in_template(text: str, where: str) -> None:
+        """A text with {placeholders}: only the placeholders may bring numbers."""
+        bad = _digits(PLACEHOLDER_RE.sub(" ", text), lit)
+        if bad:
+            errs.append(f"{where}: hand-typed number(s) {bad}; put them in values")
+
     for tier, lesson, t in ordered:
         where = f"{lesson.id}/{t.id}"
-        for field in ("term", "short", "plain", "fools_you"):
-            bad = _digits(getattr(t, field), lit)
+        for field in ("term", "short", "plain", "fools_you", "used_for"):
+            value = getattr(t, field)
+            bad = _digits(value, lit) if value else []
             if bad:
                 errs.append(f"{where}.{field}: hand-typed number(s) {bad} (use an example or allowed_literals)")
+        if lesson.kind == "measures":
+            for field in ("used_for", "in_finance"):
+                if not getattr(t, field):
+                    errs.append(f"{where}: measures cards need {field}")
+        env: dict[str, float] = {}
+        if t.reading is not None:
+            r = t.reading
+            try:
+                _, env = render_reading(r)
+            except ExampleError as e:
+                errs.append(f"{where}: reading: {e}")
+            for i, txt in enumerate([r.question, r.means, *r.misreadings]):
+                digits_in_template(txt, f"{where}.reading text {i}")
+            for label in [m.label for m in r.marks] + [b.label for b in r.bands]:
+                if _digits(label, lit):
+                    errs.append(f"{where}: reading label {label!r} has digits")
+            if r.bands_source:
+                need_source(r.bands_source, f"{where} reading bands")
+        if t.in_finance:
+            digits_in_template(t.in_finance, f"{where}.in_finance")
+            try:
+                fill(t.in_finance, env, t.reading.formats if t.reading else {})
+            except ExampleError as e:
+                errs.append(f"{where}.in_finance: {e} (in_finance may only use the reading's values)")
         for alias in t.aliases:
             if _digits(alias, lit):
                 errs.append(f"{where}: alias {alias!r} contains digits not in allowed_literals")
@@ -364,13 +533,17 @@ CREATE TABLE terms(id TEXT PRIMARY KEY, tier TEXT, lesson TEXT, rank INTEGER, te
 
 
 def term_json(t: Term, formula_asset: str | None) -> dict[str, Any]:
-    d = t.model_dump(exclude={"formula", "example"})
+    d = t.model_dump(exclude={"formula", "example", "reading", "in_finance"})
     d["formula"] = None if t.formula is None else {
         "plain": t.formula.plain,
         "symbols": [s.model_dump() for s in t.formula.symbols],
         "image": formula_asset,
     }
     d["example"] = None if t.example is None else {"text": render_example(t.example)[0]}
+    reading, env = render_reading(t.reading) if t.reading is not None else (None, {})
+    d["reading"] = reading
+    d["in_finance"] = None if t.in_finance is None else fill(
+        t.in_finance, env, t.reading.formats if t.reading else {})
     return d
 
 

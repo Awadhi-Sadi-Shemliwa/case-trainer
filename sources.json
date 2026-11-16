@@ -344,5 +344,205 @@
     "quote": "machine learning has grown into an important skillset for the finance industry",
     "status": "VERIFIED",
     "note": "Springer, ISBN 978-3-030-41067-4. Its chapter topics shaped the quant tier; definitions are written fresh, nothing is copied. The owner's PDF copy is never committed."
+  },
+  {
+    "key": "sklearn_metrics",
+    "title": "Metrics and scoring: quantifying the quality of predictions",
+    "authors": [
+      "scikit-learn developers"
+    ],
+    "year": "2026",
+    "url": "https://scikit-learn.org/stable/modules/model_evaluation.html",
+    "verified_on": "2026-11-16",
+    "quote": "computes the area under the ROC curve",
+    "status": "VERIFIED",
+    "note": "scikit-learn user guide section 3.4 (version 1.9.1 docs). Checked for accuracy, precision, recall, F1, ROC AUC, Brier score, R-squared, MAE and RMSE definitions."
+  },
+  {
+    "key": "sklearn_cross_validation",
+    "title": "Cross-validation: evaluating estimator performance",
+    "authors": [
+      "scikit-learn developers"
+    ],
+    "year": "2026",
+    "url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+    "verified_on": "2026-11-16",
+    "quote": "each split holds out samples belonging to one specific group",
+    "status": "VERIFIED",
+    "note": "scikit-learn user guide section 3.1: train/test splits, k-fold, leave-one-group-out, time-series splits."
+  },
+  {
+    "key": "nist_eda",
+    "title": "What is EDA?",
+    "authors": [
+      "NIST/SEMATECH e-Handbook of Statistical Methods"
+    ],
+    "year": "2012",
+    "url": "https://www.itl.nist.gov/div898/handbook/eda/section1/eda11.htm",
+    "verified_on": "2026-11-16",
+    "quote": "Exploratory Data Analysis (EDA) is an approach/philosophy for data analysis",
+    "status": "VERIFIED",
+    "note": "e-Handbook section 1.1.1."
+  },
+  {
+    "key": "nist_location",
+    "title": "Measures of Location",
+    "authors": [
+      "NIST/SEMATECH e-Handbook of Statistical Methods"
+    ],
+    "year": "2012",
+    "url": "https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm",
+    "verified_on": "2026-11-16",
+    "quote": "Extreme values in the tails distort the mean.",
+    "status": "VERIFIED",
+    "note": "e-Handbook section 1.3.5.1: mean, median and mode, and why the median resists skew."
+  },
+  {
+    "key": "nist_outliers",
+    "title": "What are outliers in the data?",
+    "authors": [
+      "NIST/SEMATECH e-Handbook of Statistical Methods"
+    ],
+    "year": "2012",
+    "url": "https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm",
+    "verified_on": "2026-11-16",
+    "quote": "An outlier is an observation that lies an abnormal distance from other values",
+    "status": "VERIFIED",
+    "note": "e-Handbook section 7.1.6."
+  },
+  {
+    "key": "nist_confidence_limits",
+    "title": "Confidence Limits for the Mean",
+    "authors": [
+      "NIST/SEMATECH e-Handbook of Statistical Methods"
+    ],
+    "year": "2012",
+    "url": "https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm",
+    "verified_on": "2026-11-16",
+    "quote": "a confidence interval generates a lower and upper limit for the mean",
+    "status": "VERIFIED",
+    "note": "e-Handbook section 1.3.5.2."
+  },
+  {
+    "key": "nist_pvalues",
+    "title": "Critical values and p values",
+    "authors": [
+      "NIST/SEMATECH e-Handbook of Statistical Methods"
+    ],
+    "year": "2012",
+    "url": "https://www.itl.nist.gov/div898/handbook/prc/section1/prc131.htm",
+    "verified_on": "2026-11-16",
+    "quote": "values of 0.1, 0.05, and 0.01 are common",
+    "status": "VERIFIED",
+    "note": "e-Handbook section 7.1.3.1. The source for the conventional significance levels marked on the p-value scale."
+  },
+  {
+    "key": "nist_ks_test",
+    "title": "Kolmogorov-Smirnov Goodness-of-Fit Test",
+    "authors": [
+      "NIST/SEMATECH e-Handbook of Statistical Methods"
+    ],
+    "year": "2012",
+    "url": "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35g.htm",
+    "verified_on": "2026-11-16",
+    "quote": "The K-S test is based on the maximum distance between these two curves.",
+    "status": "VERIFIED",
+    "note": "e-Handbook section 1.3.5.16."
+  },
+  {
+    "key": "nist_pca",
+    "title": "Principal Components",
+    "authors": [
+      "NIST/SEMATECH e-Handbook of Statistical Methods"
+    ],
+    "year": "2012",
+    "url": "https://www.itl.nist.gov/div898/handbook/pmc/section5/pmc55.htm",
+    "verified_on": "2026-11-16",
+    "quote": "reducing a large set of variables to a small set",
+    "status": "VERIFIED",
+    "note": "e-Handbook section 6.5.5."
+  },
+  {
+    "key": "asa_pvalues_2016",
+    "title": "Statistical significance and p-values",
+    "authors": [
+      "American Statistical Association"
+    ],
+    "year": "2016",
+    "url": "https://www.sciencedaily.com/releases/2016/03/160307092305.htm",
+    "verified_on": "2026-11-16",
+    "quote": "P-values do not measure the probability that the studied hypothesis is true",
+    "status": "VERIFIED",
+    "note": "ASA news release of 7 March 2016 on its six principles (Wasserstein and Lazar, The American Statistician, doi 10.1080/00031305.2016.1154108; the journal page refuses automated access)."
+  },
+  {
+    "key": "engelmann_ar_auc_2003",
+    "title": "Measuring the Discriminative Power of Rating Systems",
+    "authors": [
+      "Bernd Engelmann",
+      "Evelyn Hayden",
+      "Dirk Tasche"
+    ],
+    "year": "2003",
+    "url": "https://bundesbank.de/resource/blob/704150/b9fa10a16dfff3c98842581253f6d141/472B63F073F071307366337C94F8C870/2003-10-01-dkp-01-data.pdf",
+    "verified_on": "2026-11-16",
+    "quote": "the Accuracy Ratio and the area under the ROC curve, contain the same information",
+    "status": "VERIFIED",
+    "note": "Deutsche Bundesbank Discussion Paper Series 2, No 01/2003. Equation 17 and Appendix A prove AR = 2 AUC - 1 (accuracy ratio, the credit-scoring Gini)."
+  },
+  {
+    "key": "casrai_auc_bands",
+    "title": "ROC Curves and AUC: What They Plot, What AUC Means, and Where It Misleads",
+    "authors": [
+      "CASRAI Editorial Board"
+    ],
+    "year": "2026",
+    "url": "https://www.casrai.org/guides/roc-curve-auc",
+    "verified_on": "2026-11-16",
+    "quote": "0.7–0.8: acceptable discrimination",
+    "status": "VERIFIED",
+    "note": "Secondary source: attributes the acceptable / excellent / outstanding bands to Hosmer and Lemeshow, Applied Logistic Regression. Used only for the bands on the AUC scale, labelled a rule of thumb."
+  },
+  {
+    "key": "potgieter_psi_2023",
+    "title": "The Population Resemblance Statistic: A Chi-Square Measure of Fit for Banking",
+    "authors": [
+      "Nelis Potgieter",
+      "Corli van Zyl",
+      "WD Schutte",
+      "Fred Lombard"
+    ],
+    "year": "2023",
+    "url": "https://arxiv.org/html/2307.11878",
+    "verified_on": "2026-11-16",
+    "quote": "a value above 0.25 signals a material change in the incoming population",
+    "status": "VERIFIED",
+    "note": "arXiv:2307.11878. States the industry rule of thumb for the population stability index (below 0.10 similar, 0.10 to 0.25 investigate, above 0.25 material change) and argues it is arbitrary."
+  },
+  {
+    "key": "bcbs_wp14",
+    "title": "Studies on the Validation of Internal Rating Systems (revised)",
+    "authors": [
+      "Basel Committee on Banking Supervision"
+    ],
+    "year": "2005",
+    "url": "https://www.bis.org/publ/bcbs_wp14.pdf",
+    "verified_on": "2026-11-16",
+    "quote": "the performance of the PD quantification (calibration)",
+    "status": "VERIFIED",
+    "note": "BCBS Working Paper No. 14. Separates a rating system's discriminatory power from the calibration of its default probabilities (PD calibration)."
+  },
+  {
+    "key": "mathworks_scorecard_metrics",
+    "title": "Credit Scorecard Validation Metrics",
+    "authors": [
+      "MathWorks"
+    ],
+    "year": "2026",
+    "url": "https://www.mathworks.com/help/risk/credit-scorecard-validation-metrics.html",
+    "verified_on": "2026-11-16",
+    "quote": "indicates the maximal separation of defaulters from non-defaulters that the model achieves",
+    "status": "VERIFIED",
+    "note": "Vendor documentation (Risk Management Toolbox). Lists the accuracy ratio, AUROC and the KS statistic as the scorecard validation metrics."
   }
 ]
