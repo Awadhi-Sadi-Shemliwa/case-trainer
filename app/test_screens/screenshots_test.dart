@@ -145,4 +145,44 @@ void main() {
     await tester.tap(find.text('Progress'));
     await shot(tester, '10_progress');
   });
+
+  // Measures (owner request 2026-11-16): a word's reading scale, light and dark, and the Core heading.
+  Future<void> openReading(WidgetTester tester, String query, String id) async {
+    await tester.tap(find.text('Learn'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open_glossary')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const ValueKey('glossary_search')), query);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(ValueKey('glossary_$id')));
+    await tester.pumpAndSettle();
+    final reading = find.byKey(ValueKey('reading_$id'));
+    await tester.scrollUntilVisible(reading, 300, scrollable: find.byType(Scrollable).first);
+    await tester.pumpAndSettle();
+    await Scrollable.ensureVisible(tester.element(reading), alignment: 0.15);
+  }
+
+  for (final (name, query, id, mode) in [
+    ('11_auc_light', 'AUC', 'roc_auc', ThemeMode.light),
+    ('12_auc_dark', 'AUC', 'roc_auc', ThemeMode.dark),
+    ('13_ci_light', 'confidence interval', 'confidence_interval', ThemeMode.light),
+    ('14_psi_dark', 'PSI', 'population_stability_index', ThemeMode.dark),
+    ('15_brier_light', 'Brier', 'brier_score', ThemeMode.light),
+  ]) {
+    testWidgets('reading $name', (tester) async {
+      await pump(tester, cover: false, mode: mode);
+      await openReading(tester, query, id);
+      await shot(tester, name);
+    });
+  }
+
+  testWidgets('learn measures heading', (tester) async {
+    await pump(tester, cover: false);
+    await tester.tap(find.text('Learn'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.byKey(const ValueKey('measures_heading_core')), 400,
+        scrollable: find.byType(Scrollable).first);
+    await Scrollable.ensureVisible(tester.element(find.byKey(const ValueKey('measures_heading_core'))), alignment: 0.3);
+    await shot(tester, '16_learn_measures');
+  });
 }

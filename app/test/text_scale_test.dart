@@ -35,6 +35,26 @@ void main() {
     }
   });
 
+  testWidgets('measures cards with reading scales at 130% text', (tester) async {
+    await start(tester);
+    await tester.tap(find.text('Learn').last);
+    await tester.pumpAndSettle();
+    for (final (query, id) in [('AUC', 'roc_auc'), ('confidence interval', 'confidence_interval'), ('PSI', 'population_stability_index')]) {
+      await tester.tap(find.byKey(const ValueKey('open_glossary')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('glossary_search')), query);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(ValueKey('glossary_$id')));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.byKey(ValueKey('reading_$id')), 300, scrollable: find.byType(Scrollable).first);
+      await tester.scrollUntilVisible(find.text('It does not mean'), 300, scrollable: find.byType(Scrollable).first);
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+    }
+  });
+
   testWidgets('a case step and a lesson at 130% text', (tester) async {
     await start(tester);
     await tapVisible(tester, find.byKey(const ValueKey('resume_case')));

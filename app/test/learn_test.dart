@@ -21,15 +21,15 @@ void main() {
   tearDownAll(() => content.close());
 
   group('course', () {
-    test('three tiers of a hundred words, ten lessons each, ranked 1..300', () {
+    test('Core holds 100 finance words then 30 measures; the other tiers 100 each; ranked 1..330', () {
       expect(course.tiers.map((t) => t.id), ['core', 'intermediate', 'quant']);
-      expect(course.terms.length, 300);
-      expect(course.lessons.length, 30);
-      for (final t in course.tiers) {
-        expect(course.termsOfTier(t.id).length, 100);
-        expect(course.lessonsOf(t.id).length, 10);
-      }
-      expect([for (final t in course.terms) t.rank], List.generate(300, (i) => i + 1));
+      expect(course.terms.length, 330);
+      expect(course.lessons.length, 33);
+      expect([for (final t in course.tiers) course.termsOfTier(t.id).length], [130, 100, 100]);
+      expect([for (final t in course.tiers) course.lessonsOf(t.id).length], [13, 10, 10]);
+      expect([for (final l in course.lessonsOf('core')) l.isMeasures], [...List.filled(10, false), true, true, true]);
+      expect(course.lessons.where((l) => l.isMeasures).every((l) => l.tier == 'core'), isTrue);
+      expect([for (final t in course.terms) t.rank], List.generate(330, (i) => i + 1));
       expect(course.byId['equity']!.rank, lessThanOrEqualTo(10), reason: 'the owner did not know equity');
     });
 
@@ -141,13 +141,142 @@ void main() {
     });
   });
 
+  group('measures (owner request 2026-11-16)', () {
+    test('the P50 evaluation words and the measures the owner named sit in Core', () {
+      for (final id in ['base_rate', 'hit_false_alarm', 'roc_auc', 'brier_score', 'calibration', 'decision_threshold',
+          'pca', 'ks_statistic', 'eda', 'r_squared', 'gini_accuracy_ratio', 'population_stability_index']) {
+        final t = course.byId[id]!;
+        expect(t.tier, 'core', reason: id);
+        expect(course.isMeasure(t), isTrue, reason: id);
+        expect(t.rank, inInclusiveRange(101, 130), reason: id);
+        expect(t.usedFor, isNotNull, reason: id);
+        expect(t.inFinance, isNotNull, reason: id);
+      }
+    });
+
+    test('the AUC reading arrives with its numbers, bands and finance name filled in by the pipeline', () {
+      final r = course.byId['roc_auc']!.reading!;
+      expect(r.question, 'What does an AUC of 0.78 mean?');
+      expect(r.point, (at: 0.78, text: '0.78'));
+      expect((r.lo, r.hi), (0.5, 1.0));
+      expect(r.pointBand!.label, 'acceptable');
+      expect(r.bandsSource, 'casrai_auc_bands');
+      expect(r.misreadings, hasLength(3));
+      expect(r.meansPlain, isNot(contains('[[')));
+      expect(course.byId['roc_auc']!.inFinance, contains('[[0.56]]'), reason: 'Gini = 2 x AUC - 1, computed');
+    });
+
+    test('a read-the-number question has the right reading and three misreadings, and is deterministic', () {
+      final auc = course.byId['roc_auc']!;
+      final words = course.termsOf(auc.lesson);
+      QuizQuestion? q;
+      var seed = '';
+      for (var attempt = 0; q == null; attempt++) {
+        seed = '${auc.lesson}|$attempt';
+        q = buildQuiz(course, words, seed: seed)
+            .where((x) => x.term.id == 'roc_auc' && x.kind == QuestionKind.readTheNumber)
+            .firstOrNull;
+      }
+      expect(q.prompt, auc.reading!.question);
+      expect(q.options.map((o) => o.text), unorderedEquals([auc.reading!.meansPlain, ...auc.reading!.misreadings]));
+      expect(q.options.where(q.isCorrect).single.text, auc.reading!.meansPlain);
+      String fp(List<QuizQuestion> l) => l.map((x) => '${x.kind.name}:${x.options.map((o) => o.termId).join(',')}').join('|');
+      expect(fp(buildQuiz(course, words, seed: seed)), fp(buildQuiz(course, words, seed: seed)));
+    });
+
+    test('distractors for a measure are other measures, never finance words', () {
+      for (final l in course.lessons.where((l) => l.isMeasures)) {
+        for (var attempt = 0; attempt < 4; attempt++) {
+          for (final q in buildQuiz(course, course.termsOf(l.id), seed: '${l.id}|$attempt')) {
+            if (q.kind == QuestionKind.readTheNumber) continue;
+            for (final o in q.options) {
+              expect(course.isMeasure(course.byId[o.termId]!), isTrue, reason: '${q.term.id}: ${o.termId}');
+            }
+          }
+        }
+      }
+    });
+
+    test('the measures linker finds measures only; the full linker finds both', () {
+      const s = 'The confidence interval for the return on equity was wide, and the median shows it.';
+      List<String> ids(TermLinker l) => [for (final p in l.split(s).whereType<TermPiece>()) p.term.id];
+      expect(ids(TermLinker(course, where: course.isMeasure)), ['confidence_interval', 'mean_median']);
+      expect(ids(TermLinker(course)), containsAll(['confidence_interval', 'return', 'equity', 'mean_median']));
+    });
+
+    testWidgets('an F1 step links its measures and no finance word', (tester) async {
+      final progress = ProgressDb.inMemory();
+      addTearDown(progress.close);
+      const f1 = 'p13_tyre_deg';
+      progress.saveCaseState(f1, content.steps(f1).indexWhere((s) => s.id == 's11_read_fe'));
+      await pumpApp(tester, content, progress);
+      await tapVisible(tester, find.byKey(const ValueKey('resume_case')));
+      final links = [for (final e in find.byType(RichText).evaluate()) ...termLinksIn(e.widget as RichText)];
+      expect([for (final l in links) l.text.toLowerCase()], containsAll(['standard errors', 'least squares']));
+      final measureNames = {
+        for (final t in course.terms)
+          if (course.isMeasure(t))
+            for (final n in t.names) n.toLowerCase()
+      };
+      for (final l in links) {
+        expect(measureNames, contains(l.text.toLowerCase()), reason: '"${l.text}" is not a measure');
+      }
+      links.firstWhere((l) => l.text.toLowerCase() == 'standard errors').recognizer.onTap!();
+      await tester.pumpAndSettle();
+      expect(find.text('In finance'), findsOneWidget);
+    });
+
+    testWidgets('Learn lists the measures under their own heading inside Core', (tester) async {
+      final progress = ProgressDb.inMemory();
+      addTearDown(progress.close);
+      await pumpApp(tester, content, progress);
+      await tester.tap(find.text('Learn'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.byKey(const ValueKey('measures_heading_core')), 400,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.text('Measures every case uses'), findsOneWidget);
+      expect(find.byKey(const ValueKey('lesson_core_11_forecast_scores')), findsOneWidget);
+    });
+
+    testWidgets('the AUC card: the value on its scale, what it does not mean, and the finance name', (tester) async {
+      final semantics = tester.ensureSemantics();
+      final progress = ProgressDb.inMemory();
+      addTearDown(progress.close);
+      await pumpApp(tester, content, progress);
+      await tester.tap(find.text('Learn'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('open_glossary')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('glossary_search')), 'gini');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('glossary_gini_accuracy_ratio')), findsOneWidget);
+      expect(find.byKey(const ValueKey('glossary_roc_auc')), findsOneWidget, reason: 'its finance note names the Gini');
+      await tester.enterText(find.byKey(const ValueKey('glossary_search')), 'AUC');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('glossary_roc_auc')));
+      await tester.pumpAndSettle();
+
+      final scroll = find.byType(Scrollable).first;
+      await tester.scrollUntilVisible(find.byKey(const ValueKey('reading_roc_auc')), 300, scrollable: scroll);
+      expect(find.text('What does an AUC of 0.78 mean?'), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp(r'This value: 0\.78, in the band acceptable\..*coin toss')), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('It does not mean'), 300, scrollable: scroll);
+      expect(find.text('The model classifies 78% of months correctly.'), findsOneWidget);
+      await tester.scrollUntilVisible(find.byKey(const ValueKey('in_finance')), 300, scrollable: scroll);
+      expect(find.text('In finance'), findsOneWidget);
+      await tester.scrollUntilVisible(find.textContaining('ROC Curves and AUC'), 300, scrollable: scroll);
+      expect(find.textContaining('ROC Curves and AUC'), findsOneWidget, reason: 'the bands source is listed');
+      semantics.dispose();
+    });
+  });
+
   testWidgets('a lesson: read, take the quick check, pass, words become known', (tester) async {
     final progress = ProgressDb.inMemory();
     addTearDown(progress.close);
     await pumpApp(tester, content, progress);
     await tester.tap(find.text('Learn'));
     await tester.pumpAndSettle();
-    expect(find.text('0 of 300 words known'), findsOneWidget);
+    expect(find.text('0 of ${course.terms.length} words known'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('start_next_lesson')));
     await tester.pumpAndSettle();
 

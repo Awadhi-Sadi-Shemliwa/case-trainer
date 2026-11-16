@@ -1,4 +1,5 @@
-/// Finds glossary words inside case text so they can be tapped for their definition (finance cases only).
+/// Finds glossary words inside case text so they can be tapped for their definition. Finance cases link every word;
+/// the other cases link only the data-science measures (see `measureLinkerProvider`).
 ///
 /// Matching rules: longest name first ("earnings per share" beats "earnings"); whole words only; acronyms and
 /// short capitalised names ("GDP", "AUC", "Fed", "PM") must match their exact case so "fed" or "pm" in ordinary
@@ -22,10 +23,12 @@ class TermPiece extends LinkPiece {
 }
 
 class TermLinker {
-  TermLinker(Course course) {
+  /// [where] limits the words that may be linked (all of them when null).
+  TermLinker(Course course, {bool Function(GlossaryTerm)? where}) {
     final entries = <({String name, GlossaryTerm term})>[
       for (final t in course.terms)
-        for (final n in t.names)
+        if (where == null || where(t))
+          for (final n in t.names)
           if (!n.contains('(')) (name: n, term: t),
     ]..sort((a, b) => b.name.length.compareTo(a.name.length));
     final seen = <String>{};

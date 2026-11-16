@@ -6,6 +6,7 @@ import '../providers.dart';
 import '../ui/theme/tokens.dart';
 import '../ui/widgets/highlight.dart';
 import 'course.dart';
+import 'reading_scale.dart';
 
 /// Everything about one word: meaning, plain words, formula, a worked example, how it fools people, related
 /// words, where the cases use it and which pages the definition was checked against.
@@ -41,13 +42,25 @@ class TermCard extends ConsumerWidget {
       const SizedBox(height: 2),
       SectionTitle('In plain words', icon: Icons.chat_bubble_outline_rounded),
       Text(term.plain, style: t.bodyLarge),
+      if (term.usedFor case final usedFor?) ...[
+        SectionTitle("What it's for", icon: Icons.track_changes_rounded),
+        Text(usedFor, style: t.bodyLarge),
+      ],
       if (term.formula != null) ...[
         SectionTitle('Formula', icon: Icons.functions_rounded),
         _Formula(term.formula!),
       ],
+      if (term.reading case final reading?) ...[
+        SectionTitle('Reading the number', icon: Icons.straighten_rounded, trailing: Text('made-up numbers', style: t.bodySmall)),
+        _Reading(reading, key: ValueKey('reading_${term.id}')),
+      ],
       if (term.exampleText != null) ...[
         SectionTitle('Worked example', icon: Icons.calculate_outlined, trailing: Text('made-up numbers', style: t.bodySmall)),
         MarkedText(term.exampleText!, style: t.bodyLarge),
+      ],
+      if (term.inFinance case final inFinance?) ...[
+        SectionTitle('In finance', icon: Icons.account_balance_outlined),
+        MarkedText(inFinance, key: const ValueKey('in_finance'), style: t.bodyLarge),
       ],
       RuledNote(
         title: 'How it fools people',
@@ -73,15 +86,49 @@ class TermCard extends ConsumerWidget {
           Text('${_caseLabel(content.caseById(ref.caseId).number)}: ${content.stepTitle(ref.caseId, ref.stepId) ?? ref.stepId}',
               style: t.bodyMedium),
       ],
-      if (!compact && (term.sources.isNotEmpty || lessonSources.isNotEmpty)) ...[
+      if (!compact && (term.sources.isNotEmpty || lessonSources.isNotEmpty || term.reading?.bandsSource != null)) ...[
         SectionTitle('Checked against', icon: Icons.verified_outlined),
-        for (final k in {...term.sources, ...lessonSources})
+        for (final k in {...term.sources, ...lessonSources, ?term.reading?.bandsSource})
           if (sourceTitles[k] case final title?) Text(title, style: t.bodySmall),
       ],
     ]);
   }
 
   static String _caseLabel(int number) => 'P$number';
+}
+
+/// The question, the value on its scale, the right reading and the classic wrong ones.
+class _Reading extends StatelessWidget {
+  const _Reading(this.r, {super.key});
+  final ReadingInfo r;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final t = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: c.paperSunken,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: c.grid),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 12, children: [
+        Text(r.question, style: t.titleMedium),
+        if (r.hasScale) ReadingScale(r),
+        MarkedText(r.means, style: t.bodyLarge),
+        Text('It does not mean', style: t.labelLarge?.copyWith(color: c.inkSoft)),
+        for (final m in r.misreadings)
+          Row(crossAxisAlignment: CrossAxisAlignment.start, spacing: 8, children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Icon(Icons.close_rounded, size: 18, color: c.bad, semanticLabel: 'Wrong reading'),
+            ),
+            Expanded(child: Text(m, style: t.bodyMedium)),
+          ]),
+      ]),
+    );
+  }
 }
 
 class _Formula extends StatelessWidget {

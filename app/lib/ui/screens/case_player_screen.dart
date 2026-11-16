@@ -121,7 +121,7 @@ class _CasePlayerScreenState extends ConsumerState<CasePlayerScreen> {
       progress: ref.read(progressDbProvider),
       grader: ref.read(graderProvider),
       onProgress: () => ref.read(progressTickProvider.notifier).bump(),
-      linker: _case.domain == 'finance' ? ref.read(termLinkerProvider) : null,
+      linker: ref.read(_case.domain == 'finance' ? termLinkerProvider : measureLinkerProvider),
       onTerm: (term) => showTermSheet(context, term),
     );
     return Scaffold(

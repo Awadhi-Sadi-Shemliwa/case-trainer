@@ -39,8 +39,15 @@ final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeMo
 /// The finance course from the bundle (fixed for the app's lifetime).
 final courseProvider = Provider<Course>((ref) => ref.watch(contentDbProvider).course());
 
-/// Finds glossary words in case text (used in finance cases).
+/// Finds every glossary word in case text (used in finance cases).
 final termLinkerProvider = Provider<TermLinker>((ref) => TermLinker(ref.watch(courseProvider)));
+
+/// Finds only the data-science measures (AUC, p-value, median...) in case text: used in the aviation, F1 and
+/// football cases, where finance words would be out of place (owner request 2026-11-16).
+final measureLinkerProvider = Provider<TermLinker>((ref) {
+  final course = ref.watch(courseProvider);
+  return TermLinker(course, where: course.isMeasure);
+});
 
 /// Learning state; recomputed whenever progress is written.
 final courseProgressProvider = Provider<CourseProgress>((ref) {

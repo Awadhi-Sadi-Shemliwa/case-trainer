@@ -92,7 +92,9 @@ class _QuizRunnerState extends State<QuizRunner> {
           title: q.isCorrect(_picked!) ? 'Right' : 'Not quite',
           icon: q.isCorrect(_picked!) ? Icons.check_circle_rounded : Icons.highlight_off_rounded,
           rule: q.isCorrect(_picked!) ? c.good : c.bad,
-          child: Text('${q.term.term}: ${q.term.short}', style: t.bodyMedium),
+          child: q.kind == QuestionKind.readTheNumber
+              ? MarkedText(q.term.reading!.means, style: t.bodyMedium)
+              : Text('${q.term.term}: ${q.term.short}', style: t.bodyMedium),
         ),
         FilledButton(
           key: const ValueKey('quiz_next'),

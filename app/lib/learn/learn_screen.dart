@@ -59,7 +59,17 @@ class LearnScreen extends ConsumerWidget {
               const SizedBox(height: 28),
               _TierHeader(tier: tier, course: course, progress: p),
               const SizedBox(height: 8),
-              for (final l in course.lessonsOf(tier.id))
+              for (final (i, l) in course.lessonsOf(tier.id).indexed) ...[
+                if (l.isMeasures && (i == 0 || !course.lessonsOf(tier.id)[i - 1].isMeasures))
+                  Padding(
+                    key: ValueKey('measures_heading_${tier.id}'),
+                    padding: const EdgeInsets.fromLTRB(2, 14, 2, 10),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, spacing: 2, children: [
+                      Text('Measures every case uses', style: t.titleMedium),
+                      Text('Scores, errors, tests and data checks from all four cases. Their words are linked in every case.',
+                          style: t.bodySmall?.copyWith(color: c.inkSoft)),
+                    ]),
+                  ),
                 _LessonRow(
                   lesson: l,
                   passed: p.lessonPassed(l.id),
@@ -69,6 +79,7 @@ class LearnScreen extends ConsumerWidget {
                   total: course.termsOf(l.id).length,
                   lockedHint: 'Pass every ${course.tiers[(tier.ord - 1).clamp(0, course.tiers.length - 1)].title.toLowerCase()} lesson to open this tier.',
                 ),
+              ],
               if (tier.readNext.isNotEmpty) ...[
                 const SizedBox(height: 10),
                 Text('Read next', style: t.labelLarge?.copyWith(color: c.inkSoft)),
@@ -312,17 +323,23 @@ class _GlossaryScreenState extends ConsumerState<GlossaryScreen> {
     final c = context.colors;
     final t = Theme.of(context).textTheme;
     final q = _q.trim().toLowerCase();
+    // Names first, then the definition, then the rest of the card (so "Gini" also finds the ROC card, whose
+    // finance note mentions it).
+    bool inBody(GlossaryTerm w) =>
+        [w.plain, w.usedFor ?? '', unmarked(w.inFinance ?? '')].any((s) => s.toLowerCase().contains(q));
     final hits = q.isEmpty
         ? [...course.terms]
         : [
             for (final w in course.terms)
-              if (w.names.any((n) => n.toLowerCase().contains(q)) || w.short.toLowerCase().contains(q)) w
+              if (w.names.any((n) => n.toLowerCase().contains(q)) || w.short.toLowerCase().contains(q) || inBody(w)) w
           ]
       ..sort((a, b) {
         if (q.isEmpty) return a.rank.compareTo(b.rank);
         int score(GlossaryTerm w) => w.names.any((n) => n.toLowerCase() == q)
             ? 0
-            : (w.names.any((n) => n.toLowerCase().startsWith(q)) ? 1 : (w.names.any((n) => n.toLowerCase().contains(q)) ? 2 : 3));
+            : (w.names.any((n) => n.toLowerCase().startsWith(q))
+                ? 1
+                : (w.names.any((n) => n.toLowerCase().contains(q)) ? 2 : (w.short.toLowerCase().contains(q) ? 3 : 4)));
         final s = score(a).compareTo(score(b));
         return s != 0 ? s : a.rank.compareTo(b.rank);
       });
@@ -331,8 +348,8 @@ class _GlossaryScreenState extends ConsumerState<GlossaryScreen> {
         title: TextField(
           key: const ValueKey('glossary_search'),
           autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Search 300 words',
+          decoration: InputDecoration(
+            hintText: 'Search ${course.terms.length} words',
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
