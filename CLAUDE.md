@@ -3,6 +3,10 @@
 Full spec: docs/spec.pdf (single source of truth; Section 2 overrides everything).
 Start-here / recovery docs: docs/knowledge/00_START_HERE.md. Progress: docs/ROADMAP.md.
 
+## NEXT TASK (owner, 2026-11-16)
+"Building new real data for all the 4 groups such that once one problem is finished another pops up, as i said dont worry about the size of app make sure we achieve the target of me being the best data scientist"
+Order per sector follows pipeline/catalog.yaml build_rank (football: P33 first). Same rules as every case: real data only.
+
 ## What this is
 Python pipeline (pipeline/) solves 50-problem cases offline on REAL public data and writes a
 content bundle; Flutter Android app (app/) only presents and examines. The app never computes results.
@@ -28,6 +32,7 @@ content bundle; Flutter Android app (app/) only presents and examines. The app n
 - Let any LLM change or invent numbers. Grading (owner decision 2026-11-16): the Claude examiner judges coverage of
   each rubric point; the app computes the score from the weights, checks numbers against expected_results, and
   applies pass = score >= 85 with no critical red flag (docs/knowledge/GRADING.md).
+- Call the Claude API outside app/lib/grading/claude_client.dart, or break the budget rules in docs/knowledge/API_USAGE.md.
 - Commit an API key. The Claude key lives in git-ignored app/secrets.json (`--dart-define-from-file=secrets.json`).
 - Redistribute data beyond its terms (StatsBomb credit+logo; LOBSTER research use; check Yahoo/Kaggle).
 - Build features from a later prompt than the current one.

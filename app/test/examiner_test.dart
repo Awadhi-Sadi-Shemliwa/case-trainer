@@ -27,7 +27,7 @@ const p34 = 'p34_home_adv';
 /// An API reply carrying [json] as the structured-output text block.
 http.Response apiReply(Map<String, dynamic> json) => http.Response(
       jsonEncode({
-        'model': examinerModel,
+        'model': graderModel,
         'stop_reason': 'end_turn',
         'content': [
           {'type': 'thinking', 'thinking': ''},
@@ -121,9 +121,14 @@ void main() {
     test('sends the rubric with resolved pipeline numbers and a closed JSON schema', () async {
       final r = resolverFor(content, p34);
       await grader.grade(plan, 'The plan assumes referees are biased.', r, caseInfo: content.caseById(p34));
-      expect(sent!['model'], examinerModel);
+      expect(sent!['model'], graderModel);
+      expect(sent!['fallbacks'], 'default');
       expect((sent!['output_config'] as Map)['format']['type'], 'json_schema');
-      final user = ((sent!['messages'] as List).first as Map)['content'] as String;
+      final blocks = (((sent!['messages'] as List).first as Map)['content'] as List).cast<Map>();
+      expect(blocks.first['cache_control'], {'type': 'ephemeral'}, reason: 'step material is cached for the next try');
+      expect(blocks.first['text'], isNot(contains('The plan assumes referees')), reason: 'the answer is not in the cached block');
+      expect(blocks.last.containsKey('cache_control'), isFalse);
+      final user = blocks.map((b) => b['text']).join('\n');
       expect(user, contains('point id="multiple"'));
       expect(user, contains(r.results['n_leagues_significant']!.display));
       expect(user, isNot(contains('{expected.')), reason: 'placeholders are resolved before Claude sees them');
@@ -162,6 +167,96 @@ void main() {
       final g = await grader.grade(plan, "I don't know", resolverFor(content, p34));
       expect(g.status, GradeStatus.noAttempt);
       expect(sent, isNull);
+    });
+  });
+
+  group('budget rules (owner, 2026-11-16)', () {
+    final ok = {'ok': true};
+    test('a rate limit waits retry-after and retries; the credit error is never retried', () async {
+      var calls = 0;
+      final waits = <Duration>[];
+      final c = ClaudeClient(
+        apiKey: () => 'k',
+        sleep: (d) async => waits.add(d),
+        httpClient: MockClient((_) async {
+          calls++;
+          return calls == 1
+              ? http.Response(jsonEncode({'error': {'message': 'rate limited'}}), 429, headers: {'retry-after': '3'})
+              : apiReply(ok);
+        }),
+      );
+      final r = await c.json(model: graderModel, system: 's', user: 'u', schema: const {});
+      expect(r.json, ok);
+      expect(r.retries, 1);
+      expect(waits, [const Duration(seconds: 3)]);
+
+      calls = 0;
+      final credit = ClaudeClient(
+        apiKey: () => 'k',
+        sleep: (d) async => waits.add(d),
+        httpClient: MockClient((_) async {
+          calls++;
+          return http.Response(jsonEncode({'error': {'message': 'Your credit balance is too low'}}), 400);
+        }),
+      );
+      await expectLater(credit.json(model: graderModel, system: 's', user: 'u', schema: const {}),
+          throwsA(isA<ClaudeError>().having((e) => e.kind, 'kind', ClaudeErrorKind.credit)));
+      expect(calls, 1);
+    });
+
+    test('overload twice then gives up after two retries with 2 s and 4 s waits', () async {
+      var calls = 0;
+      final waits = <Duration>[];
+      final c = ClaudeClient(
+        apiKey: () => 'k',
+        sleep: (d) async => waits.add(d),
+        httpClient: MockClient((_) async {
+          calls++;
+          return http.Response(jsonEncode({'error': {'message': 'overloaded'}}), 529);
+        }),
+      );
+      await expectLater(c.json(model: graderModel, system: 's', user: 'u', schema: const {}),
+          throwsA(isA<ClaudeError>().having((e) => e.kind, 'kind', ClaudeErrorKind.overloaded)));
+      expect(calls, 3);
+      expect(waits, [const Duration(seconds: 2), const Duration(seconds: 4)]);
+    });
+
+    test('Haiku calls carry no fallbacks; requests run one at a time', () async {
+      final bodies = <Map>[];
+      var running = 0, maxRunning = 0;
+      final c = ClaudeClient(
+        apiKey: () => 'k',
+        httpClient: MockClient((req) async {
+          running++;
+          maxRunning = running > maxRunning ? running : maxRunning;
+          bodies.add(jsonDecode(req.body) as Map);
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          running--;
+          return apiReply(ok);
+        }),
+      );
+      await Future.wait([
+        c.json(model: summaryModel, system: 's', user: 'a', schema: const {}),
+        c.json(model: summaryModel, system: 's', user: 'b', schema: const {}),
+      ]);
+      expect(maxRunning, 1);
+      expect(bodies.every((b) => !b.containsKey('fallbacks') && b['model'] == summaryModel), isTrue);
+    });
+
+    test('usage and cost are stored with each verdict and summed for Settings', () async {
+      final progress = ProgressDb.inMemory();
+      final reply = ClaudeReply(json: const {}, model: graderModel, inputTokens: 1000, outputTokens: 500, cacheReadTokens: 3000);
+      expect(reply.cost, closeTo((1000 * 2 + 500 * 10 + 3000 * 0.10) / 1e6, 1e-12));
+      for (var i = 0; i < 2; i++) {
+        progress.recordExaminedAttempt(
+          caseId: p34, stepId: 's13_result', answer: 'x', startedAt: DateTime.now(), status: 'graded', score: 50,
+          feedback: GradeResult(status: GradeStatus.graded, score: 50, usage: reply.usageJson()).toJson(),
+        );
+      }
+      final u = progress.examinerUsage();
+      expect(u.calls, 2);
+      expect(u.cacheReadTokens, 6000);
+      expect(u.cost, closeTo(2 * reply.cost, 1e-12));
     });
   });
 

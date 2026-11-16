@@ -82,27 +82,28 @@ List<StepRecord> collectRecords(ContentDb content, ProgressDb progress, String c
 /// Asks the examiner for an overall summary of the case. Returns null when it cannot be reached.
 Future<CaseSummary?> summariseCase(ClaudeClient client, CaseInfo info, List<StepRecord> records, Resolver r) async {
   if (!client.hasKey) return null;
-  final b = StringBuffer('Case P${info.number}: ${info.title}\n\n');
+  // Owner budget rule: send only what the summary needs (no reading steps, latest try only, short quotes).
+  String cut(String s) => s.length <= 160 ? s : '${s.substring(0, 157)}...';
+  final b = StringBuffer('Case P${info.number}: ${info.title}\n');
   for (final rec in records) {
     if (rec.step.isInfo) continue;
-    b.writeln('Step ${rec.step.index + 1} "${rec.step.title}" (${rec.step.type}):');
+    final head = 'Step ${rec.step.index + 1} "${rec.step.title}"';
     if (rec.step.isGraded) {
       if (rec.examined.isEmpty) {
-        b.writeln('  not graded');
+        b.writeln('$head: not answered');
         continue;
       }
-      for (final a in rec.examined) {
-        final g = GradeResult.fromJson(a.feedback);
-        b.writeln('  try ${a.attemptNo}: ${a.status == 'noAttempt' ? "said they did not know" : 'score ${a.score?.round()}${a.passed ? ' (pass)' : ''}'}');
-        for (final p in g.points.where((p) => p.coverage != Coverage.full)) {
-          b.writeln('    missing: ${p.label}${p.missing.isEmpty ? '' : ': ${p.missing}'}');
-        }
-        for (final e in g.errors) {
-          b.writeln('    error: "${e.quote}": ${e.problem}');
-        }
+      final last = rec.examined.last;
+      final g = GradeResult.fromJson(last.feedback);
+      b.writeln('$head: ${rec.examined.length} tries, best ${rec.best?.round() ?? 0}${rec.passed ? ', passed' : ''}'
+          '${rec.examined.any((a) => a.status == 'noAttempt') ? ', asked for hints' : ''}');
+      final missing = [for (final p in g.points) if (p.coverage != Coverage.full) p.label];
+      if (missing.isNotEmpty) b.writeln('  missing: ${missing.join('; ')}');
+      for (final e in g.errors.take(2)) {
+        b.writeln('  error: "${cut(e.quote)}": ${cut(e.problem)}');
       }
     } else {
-      b.writeln('  ${rec.checkedAttempts.length} tries, ${rec.solved ? 'solved' : 'not solved'}');
+      b.writeln('$head: ${rec.checkedAttempts.length} tries, ${rec.solved ? 'solved' : 'not solved'}');
     }
   }
   try {
@@ -110,11 +111,13 @@ Future<CaseSummary?> summariseCase(ClaudeClient client, CaseInfo info, List<Step
       system: 'You are the examiner in Case Trainer, a data-science case app. Write a short end-of-case summary for '
           'the learner from the grading record you are given: a one-sentence headline, two to four strengths, the '
           'recurring gaps (concepts, not single slips), and two to four concrete things to revise. Plain English; '
-          'the learner knows p-values and correlation. Do not invent results that are not in the record.',
+          'the learner knows p-values and correlation. State only what the record shows: do not invent results, do not '
+          'claim progress between tries unless their scores differ, and treat steps marked not answered as not reached.',
+      model: summaryModel,
       user: b.toString(),
       schema: _summarySchema,
       effort: 'low',
-      maxTokens: 8000,
+      maxTokens: 2000,
     );
     return CaseSummary.fromJson(reply.json);
   } on ClaudeError {
@@ -133,7 +136,8 @@ Future<Uint8List> buildCaseReport({
   DateTime? now,
 }) async {
   final date = (now ?? DateTime.now()).toLocal();
-  final theme = pw.ThemeData.withFont(base: fonts.regular, bold: fonts.bold);
+  // Archivo has no italic cut in the bundle; the upright faces stand in so every character renders.
+  final theme = pw.ThemeData.withFont(base: fonts.regular, bold: fonts.bold, italic: fonts.regular, boldItalic: fonts.bold);
   final doc = pw.Document(title: 'P${info.number} ${info.title}', author: 'Case Trainer', theme: theme);
   final ink = PdfColor.fromHex('#1D2A44');
   final soft = PdfColor.fromHex('#5B6478');
@@ -177,7 +181,7 @@ Future<Uint8List> buildCaseReport({
       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
         p('Written answers passed: $passedN of ${graded.length}${mean == null ? '' : ' (average best score ${mean.round()} / 100)'}'),
         p('Checked questions solved: $solvedN of ${checked.length} (the rest revealed after three tries)'),
-        p('Pass mark for written answers: ${passMark.round()}, with no critical red flag. Grades by the Claude examiner ($examinerModel); '
+        p('Pass mark for written answers: ${passMark.round()}, with no critical red flag. Grades by the Claude examiner ($graderModel); '
             'scores are computed in the app from the rubric weights.', color: soft, size: 9),
       ]),
     ),

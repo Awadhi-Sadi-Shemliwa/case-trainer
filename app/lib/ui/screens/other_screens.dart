@@ -294,7 +294,16 @@ class _ExaminerSettingsState extends ConsumerState<ExaminerSettings> {
         : (key.isNotEmpty ? 'Using the key built into this install${_tail(key)}.' : 'No key: answers are saved but not graded.');
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, spacing: 8, children: [
       SectionTitle('Examiner', icon: Icons.fact_check_outlined),
-      Text('Written answers are graded by Claude ($examinerModel). The key stays on this phone.', style: t.bodySmall),
+      Text('Written answers are graded by Claude ($graderModel); report summaries by $summaryModel. The key stays on this phone.',
+          style: t.bodySmall),
+      () {
+        final u = p.examinerUsage();
+        return Text(
+          u.calls == 0 ? 'Nothing graded yet.' : '${u.calls} answers graded, about \$${u.cost.toStringAsFixed(2)} of API credit used.',
+          key: const ValueKey('api_usage'),
+          style: t.bodySmall,
+        );
+      }(),
       Text(where, key: const ValueKey('api_key_status'), style: t.bodyMedium),
       Wrap(spacing: 8, runSpacing: 8, children: [
         OutlinedButton.icon(onPressed: _paste, icon: const Icon(Icons.key_rounded), label: const Text('Paste a new key')),

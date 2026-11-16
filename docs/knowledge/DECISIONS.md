@@ -263,3 +263,14 @@ MediaStore (Kotlin channel in MainActivity; no permission; media_store_plus was 
 via `share_plus`. pipeline/catalog.yaml lists all 50 curriculum problems with spec tiers and the build order
 (Gemini's citations stripped: unverified). Home shows one active case per sector; when a sector's built cases are all
 finished, the next Tier A/A* problem appears as "being prepared".
+
+### 2026-11-16 · Budget rules: Sonnet grades, Haiku summarises, cache and retry
+The owner added $5 (Tier 1) and gave rules to stay inside the rate limit and stretch the credit (docs/knowledge/API_USAGE.md).
+Grading moves from Opus 5.5 to Sonnet 5.5 (owner: Sonnet for reasoning; half the price), summaries and the connection
+test to Haiku 5.5 (no server-side fallback there, so none is sent). Step material is prompt-cached; requests are
+queued one at a time; 429/5xx retry after `retry-after` or 2 s / 4 s. Live run on the owner's real step-9 answer:
+the examiner quoted the three wrong sentences (total goals vs home minus away, the range, 2019/20 vs autumn 2020);
+the cached retry cost half. "Save progress as PDF" is now available at any point in a case, not only at Finish.
+
+### 2026-11-16 · Next task
+Owner: "Building new real data for all the 4 groups such that once one problem is finished another pops up, as i said dont worry about the size of app make sure we achieve the target of me being the best data scientist"

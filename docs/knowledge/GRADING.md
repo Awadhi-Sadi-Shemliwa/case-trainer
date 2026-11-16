@@ -7,7 +7,7 @@ MiniLM grader (spec §5, Prompt 6/7); the rule "no LLM decides pass/fail" is ove
 ## Who decides what
 | Part | Who | Where |
 |---|---|---|
-| Coverage of each rubric point (full / partial / none), quotes of wrong sentences, red flags asserted, "no attempt" | Claude (`claude-opus-5-5`, effort medium, structured JSON output) | `app/lib/grading/claude_grader.dart` |
+| Coverage of each rubric point (full / partial / none), quotes of wrong sentences, red flags asserted, "no attempt" | Claude (`claude-sonnet-5-5`, effort medium, structured JSON output; step material prompt-cached) | `app/lib/grading/claude_grader.dart` |
 | Score = sum of weight x coverage minus red-flag penalties, clipped 0-100 | app | `grading/score.dart` |
 | Numeric anchor: a point with `numeric` keeps full credit only if the answer has the pipeline number within tolerance (else capped at partial) | app | `score.dart` |
 | Pass = score >= 85 and no critical red flag | app | `score.dart` |
@@ -32,4 +32,4 @@ progress.sqlite v3 `examiner_feedback` (one row per counted try: status, score, 
 tokens). The finish rule (`engine/step_status.dart`) counts a written step as answered once passed or after three tries.
 
 ## Cost
-About 3-6k input and 1-2k output tokens per grade on Opus 5.5 ($4 / $20 per million): roughly 2-6 US cents each.
+Measured: about 2 US cents for a first try and 1 cent for a cached retry on Sonnet 5.5 (docs/knowledge/API_USAGE.md).

@@ -1,5 +1,8 @@
 # START HERE — recovering or continuing the project
 
+**Next task (owner, 2026-11-16):** "Building new real data for all the 4 groups such that once one problem is finished another pops up, as i said dont worry about the size of app make sure we achieve the target of me being the best data scientist"
+Claude API rules: docs/knowledge/API_USAGE.md.
+
 If the app crashes, a session is lost, or you come back after weeks, read in this order:
 
 1. `CLAUDE.md` (repo root) — the rules. `docs/spec.pdf` — the full spec.

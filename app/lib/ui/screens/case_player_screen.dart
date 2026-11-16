@@ -78,6 +78,25 @@ class _CasePlayerScreenState extends ConsumerState<CasePlayerScreen> {
     if (mounted) Navigator.of(context).maybePop();
   }
 
+  /// Owner request: "that progress needs to be saved as pdf in the phone and the answers to be able to be transferred".
+  /// Works at any point; open questions are marked "not answered" in the report.
+  Future<void> _saveProgressPdf() async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(const SnackBar(content: Text('Writing your progress report…')));
+    try {
+      final saved = await writeReport(ref, _case);
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(SnackBar(
+        duration: const Duration(seconds: 8),
+        content: Text(saved.downloads != null ? 'Saved in ${saved.downloads}' : 'Saved in the app'),
+        action: SnackBarAction(label: 'Share', onPressed: () => shareReport(saved.path, _case)),
+      ));
+    } catch (e) {
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(SnackBar(content: Text('The report could not be written: $e')));
+    }
+  }
+
   void _showUnfinished(List<StepData> missing) {
     final progress = ref.read(progressDbProvider);
     showModalBottomSheet<void>(
@@ -204,6 +223,12 @@ class _CasePlayerScreenState extends ConsumerState<CasePlayerScreen> {
           ),
         ]),
         actions: [
+          IconButton(
+            key: const ValueKey('save_pdf'),
+            tooltip: 'Save progress as PDF',
+            onPressed: _saveProgressPdf,
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+          ),
           IconButton(
             key: const ValueKey('step_map'),
             tooltip: 'All steps',

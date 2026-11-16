@@ -202,6 +202,22 @@ class ProgressDb {
           [caseId, stepId]).first['s'] as num?)
       ?.toDouble();
 
+  /// Calls made to the examiner and their estimated cost (from each verdict's stored usage).
+  ({int calls, double cost, int inputTokens, int outputTokens, int cacheReadTokens}) examinerUsage() {
+    var calls = 0, input = 0, output = 0, cacheRead = 0;
+    var cost = 0.0;
+    for (final r in _db.select("SELECT feedback_json FROM examiner_feedback WHERE status = 'graded'")) {
+      final u = (jsonDecode(r['feedback_json'] as String) as Map)['usage'] as Map?;
+      if (u == null) continue;
+      calls++;
+      input += (u['input_tokens'] as num?)?.toInt() ?? 0;
+      output += (u['output_tokens'] as num?)?.toInt() ?? 0;
+      cacheRead += (u['cache_read_input_tokens'] as num?)?.toInt() ?? 0;
+      cost += (u['cost_usd'] as num?)?.toDouble() ?? 0;
+    }
+    return (calls: calls, cost: cost, inputTokens: input, outputTokens: output, cacheReadTokens: cacheRead);
+  }
+
   /// Puts a step on the spaced re-test ladder (1, 3, 7, 21 days) once it is passed or revealed.
   void scheduleReview(String caseId, String stepId, {DateTime? now}) {
     final due = (now ?? DateTime.now()).toUtc().add(Duration(days: reviewLadderDays.first)).toIso8601String();

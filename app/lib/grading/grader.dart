@@ -131,6 +131,7 @@ class GradeResult {
     this.model,
     this.inputTokens,
     this.outputTokens,
+    this.usage,
   });
 
   final GradeStatus status;
@@ -148,6 +149,9 @@ class GradeResult {
   final int? inputTokens;
   final int? outputTokens;
 
+  /// Tokens, cache reads, retries, time and estimated cost of the call (null for local verdicts).
+  final Map<String, dynamic>? usage;
+
   bool get graded => status == GradeStatus.graded;
   bool get countsAsAttempt => status != GradeStatus.unavailable;
   List<PointVerdict> get missingPoints => [for (final p in points) if (p.coverage != Coverage.full) p];
@@ -158,6 +162,7 @@ class GradeResult {
         'errors': [for (final e in errors) e.toJson()],
         'flags': [for (final f in flags) f.toJson()],
         'strengths': strengths, 'summary': summary, 'message': message, 'model': model,
+        if (usage != null) 'usage': usage,
       };
 
   factory GradeResult.fromJson(Map<String, dynamic> j) => GradeResult(
@@ -171,6 +176,7 @@ class GradeResult {
         summary: j['summary'] as String? ?? '',
         message: j['message'] as String? ?? '',
         model: j['model'] as String?,
+        usage: (j['usage'] as Map?)?.cast<String, dynamic>(),
       );
 }
 

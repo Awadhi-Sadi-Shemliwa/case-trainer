@@ -107,18 +107,37 @@ class ClaudeGrader implements Grader {
     if (rubric == null) {
       return const GradeResult(status: GradeStatus.unavailable, message: 'This step has no rubric.');
     }
-    final user = await buildPrompt(step, answer, resolver, caseInfo: caseInfo);
+    final material = await buildMaterial(step, resolver, caseInfo: caseInfo);
     try {
-      final reply = await client.json(system: examinerSystem, user: user, schema: examinerSchema);
+      final reply = await client.json(
+        model: graderModel,
+        system: examinerSystem,
+        user: userBlocks(material, answer),
+        schema: examinerSchema,
+        effort: 'medium',
+        maxTokens: 8000,
+      );
       return interpret(step, answer, resolver, reply.json,
-          model: reply.model, inputTokens: reply.inputTokens, outputTokens: reply.outputTokens);
+          model: reply.model, inputTokens: reply.inputTokens, outputTokens: reply.outputTokens, usage: reply.usageJson());
     } on ClaudeError catch (e) {
       return GradeResult(status: GradeStatus.unavailable, message: explainClaudeError(e));
     }
   }
 
-  /// The per-step part of the prompt. Placeholders are resolved, so Claude sees the pipeline's real values.
-  Future<String> buildPrompt(StepData step, String answer, Resolver resolver, {CaseInfo? caseInfo}) async {
+  /// The request content: the step material first, marked for prompt caching (a second or third try on the same
+  /// step within five minutes reads it at a twentieth of the price), then the answer, which changes every time.
+  static List<Map<String, dynamic>> userBlocks(String material, String answer) => [
+        {'type': 'text', 'text': material, 'cache_control': {'type': 'ephemeral'}},
+        {
+          'type': 'text',
+          'text': '<learner_answer>\n$answer\n</learner_answer>\n\n'
+              'Grade the learner answer. Give one entry in "points" for every rubric point id, in rubric order.',
+        },
+      ];
+
+  /// The per-step material (no answer). Placeholders are resolved, so Claude sees the pipeline's real values.
+  /// Only what grading needs is sent: the step, a sampled chart description, the model answer, rubric and numbers.
+  Future<String> buildMaterial(StepData step, Resolver resolver, {CaseInfo? caseInfo}) async {
     String p(String? s) => s == null ? '' : resolver.plain(s);
     final rubric = step.rubric!;
     final b = StringBuffer();
@@ -167,9 +186,7 @@ class ClaudeGrader implements Grader {
       }
       b.writeln('</pipeline_numbers>\n');
     }
-    b.writeln('<learner_answer>\n$answer\n</learner_answer>');
-    b.writeln('\nGrade the learner answer. Give one entry in "points" for every rubric point id, in rubric order.');
-    return b.toString();
+    return b.toString().trimRight();
   }
 
   /// Every pipeline number the step, its model answer or its rubric refers to.
@@ -185,9 +202,10 @@ class ClaudeGrader implements Grader {
 
   /// Turns Claude's judgement into a result: weights, number check and penalties are applied here.
   GradeResult interpret(StepData step, String answer, Resolver resolver, Map<String, dynamic> j,
-      {String? model, int? inputTokens, int? outputTokens}) {
+      {String? model, int? inputTokens, int? outputTokens, Map<String, dynamic>? usage}) {
     if (j['no_attempt'] == true) {
-      return GradeResult(status: GradeStatus.noAttempt, score: 0, model: model, inputTokens: inputTokens, outputTokens: outputTokens);
+      return GradeResult(
+          status: GradeStatus.noAttempt, score: 0, model: model, inputTokens: inputTokens, outputTokens: outputTokens, usage: usage);
     }
     final rubric = step.rubric!;
     final judged = {
@@ -243,6 +261,7 @@ class ClaudeGrader implements Grader {
       model: model,
       inputTokens: inputTokens,
       outputTokens: outputTokens,
+      usage: usage,
     );
   }
 }

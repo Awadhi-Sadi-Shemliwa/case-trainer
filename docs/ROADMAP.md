@@ -1,5 +1,7 @@
 # Roadmap
 
+> **NEXT TASK (owner, 2026-11-16):** "Building new real data for all the 4 groups such that once one problem is finished another pops up, as i said dont worry about the size of app make sure we achieve the target of me being the best data scientist"
+
 Prompts come from docs/spec.pdf §10. Status: TODO / IN PROGRESS / DONE / BLOCKED (with reason).
 
 | # | Prompt | Status | Notes |
@@ -9,7 +11,7 @@ Prompts come from docs/spec.pdf §10. Status: TODO / IN PROGRESS / DONE / BLOCKE
 | 3 | Solve P50 yield curve end to end | DONE (awaiting owner review) | 25 steps, 120 results, 9 graded steps, 290 calibration answers (49 flagged for owner review; counts as of the 2026-11-10 cross-check, flagged count enforced by `tests/test_crosscheck.py`). NY Fed benchmark NOT obtained — see docs/knowledge/cases/p50_yield_curve.md |
 | 4 | Flutter app shell and case player | DONE | Plays P50 on the S21+ to the first chart and beyond; resume verified after app kill; release cold start median 309 ms; 14 Flutter tests incl. no-hard-coded-numbers |
 | 5 | Interactive charts (Syncfusion; PNG fallback) | DONE | Pinch/pan, unit tooltips, legend toggle, reset, landscape full screen verified on S21+. Pinch-zoom misses ~12% of 60 Hz build frames (median of 9 measured runs), raster 0 missed. No licence key needed in 35.x; fl_chart not added (DECISIONS) |
-| 6 | Examiner: grading engine, 3 attempts, 85% | DONE (2026-11-16, owner change) | Claude examiner (claude-opus-5-5) judges rubric coverage; app computes score/pass. MiniLM plan dropped. Live grading waits on API credit |
+| 6 | Examiner: grading engine, 3 attempts, 85% | DONE (2026-11-16, owner change) | Claude examiner (claude-sonnet-5-5, cached, retried) judges rubric coverage; app computes score/pass. MiniLM plan dropped. Verified live on the owner's real answer |
 | 7 | Calibrate and test the grader | TODO | Run the calibration answers through the Claude examiner once the account has credit; report agreement |
 | 8 | Remaining Tier A cases in batches | IN PROGRESS | Batch 1: **P34 DONE** (quality-gated, fixed), **P3 DONE** (quality-gated, fixed); P50 also re-gated and fixed, **P13 DONE** (quality-gated, fixed) on the free OpenF1 API (CC BY-NC-SA 4.0) because FastF1 needs F1TV; 61 dry races 2023-2025. Next: P1, then spec §8 order |
 | 9 | Learn tab, spaced review, progress, portfolio export | IN PROGRESS | Finished-case PDF report (Downloads/CaseTrainer + share) and methods lesson DONE 2026-11-16 |
